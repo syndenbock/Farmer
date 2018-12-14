@@ -1,0 +1,14 @@
+  version 2.5.1
+- fixed compatibility with WoW version 8.1
+
+  version 2.5
+- added option to set icon scale
+
+version 2.4.1
+- option "show names of all items" now also applies to currencies
+
+  version 2.4
+
+- increased icon size relative to text size
+- small performance improvements
+- fixed bag item count only working when also having total count active
