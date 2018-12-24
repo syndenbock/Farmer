@@ -1,3 +1,6 @@
+  version 2.5.2
+- increased frame strata to support island expeditions
+
   version 2.5.1
 - fixed compatibility with WoW version 8.1
 

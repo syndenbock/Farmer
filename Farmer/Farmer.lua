@@ -118,7 +118,7 @@ local lootTimeStamp = 0
 local playerName
 local playerFullName
 
-function events:PLAYER_ENTERING_WORLD ()
+function events:PLAYER_LOGIN ()
   playerName = {UnitFullName('player')}
   playerFullName = playerName[1] .. '-' .. playerName[2]
   playerName = playerName[1]
@@ -146,6 +146,11 @@ local function printTable (table)
   end
 end
 
+local function printMessage (...)
+  farmerFrame:AddMessage(...)
+  ChatFrame1:AddMessage(...)
+end
+
 local function setTrueScale (frame, scale)
     frame:SetScale(1)
     frame:SetScale(scale / frame:GetEffectiveScale())
@@ -169,7 +174,7 @@ end
 local function printItem (texture, text, colors)
   local icon = ' |T' .. texture .. farmerVars.iconOffset
 
-  farmerFrame:AddMessage(icon .. text, unpack(colors))
+  printMessage(icon .. text, unpack(colors))
 end
 
 local function printItemCount (texture, name, text, count, colors)
@@ -553,13 +558,14 @@ function events:PLAYER_MONEY ()
     text = text .. ' ' .. copper
   end
   text = string.sub(text, 2)
-  farmerFrame:AddMessage(text, 1, 1, 1, 1)
+  printMessage(text, 1, 1, 1, 1)
 end
 
 farmerFrame = CreateFrame('ScrollingMessageFrame', 'farmerFrame', UIParent)
 farmerFrame:SetWidth(GetScreenWidth() / 2)
 farmerFrame:SetHeight(GetScreenHeight() / 2)
-farmerFrame:SetFrameStrata('DIALOG')
+-- farmerFrame:SetFrameStrata('DIALOG')
+farmerFrame:SetFrameStrata('FULLSCREEN_DIALOG')
 farmerFrame:SetFrameLevel(2)
 farmerFrame:SetFading(true)
 -- farmerFrame:SetTimeVisible(2)
