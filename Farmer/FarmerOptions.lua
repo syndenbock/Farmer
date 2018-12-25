@@ -1,6 +1,6 @@
 local addonName, farmerVars = ...
 
-local currentVersion = 0205020
+local currentVersion = 0206000
 
 local rarityList = {
   [0] = 'Poor',
@@ -387,7 +387,7 @@ function events:ADDON_LOADED (addon)
     local text
 
     text = 'New in ' .. addonName .. ' version ' .. version .. ':\n' ..
-           'Island Expeditions are now supported \nand can be enabled in the options.'
+           'Ids of farming items can now be entered in the options'
     print(text)
   end
   farmerOptions.version = currentVersion
