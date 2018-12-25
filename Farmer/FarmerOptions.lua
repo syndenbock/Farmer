@@ -173,7 +173,7 @@ local function createEditBox (name, anchorFrame, xOffset, yOffset, width, height
   back.scroll = scroll
   back.edit = edit
   anchor = anchor or 'TOPLEFT'
-  parentAnchor = parentAnchor or 'TOPLEFT'
+  parentAnchor = parentAnchor or 'BOTTOMLEFT'
 
   back:SetBackdrop({
     -- bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
@@ -217,6 +217,19 @@ local function createEditBox (name, anchorFrame, xOffset, yOffset, width, height
   return back;
 end
 
+local function createLabel (anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
+  local label = farmerOptionsFrame:CreateFontString('FontString');
+
+  achor = achor or 'TOPLEFT';
+  parentAnchor = parentAnchor or 'BOTTOMLEFT';
+
+  label:SetFont('Fonts\\ARIALN.TTF', 16, 'thickoutline')
+  label:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
+  label:SetText(text);
+
+  return label;
+end
+
 local function initPanel ()
   local anchor = farmerOptionsFrame
   local itemField
@@ -233,7 +246,6 @@ local function initPanel ()
   _, anchor = createSlider('minimumRarity', anchor, 20, -20, 'minimum rarity', 0, 8, '', '', 'TOPLEFT', 'BOTTOMLEFT', function (self, value)
     displayRarity(self.edit, value)
   end)
-  anchor = createCheckButton('special', anchor, -20, -10, 'always show farming items')
   anchor = createCheckButton('reagents', anchor, 0, -5, 'always show reagents')
   anchor = createCheckButton('questItems', anchor, 0, -5, 'always show quest items')
   anchor = createCheckButton('currency', anchor, 0, -25, 'show currencies')
@@ -256,8 +268,14 @@ local function initPanel ()
     farmerVars.frame:SetTimeVisible(value - farmerVars.frame:GetFadeDuration())
   end)
 
-  itemField = createEditBox('focusItems', farmerOptionsFrame, -25, 25, 120, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT');
+  itemField = createEditBox('focusItems', farmerOptionsFrame, -120, 100, 150, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT');
   anchor = itemField;
+
+  createLabel(anchor, 0, 0, 'focused item ids:', 'BOTTOMLEFT', 'TOPLEFT');
+
+  anchor = createCheckButton('special', anchor, 0, -10, 'always show focused items', 'TOPLEFT', 'BOTTOMLEFT');
+  anchor = createCheckButton('focus', anchor, 0, -10, 'only show focused items');
+
 end
 
 local function applyOptions ()
@@ -384,6 +402,7 @@ function events:ADDON_LOADED (addon)
   checkOption('rarity', true)
   checkOption('minimumRarity', 3)
   checkOption('special', true)
+  checkOption('focus', false)
   checkOption('reagents', true)
   checkOption('questItems', false)
   checkOption('currency', true)

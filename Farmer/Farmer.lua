@@ -266,60 +266,110 @@ local function printEquip (texture, name, text, count, colors)
   printItemCount(texture, name, text, count, colors)
 end
 
-local function handleItem (itemLink, count, totalCount)
+local function checkItemDisplay (itemLink)
+  local itemId = GetItemInfoInstant(itemLink)
+
+  if (itemId and
+      farmerOptions.focusItems[itemId] == true) then
+    if (farmerOptions.special == true) then
+      return true;
+    end
+  elseif (farmerOptions.focus == true) then
+    return false;
+  end
+
   local itemName, _itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
         itemSetID, isCraftingReagent = GetItemInfo(itemLink)
+
   -- happens when caging a pet
   if (itemName == nil) then
     return
   end
 
-  local itemId = GetItemInfoInstant(itemLink)
-
-  if (farmerOptions.reagents == true) then
-    if (isCraftingReagent == true) then
-      if (itemId == chipId and hadChip == true) then
-        hadChip = false
-        return
-      end
-
-      printStackableItem(itemLink, texture, itemName, count, totalCount, {0, 0.8, 0.8, 1})
-      return
-    end
-
-    if (itemId ~= nil) then
-      if ((itemId >= 130200 and
-           itemId <= 130204) or
-          itemId == 129099) then
-        hadChip = true
-        printStackableItem(chipId, texture, itemName, count, totalCount, {1, 1, 1, 1})
-        return
-      end
-    end
+  if (farmerOptions.reagents == true and
+      isCraftingReagent == true) then
+    return true;
   end
 
   if (farmerOptions.questItems == true and
       itemClassID == 12) then
+    return true;
+  end
+
+  if (farmerOptions.rarity == true and
+      itemRarity >= farmerOptions.minimumRarity) then
+    return true;
+  end
+
+  return false;
+end
+
+local function handleItem (itemLink, count, totalCount)
+  if (checkItemDisplay(itemLink) ~= true) then return end
+
+  local itemName, _itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
+        itemSubType, itemStackCount, itemEquipLoc, texture,
+        itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
+        itemSetID, isCraftingReagent = GetItemInfo(itemLink)
+  local colors = farmerVars.rarityColors[itemRarity]
+  local itemId = GetItemInfoInstant(itemLink)
+
+  -- crafting reagents
+  if (isCraftingReagent == true) then
+    if (itemId == chipId and hadChip == true) then
+      hadChip = false
+      return
+    end
+
+    printStackableItem(itemLink, texture, itemName, count, totalCount, {0, 0.8, 0.8, 1})
+    return
+  end
+
+  -- legion jewelcrafting colored gem chips
+  if (itemId ~= nil) then
+    if ((itemId >= 130200 and
+         itemId <= 130204) or
+        itemId == 129099) then
+      hadChip = true
+      printStackableItem(chipId, texture, itemName, count, totalCount, {1, 1, 1, 1})
+      return
+    end
+  end
+
+  -- quest items
+  if (itemClassID == 12) then
     printItemCount(texture, itemName, '', count, {1, 0.8, 0, 1})
     return
   end
 
-  if ((farmerOptions.rarity == true and
-       itemRarity >= farmerOptions.minimumRarity) or
-      (farmerOptions.special == true and
-       itemId ~= nil and
-       farmerOptions.focusItems[itemId] == true)) then
-    local colors = farmerVars.rarityColors[itemRarity]
+  -- stackable items
+  if (itemStackCount > 1) then
+    printStackableItem(itemLink, texture, itemName, count, totalCount, colors)
+    return
+  end
 
-    if (itemStackCount > 1) then
-      printStackableItem(itemLink, texture, itemName, count, totalCount, colors)
+  -- artifact relics
+  if (itemClassID == 3 and
+      itemSubClassID == 11) then -- gem / artifact relics
+    local text
+    itemLevel = GetDetailedItemLevelInfo(itemLink)
+    text = itemSubType .. ' ' .. itemLevel
+    printEquip(texture, itemName, text, count, colors)
+    return
+  end
+
+  -- equippables
+  if (itemEquipLoc ~= '') then
+    -- bags
+    if (itemClassID == 1) then
+      printEquip(texture, itemName, itemSubType, count, colors)
       return
     end
 
-    if (itemClassID == 3 and
-        itemSubClassID == 11) then -- gem / artifact relics
+    -- weapons
+    if (itemClassID == 2) then
       local text
       itemLevel = GetDetailedItemLevelInfo(itemLink)
       text = itemSubType .. ' ' .. itemLevel
@@ -327,44 +377,30 @@ local function handleItem (itemLink, count, totalCount)
       return
     end
 
-    if (itemEquipLoc ~= '') then
-      if (itemClassID == 1) then -- bags
-        printEquip(texture, itemName, itemSubType, count, colors)
-        return
-      end
+    -- armor
+    if (itemClassID == 4) then
+      local text = _G[itemEquipLoc]
+      itemLevel = GetDetailedItemLevelInfo(itemLink)
 
-      if (itemClassID == 2) then -- weapons
-        local text
-        itemLevel = GetDetailedItemLevelInfo(itemLink)
+      if (itemEquipLoc == 'INVTYPE_TABARD') then
+        -- text is already fine
+      elseif (itemEquipLoc ==  'INVTYPE_CLOAK') then
+        text = text .. ' ' .. itemLevel
+      elseif (itemSubClassID == 0) then
+        text = text .. ' ' .. itemLevel -- fingers/trinkets
+      elseif (itemSubClassID > 4) then -- we all know shields are offhand
         text = itemSubType .. ' ' .. itemLevel
-        printEquip(texture, itemName, text, count, colors)
-        return
+      else
+        text = itemSubType .. ' ' .. text .. ' ' .. itemLevel
       end
 
-      if (itemClassID == 4) then -- armor
-        local text = _G[itemEquipLoc]
-        itemLevel = GetDetailedItemLevelInfo(itemLink)
-
-        if (itemEquipLoc == 'INVTYPE_TABARD') then
-          -- text is already fine
-        elseif (itemEquipLoc ==  'INVTYPE_CLOAK') then
-          text = text .. ' ' .. itemLevel
-        elseif (itemSubClassID == 0) then
-          text = text .. ' ' .. itemLevel -- fingers/trinkets
-        elseif (itemSubClassID > 4) then -- we all know shields are offhand
-          text = itemSubType .. ' ' .. itemLevel
-        else
-          text = itemSubType .. ' ' .. text .. ' ' .. itemLevel
-        end
-
-        printEquip(texture, itemName, text, count, colors)
-        return
-      end
+      printEquip(texture, itemName, text, count, colors)
+      return
     end
-
-    printItemCount(texture, itemName, '', count, colors)
-    return
   end
+
+  -- all unspecified items
+  printItemCount(texture, itemName, '', count, colors)
 end
 
 function handleCurrency (link, count)
