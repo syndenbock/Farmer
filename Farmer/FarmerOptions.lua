@@ -164,6 +164,51 @@ local function createSlider (name, anchorFrame, xOffset, yOffset, text, min, max
   return slider, edit
 end
 
+local function createEditBox (name, anchorFrame, xOffset, yOffset, width, height, anchor, parentAnchor)
+  local back = CreateFrame('Frame', name .. 'Back', anchorFrame);
+  local edit = CreateFrame('EditBox', name .. 'EditBox', back);
+  local scroll = CreateFrame('ScrollFrame', name .. 'ScrollFrame', back, 'UIPanelScrollFrameTemplate');
+
+  anchor = anchor or 'TOPLEFT'
+  parentAnchor = parentAnchor or 'TOPLEFT'
+
+  back:SetBackdrop({
+    -- bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
+    edgeFile = 'Interface\\PVPFrame\\UI-Character-PVP-Highlight',
+    edgeSize = 10,
+    -- insets = { left = 20, right = 20, top = 20, bottom = 20 },
+  });
+  back:SetSize(width, height);
+  back:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
+
+  -- scroll:SetPoint("TOPLEFT", back, "TOPLEFT", 4, -4);
+  -- scroll:SetPoint("BOTTOMRIGHT", back, "BOTTOMRIGHT", -4, 2);
+
+  scroll:SetPoint('TOP', 0, -12);
+  scroll:SetPoint('LEFT', 8, 0);
+  scroll:SetPoint('RIGHT', -8, 0);
+  scroll:SetPoint('BOTTOM', 0, 12);
+  -- scroll:SetPoint('BOTTOM', back, 'BOTTOM', 0, 0);
+  -- scroll:SetClipsChildren(true);
+
+  edit:SetAutoFocus(false);
+  edit:SetMultiLine(true);
+  edit:EnableMouse(true);
+  edit:SetMaxLetters(1000);
+  -- edit:SetFontObject('ChatFontNormal');
+  edit:SetFont('Fonts\\ARIALN.ttf', 16, 'THINOUTLINE');
+  edit:SetWidth(width);
+  edit:SetHeight(height);
+  edit:SetPoint('TOPLEFT', back, 'TOPLEFT', 0, 0);
+  edit:SetPoint('BOTTOMRIGHT', back, 'BOTTOMRIGHT', 0, 0);
+  -- edit:SetTextInsets(8, 8, 8, 8);
+  edit:SetScript('OnEscapePressed', function ()
+    edit:ClearFocus();
+  end)
+  edit:Show();
+  scroll:SetScrollChild(edit);
+end
+
 local function initPanel ()
   local anchor = farmerOptionsFrame
 
@@ -201,6 +246,9 @@ local function initPanel ()
   createSlider('displayTime', anchor, 23, 0, 'display time', 1, 10, '1', '10', 'LEFT', 'RIGHT', function (self, value)
     farmerVars.frame:SetTimeVisible(value - farmerVars.frame:GetFadeDuration())
   end)
+
+  anchor = createEditBox('farmItems', farmerOptionsFrame, -25, 25, 120, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT')
+
 end
 
 local function applyOptions ()
