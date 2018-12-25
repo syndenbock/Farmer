@@ -16,6 +16,7 @@ local rarityList = {
 
 local checkButtonList = {}
 local sliderList = {}
+local editBoxList = {}
 local events = {}
 
 farmerVars.rarityColors = {}
@@ -169,6 +170,8 @@ local function createEditBox (name, anchorFrame, xOffset, yOffset, width, height
   local edit = CreateFrame('EditBox', name .. 'EditBox', back);
   local scroll = CreateFrame('ScrollFrame', name .. 'ScrollFrame', back, 'UIPanelScrollFrameTemplate');
 
+  back.scroll = scroll
+  back.edit = edit
   anchor = anchor or 'TOPLEFT'
   parentAnchor = parentAnchor or 'TOPLEFT'
 
@@ -197,20 +200,26 @@ local function createEditBox (name, anchorFrame, xOffset, yOffset, width, height
   edit:SetMaxLetters(1000);
   -- edit:SetFontObject('ChatFontNormal');
   edit:SetFont('Fonts\\ARIALN.ttf', 16, 'THINOUTLINE');
-  edit:SetWidth(width);
-  edit:SetHeight(height);
-  edit:SetPoint('TOPLEFT', back, 'TOPLEFT', 0, 0);
-  edit:SetPoint('BOTTOMRIGHT', back, 'BOTTOMRIGHT', 0, 0);
+  edit:SetWidth(width - 16);
+  editBoxList[name] = edit;
+  -- edit:SetHeight(height);
+  -- edit:SetPoint('TOP', back, 'TOP', 0, 0);
+  -- edit:SetPoint('TOPLEFT', back, 'TOPLEFT', 0, 0);
+  -- edit:SetPoint('BOTTOM', back, 'BOTTOM', 0, 0);
+  -- edit:SetPoint('BOTTOMRIGHT', back, 'BOTTOMRIGHT', 0, 0);
   -- edit:SetTextInsets(8, 8, 8, 8);
   edit:SetScript('OnEscapePressed', function ()
     edit:ClearFocus();
   end)
   edit:Show();
   scroll:SetScrollChild(edit);
+
+  return back;
 end
 
 local function initPanel ()
   local anchor = farmerOptionsFrame
+  local itemField
 
   anchor = createCheckButton('fastLoot', farmerOptionsFrame, 300, -15, 'enable fast autoloot', 'TOPLEFT', 'TOPLEFT')
   anchor = createCheckButton('itemNames', anchor, 0, -5, 'show names of all items')
@@ -247,8 +256,8 @@ local function initPanel ()
     farmerVars.frame:SetTimeVisible(value - farmerVars.frame:GetFadeDuration())
   end)
 
-  anchor = createEditBox('farmItems', farmerOptionsFrame, -25, 25, 120, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT')
-
+  itemField = createEditBox('focusItems', farmerOptionsFrame, -25, 25, 120, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT');
+  anchor = itemField;
 end
 
 local function applyOptions ()
@@ -273,6 +282,18 @@ local function applyOptions ()
   -- farmerVars.frame:SetTimeVisible(farmerOptions.displayTime)
 end
 
+local function loadItemIds ()
+  local list = farmerOptions['focusItems'];
+  local edit = editBoxList['focusItems'];
+  local text = {};
+
+  for key in pairs(list) do
+    table.insert(text, key);
+  end
+
+  edit:SetText(table.concat(text, '\n'));
+end
+
 local function loadOptions ()
   fontSize = nil
   iconScale = nil
@@ -282,6 +303,29 @@ local function loadOptions ()
   for k, v in pairs(sliderList) do
     v:SetValue(farmerOptions[k])
   end
+
+  loadItemIds()
+end
+
+local function saveItemIds ()
+  local text = editBoxList['focusItems']:GetText();
+  local list = {};
+
+  text = {strsplit('\n', text)};
+
+  for i = 1, #text do
+    local line = text[i];
+
+    if (line) then
+      line = strtrim(line);
+
+      if (line ~= '') then
+        list[tonumber(line)] = true;
+      end
+    end
+  end
+
+  farmerOptions['focusItems'] = list
 end
 
 local function saveOptions ()
@@ -292,6 +336,7 @@ local function saveOptions ()
     farmerOptions[k] = v:GetValue()
   end
 
+  saveItemIds()
   applyOptions()
 end
 
@@ -346,6 +391,7 @@ function events:ADDON_LOADED (addon)
   checkOption('fontSize', 24)
   checkOption('iconScale', 1)
   checkOption('displayTime', 4)
+  checkOption('focusItems', {})
 
   if (farmerOptions.anchor == nil) then
     setDefaultPosition()

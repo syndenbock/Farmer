@@ -1,24 +1,6 @@
 local addonName, farmerVars = ...
 
 local chipId = 129100
-local specialList = {
-  [116158] = true, -- Lunarfall Carp
-  [112633] = true, -- Frostdeep Minnow
-  [127141] = true, -- Bloated Thresher
-  [32620] = true, -- time-lost scroll
-  [86547] = true, -- skyshard
-  [25433] = true, -- obsidian warbeads
-  [141975] = true, -- mark of aquaos
-  [138777] = true, -- drowned mana
-  [94288] = true, -- giant donsaur bone
-  [87779] = true, -- Ancient Guo-Lai Cache Key
-  [153190] = true, -- fel-spotted egg
-  [143924] = true, -- burning key
-  [23247] = true, -- Burning Blossom
-  [124670] = true, -- Sealed Darkmoon Crate
-  [163852] = true, -- tortollan pilgrimage scroll
-}
-
 local font = CreateFont('farmerFont')
 local _, chipName = GetItemInfoInstant(chipId)
 
@@ -328,7 +310,7 @@ local function handleItem (itemLink, count, totalCount)
        itemRarity >= farmerOptions.minimumRarity) or
       (farmerOptions.special == true and
        itemId ~= nil and
-       specialList[itemId] == true)) then
+       farmerOptions.focusItems[itemId] == true)) then
     local colors = farmerVars.rarityColors[itemRarity]
 
     if (itemStackCount > 1) then
