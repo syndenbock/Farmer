@@ -1,6 +1,6 @@
 local addonName, farmerVars = ...
 
-local currentVersion = 0205000
+local currentVersion = 0205020
 
 local rarityList = {
   [0] = 'Poor',
@@ -171,6 +171,7 @@ local function initPanel ()
   anchor = createCheckButton('itemNames', anchor, 0, -5, 'show names of all items')
   anchor = createCheckButton('hideLootToasts', anchor, 0, -5, 'hide loot and item roll toasts')
   anchor = createCheckButton('hideInArena', anchor, 0, -5, 'don\'t display items in arena')
+  anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, 'don\'t display items on island expeditions')
   anchor = createCheckButton('showTotal', anchor, 0, -5, 'show total count for stackable items')
   anchor = createCheckButton('showBags', anchor, 0, -5, 'show bag count for stackable items')
 
@@ -275,7 +276,7 @@ function events:ADDON_LOADED (addon)
     local text
 
     text = 'New in ' .. addonName .. ' version ' .. version .. ':\n' ..
-           'You can now set the icon scale of messages.'
+           'Island Expeditions are now supported \nand can be enabled in the options.'
     print(text)
   end
   farmerOptions.version = currentVersion
@@ -284,6 +285,7 @@ function events:ADDON_LOADED (addon)
   checkOption('itemNames', true)
   checkOption('hideLootToasts', false)
   checkOption('hideInArena', true)
+  checkOption('hideOnExpeditions', true)
   checkOption('showTotal', true)
   checkOption('showBags', false)
   checkOption('rarity', true)

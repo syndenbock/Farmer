@@ -148,12 +148,27 @@ end
 
 local function printMessage (...)
   farmerFrame:AddMessage(...)
-  ChatFrame1:AddMessage(...)
+  -- ChatFrame1:AddMessage(...)
 end
 
 local function setTrueScale (frame, scale)
     frame:SetScale(1)
     frame:SetScale(scale / frame:GetEffectiveScale())
+end
+
+local function checkHideOptions ()
+  if (farmerOptions.hideOnExpeditions == true and
+      IslandsPartyPoseFrame and
+      IslandsPartyPoseFrame:IsShown() == true) then
+    return false;
+  end
+
+  if (farmerOptions.hideInArena == true and
+      IsActiveBattlefieldArena() == true) then
+    return false;
+  end
+
+  return true;
 end
 
 local function performAutoLoot ()
@@ -371,8 +386,8 @@ local function handleItem (itemLink, count, totalCount)
 end
 
 function handleCurrency (link, count)
-  if (farmerOptions.hideInArena == true and
-      IsActiveBattlefieldArena() == true) then return end
+  if (checkHideOptions() == false) then return end
+
   local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
         rarity = GetCurrencyInfo(link)
   local text = 'x' .. count .. ' (' .. amount .. ')'
@@ -389,8 +404,7 @@ function displayLoot ()
     return
   end
 
-  if (farmerOptions.hideInArena == true and
-      IsActiveBattlefieldArena() == true) then
+  if (checkHideOptions() == false) then
     lootStack = nil
     return
   end
@@ -489,8 +503,7 @@ function events:BAG_UPDATE_DELAYED ()
     return
   end
 
-  if (farmerOptions.hideInArena == true and
-      IsActiveBattlefieldArena() == true) then
+  if (checkHideOptions() == false) then
     lootStack = nil
     return
   end
