@@ -1,3 +1,7 @@
+  version 2.7
+- made currency display more responsive
+- some code improvements
+
   version 2.6
 - added option to enter own farming item ids
 

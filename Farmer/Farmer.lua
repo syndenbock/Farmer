@@ -97,11 +97,30 @@ local lootStack = nil
 local lootTimeStamp = 0
 local playerName
 local playerFullName
+local currencyTable = {}
+
+function fillCurrencyTable()
+  for i = 1, GetCurrencyListSize() do
+    local info = {GetCurrencyListInfo(i)}
+    local id = info[1]
+    local count = info[6]
+
+    -- print(GetCurrencyListInfo(i))
+    print(id)
+    -- print(count)
+
+    if (id) then
+      currencyTable[id] = count
+    end
+  end
+end
 
 function events:PLAYER_LOGIN ()
   playerName = {UnitFullName('player')}
   playerFullName = playerName[1] .. '-' .. playerName[2]
   playerName = playerName[1]
+
+  fillCurrencyTable()
 end
 
 for msg, replacements in pairs(messagePatterns) do
@@ -534,6 +553,7 @@ function events:BAG_UPDATE_DELAYED ()
 end
 
 function events:CHAT_MSG_CURRENCY (message)
+  if true then return end
   if (farmerOptions.currency ~= true) then
     return
   end
@@ -572,6 +592,21 @@ function events:PLAYER_MONEY ()
   farmerVars.moneyStamp = money
 
   printMessage(text, 1, 1, 1, 1)
+end
+
+function events:CURRENCY_DISPLAY_UPDATE (id, total)
+  if (id == nil) then return end
+
+  local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
+        rarity = GetCurrencyInfo(id)
+  local amount = currencyTable[name] or 0;
+  local count = total - amount;
+
+  currencyTable[name] = total;
+
+  if (count > 0) then
+    handleCurrency(id, count);
+  end
 end
 
 farmerFrame = CreateFrame('ScrollingMessageFrame', 'farmerFrame', UIParent)
