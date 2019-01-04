@@ -102,11 +102,15 @@ local currencyTable = {}
 function fillCurrencyTable()
   for i = 1, GetCurrencyListSize() do
     local info = {GetCurrencyListInfo(i)}
-    local name = info[1]
-    local count = info[6]
+    local isHeader = info[2]
 
-    if (name) then
-      currencyTable[name] = count
+    if (isHeader ~= true) then
+      local name = info[1]
+      local count = info[6]
+
+      if (name) then
+        currencyTable[name] = count
+      end
     end
   end
 end
@@ -155,15 +159,15 @@ local function checkHideOptions ()
   if (farmerOptions.hideOnExpeditions == true and
       IslandsPartyPoseFrame and
       IslandsPartyPoseFrame:IsShown() == true) then
-    return false;
+    return false
   end
 
   if (farmerOptions.hideInArena == true and
       IsActiveBattlefieldArena() == true) then
-    return false;
+    return false
   end
 
-  return true;
+  return true
 end
 
 local function performAutoLoot ()
@@ -285,10 +289,10 @@ local function checkItemDisplay (itemLink)
   if (itemId and
       farmerOptions.focusItems[itemId] == true) then
     if (farmerOptions.special == true) then
-      return true;
+      return true
     end
   elseif (farmerOptions.focus == true) then
-    return false;
+    return false
   end
 
   local itemName, _itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
@@ -303,20 +307,20 @@ local function checkItemDisplay (itemLink)
 
   if (farmerOptions.reagents == true and
       isCraftingReagent == true) then
-    return true;
+    return true
   end
 
   if (farmerOptions.questItems == true and
       itemClassID == 12) then
-    return true;
+    return true
   end
 
   if (farmerOptions.rarity == true and
       itemRarity >= farmerOptions.minimumRarity) then
-    return true;
+    return true
   end
 
-  return false;
+  return false
 end
 
 local function handleItem (itemLink, count, totalCount)
@@ -416,13 +420,13 @@ local function handleItem (itemLink, count, totalCount)
   printItemCount(texture, itemName, '', count, colors)
 end
 
-function handleCurrency (link, total)
+function handleCurrency (id, total)
   local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
-        rarity = GetCurrencyInfo(link)
-  local count = currencyTable[name] or 0;
-  local count = total - count;
+        rarity = GetCurrencyInfo(id)
+  local count = currencyTable[name] or 0
+  local count = total - count
 
-  currencyTable[name] = total;
+  currencyTable[name] = total
 
   if (checkHideOptions() == false) then return end
 
@@ -431,7 +435,7 @@ function handleCurrency (link, total)
   local text = 'x' .. count .. ' (' .. amount .. ')'
 
   if (farmerOptions.itemNames == true) then
-    text = name .. ' ' .. text;
+    text = name .. ' ' .. text
   end
 
   printItem(texture, text, {1, 0.9, 0, 1})
@@ -558,7 +562,7 @@ end
 function events:CURRENCY_DISPLAY_UPDATE (id, total)
   if (id == nil) then return end
 
-  handleCurrency(id, total);
+  handleCurrency(id, total)
 end
 
 function events:PLAYER_MONEY ()

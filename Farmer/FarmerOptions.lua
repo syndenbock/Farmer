@@ -166,9 +166,9 @@ local function createSlider (name, anchorFrame, xOffset, yOffset, text, min, max
 end
 
 local function createEditBox (name, anchorFrame, xOffset, yOffset, width, height, anchor, parentAnchor)
-  local back = CreateFrame('Frame', name .. 'Back', anchorFrame);
-  local edit = CreateFrame('EditBox', name .. 'EditBox', back);
-  local scroll = CreateFrame('ScrollFrame', name .. 'ScrollFrame', back, 'UIPanelScrollFrameTemplate');
+  local back = CreateFrame('Frame', name .. 'Back', anchorFrame)
+  local edit = CreateFrame('EditBox', name .. 'EditBox', back)
+  local scroll = CreateFrame('ScrollFrame', name .. 'ScrollFrame', back, 'UIPanelScrollFrameTemplate')
 
   back.scroll = scroll
   back.edit = edit
@@ -180,54 +180,54 @@ local function createEditBox (name, anchorFrame, xOffset, yOffset, width, height
     edgeFile = 'Interface\\PVPFrame\\UI-Character-PVP-Highlight',
     edgeSize = 10,
     -- insets = { left = 20, right = 20, top = 20, bottom = 20 },
-  });
-  back:SetSize(width, height);
-  back:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
+  })
+  back:SetSize(width, height)
+  back:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset)
 
-  -- scroll:SetPoint("TOPLEFT", back, "TOPLEFT", 4, -4);
-  -- scroll:SetPoint("BOTTOMRIGHT", back, "BOTTOMRIGHT", -4, 2);
+  -- scroll:SetPoint("TOPLEFT", back, "TOPLEFT", 4, -4)
+  -- scroll:SetPoint("BOTTOMRIGHT", back, "BOTTOMRIGHT", -4, 2)
 
-  scroll:SetPoint('TOP', 0, -12);
-  scroll:SetPoint('LEFT', 8, 0);
-  scroll:SetPoint('RIGHT', -8, 0);
-  scroll:SetPoint('BOTTOM', 0, 12);
-  -- scroll:SetPoint('BOTTOM', back, 'BOTTOM', 0, 0);
-  -- scroll:SetClipsChildren(true);
+  scroll:SetPoint('TOP', 0, -12)
+  scroll:SetPoint('LEFT', 8, 0)
+  scroll:SetPoint('RIGHT', -8, 0)
+  scroll:SetPoint('BOTTOM', 0, 12)
+  -- scroll:SetPoint('BOTTOM', back, 'BOTTOM', 0, 0)
+  -- scroll:SetClipsChildren(true)
 
-  edit:SetAutoFocus(false);
-  edit:SetMultiLine(true);
-  edit:EnableMouse(true);
-  edit:SetMaxLetters(1000);
-  -- edit:SetFontObject('ChatFontNormal');
-  edit:SetFont('Fonts\\ARIALN.ttf', 16, 'THINOUTLINE');
-  edit:SetWidth(width - 16);
-  editBoxList[name] = edit;
-  -- edit:SetHeight(height);
-  -- edit:SetPoint('TOP', back, 'TOP', 0, 0);
-  -- edit:SetPoint('TOPLEFT', back, 'TOPLEFT', 0, 0);
-  -- edit:SetPoint('BOTTOM', back, 'BOTTOM', 0, 0);
-  -- edit:SetPoint('BOTTOMRIGHT', back, 'BOTTOMRIGHT', 0, 0);
-  -- edit:SetTextInsets(8, 8, 8, 8);
+  edit:SetAutoFocus(false)
+  edit:SetMultiLine(true)
+  edit:EnableMouse(true)
+  edit:SetMaxLetters(1000)
+  -- edit:SetFontObject('ChatFontNormal')
+  edit:SetFont('Fonts\\ARIALN.ttf', 16, 'THINOUTLINE')
+  edit:SetWidth(width - 16)
+  editBoxList[name] = edit
+  -- edit:SetHeight(height)
+  -- edit:SetPoint('TOP', back, 'TOP', 0, 0)
+  -- edit:SetPoint('TOPLEFT', back, 'TOPLEFT', 0, 0)
+  -- edit:SetPoint('BOTTOM', back, 'BOTTOM', 0, 0)
+  -- edit:SetPoint('BOTTOMRIGHT', back, 'BOTTOMRIGHT', 0, 0)
+  -- edit:SetTextInsets(8, 8, 8, 8)
   edit:SetScript('OnEscapePressed', function ()
-    edit:ClearFocus();
+    edit:ClearFocus()
   end)
-  edit:Show();
-  scroll:SetScrollChild(edit);
+  edit:Show()
+  scroll:SetScrollChild(edit)
 
-  return back;
+  return back
 end
 
 local function createLabel (anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
-  local label = farmerOptionsFrame:CreateFontString('FontString');
+  local label = farmerOptionsFrame:CreateFontString('FontString')
 
-  achor = achor or 'TOPLEFT';
-  parentAnchor = parentAnchor or 'BOTTOMLEFT';
+  achor = achor or 'TOPLEFT'
+  parentAnchor = parentAnchor or 'BOTTOMLEFT'
 
   label:SetFont('Fonts\\ARIALN.TTF', 16, 'thickoutline')
-  label:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
-  label:SetText(text);
+  label:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset)
+  label:SetText(text)
 
-  return label;
+  return label
 end
 
 local function initPanel ()
@@ -268,13 +268,13 @@ local function initPanel ()
     farmerVars.frame:SetTimeVisible(value - farmerVars.frame:GetFadeDuration())
   end)
 
-  itemField = createEditBox('focusItems', farmerOptionsFrame, -120, 100, 150, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT');
-  anchor = itemField;
+  itemField = createEditBox('focusItems', farmerOptionsFrame, -120, 100, 150, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT')
+  anchor = itemField
 
-  createLabel(anchor, 0, 0, 'focused item ids:', 'BOTTOMLEFT', 'TOPLEFT');
+  createLabel(anchor, 0, 0, 'focused item ids:', 'BOTTOMLEFT', 'TOPLEFT')
 
-  anchor = createCheckButton('special', anchor, 0, -10, 'always show focused items', 'TOPLEFT', 'BOTTOMLEFT');
-  anchor = createCheckButton('focus', anchor, 0, -10, 'only show focused items');
+  anchor = createCheckButton('special', anchor, 0, -10, 'always show focused items', 'TOPLEFT', 'BOTTOMLEFT')
+  anchor = createCheckButton('focus', anchor, 0, -10, 'only show focused items')
 
 end
 
@@ -301,15 +301,15 @@ local function applyOptions ()
 end
 
 local function loadItemIds ()
-  local list = farmerOptions['focusItems'];
-  local edit = editBoxList['focusItems'];
-  local text = {};
+  local list = farmerOptions['focusItems']
+  local edit = editBoxList['focusItems']
+  local text = {}
 
   for key in pairs(list) do
-    table.insert(text, key);
+    table.insert(text, key)
   end
 
-  edit:SetText(table.concat(text, '\n'));
+  edit:SetText(table.concat(text, '\n'))
 end
 
 local function loadOptions ()
@@ -326,19 +326,19 @@ local function loadOptions ()
 end
 
 local function saveItemIds ()
-  local text = editBoxList['focusItems']:GetText();
-  local list = {};
+  local text = editBoxList['focusItems']:GetText()
+  local list = {}
 
-  text = {strsplit('\n', text)};
+  text = {strsplit('\n', text)}
 
   for i = 1, #text do
-    local line = text[i];
+    local line = text[i]
 
     if (line) then
-      line = strtrim(line);
+      line = strtrim(line)
 
       if (line ~= '') then
-        list[tonumber(line)] = true;
+        list[tonumber(line)] = true
       end
     end
   end
