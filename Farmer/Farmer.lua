@@ -91,8 +91,6 @@ local messagePatterns = {
 
 local farmerFrame
 local events = {}
-local itemList = {}
-local awaitingList = {}
 local mapShown
 local hadChip = false
 local lootStack = nil
@@ -569,26 +567,10 @@ function events:PLAYER_MONEY ()
   end
 
   local difference = money - farmerVars.moneyStamp
-  local gold = math.floor(difference / 10000)
-  local silver = math.floor(difference / 100) % 100
-  local copper = difference % 100
-  local text = ''
+  local text = GetCoinTextureString(difference)
 
   farmerVars.moneyStamp = money
 
-  if (gold ~= 0) then
-    gold = GOLD_AMOUNT_TEXTURE:format(gold, 0, 0)
-    text = text .. ' ' .. gold
-  end
-  if (silver ~= 0) then
-    silver = SILVER_AMOUNT_TEXTURE:format(silver, 0, 0)
-    text = text .. ' ' .. silver
-  end
-  if (copper ~= 0) then
-    copper = COPPER_AMOUNT_TEXTURE:format(copper, 0, 0)
-    text = text .. ' ' .. copper
-  end
-  text = string.sub(text, 2)
   printMessage(text, 1, 1, 1, 1)
 end
 

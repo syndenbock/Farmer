@@ -464,13 +464,8 @@ function slashCommands:gold (param)
   end
   local difference = GetMoney() - earningStamp
   local amount = math.abs(difference)
-  local text
+  local text text = GetCoinTextureString(amount)
 
-  text = (GOLD_AMOUNT_TEXTURE .. ' ' ..
-          SILVER_AMOUNT_TEXTURE .. ' ' ..
-          COPPER_AMOUNT_TEXTURE):format(amount / 10000, 0, 0,
-                                        (amount / 100) % 100, 0, 0,
-                                        amount % 100, 0, 0)
   if (difference >= 0) then
     print('Money earned this session: ' .. text)
   else
