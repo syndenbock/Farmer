@@ -102,15 +102,11 @@ local currencyTable = {}
 function fillCurrencyTable()
   for i = 1, GetCurrencyListSize() do
     local info = {GetCurrencyListInfo(i)}
-    local id = info[1]
+    local name = info[1]
     local count = info[6]
 
-    -- print(GetCurrencyListInfo(i))
-    print(id)
-    -- print(count)
-
-    if (id) then
-      currencyTable[id] = count
+    if (name) then
+      currencyTable[name] = count
     end
   end
 end
@@ -420,11 +416,18 @@ local function handleItem (itemLink, count, totalCount)
   printItemCount(texture, itemName, '', count, colors)
 end
 
-function handleCurrency (link, count)
-  if (checkHideOptions() == false) then return end
-
+function handleCurrency (link, total)
   local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
         rarity = GetCurrencyInfo(link)
+  local count = currencyTable[name] or 0;
+  local count = total - count;
+
+  currencyTable[name] = total;
+
+  if (checkHideOptions() == false) then return end
+
+  if (count <= 0) then return end
+
   local text = 'x' .. count .. ' (' .. amount .. ')'
 
   if (farmerOptions.itemNames == true) then
@@ -552,26 +555,10 @@ function events:BAG_UPDATE_DELAYED ()
   lootStack = nil
 end
 
-function events:CHAT_MSG_CURRENCY (message)
-  if true then return end
-  if (farmerOptions.currency ~= true) then
-    return
-  end
+function events:CURRENCY_DISPLAY_UPDATE (id, total)
+  if (id == nil) then return end
 
-  local list = messagePatterns.CHAT_MSG_CURRENCY
-
-  for k = 1, #list do
-    local v = list[k]
-    local link, amount = string.match(message, v)
-    if (link ~= nil) then
-      if (amount == nil) then
-        amount = 1
-      end
-
-      handleCurrency(link, amount)
-      break
-    end
-  end
+  handleCurrency(id, total);
 end
 
 function events:PLAYER_MONEY ()
@@ -592,21 +579,6 @@ function events:PLAYER_MONEY ()
   farmerVars.moneyStamp = money
 
   printMessage(text, 1, 1, 1, 1)
-end
-
-function events:CURRENCY_DISPLAY_UPDATE (id, total)
-  if (id == nil) then return end
-
-  local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
-        rarity = GetCurrencyInfo(id)
-  local amount = currencyTable[name] or 0;
-  local count = total - amount;
-
-  currencyTable[name] = total;
-
-  if (count > 0) then
-    handleCurrency(id, count);
-  end
 end
 
 farmerFrame = CreateFrame('ScrollingMessageFrame', 'farmerFrame', UIParent)
