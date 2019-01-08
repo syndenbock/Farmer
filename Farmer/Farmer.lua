@@ -100,18 +100,11 @@ local playerFullName
 local currencyTable = {}
 
 function fillCurrencyTable()
-  for i = 1, GetCurrencyListSize() do
-    local info = {GetCurrencyListInfo(i)}
-    local isHeader = info[2]
+  -- a pretty ugly workaround, but WoW has no table containing the currency ids
+  for i = 1, 2000 do
+    local info = {GetCurrencyInfo(i)}
 
-    if (isHeader ~= true) then
-      local name = info[1]
-      local count = info[6]
-
-      if (name) then
-        currencyTable[name] = count
-      end
-    end
+    currencyTable[i] = info[2]
   end
 end
 
@@ -423,10 +416,10 @@ end
 function handleCurrency (id, total)
   local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
         rarity = GetCurrencyInfo(id)
-  local count = currencyTable[name] or 0
+  local count = currencyTable[id] or 0
   local count = total - count
 
-  currencyTable[name] = total
+  currencyTable[id] = total
 
   if (checkHideOptions() == false) then return end
 
