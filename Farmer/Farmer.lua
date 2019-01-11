@@ -101,10 +101,13 @@ local currencyTable = {}
 
 function fillCurrencyTable()
   -- a pretty ugly workaround, but WoW has no table containing the currency ids
+  -- does not take long though, so it's fine (2ms on my shitty ass pc)
   for i = 1, 2000 do
     local info = {GetCurrencyInfo(i)}
 
-    currencyTable[i] = info[2]
+    if (info[2]) then
+      currencyTable[i] = info[2]
+    end
   end
 end
 
