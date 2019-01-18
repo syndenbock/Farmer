@@ -1,3 +1,6 @@
+  version 2.6.3
+- added fix for unlisted currencies
+
   version 2.6.2
 - fixed bug with currencies that are not in the currency book
 

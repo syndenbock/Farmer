@@ -422,6 +422,11 @@ function handleCurrency (id, total)
   local count = currencyTable[id] or 0
   local count = total - count
 
+  -- warfronts show unknown currencies
+  if (not name or not amount or not texture) then
+    return
+  end
+
   currencyTable[id] = total
 
   if (checkHideOptions() == false) then return end
