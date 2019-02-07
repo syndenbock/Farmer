@@ -125,6 +125,7 @@ end
 
 local function createSlider (name, anchorFrame, xOffset, yOffset, text, min, max, lowText, highText, anchor, parentAnchor, onChange)
   local slider = CreateFrame('Slider', name .. 'Slider', farmerOptionsFrame, 'OptionsSliderTemplate')
+  local edit
 
   anchor = anchor or 'TOPLEFT'
   parentAnchor = parentAnchor or 'BOTTOMLEFT'
@@ -220,7 +221,7 @@ end
 local function createLabel (anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
   local label = farmerOptionsFrame:CreateFontString('FontString')
 
-  achor = achor or 'TOPLEFT'
+  anchor = anchor or 'TOPLEFT'
   parentAnchor = parentAnchor or 'BOTTOMLEFT'
 
   label:SetFont('Fonts\\ARIALN.TTF', 16, 'thickoutline')
@@ -234,7 +235,7 @@ local function initPanel ()
   local anchor = farmerOptionsFrame
   local itemField
 
-  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 300, -15, 'enable fast autoloot', 'TOPLEFT', 'TOPLEFT')
+  anchor = createCheckButton('fastLoot', anchor, 300, -15, 'enable fast autoloot', 'TOPLEFT', 'TOPLEFT')
   anchor = createCheckButton('itemNames', anchor, 0, -5, 'show names of all items')
   anchor = createCheckButton('hideLootToasts', anchor, 0, -5, 'hide loot and item roll toasts')
   anchor = createCheckButton('hideInArena', anchor, 0, -5, 'don\'t display items in arena')
@@ -313,8 +314,6 @@ local function loadItemIds ()
 end
 
 local function loadOptions ()
-  fontSize = nil
-  iconScale = nil
   for k, v in pairs(checkButtonList) do
     v:SetChecked(farmerOptions[k])
   end

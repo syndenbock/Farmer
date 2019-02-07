@@ -93,7 +93,7 @@ local farmerFrame
 local events = {}
 local mapShown
 local hadChip = false
-local lootStack = nil
+local lootStack
 local lootTimeStamp = 0
 local playerName
 local playerFullName
@@ -152,6 +152,11 @@ local function setTrueScale (frame, scale)
 end
 
 local function checkHideOptions ()
+  if (MailFrame and
+      MailFrame:IsShown() == true) then
+    return false
+  end
+
   if (farmerOptions.hideOnExpeditions == true and
       IslandsPartyPoseFrame and
       IslandsPartyPoseFrame:IsShown() == true) then
@@ -188,13 +193,13 @@ local function printItem (texture, text, colors)
 end
 
 local function printItemCount (texture, name, text, count, colors)
-  if (count > 1) then
-    text = 'x' .. count .. ' ' .. text
-  end
-
   if (farmerOptions.itemNames == true or
       text == '') then
     text = name .. ' ' .. text
+  end
+
+  if (count > 1) then
+    text = 'x' .. count .. ' ' .. text
   end
 
   printItem(texture, text, colors)
