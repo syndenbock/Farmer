@@ -224,7 +224,7 @@ local function createLabel (anchorFrame, xOffset, yOffset, text, anchor, parentA
   anchor = anchor or 'TOPLEFT'
   parentAnchor = parentAnchor or 'BOTTOMLEFT'
 
-  label:SetFont('Fonts\\ARIALN.TTF', 16, 'thickoutline')
+  label:SetFont('Fonts\\ARIALN.TTF', 16, 'outline')
   label:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset)
   label:SetText(text)
 
@@ -235,22 +235,25 @@ local function initPanel ()
   local anchor = farmerOptionsFrame
   local itemField
 
-  anchor = createCheckButton('fastLoot', anchor, 300, -15, 'enable fast autoloot', 'TOPLEFT', 'TOPLEFT')
-  anchor = createCheckButton('itemNames', anchor, 0, -5, 'show names of all items')
-  anchor = createCheckButton('hideLootToasts', anchor, 0, -5, 'hide loot and item roll toasts')
-  anchor = createCheckButton('hideInArena', anchor, 0, -5, 'don\'t display items in arena')
-  anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, 'don\'t display items on island expeditions')
-  anchor = createCheckButton('showTotal', anchor, 0, -5, 'show total count for stackable items')
-  anchor = createCheckButton('showBags', anchor, 0, -5, 'show bag count for stackable items')
-
   anchor = createCheckButton('rarity', farmerOptionsFrame, 15, -15, 'show items based on rarity', 'TOPLEFT', 'TOPLEFT')
   _, anchor = createSlider('minimumRarity', anchor, 20, -20, 'minimum rarity', 0, 8, '', '', 'TOPLEFT', 'BOTTOMLEFT', function (self, value)
     displayRarity(self.edit, value)
   end)
   anchor = createCheckButton('reagents', anchor, 0, -5, 'always show reagents')
   anchor = createCheckButton('questItems', anchor, 0, -5, 'always show quest items')
+  anchor = createCheckButton('hideAtMailbox', anchor, 0, -5, 'don\'t display items at mailboxes')
+  anchor = createCheckButton('hideInArena', anchor, 0, -5, 'don\'t display items in arena')
+  anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, 'don\'t display items on island expeditions')
+  anchor = createCheckButton('showTotal', anchor, 0, -5, 'show total count for stackable items')
+  anchor = createCheckButton('showBags', anchor, 0, -5, 'show bag count for stackable items')
+
   anchor = createCheckButton('currency', anchor, 0, -25, 'show currencies')
-  anchor = createCheckButton('money', anchor, 0, -5, 'show money')
+  anchor = createCheckButton('ignoreHonor', anchor, 20, 0, 'ignore Honor')
+  anchor = createCheckButton('money', anchor, -20, -5, 'show money')
+
+  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 300, -15, 'enable fast autoloot', 'TOPLEFT', 'TOPLEFT')
+  anchor = createCheckButton('itemNames', anchor, 0, -5, 'show names of all items')
+  anchor = createCheckButton('hideLootToasts', anchor, 0, -5, 'hide loot and item roll toasts')
 
   anchor = createButton ('move', farmerOptionsFrame, 10, 12, 'move frame', 'BOTTOMLEFT', 'BOTTOMLEFT', function (self)
     moveFrame()
@@ -276,7 +279,6 @@ local function initPanel ()
 
   anchor = createCheckButton('special', anchor, 0, -10, 'always show focused items', 'TOPLEFT', 'BOTTOMLEFT')
   anchor = createCheckButton('focus', anchor, 0, -10, 'only show focused items')
-
 end
 
 local function applyOptions ()
@@ -394,6 +396,7 @@ function events:ADDON_LOADED (addon)
   checkOption('fastLoot', true)
   checkOption('itemNames', true)
   checkOption('hideLootToasts', false)
+  checkOption('hideAtMailbox', true)
   checkOption('hideInArena', true)
   checkOption('hideOnExpeditions', true)
   checkOption('showTotal', true)
@@ -405,6 +408,7 @@ function events:ADDON_LOADED (addon)
   checkOption('reagents', true)
   checkOption('questItems', false)
   checkOption('currency', true)
+  checkOption('ignoreHonor', true)
   checkOption('money', false)
   checkOption('fontSize', 24)
   checkOption('iconScale', 1)

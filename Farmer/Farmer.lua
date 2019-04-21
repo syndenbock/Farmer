@@ -152,7 +152,8 @@ local function setTrueScale (frame, scale)
 end
 
 local function checkHideOptions ()
-  if (MailFrame and
+  if (farmerOptions.hideAtMailbox == true and
+      MailFrame and
       MailFrame:IsShown() == true) then
     return false
   end
@@ -172,17 +173,14 @@ local function checkHideOptions ()
 end
 
 local function performAutoLoot ()
-  local time = GetTime()
-
-  if ((time - lootTimeStamp) < 0.3) then
-    return
-  end
-
-  lootTimeStamp = time
-
   -- for i = GetNumLootItems(), 1, -1 do
   for i = 1, GetNumLootItems(), 1 do
-    LootSlot(i)
+    local info = {GetLootSlotInfo(i)}
+    local locked = info[6]
+
+    if (locked ~= true) then
+      LootSlot(i)
+    end
   end
 end
 
@@ -421,7 +419,22 @@ local function handleItem (itemLink, count, totalCount)
   printItemCount(texture, itemName, '', count, colors)
 end
 
-function handleCurrency (id, total)
+local function checkCurrencyDisplay (id)
+  if (farmerOptions.ignoreHonor == true) then
+    local honorId = 1585
+    local conquestId = 11600
+
+    if (id == honorId) then
+      return false
+    end
+  end
+
+  return true
+end
+
+local function handleCurrency (id, total)
+  if (checkCurrencyDisplay(id) == false) then return end
+
   local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
         rarity = GetCurrencyInfo(id)
   local count = currencyTable[id] or 0
@@ -478,6 +491,17 @@ end
 LootFrame:SetAlpha(0)
 
 function events:LOOT_READY (lootSwitch)
+  local time = GetTime()
+
+  --[[ the LOOT_READY sometimes fires multiple times when looting, so we do not
+    handle it when it fires earlier than 0.3 seconds after the last one ]]
+
+  if ((time - lootTimeStamp) < 0.3) then
+    return
+  end
+
+  lootTimeStamp = time
+
   mapShown = WorldMapFrame:IsShown()
   if (lootSwitch == true and
       farmerOptions.fastLoot == true) then

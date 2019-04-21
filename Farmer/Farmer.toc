@@ -1,6 +1,6 @@
 ## Interface: 80100
 ## Title: Farmer
-## Version: 2.6.3
+## Version: 2.6.4
 ## Author: syndenbock
 ## Notes: Shows information on all the stuff you loot
 ## SavedVariablesPerCharacter: earningStamp

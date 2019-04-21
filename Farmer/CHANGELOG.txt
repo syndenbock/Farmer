@@ -1,3 +1,10 @@
+  version 2.6.4
+- added option for ignoring Honor
+- added option to hide items at mailboxes
+- fast autoloot ignores locked items
+- re-ordered options in option panel
+- minor code improvements
+
   version 2.6.3
 - added fix for unlisted currencies
 
