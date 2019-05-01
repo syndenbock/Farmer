@@ -92,6 +92,7 @@ local messagePatterns = {
 local farmerFrame
 local events = {}
 local mapShown
+local mailOpen = false
 local hadChip = false
 local lootStack
 local lootTimeStamp = 0
@@ -99,24 +100,20 @@ local playerName
 local playerFullName
 local currencyTable = {}
 
-function fillCurrencyTable()
-  -- a pretty ugly workaround, but WoW has no table containing the currency ids
-  -- does not take long though, so it's fine (2ms on my shitty ass pc)
-  for i = 1, 2000 do
-    local info = {GetCurrencyInfo(i)}
-
-    if (info[2]) then
-      currencyTable[i] = info[2]
-    end
+local function printTable (table)
+  for i, v in pairs(table) do
+    print(i, ' - ', v)
   end
 end
 
-function events:PLAYER_LOGIN ()
-  playerName = {UnitFullName('player')}
-  playerFullName = playerName[1] .. '-' .. playerName[2]
-  playerName = playerName[1]
+local function printMessage (...)
+  farmerFrame:AddMessage(...)
+  -- ChatFrame1:AddMessage(...)
+end
 
-  fillCurrencyTable()
+local function setTrueScale (frame, scale)
+    frame:SetScale(1)
+    frame:SetScale(scale / frame:GetEffectiveScale())
 end
 
 for msg, replacements in pairs(messagePatterns) do
@@ -135,26 +132,21 @@ for msg, replacements in pairs(messagePatterns) do
   messagePatterns[msg] = new
 end
 
-local function printTable (table)
-  for i, v in pairs(table) do
-    print(i, ' - ', v)
+function fillCurrencyTable()
+  -- a pretty ugly workaround, but WoW has no table containing the currency ids
+  -- does not take long though, so it's fine (2ms on my shitty ass pc)
+  for i = 1, 2000 do
+    local info = {GetCurrencyInfo(i)}
+
+    if (info[2]) then
+      currencyTable[i] = info[2]
+    end
   end
-end
-
-local function printMessage (...)
-  farmerFrame:AddMessage(...)
-  -- ChatFrame1:AddMessage(...)
-end
-
-local function setTrueScale (frame, scale)
-    frame:SetScale(1)
-    frame:SetScale(scale / frame:GetEffectiveScale())
 end
 
 local function checkHideOptions ()
   if (farmerOptions.hideAtMailbox == true and
-      MailFrame and
-      MailFrame:IsShown() == true) then
+      mailOpen == true) then
     return false
   end
 
@@ -433,8 +425,6 @@ local function checkCurrencyDisplay (id)
 end
 
 local function handleCurrency (id, total)
-  if (checkCurrencyDisplay(id) == false) then return end
-
   local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
         rarity = GetCurrencyInfo(id)
   local count = currencyTable[id] or 0
@@ -447,7 +437,8 @@ local function handleCurrency (id, total)
 
   currencyTable[id] = total
 
-  if (checkHideOptions() == false) then return end
+  if (checkCurrencyDisplay(id) == false or
+      checkHideOptions() == false) then return end
 
   if (count <= 0) then return end
 
@@ -483,6 +474,22 @@ end
 /// Event listeners
 ///#############################################################################
 ]]--
+
+function events:PLAYER_LOGIN ()
+  playerName = {UnitFullName('player')}
+  playerFullName = playerName[1] .. '-' .. playerName[2]
+  playerName = playerName[1]
+
+  fillCurrencyTable()
+end
+
+function events:MAIL_SHOW ()
+  mailOpen = true
+end
+
+function events:MAIL_CLOSED ()
+  mailOpen = false
+end
 
 function events:UNIT_INVENTORY_CHANGED (arg)
   if (arg ~= 'player') then return end
@@ -596,7 +603,8 @@ function events:CURRENCY_DISPLAY_UPDATE (id, total)
 end
 
 function events:PLAYER_MONEY ()
-  if (farmerOptions.money == false) then
+  if (farmerOptions.money == false or
+      checkHideOptions() == false) then
     return
   end
 

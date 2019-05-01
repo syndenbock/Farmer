@@ -1,3 +1,7 @@
+  version 2.6.5
+- fixed hiding display at mailbox for non-default mailboxes
+- hiding rules now apply to all displays
+
   version 2.6.4
 - added option for ignoring Honor
 - added option to hide items at mailboxes

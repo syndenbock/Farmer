@@ -241,19 +241,21 @@ local function initPanel ()
   end)
   anchor = createCheckButton('reagents', anchor, -20, -5, 'always show reagents')
   anchor = createCheckButton('questItems', anchor, 0, -5, 'always show quest items')
-  anchor = createCheckButton('hideAtMailbox', anchor, 0, -5, 'don\'t display items at mailboxes')
-  anchor = createCheckButton('hideInArena', anchor, 0, -5, 'don\'t display items in arena')
-  anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, 'don\'t display items on island expeditions')
+
   anchor = createCheckButton('showTotal', anchor, 0, -5, 'show total count for stackable items')
   anchor = createCheckButton('showBags', anchor, 0, -5, 'show bag count for stackable items')
-
-  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 300, -15, 'enable fast autoloot', 'TOPLEFT', 'TOPLEFT')
-  anchor = createCheckButton('itemNames', anchor, 0, -5, 'show names of all items')
-  anchor = createCheckButton('hideLootToasts', anchor, 0, -5, 'hide loot and item roll toasts')
 
   anchor = createCheckButton('currency', anchor, 0, -25, 'show currencies')
   anchor = createCheckButton('ignoreHonor', anchor, 20, 0, 'ignore Honor')
   anchor = createCheckButton('money', anchor, -20, -5, 'show money')
+
+  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 330, -21, 'enable fast autoloot', 'TOPLEFT', 'TOPLEFT')
+  anchor = createCheckButton('itemNames', anchor, 0, -5, 'show names of all items')
+  anchor = createCheckButton('hideLootToasts', anchor, 0, -5, 'hide loot and item roll toasts')
+
+  anchor = createCheckButton('hideAtMailbox', anchor, 0, -25, 'don\'t display at mailboxes')
+  anchor = createCheckButton('hideInArena', anchor, 0, -5, 'don\'t display in arena')
+  anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, 'don\'t display on island expeditions')
 
   anchor = createButton ('move', farmerOptionsFrame, 10, 12, 'move frame', 'BOTTOMLEFT', 'BOTTOMLEFT', function (self)
     moveFrame()
@@ -272,13 +274,13 @@ local function initPanel ()
     farmerVars.frame:SetTimeVisible(value - farmerVars.frame:GetFadeDuration())
   end)
 
-  itemField = createEditBox('focusItems', farmerOptionsFrame, -120, 100, 150, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT')
+  itemField = createEditBox('focusItems', farmerOptionsFrame, -80, 100, 150, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT')
   anchor = itemField
 
   createLabel(anchor, 0, 0, 'focused item ids:', 'BOTTOMLEFT', 'TOPLEFT')
 
-  anchor = createCheckButton('special', anchor, 0, -10, 'always show focused items', 'TOPLEFT', 'BOTTOMLEFT')
-  anchor = createCheckButton('focus', anchor, 0, -10, 'only show focused items')
+  anchor = createCheckButton('special', anchor, 0, -5, 'always show focused items', 'TOPLEFT', 'BOTTOMLEFT')
+  anchor = createCheckButton('focus', anchor, 0, -5, 'only show focused items')
 end
 
 local function applyOptions ()
