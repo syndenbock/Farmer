@@ -96,6 +96,7 @@ local mailOpen = false
 local hadChip = false
 local lootStack
 local lootTimeStamp = 0
+local bagTimeStamp = 0
 local playerName
 local playerFullName
 local currencyTable = {}
@@ -451,7 +452,7 @@ local function handleCurrency (id, total)
   printItem(texture, text, {1, 0.9, 0, 1})
 end
 
-function displayLoot ()
+function displayLootBeforeUpdate ()
   if (lootStack == nil) then
     return
   end
@@ -467,6 +468,25 @@ function displayLoot ()
       value.count = 0
     end
   end
+end
+
+function displayLootAfterUpdate ()
+  if (lootStack == nil) then
+    return
+  end
+
+  if (checkHideOptions() == false) then
+    lootStack = nil
+    return
+  end
+
+  for key, value in pairs (lootStack) do
+    if (value.count > 0) then
+      handleItem(key, value.count, 0)
+    end
+  end
+
+  lootStack = nil
 end
 
 --[[
@@ -489,10 +509,6 @@ end
 
 function events:MAIL_CLOSED ()
   mailOpen = false
-end
-
-function events:UNIT_INVENTORY_CHANGED (arg)
-  if (arg ~= 'player') then return end
 end
 
 LootFrame:SetAlpha(0)
@@ -547,7 +563,6 @@ function events:CHAT_MSG_LOOT (message, _, _, _, unit)
     local link, amount = string.match(message, v)
 
     if (link ~= nil) then
-
       if (amount == nil) then
         amount = 1
       else
@@ -564,36 +579,43 @@ function events:CHAT_MSG_LOOT (message, _, _, _, unit)
         lootStack[link].totalCount = lootStack[link].totalCount + amount
       end
 
+      C_Timer.After(1, function ()
+        if (lootStack ~= nil) then
+          print('no loot message!')
+        end
+      end)
+
       -- if (farmerFrame:GetScript('OnUpdate') == nil) then
       -- end
 
+      local elapsed = GetTime() - bagTimeStamp
+
       farmerFrame:SetScript('OnUpdate', function ()
         farmerFrame:SetScript('OnUpdate', nil)
-        displayLoot()
-      end)
 
+        if (elapsed > 0.1 and elapsed < 0.3) then
+          print(elapsed)
+        end
+
+        if (elapsed < 0.1) then
+          -- print(elapsed)
+          -- print(link)
+          -- print(GetItemCount(link, true))
+          displayLootAfterUpdate()
+        else
+          displayLootBeforeUpdate()
+        end
+        -- skipping one frame to prevent calling before bag_update events
+      end)
       return
     end
   end
 end
 
 function events:BAG_UPDATE_DELAYED ()
-  if (lootStack == nil) then
-    return
-  end
+  bagTimeStamp = GetTime()
 
-  if (checkHideOptions() == false) then
-    lootStack = nil
-    return
-  end
-
-  for key, value in pairs (lootStack) do
-    if (value.count > 0) then
-      handleItem(key, value.count, 0)
-    end
-  end
-
-  lootStack = nil
+  displayLootAfterUpdate()
 end
 
 function events:CURRENCY_DISPLAY_UPDATE (id, total)

@@ -1,5 +1,6 @@
 local addonName, farmerVars = ...
 
+local L = farmerVars.L
 local currentVersion = 0206000
 
 local rarityList = {
@@ -235,27 +236,27 @@ local function initPanel ()
   local anchor = farmerOptionsFrame
   local itemField
 
-  anchor = createCheckButton('rarity', farmerOptionsFrame, 15, -15, 'show items based on rarity', 'TOPLEFT', 'TOPLEFT')
-  _, anchor = createSlider('minimumRarity', anchor, 20, -20, 'minimum rarity', 0, 8, '', '', 'TOPLEFT', 'BOTTOMLEFT', function (self, value)
+  anchor = createCheckButton('rarity', farmerOptionsFrame, 15, -15, L['show items based on rarity'], 'TOPLEFT', 'TOPLEFT')
+  _, anchor = createSlider('minimumRarity', anchor, 20, -20, L['minimum rarity'], 0, 8, '', '', 'TOPLEFT', 'BOTTOMLEFT', function (self, value)
     displayRarity(self.edit, value)
   end)
-  anchor = createCheckButton('reagents', anchor, -20, -5, 'always show reagents')
-  anchor = createCheckButton('questItems', anchor, 0, -5, 'always show quest items')
+  anchor = createCheckButton('reagents', anchor, -20, -5, L['always show reagents'])
+  anchor = createCheckButton('questItems', anchor, 0, -5, L['always show quest items'])
 
-  anchor = createCheckButton('showTotal', anchor, 0, -5, 'show total count for stackable items')
-  anchor = createCheckButton('showBags', anchor, 0, -5, 'show bag count for stackable items')
+  anchor = createCheckButton('showTotal', anchor, 0, -5, L['show total count for stackable items'])
+  anchor = createCheckButton('showBags', anchor, 0, -5, L['show bag count for stackable items'])
 
-  anchor = createCheckButton('currency', anchor, 0, -25, 'show currencies')
-  anchor = createCheckButton('ignoreHonor', anchor, 20, 0, 'ignore Honor')
-  anchor = createCheckButton('money', anchor, -20, -5, 'show money')
+  anchor = createCheckButton('currency', anchor, 0, -25, L['show currencies'])
+  anchor = createCheckButton('ignoreHonor', anchor, 20, 0, L['ignore Honor'])
+  anchor = createCheckButton('money', anchor, -20, -5, L['show money'])
 
-  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 330, -21, 'enable fast autoloot', 'TOPLEFT', 'TOPLEFT')
-  anchor = createCheckButton('itemNames', anchor, 0, -5, 'show names of all items')
-  anchor = createCheckButton('hideLootToasts', anchor, 0, -5, 'hide loot and item roll toasts')
+  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 330, -21, L['enable fast autoloot'], 'TOPLEFT', 'TOPLEFT')
+  anchor = createCheckButton('itemNames', anchor, 0, -5, L['show names of all items'])
+  anchor = createCheckButton('hideLootToasts', anchor, 0, -5, L['hide loot and item roll toasts'])
 
-  anchor = createCheckButton('hideAtMailbox', anchor, 0, -25, 'don\'t display at mailboxes')
-  anchor = createCheckButton('hideInArena', anchor, 0, -5, 'don\'t display in arena')
-  anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, 'don\'t display on island expeditions')
+  anchor = createCheckButton('hideAtMailbox', anchor, 0, -25, L['don\'t display at mailboxes'])
+  anchor = createCheckButton('hideInArena', anchor, 0, -5, L['don\'t display in arena'])
+  anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, L['don\'t display on island expeditions'])
 
   anchor = createButton ('move', farmerOptionsFrame, 10, 12, 'move frame', 'BOTTOMLEFT', 'BOTTOMLEFT', function (self)
     moveFrame()
@@ -279,8 +280,8 @@ local function initPanel ()
 
   createLabel(anchor, 0, 0, 'focused item ids:', 'BOTTOMLEFT', 'TOPLEFT')
 
-  anchor = createCheckButton('special', anchor, 0, -5, 'always show focused items', 'TOPLEFT', 'BOTTOMLEFT')
-  anchor = createCheckButton('focus', anchor, 0, -5, 'only show focused items')
+  anchor = createCheckButton('special', anchor, 0, -5, L['always show focused items'], 'TOPLEFT', 'BOTTOMLEFT')
+  anchor = createCheckButton('focus', anchor, 0, -5, L['only show focused items'])
 end
 
 local function applyOptions ()
@@ -384,7 +385,7 @@ function events:ADDON_LOADED (addon)
   end
 
   if (farmerOptions.version == nil) then
-    print('You seem to have used an old Version of Farmer\nCheck out all the new features in the options!')
+    print(L['You seem to have used an old Version of Farmer\nCheck out all the new features in the options!'])
   elseif (farmerOptions.version < currentVersion) then
     local version = GetAddOnMetadata(addonName, 'version')
     local text
@@ -464,16 +465,16 @@ end
 function slashCommands:gold (param)
   if (param == 'reset') then
     earningStamp = GetMoney()
-    print('Money counter was reset')
+    print(L['Money counter was reset'])
     return
   end
   local difference = GetMoney() - earningStamp
   local text = GetCoinTextureString(math.abs(difference))
 
   if (difference >= 0) then
-    print('Money earned this session: ' .. text)
+    print(L['Money earned this session: '] .. text)
   else
-    print('You lost money this session: ' .. text)
+    print(L['You lost money this session: '] .. text)
   end
 end
 
@@ -493,7 +494,7 @@ local function slashHandler (input)
     slashCommands[command](nil, param)
     return
   end
-  print('Farmer: unknown command "' .. input .. '"')
+  print(L['Farmer: unknown command'] .. '"' .. input .. '"')
 end
 
 SLASH_FARMER1 = '/farmer'
