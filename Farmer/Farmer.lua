@@ -91,15 +91,16 @@ local messagePatterns = {
 
 local farmerFrame
 local events = {}
-local mapShown
+local currencyTable = {}
 local mailOpen = false
 local hadChip = false
-local lootStack
+local lootFlag = false
 local lootTimeStamp = 0
 local bagTimeStamp = 0
+local mapShown
+local lootStack
 local playerName
 local playerFullName
-local currencyTable = {}
 
 local function printTable (table)
   for i, v in pairs(table) do
@@ -514,16 +515,15 @@ end
 LootFrame:SetAlpha(0)
 
 function events:LOOT_READY (lootSwitch)
-  local time = GetTime()
+  --[[ the LOOT_READY sometimes fires multiple times when looting, so we only
+    handle it once until loot is closed ]]
 
-  --[[ the LOOT_READY sometimes fires multiple times when looting, so we do not
-    handle it when it fires earlier than 0.3 seconds after the last one ]]
 
-  if ((time - lootTimeStamp) < 0.3) then
+  if (lootFlag == true) then
+    print('lootflag!')
     return
   end
-
-  lootTimeStamp = time
+  lootFlag = true
 
   mapShown = WorldMapFrame:IsShown()
   if (lootSwitch == true and
@@ -538,6 +538,8 @@ function events:LOOT_READY (lootSwitch)
 end
 
 function events:LOOT_CLOSED ()
+  lootFlag = false
+
   LootFrame:SetAlpha(0)
   if (mapShown == true) then
     WorldMapFrame:Show()
@@ -579,28 +581,12 @@ function events:CHAT_MSG_LOOT (message, _, _, _, unit)
         lootStack[link].totalCount = lootStack[link].totalCount + amount
       end
 
-      C_Timer.After(1, function ()
-        if (lootStack ~= nil) then
-          print('no loot message!')
-        end
-      end)
-
-      -- if (farmerFrame:GetScript('OnUpdate') == nil) then
-      -- end
-
       local elapsed = GetTime() - bagTimeStamp
 
       farmerFrame:SetScript('OnUpdate', function ()
         farmerFrame:SetScript('OnUpdate', nil)
 
-        if (elapsed > 0.1 and elapsed < 0.3) then
-          print(elapsed)
-        end
-
-        if (elapsed < 0.1) then
-          -- print(elapsed)
-          -- print(link)
-          -- print(GetItemCount(link, true))
+        if (elapsed < 0.3) then
           displayLootAfterUpdate()
         else
           displayLootBeforeUpdate()
