@@ -519,10 +519,7 @@ function events:LOOT_READY (lootSwitch)
     handle it once until loot is closed ]]
 
 
-  if (lootFlag == true) then
-    print('lootflag!')
-    return
-  end
+  if (lootFlag == true) then return end
   lootFlag = true
 
   mapShown = WorldMapFrame:IsShown()
@@ -587,6 +584,7 @@ function events:CHAT_MSG_LOOT (message, _, _, _, unit)
         farmerFrame:SetScript('OnUpdate', nil)
 
         if (elapsed < 0.3) then
+          bagTimeStamp = 0
           displayLootAfterUpdate()
         else
           displayLootBeforeUpdate()
@@ -599,9 +597,12 @@ function events:CHAT_MSG_LOOT (message, _, _, _, unit)
 end
 
 function events:BAG_UPDATE_DELAYED ()
-  bagTimeStamp = GetTime()
-
-  displayLootAfterUpdate()
+  if (lootStack == nil) then
+    bagTimeStamp = GetTime()
+  else
+    bagTimeStamp = 0
+    displayLootAfterUpdate()
+  end
 end
 
 function events:CURRENCY_DISPLAY_UPDATE (id, total)
