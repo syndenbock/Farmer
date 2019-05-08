@@ -1,6 +1,8 @@
   version 2.6.5
 - fixed hiding display at mailbox for non-default mailboxes
 - hiding rules now apply to all displays
+- fixed false amount display when the game fires events in a faulty order
+- minor code improvements
 
   version 2.6.4
 - added option for ignoring Honor

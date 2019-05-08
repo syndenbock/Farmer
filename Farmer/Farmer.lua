@@ -562,6 +562,8 @@ function events:CHAT_MSG_LOOT (message, _, _, _, unit)
     local link, amount = string.match(message, v)
 
     if (link ~= nil) then
+      local elapsed = GetTime() - bagTimeStamp
+
       if (amount == nil) then
         amount = 1
       else
@@ -578,18 +580,17 @@ function events:CHAT_MSG_LOOT (message, _, _, _, unit)
         lootStack[link].totalCount = lootStack[link].totalCount + amount
       end
 
-      local elapsed = GetTime() - bagTimeStamp
-
+      -- skipping one frame to accumulate all loot messages in a frame first
       farmerFrame:SetScript('OnUpdate', function ()
         farmerFrame:SetScript('OnUpdate', nil)
 
         if (elapsed < 0.3) then
-          bagTimeStamp = 0
           displayLootAfterUpdate()
         else
           displayLootBeforeUpdate()
         end
-        -- skipping one frame to prevent calling before bag_update events
+
+        bagTimeStamp = 0
       end)
       return
     end
