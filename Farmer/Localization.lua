@@ -1,4 +1,4 @@
-local addonName, farmerVars = ...;
+local addonName, addon = ...;
 
 local L = setmetatable({}, {
   __index = function (table, key)
@@ -6,4 +6,4 @@ local L = setmetatable({}, {
   end,
 });
 
-farmerVars.L = L;
+addon.L = L;

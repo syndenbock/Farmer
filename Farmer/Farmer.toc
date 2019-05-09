@@ -6,6 +6,7 @@
 ## SavedVariablesPerCharacter: earningStamp
 ## SavedVariables: farmerOptions
 
+Core.lua
 Localization.lua
 FarmerOptions.lua
 Farmer.lua

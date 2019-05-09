@@ -1,4 +1,4 @@
-local addonName, farmerVars = ...
+local addonName, addon = ...
 
 local chipId = 129100
 local font = CreateFont('farmerFont')
@@ -90,7 +90,6 @@ local messagePatterns = {
 }
 
 local farmerFrame
-local events = {}
 local currencyTable = {}
 local mailOpen = false
 local hadChip = false
@@ -101,12 +100,6 @@ local mapShown
 local lootStack
 local playerName
 local playerFullName
-
-local function printTable (table)
-  for i, v in pairs(table) do
-    print(i, ' - ', v)
-  end
-end
 
 local function printMessage (...)
   farmerFrame:AddMessage(...)
@@ -179,7 +172,7 @@ local function performAutoLoot ()
 end
 
 local function printItem (texture, text, colors)
-  local icon = ' |T' .. texture .. farmerVars.iconOffset
+  local icon = ' |T' .. texture .. addon.iconOffset
 
   printMessage(icon .. text, unpack(colors))
 end
@@ -323,7 +316,7 @@ local function handleItem (itemLink, count, totalCount)
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
         itemSetID, isCraftingReagent = GetItemInfo(itemLink)
-  local colors = farmerVars.rarityColors[itemRarity]
+  local colors = addon.rarityColors[itemRarity]
   local itemId = GetItemInfoInstant(itemLink)
 
   -- crafting reagents
@@ -496,25 +489,25 @@ end
 ///#############################################################################
 ]]--
 
-function events:PLAYER_LOGIN ()
+addon:on('PLAYER_LOGIN', function ()
   playerName = {UnitFullName('player')}
   playerFullName = playerName[1] .. '-' .. playerName[2]
   playerName = playerName[1]
 
   fillCurrencyTable()
-end
+end)
 
-function events:MAIL_SHOW ()
+addon:on('MAIL_SHOW', function ()
   mailOpen = true
-end
+end)
 
-function events:MAIL_CLOSED ()
+addon:on('MAIL_CLOSED', function ()
   mailOpen = false
-end
+end)
 
 LootFrame:SetAlpha(0)
 
-function events:LOOT_READY (lootSwitch)
+addon:on('LOOT_READY', function (lootSwitch)
   --[[ the LOOT_READY sometimes fires multiple times when looting, so we only
     handle it once until loot is closed ]]
 
@@ -532,9 +525,9 @@ function events:LOOT_READY (lootSwitch)
   else
     LootFrame:SetAlpha(1)
   end
-end
+end)
 
-function events:LOOT_CLOSED ()
+addon:on('LOOT_CLOSED', function ()
   lootFlag = false
 
   LootFrame:SetAlpha(0)
@@ -542,9 +535,9 @@ function events:LOOT_CLOSED ()
     WorldMapFrame:Show()
     mapShown = false
   end
-end
+end)
 
-function events:CHAT_MSG_LOOT (message, _, _, _, unit)
+addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
   -- prevents string parsing in groups/raids
   if (unit ~= playerName and
       unit ~= playerFullName) then
@@ -595,24 +588,24 @@ function events:CHAT_MSG_LOOT (message, _, _, _, unit)
       return
     end
   end
-end
+end)
 
-function events:BAG_UPDATE_DELAYED ()
+addon:on('BAG_UPDATE_DELAYED', function ()
   if (lootStack == nil) then
     bagTimeStamp = GetTime()
   else
     bagTimeStamp = 0
     displayLootAfterUpdate()
   end
-end
+end)
 
-function events:CURRENCY_DISPLAY_UPDATE (id, total)
+addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total)
   if (id == nil) then return end
 
   handleCurrency(id, total)
-end
+end)
 
-function events:PLAYER_MONEY ()
+addon:on('PLAYER_MONEY', function ()
   if (farmerOptions.money == false or
       checkHideOptions() == false) then
     return
@@ -620,18 +613,18 @@ function events:PLAYER_MONEY ()
 
   local money = GetMoney()
 
-  if (farmerVars.moneyStamp >= money) then
-    farmerVars.moneyStamp = money
+  if (addon.moneyStamp >= money) then
+    addon.moneyStamp = money
     return
   end
 
-  local difference = money - farmerVars.moneyStamp
+  local difference = money - addon.moneyStamp
   local text = GetCoinTextureString(difference)
 
-  farmerVars.moneyStamp = money
+  addon.moneyStamp = money
 
   printMessage(text, 1, 1, 1, 1)
-end
+end)
 
 farmerFrame = CreateFrame('ScrollingMessageFrame', 'farmerFrame', UIParent)
 farmerFrame:SetWidth(GetScreenWidth() / 2)
@@ -648,21 +641,11 @@ farmerFrame:SetFontObject(font)
 setTrueScale(farmerFrame, 1)
 farmerFrame:Show()
 
-local function eventHandler (self, event, ...)
-  events[event](self, ...)
-end
-
-farmerFrame:SetScript('OnEvent', eventHandler)
-
-for k, v in pairs(events) do
-  farmerFrame:RegisterEvent(k)
-end
-
 --[[
 ///#############################################################################
 /// shared variables
 ///#############################################################################
 --]]
 
-farmerVars.frame = farmerFrame
-farmerVars.font = font
+addon.frame = farmerFrame
+addon.font = font

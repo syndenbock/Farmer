@@ -1,6 +1,6 @@
-local addonName, farmerVars = ...
+local addonName, addon = ...
 
-local L = farmerVars.L
+local L = addon.L
 local currentVersion = 0206000
 
 local rarityList = {
@@ -18,11 +18,10 @@ local rarityList = {
 local checkButtonList = {}
 local sliderList = {}
 local editBoxList = {}
-local events = {}
 
-farmerVars.rarityColors = {}
+addon.rarityColors = {}
 for i = 0, 8 do
-  farmerVars.rarityColors[i] = {GetItemQualityColor(i)}
+  addon.rarityColors[i] = {GetItemQualityColor(i)}
 end
 
 local farmerOptionsFrame = CreateFrame('Frame', 'farmerOptionsFrame', UIParent)
@@ -30,7 +29,7 @@ farmerOptionsFrame.name = 'Farmer'
 InterfaceOptions_AddCategory(farmerOptionsFrame)
 
 local function setDefaultPosition ()
-  local frame = farmerVars.frame
+  local frame = addon.frame
   frame:ClearAllPoints()
   frame:SetPoint('BOTTOM', nil, 'CENTER', 0, 35)
 end
@@ -38,7 +37,7 @@ end
 local function storePosition (frame)
   local icon = GetItemIcon(114978)
 
-  icon = ' |T' .. icon .. farmerVars.iconOffset
+  icon = ' |T' .. icon .. addon.iconOffset
   farmerOptions.anchor = {frame:GetPoint()}
   frame:EnableMouse(false)
   frame:SetMovable(false)
@@ -51,10 +50,10 @@ local function storePosition (frame)
 end
 
 local function moveFrame ()
-  local frame = farmerVars.frame
+  local frame = addon.frame
   local icon = GetItemIcon(3334)
 
-  icon = ' |T' .. icon .. farmerVars.iconOffset
+  icon = ' |T' .. icon .. addon.iconOffset
   frame:RegisterForDrag('LeftButton')
   frame:SetFading(false)
   frame:Clear()
@@ -73,21 +72,21 @@ end
 
 local function displayRarity (edit, rarity)
   local colorHex
-  colorHex = farmerVars.rarityColors[rarity][4]
+  colorHex = addon.rarityColors[rarity][4]
   edit:SetText('|c' .. colorHex .. rarityList[rarity])
   edit:SetCursorPosition(0)
 end
 
 local function setFontSize (size, scale)
-  farmerVars.font:SetFont('Fonts\\FRIZQT__.TTF', size, 'thickoutline')
+  addon.font:SetFont('Fonts\\FRIZQT__.TTF', size, 'thickoutline')
   -- adding line spacing makes textures completely off so they need y-offset
   -- for some reason that offset has to be 1.5 times the spacing
   -- i have no idea why, i just figured it out by testing
-  farmerVars.font:SetSpacing(size / 9)
-  farmerVars.iconOffset = ':'.. size * scale .. ':' .. size *scale .. ':' ..
+  addon.font:SetSpacing(size / 9)
+  addon.iconOffset = ':'.. size * scale .. ':' .. size *scale .. ':' ..
                           '0:-' .. (size / 6) .. '|t '
-  -- farmerVars.textOffset = ':'.. s .. ':' .. s .. ':' .. '0:-' .. (size / 6) .. '|t '
-  -- farmerVars.iconOffset = ':0:0:0:-' .. (size / 6)  .. '|t '
+  -- addon.textOffset = ':'.. s .. ':' .. s .. ':' .. '0:-' .. (size / 6) .. '|t '
+  -- addon.iconOffset = ':0:0:0:-' .. (size / 6)  .. '|t '
 end
 
 local function createCheckButton (name, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
@@ -263,7 +262,7 @@ local function initPanel ()
   end)
   createButton ('resetPosition', anchor, 20, 0, 'reset position', 'LEFT', 'RIGHT', function (self)
     setDefaultPosition()
-    storePosition(farmerVars.frame)
+    storePosition(addon.frame)
   end)
   anchor = createSlider('fontSize', anchor, 3, 40, 'font size', 8, 64, '8', '64', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
     setFontSize(value, farmerOptions.iconScale)
@@ -272,7 +271,7 @@ local function initPanel ()
   end)
   anchor:SetValueStep(0.1)
   createSlider('displayTime', anchor, 23, 0, 'display time', 1, 10, '1', '10', 'LEFT', 'RIGHT', function (self, value)
-    farmerVars.frame:SetTimeVisible(value - farmerVars.frame:GetFadeDuration())
+    addon.frame:SetTimeVisible(value - addon.frame:GetFadeDuration())
   end)
 
   itemField = createEditBox('focusItems', farmerOptionsFrame, -80, 100, 150, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT')
@@ -298,12 +297,12 @@ local function applyOptions ()
   end
 
   if (farmerOptions.money == true) then
-    farmerVars.moneyStamp = GetMoney()
+    addon.moneyStamp = GetMoney()
   end
 
   setFontSize(farmerOptions.fontSize, farmerOptions.iconScale)
-  farmerVars.frame:SetTimeVisible(farmerOptions.displayTime - farmerVars.frame:GetFadeDuration())
-  -- farmerVars.frame:SetTimeVisible(farmerOptions.displayTime)
+  addon.frame:SetTimeVisible(farmerOptions.displayTime - addon.frame:GetFadeDuration())
+  -- addon.frame:SetTimeVisible(farmerOptions.displayTime)
 end
 
 local function loadItemIds ()
@@ -372,8 +371,8 @@ function checkOption (name, default)
   end
 end
 
-function events:ADDON_LOADED (addon)
-  if (addon ~= 'Farmer') then
+addon:on('ADDON_LOADED', function (name)
+  if (name ~= addonName) then
     return
   end
 
@@ -421,31 +420,21 @@ function events:ADDON_LOADED (addon)
   if (farmerOptions.anchor == nil) then
     setDefaultPosition()
   else
-    farmerVars.frame:SetPoint(unpack(farmerOptions.anchor))
+    addon.frame:SetPoint(unpack(farmerOptions.anchor))
   end
 
   applyOptions()
-end
+end)
 
-function events:PLAYER_LOGIN ()
+addon:on('PLAYER_LOGIN', function ()
   local money = GetMoney()
 
   earningStamp = earningStamp or money
 
   if (farmerOptions.money == true) then
-    farmerVars.moneyStamp = money
+    addon.moneyStamp = money
   end
-end
-
-local function eventHandler (self, event, ...)
-  events[event](self, ...)
-end
-
-farmerOptionsFrame:SetScript('OnEvent', eventHandler)
-
-for k, v in pairs(events) do
-  farmerOptionsFrame:RegisterEvent(k)
-end
+end)
 
 --[[
 ///#############################################################################
@@ -455,14 +444,14 @@ end
 
 local slashCommands = {}
 
-slashCommands['move'] = moveFrame
+addon:slash('move', moveFrame)
 
-function slashCommands:reset ()
+addon:slash('reset', function ()
   setDefaultPosition()
-  storePosition(farmerVars.frame)
-end
+  storePosition(addon.frame)
+end)
 
-function slashCommands:gold (param)
+addon:slash('gold', function (param)
   if (param == 'reset') then
     earningStamp = GetMoney()
     print(L['Money counter was reset'])
@@ -476,26 +465,9 @@ function slashCommands:gold (param)
   else
     print(L['You lost money this session: '] .. text)
   end
-end
+end)
 
-function slashCommands:default ()
+addon:slash('default', function ()
   InterfaceOptionsFrame_Show()
   InterfaceOptionsFrame_OpenToCategory(farmerOptionsFrame)
-end
-
-local function slashHandler (input)
-  local command, param = input.split(' ', input, 3)
-
-  command = command == '' and 'default' or command
-  command = string.lower(command or 'default')
-  param = string.lower(param or '')
-
-  if (slashCommands[command] ~= nil) then
-    slashCommands[command](nil, param)
-    return
-  end
-  print(L['Farmer: unknown command'] .. '"' .. input .. '"')
-end
-
-SLASH_FARMER1 = '/farmer'
-SlashCmdList.FARMER = slashHandler
+end)
