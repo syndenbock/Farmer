@@ -65,7 +65,7 @@ do
 
   function addon:slash (command, callback)
     if (slashCommands[command] ~= nil) then
-      print('syn: slash handler already exists for ' .. command)
+      print('Farmer: slash handler already exists for ' .. command)
       return
     end
 
@@ -83,7 +83,7 @@ do
       slashCommands[command](param)
       return
     end
-    print('syn: unknown command "' .. input .. '"')
+    print('Farmer: unknown command "' .. input .. '"')
   end
 
   SLASH_FARMER1 = '/farmer'

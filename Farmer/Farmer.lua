@@ -301,6 +301,11 @@ local function checkItemDisplay (itemLink)
     return true
   end
 
+  if (farmerOptions.recipes == true and
+      itemClassID == 9) then
+    return true
+  end
+
   if (farmerOptions.rarity == true and
       itemRarity >= farmerOptions.minimumRarity) then
     return true
@@ -344,12 +349,6 @@ local function handleItem (itemLink, count, totalCount)
   -- quest items
   if (itemClassID == 12) then
     printItemCount(texture, itemName, '', count, {1, 0.8, 0, 1})
-    return
-  end
-
-  -- stackable items
-  if (itemStackCount > 1) then
-    printStackableItem(itemLink, texture, itemName, count, totalCount, colors)
     return
   end
 
@@ -400,6 +399,12 @@ local function handleItem (itemLink, count, totalCount)
       printEquip(texture, itemName, text, count, colors)
       return
     end
+  end
+
+  -- stackable items
+  if (itemStackCount > 1) then
+    printStackableItem(itemLink, texture, itemName, count, totalCount, colors)
+    return
   end
 
   -- all unspecified items
@@ -678,3 +683,7 @@ farmerFrame:Show()
 
 addon.frame = farmerFrame
 addon.font = font
+
+addon:slash('test', function ()
+  handleItem(162288, 1, 1);
+end);
