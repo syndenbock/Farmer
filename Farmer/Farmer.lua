@@ -127,7 +127,7 @@ for msg, replacements in pairs(messagePatterns) do
   messagePatterns[msg] = new
 end
 
-function fillCurrencyTable()
+local function fillCurrencyTable()
   -- a pretty ugly workaround, but WoW has no table containing the currency ids
   -- does not take long though, so it's fine (2ms on my shitty ass pc)
   for i = 1, 2000 do
@@ -446,7 +446,7 @@ local function handleCurrency (id, total)
   printItem(texture, text, {1, 0.9, 0, 1})
 end
 
-function displayLootBeforeUpdate ()
+local function displayLootBeforeUpdate ()
   if (lootStack == nil) then
     return
   end
@@ -464,7 +464,7 @@ function displayLootBeforeUpdate ()
   end
 end
 
-function displayLootAfterUpdate ()
+local function displayLootAfterUpdate ()
   if (lootStack == nil) then
     return
   end
@@ -510,7 +510,6 @@ LootFrame:SetAlpha(0)
 addon:on('LOOT_READY', function (lootSwitch)
   --[[ the LOOT_READY sometimes fires multiple times when looting, so we only
     handle it once until loot is closed ]]
-
 
   if (lootFlag == true) then return end
   lootFlag = true
@@ -625,6 +624,36 @@ addon:on('PLAYER_MONEY', function ()
 
   printMessage(text, 1, 1, 1, 1)
 end)
+
+
+--[[ handling nameplates when fishing --]]
+
+do
+  local FISHING_ID = 131476;
+  local platesShown = nil;
+
+  addon:on('UNIT_SPELLCAST_CHANNEL_START', function (unit, target, spellid)
+    if (farmerOptions.hidePlatesWhenFishing == true and
+        unit == 'player' and
+        spellid == FISHING_ID) then
+      platesShown = GetCVar('nameplateShowAll');
+      SetCVar('nameplateShowAll', 0);
+    end
+  end);
+
+  addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function (unit, target, spellid)
+    if (platesShown ~= nil and
+        unit == 'player' and
+        spellid == FISHING_ID) then
+      SetCVar('nameplateShowAll', platesShown);
+
+      --[[ we change platesShown back to nil, so when someone disables the
+        option and changes nameplates manually, the old value does not get
+        applied anymore --]]
+      platesShown = nil;
+    end
+  end);
+end
 
 farmerFrame = CreateFrame('ScrollingMessageFrame', 'farmerFrame', UIParent)
 farmerFrame:SetWidth(GetScreenWidth() / 2)

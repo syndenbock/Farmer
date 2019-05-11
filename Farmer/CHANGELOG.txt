@@ -1,4 +1,5 @@
-  version 2.6.5
+  version 2.7
+- added option to hide nameplates while fishing
 - fixed hiding display at mailbox for non-default mailboxes
 - hiding rules now apply to all displays
 - fixed false amount display when the game fires events in a faulty order

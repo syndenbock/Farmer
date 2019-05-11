@@ -83,8 +83,8 @@ local function setFontSize (size, scale)
   -- for some reason that offset has to be 1.5 times the spacing
   -- i have no idea why, i just figured it out by testing
   addon.font:SetSpacing(size / 9)
-  addon.iconOffset = ':'.. size * scale .. ':' .. size *scale .. ':' ..
-                          '0:-' .. (size / 6) .. '|t '
+  rawset(addon, 'iconOffset', ':'.. size * scale .. ':' .. size *scale .. ':' ..
+                          '0:-' .. (size / 6) .. '|t ');
   -- addon.textOffset = ':'.. s .. ':' .. s .. ':' .. '0:-' .. (size / 6) .. '|t '
   -- addon.iconOffset = ':0:0:0:-' .. (size / 6)  .. '|t '
 end
@@ -245,15 +245,16 @@ local function initPanel ()
   anchor = createCheckButton('showTotal', anchor, 0, -5, L['show total count for stackable items'])
   anchor = createCheckButton('showBags', anchor, 0, -5, L['show bag count for stackable items'])
 
-  anchor = createCheckButton('currency', anchor, 0, -25, L['show currencies'])
+  anchor = createCheckButton('currency', anchor, 0, -20, L['show currencies'])
   anchor = createCheckButton('ignoreHonor', anchor, 20, 0, L['ignore Honor'])
   anchor = createCheckButton('money', anchor, -20, -5, L['show money'])
 
-  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 330, -21, L['enable fast autoloot'], 'TOPLEFT', 'TOPLEFT')
+  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 330, -15, L['enable fast autoloot'], 'TOPLEFT', 'TOPLEFT')
   anchor = createCheckButton('itemNames', anchor, 0, -5, L['show names of all items'])
   anchor = createCheckButton('hideLootToasts', anchor, 0, -5, L['hide loot and item roll toasts'])
+  anchor = createCheckButton('hidePlatesWhenFishing', anchor, 0, -5, L['hide nameplates while fishing'])
 
-  anchor = createCheckButton('hideAtMailbox', anchor, 0, -25, L['don\'t display at mailboxes'])
+  anchor = createCheckButton('hideAtMailbox', anchor, 0, -20, L['don\'t display at mailboxes'])
   anchor = createCheckButton('hideInArena', anchor, 0, -5, L['don\'t display in arena'])
   anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, L['don\'t display on island expeditions'])
 
@@ -398,6 +399,7 @@ addon:on('ADDON_LOADED', function (name)
   checkOption('fastLoot', true)
   checkOption('itemNames', true)
   checkOption('hideLootToasts', false)
+  checkOption('hidePlatesWhenFishing', false)
   checkOption('hideAtMailbox', true)
   checkOption('hideInArena', true)
   checkOption('hideOnExpeditions', true)
