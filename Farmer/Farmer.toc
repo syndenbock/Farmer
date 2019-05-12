@@ -1,12 +1,16 @@
 ## Interface: 80100
 ## Title: Farmer
-## Version: 2.6.5
+## Title: Farmer
+## Version: 2.7
 ## Author: syndenbock
 ## Notes: Shows information on all the stuff you loot
+## Notes-deDe: Zeigt Infos über all das Zeug das du lootest
 ## SavedVariablesPerCharacter: earningStamp
 ## SavedVariables: farmerOptions
 
-Core.lua
 Localization.lua
+localizations/German.lua
+
+Core.lua
 FarmerOptions.lua
 Farmer.lua

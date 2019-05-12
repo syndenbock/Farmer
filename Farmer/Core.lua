@@ -1,5 +1,7 @@
 local addonName, addon = ...
 
+local L = addon.L
+
 --[[
 ///#############################################################################
 /// proxy
@@ -14,9 +16,17 @@ do
 
   function proxy:__newindex (key, value)
     if (proxy[key] ~= nil) then
-      error('key already in use: ' .. key)
+      error('Farmer: addon key already in use: ' .. key)
     end
     proxy[key] = value
+  end
+
+  function proxy:__index (key)
+    if (proxy[key] == nil) then
+      error('Farmer: addon key does not exist: ' .. key)
+    end
+
+    return proxy[key]
   end
 
   setmetatable(addon, proxy)
@@ -65,7 +75,7 @@ do
 
   function addon:slash (command, callback)
     if (slashCommands[command] ~= nil) then
-      print('Farmer: slash handler already exists for ' .. command)
+      error('Farmer: slash handler already exists for ' .. command)
       return
     end
 
@@ -83,7 +93,7 @@ do
       slashCommands[command](param)
       return
     end
-    print('Farmer: unknown command "' .. input .. '"')
+    print('Farmer: ' .. L['unknown command'] .. ' "' .. input .. '"')
   end
 
   SLASH_FARMER1 = '/farmer'

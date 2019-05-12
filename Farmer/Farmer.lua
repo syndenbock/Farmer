@@ -683,7 +683,3 @@ farmerFrame:Show()
 
 addon.frame = farmerFrame
 addon.font = font
-
-addon:slash('test', function ()
-  handleItem(162288, 1, 1);
-end);

@@ -1,10 +1,10 @@
   version 2.7
 - added option to hide nameplates while fishing
 - added option to always show recipes found
-- fixed hiding display at mailbox for non-default mailboxes
 - hiding rules now apply to all displays
+- added localization support and german localization
+- fixed hiding display at mailbox for non-default mailboxes
 - fixed false amount display when the game fires events in a faulty order
-- added basic localization support
 - improved code to be more easily maintainable and expandable
 
   version 2.6.4

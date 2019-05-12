@@ -253,33 +253,33 @@ local function initPanel ()
   anchor = createCheckButton('fastLoot', farmerOptionsFrame, 330, -15, L['enable fast autoloot'], 'TOPLEFT', 'TOPLEFT')
   anchor = createCheckButton('itemNames', anchor, 0, -5, L['show names of all items'])
   anchor = createCheckButton('hideLootToasts', anchor, 0, -5, L['hide loot and item roll toasts'])
-  anchor = createCheckButton('hidePlatesWhenFishing', anchor, 0, -5, L['hide nameplates while fishing'])
+  anchor = createCheckButton('hidePlatesWhenFishing', anchor, 0, -5, L['hide health bars while fishing'])
 
   anchor = createCheckButton('hideAtMailbox', anchor, 0, -20, L['don\'t display at mailboxes'])
   anchor = createCheckButton('hideInArena', anchor, 0, -5, L['don\'t display in arena'])
   anchor = createCheckButton('hideOnExpeditions', anchor, 0, -5, L['don\'t display on island expeditions'])
 
-  anchor = createButton ('move', farmerOptionsFrame, 10, 12, 'move frame', 'BOTTOMLEFT', 'BOTTOMLEFT', function (self)
+  anchor = createButton ('move', farmerOptionsFrame, 10, 12, L['move display'], 'BOTTOMLEFT', 'BOTTOMLEFT', function (self)
     moveFrame()
   end)
-  createButton ('resetPosition', anchor, 20, 0, 'reset position', 'LEFT', 'RIGHT', function (self)
+  createButton ('resetPosition', anchor, 20, 0, L['reset position'], 'LEFT', 'RIGHT', function (self)
     setDefaultPosition()
     storePosition(addon.frame)
   end)
-  anchor = createSlider('fontSize', anchor, 3, 40, 'font size', 8, 64, '8', '64', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
-    setFontSize(value, farmerOptions.iconScale)
-  end)
-  anchor = createSlider('iconScale', anchor, 3, 40, 'icon scale', 0.1, 3, '0.1', '3', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
+  anchor = createSlider('iconScale', anchor, 3, 40, L['icon scale'], 0.1, 3, '0.1', '3', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
   end)
   anchor:SetValueStep(0.1)
-  createSlider('displayTime', anchor, 23, 0, 'display time', 1, 10, '1', '10', 'LEFT', 'RIGHT', function (self, value)
+  anchor = createSlider('fontSize', anchor, 3, 40, L['font size'], 8, 64, '8', '64', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
+    setFontSize(value, farmerOptions.iconScale)
+  end)
+  createSlider('displayTime', anchor, 23, 0, L['display time'], 1, 10, '1', '10', 'LEFT', 'RIGHT', function (self, value)
     addon.frame:SetTimeVisible(value - addon.frame:GetFadeDuration())
   end)
 
   itemField = createEditBox('focusItems', farmerOptionsFrame, -80, 100, 150, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT')
   anchor = itemField
 
-  createLabel(anchor, 0, 0, 'focused item ids:', 'BOTTOMLEFT', 'TOPLEFT')
+  createLabel(anchor, 0, 0, L['focused item ids:'], 'BOTTOMLEFT', 'TOPLEFT')
 
   anchor = createCheckButton('special', anchor, 0, -5, L['always show focused items'], 'TOPLEFT', 'BOTTOMLEFT')
   anchor = createCheckButton('focus', anchor, 0, -5, L['only show focused items'])
@@ -467,7 +467,7 @@ addon:slash('gold', function (param)
   if (difference >= 0) then
     print(L['Money earned this session: '] .. text)
   else
-    print(L['You lost money this session: '] .. text)
+    print(L['Money lost this session: '] .. text)
   end
 end)
 
