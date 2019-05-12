@@ -78,7 +78,9 @@ local function displayRarity (edit, rarity)
 end
 
 local function setFontSize (size, scale)
-  addon.font:SetFont('Fonts\\FRIZQT__.TTF', size, 'thickoutline')
+  -- FRIZQT__ cannot be used because it does not support cyrillic letters
+  addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
+  -- addon.font:SetFont('Fonts\\FRIZQT__.ttf', size, 'thickoutline')
   -- adding line spacing makes textures completely off so they need y-offset
   -- for some reason that offset has to be 1.5 times the spacing
   -- i have no idea why, i just figured it out by testing
@@ -97,6 +99,7 @@ local function createCheckButton (name, anchorFrame, xOffset, yOffset, text, anc
 
   checkButton:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset)
   _G[name .. 'CheckButtonText']:SetText(text)
+  _G[name .. 'CheckButtonText']:SetJustifyH('LEFT')
   checkButtonList[name] = checkButton
 
   -- blizzard broke something in the bfa beta, so we have to fix it

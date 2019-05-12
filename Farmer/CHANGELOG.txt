@@ -1,3 +1,7 @@
+  version 2.7.1
+- fixed cyrillic letters not being displayed
+- added russian translations
+
   version 2.7
 - added option to hide nameplates while fishing
 - added option to always show recipes found
