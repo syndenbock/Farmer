@@ -1,3 +1,7 @@
+  version 2.7.2
+- fixed display of stackable items when no count shall be displayed
+- display now uses default client font
+
   version 2.7.1
 - fixed cyrillic letters not being displayed
 - added russian translations
@@ -44,7 +48,6 @@
 - option "show names of all items" now also applies to currencies
 
   version 2.4
-
 - increased icon size relative to text size
 - small performance improvements
 - fixed bag item count only working when also having total count active

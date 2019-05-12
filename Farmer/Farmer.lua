@@ -171,23 +171,27 @@ local function performAutoLoot ()
   end
 end
 
-local function printItem (texture, text, colors)
+local function printItem (texture, name, text, colors)
   local icon = ' |T' .. texture .. addon.iconOffset
+
+  if (text == '') then
+    printMessage(icon .. name, unpack(colors))
+    return
+  end
+
+  if (farmerOptions.itemNames == true) then
+    text = name .. ' ' .. text
+  end
 
   printMessage(icon .. text, unpack(colors))
 end
 
 local function printItemCount (texture, name, text, count, colors)
-  if (farmerOptions.itemNames == true or
-      text == '') then
-    text = name .. ' ' .. text
-  end
-
-  if (count > 1) then
+  if (count > 0) then
     text = 'x' .. count .. ' ' .. text
   end
 
-  printItem(texture, text, colors)
+  printItem(texture, name, text, colors)
 end
 
 local function printStackableItemTotal (id, texture, name, count, totalCount, colors)
@@ -201,11 +205,7 @@ local function printStackableItemTotal (id, texture, name, count, totalCount, co
 
   text = 'x' .. count .. ' (' .. totalCount .. ')'
 
-  if (farmerOptions.itemNames == true) then
-    text = name .. ' ' .. text
-  end
-
-  printItem(texture, text, colors)
+  printItem(texture, name, text, colors)
 end
 
 local function printStackableItemBags (id, texture, name, count, totalCount, colors)
@@ -220,11 +220,7 @@ local function printStackableItemBags (id, texture, name, count, totalCount, col
   end
   text = 'x' .. count .. ' (' .. bagCount .. ')'
 
-  if (farmerOptions.itemNames == true) then
-    text = name .. ' ' .. text
-  end
-
-  printItem(texture, text, colors)
+  printItem(texture, name, text, colors)
 end
 
 local function printStackableItemTotalAndBags (id, texture, name, count, totalCount, colors)
@@ -237,13 +233,10 @@ local function printStackableItemTotalAndBags (id, texture, name, count, totalCo
     totalCount = count
     bagCount = count
   end
+
   text = 'x' .. count .. ' (' .. bagCount .. '/' .. totalCount .. ')'
 
-  if (farmerOptions.itemNames == true) then
-    text = name .. ' ' .. text
-  end
-
-  printItem(texture, text, colors)
+  printItem(texture, name, text, colors)
 end
 
 local function printStackableItem (id, texture, name, count, totalCount, colors)
@@ -269,6 +262,18 @@ local function printEquip (texture, name, text, count, colors)
   printItemCount(texture, name, text, count, colors)
 end
 
+local function isGemChip (itemId)
+  if (itemId == nil) then return false end
+
+  if ((itemId >= 130200 and
+       itemId <= 130204) or
+      itemId == 129099) then
+    return true
+  else
+    return false
+  end
+end
+
 local function checkItemDisplay (itemLink)
   local itemId = GetItemInfoInstant(itemLink)
 
@@ -292,7 +297,8 @@ local function checkItemDisplay (itemLink)
   end
 
   if (farmerOptions.reagents == true and
-      isCraftingReagent == true) then
+      (isGemChip(itemId) == true or
+       isCraftingReagent == true)) then
     return true
   end
 
@@ -331,25 +337,19 @@ local function handleItem (itemLink, count, totalCount)
       return
     end
 
-    printStackableItem(itemLink, texture, itemName, count, totalCount, {0, 0.8, 0.8, 1})
-    return
+    colors = {0, 0.8, 0.8, 1}
   end
 
   -- legion jewelcrafting colored gem chips
-  if (itemId ~= nil) then
-    if ((itemId >= 130200 and
-         itemId <= 130204) or
-        itemId == 129099) then
-      hadChip = true
-      printStackableItem(chipId, texture, itemName, count, totalCount, {1, 1, 1, 1})
-      return
-    end
+  if (isGemChip(itemId) == true) then
+    hadChip = true
+    itemLink = chipId
+    colors = {0, 0.8, 0.8, 1}
   end
 
   -- quest items
   if (itemClassID == 12) then
-    printItemCount(texture, itemName, '', count, {1, 0.8, 0, 1})
-    return
+    colors = {1, 0.8, 0, 1}
   end
 
   -- artifact relics
@@ -408,7 +408,7 @@ local function handleItem (itemLink, count, totalCount)
   end
 
   -- all unspecified items
-  printItemCount(texture, itemName, '', count, colors)
+  printItem(texture, itemName, text, colors)
 end
 
 local function checkCurrencyDisplay (id)

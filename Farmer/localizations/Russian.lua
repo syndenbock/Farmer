@@ -1,6 +1,6 @@
 local addonName, addon = ...
 
-if (GetLocale() ~= 'enUS') then return end
+if (GetLocale() ~= 'ruRU') then return end
 
 local L = addon.L;
 

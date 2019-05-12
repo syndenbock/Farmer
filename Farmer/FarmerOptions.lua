@@ -79,16 +79,19 @@ end
 
 local function setFontSize (size, scale)
   -- FRIZQT__ cannot be used because it does not support cyrillic letters
-  addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
+  -- addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
+  addon.font:SetFont(STANDARD_TEXT_FONT, size, 'thickoutline')
   -- addon.font:SetFont('Fonts\\FRIZQT__.ttf', size, 'thickoutline')
   -- adding line spacing makes textures completely off so they need y-offset
   -- for some reason that offset has to be 1.5 times the spacing
   -- i have no idea why, i just figured it out by testing
   addon.font:SetSpacing(size / 9)
-  rawset(addon, 'iconOffset', ':'.. size * scale .. ':' .. size *scale .. ':' ..
-                          '0:-' .. (size / 6) .. '|t ');
+
+  rawset(addon, 'iconOffset', ':'.. size * scale .. ':' .. size * scale .. ':' ..
+                          '0:-' .. (size / 9) .. '|t ')
+
   -- addon.textOffset = ':'.. s .. ':' .. s .. ':' .. '0:-' .. (size / 6) .. '|t '
-  -- addon.iconOffset = ':0:0:0:-' .. (size / 6)  .. '|t '
+  -- rawset(addon, 'iconOffset', ':0:0:0:-' .. (size / 6)  .. '|t ')
 end
 
 local function createCheckButton (name, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)

@@ -86,8 +86,8 @@ do
     local command, param = input.split(' ', input, 3)
 
     command = command == '' and 'default' or command
-    command = string.lower(command or 'default')
-    param = string.lower(param or '')
+    -- command = string.lower(command or 'default')
+    -- param = string.lower(param or '')
 
     if (slashCommands[command] ~= nil) then
       slashCommands[command](param)
