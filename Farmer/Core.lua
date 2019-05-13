@@ -32,6 +32,8 @@ do
   setmetatable(addon, proxy)
 end
 
+addon.vars = {}
+
 --[[
 ///#############################################################################
 /// event handling

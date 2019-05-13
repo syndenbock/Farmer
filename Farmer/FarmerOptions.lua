@@ -305,7 +305,7 @@ local function applyOptions ()
   end
 
   if (farmerOptions.money == true) then
-    addon.moneyStamp = GetMoney()
+    addon.vars.moneyStamp = GetMoney()
   end
 
   setFontSize(farmerOptions.fontSize, farmerOptions.iconScale)
@@ -442,7 +442,7 @@ addon:on('PLAYER_LOGIN', function ()
   earningStamp = earningStamp or money
 
   if (farmerOptions.money == true) then
-    addon.moneyStamp = money
+    rawset(addon, 'moneyStamp', money)
   end
 end)
 

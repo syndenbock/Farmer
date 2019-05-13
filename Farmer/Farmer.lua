@@ -187,7 +187,7 @@ local function printItem (texture, name, text, colors)
 end
 
 local function printItemCount (texture, name, text, count, colors)
-  if (count > 0) then
+  if (count > 1) then
     text = 'x' .. count .. ' ' .. text
   end
 
@@ -274,9 +274,7 @@ local function isGemChip (itemId)
   end
 end
 
-local function checkItemDisplay (itemLink)
-  local itemId = GetItemInfoInstant(itemLink)
-
+local function checkItemDisplay (itemId)
   if (itemId and
       farmerOptions.focusItems[itemId] == true) then
     if (farmerOptions.special == true) then
@@ -286,10 +284,10 @@ local function checkItemDisplay (itemLink)
     return false
   end
 
-  local itemName, _itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
+  local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
-        itemSetID, isCraftingReagent = GetItemInfo(itemLink)
+        itemSetID, isCraftingReagent = GetItemInfo(itemId)
 
   -- happens when caging a pet
   if (itemName == nil) then
@@ -320,15 +318,14 @@ local function checkItemDisplay (itemLink)
   return false
 end
 
-local function handleItem (itemLink, count, totalCount)
-  if (checkItemDisplay(itemLink) ~= true) then return end
+local function handleItem (itemId, count, totalCount)
+  if (checkItemDisplay(itemId) ~= true) then return end
 
-  local itemName, _itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
+  local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
-        itemSetID, isCraftingReagent = GetItemInfo(itemLink)
+        itemSetID, isCraftingReagent = GetItemInfo(itemId)
   local colors = addon.rarityColors[itemRarity]
-  local itemId = GetItemInfoInstant(itemLink)
 
   -- crafting reagents
   if (isCraftingReagent == true) then
@@ -343,7 +340,7 @@ local function handleItem (itemLink, count, totalCount)
   -- legion jewelcrafting colored gem chips
   if (isGemChip(itemId) == true) then
     hadChip = true
-    itemLink = chipId
+    itemId = chipId
     colors = {0, 0.8, 0.8, 1}
   end
 
@@ -403,12 +400,12 @@ local function handleItem (itemLink, count, totalCount)
 
   -- stackable items
   if (itemStackCount > 1) then
-    printStackableItem(itemLink, texture, itemName, count, totalCount, colors)
+    printStackableItem(itemId, texture, itemName, count, totalCount, colors)
     return
   end
 
   -- all unspecified items
-  printItem(texture, itemName, text, colors)
+  printItem(texture, itemName, '', colors)
 end
 
 local function checkCurrencyDisplay (id)
@@ -559,6 +556,7 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
     local link, amount = string.match(message, v)
 
     if (link ~= nil) then
+      local itemId = GetItemInfoInstant(link)
       local elapsed = GetTime() - bagTimeStamp
 
       if (amount == nil) then
@@ -567,14 +565,14 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
         amount = tonumber(amount)
       end
 
-      if (lootStack[link] == nil) then
-        lootStack[link] = {
+      if (lootStack[itemId] == nil) then
+        lootStack[itemId] = {
           ['count'] = amount,
           ['totalCount'] = amount
         }
       else
-        lootStack[link].count = lootStack[link].count + amount
-        lootStack[link].totalCount = lootStack[link].totalCount + amount
+        lootStack[itemId].count = lootStack[itemId].count + amount
+        lootStack[itemId].totalCount = lootStack[itemId].totalCount + amount
       end
 
       -- skipping one frame to accumulate all loot messages in a frame first
@@ -617,15 +615,15 @@ addon:on('PLAYER_MONEY', function ()
 
   local money = GetMoney()
 
-  if (addon.moneyStamp >= money) then
-    addon.moneyStamp = money
+  if (addon.vars.moneyStamp >= money) then
+    addon.vars.moneyStamp = money
     return
   end
 
-  local difference = money - addon.moneyStamp
+  local difference = money - addon.vars.moneyStamp
   local text = GetCoinTextureString(difference)
 
-  addon.moneyStamp = money
+  addon.vars.moneyStamp = money
 
   printMessage(text, 1, 1, 1, 1)
 end)
