@@ -1,3 +1,6 @@
+  version 2.7.4
+- fixed currency display
+
   version 2.7.3
 - fixed display of similar items as multiple
 - updated russian localization

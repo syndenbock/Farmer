@@ -441,11 +441,7 @@ local function handleCurrency (id, total)
 
   local text = 'x' .. count .. ' (' .. amount .. ')'
 
-  if (farmerOptions.itemNames == true) then
-    text = name .. ' ' .. text
-  end
-
-  printItem(texture, text, {1, 0.9, 0, 1})
+  printItem(texture, name, text, {1, 0.9, 0, 1})
 end
 
 local function displayLootBeforeUpdate ()
