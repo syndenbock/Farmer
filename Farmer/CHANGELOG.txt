@@ -1,3 +1,6 @@
+  version 2.7.5
+- fixed bug with faulty item level on scaling items
+
   version 2.7.4
 - fixed currency display
 

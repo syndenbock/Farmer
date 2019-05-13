@@ -274,7 +274,9 @@ local function isGemChip (itemId)
   end
 end
 
-local function checkItemDisplay (itemId)
+local function checkItemDisplay (itemLink)
+  local itemId = GetItemInfoInstant(itemLink)
+
   if (itemId and
       farmerOptions.focusItems[itemId] == true) then
     if (farmerOptions.special == true) then
@@ -287,7 +289,7 @@ local function checkItemDisplay (itemId)
   local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
-        itemSetID, isCraftingReagent = GetItemInfo(itemId)
+        itemSetID, isCraftingReagent = GetItemInfo(itemLink)
 
   -- happens when caging a pet
   if (itemName == nil) then
@@ -318,13 +320,14 @@ local function checkItemDisplay (itemId)
   return false
 end
 
-local function handleItem (itemId, count, totalCount)
-  if (checkItemDisplay(itemId) ~= true) then return end
+local function handleItem (itemLink, count, totalCount)
+  if (checkItemDisplay(itemLink) ~= true) then return end
 
+  local itemId = GetItemInfoInstant(itemLink)
   local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
-        itemSetID, isCraftingReagent = GetItemInfo(itemId)
+        itemSetID, isCraftingReagent = GetItemInfo(itemLink)
   local colors = addon.rarityColors[itemRarity]
 
   -- crafting reagents
@@ -340,7 +343,7 @@ local function handleItem (itemId, count, totalCount)
   -- legion jewelcrafting colored gem chips
   if (isGemChip(itemId) == true) then
     hadChip = true
-    itemId = chipId
+    itemLink = chipId
     colors = {0, 0.8, 0.8, 1}
   end
 
@@ -400,7 +403,7 @@ local function handleItem (itemId, count, totalCount)
 
   -- stackable items
   if (itemStackCount > 1) then
-    printStackableItem(itemId, texture, itemName, count, totalCount, colors)
+    printStackableItem(itemLink, texture, itemName, count, totalCount, colors)
     return
   end
 
@@ -456,7 +459,7 @@ local function displayLootBeforeUpdate ()
 
   for key, value in pairs (lootStack) do
     if (value.count > 0) then
-      handleItem(key, value.count, value.totalCount)
+      handleItem(value.itemLink, value.count, value.totalCount)
       value.count = 0
     end
   end
@@ -474,7 +477,7 @@ local function displayLootAfterUpdate ()
 
   for key, value in pairs (lootStack) do
     if (value.count > 0) then
-      handleItem(key, value.count, 0)
+      handleItem(value.itemLink, value.count, 0)
     end
   end
 
@@ -564,7 +567,8 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
       if (lootStack[itemId] == nil) then
         lootStack[itemId] = {
           ['count'] = amount,
-          ['totalCount'] = amount
+          ['totalCount'] = amount,
+          ['itemLink'] = link
         }
       else
         lootStack[itemId].count = lootStack[itemId].count + amount
