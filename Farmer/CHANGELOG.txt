@@ -1,3 +1,7 @@
+  version 2.7.3
+- fixed display of similar items as multiple
+- updated russian localization
+
   version 2.7.2
 - fixed display of stackable items when no count shall be displayed
 - display now uses default client font
