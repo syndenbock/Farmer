@@ -174,7 +174,7 @@ end
 local function printItem (texture, name, text, colors)
   local icon = ' |T' .. texture .. addon.iconOffset
 
-  if (text == '') then
+  if (text == nil or text == '') then
     printMessage(icon .. name, unpack(colors))
     return
   end
@@ -186,9 +186,17 @@ local function printItem (texture, name, text, colors)
   printMessage(icon .. text, unpack(colors))
 end
 
-local function printItemCount (texture, name, text, count, colors)
-  if (count > 1) then
-    text = 'x' .. count .. ' ' .. text
+local function printItemCount (texture, name, text, count, colors, forceCount)
+  local minimum = 1
+
+  if (forceCount == true) then minimum = 0 end
+
+  if (count > minimum) then
+    if (text ~= nil and text ~= '') then
+      text = 'x' .. count .. ' ' .. text
+    else
+      text = 'x' .. count
+    end
   end
 
   printItem(texture, name, text, colors)
@@ -218,6 +226,7 @@ local function printStackableItemBags (id, texture, name, count, totalCount, col
     totalCount = count
     bagCount = count
   end
+
   text = 'x' .. count .. ' (' .. bagCount .. ')'
 
   printItem(texture, name, text, colors)
@@ -251,7 +260,7 @@ local function printStackableItem (id, texture, name, count, totalCount, colors)
           farmerOptions.showBags == true) then
     printStackableItemBags(id, texture, name, count, totalCount, colors)
   else
-    printItemCount(texture, name, '', count, colors)
+    printItemCount(texture, name, '', count, colors, true)
   end
 end
 
@@ -356,6 +365,7 @@ local function handleItem (itemLink, count, totalCount)
   if (itemClassID == 3 and
       itemSubClassID == 11) then -- gem / artifact relics
     local text
+
     itemLevel = GetDetailedItemLevelInfo(itemLink)
     text = itemSubType .. ' ' .. itemLevel
     printEquip(texture, itemName, text, count, colors)
@@ -408,7 +418,7 @@ local function handleItem (itemLink, count, totalCount)
   end
 
   -- all unspecified items
-  printItem(texture, itemName, '', colors)
+  printItemCount(texture, itemName, '', count, colors)
 end
 
 local function checkCurrencyDisplay (id)
@@ -681,3 +691,9 @@ farmerFrame:Show()
 
 addon.frame = farmerFrame
 addon.font = font
+
+addon:slash('test', function (id)
+  if (id ~= nil) then
+    handleItem(id, 1, 1)
+  end
+end)

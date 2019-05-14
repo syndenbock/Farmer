@@ -1,3 +1,6 @@
+  version 2.7.6
+- fixed name being displayed for stackable items when only looting one
+
   version 2.7.5
 - fixed bug with faulty item level on scaling items
 
