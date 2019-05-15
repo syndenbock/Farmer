@@ -529,21 +529,26 @@ addon:on('LOOT_READY', function (lootSwitch)
   if (lootSwitch == true and
       farmerOptions.fastLoot == true) then
     performAutoLoot()
-    if (LootFrame:IsShown() == true) then
-      LootFrame:SetAlpha(1)
-    end
   else
     LootFrame:SetAlpha(1)
   end
+end)
+
+addon:on('LOOT_OPENED', function ()
+  C_Timer.After(0, function ()
+    if (lootFlag == true) then
+      LootFrame:SetAlpha(1)
+    end
+  end)
 end)
 
 addon:on('LOOT_CLOSED', function ()
   lootFlag = false
 
   LootFrame:SetAlpha(0)
+
   if (mapShown == true) then
     WorldMapFrame:Show()
-    mapShown = false
   end
 end)
 
@@ -555,9 +560,11 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
   end
 
   local list = messagePatterns.CHAT_MSG_LOOT
+  local previous = true
 
   if (lootStack == nil) then
     lootStack = {}
+    previous = false
   end
 
   for k = 1, #list do
@@ -585,19 +592,18 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
         lootStack[itemId].totalCount = lootStack[itemId].totalCount + amount
       end
 
-      -- skipping one frame to accumulate all loot messages in a frame first
-      farmerFrame:SetScript('OnUpdate', function ()
-        farmerFrame:SetScript('OnUpdate', nil)
+      if (previous == false) then
+        -- skipping one frame to accumulate all loot messages in a frame first
+        C_Timer.After(0, function ()
+          if (elapsed < 0.3) then
+            displayLootAfterUpdate()
+          else
+            displayLootBeforeUpdate()
+          end
 
-        if (elapsed < 0.3) then
-          displayLootAfterUpdate()
-        else
-          displayLootBeforeUpdate()
-        end
-
-        bagTimeStamp = 0
-      end)
-      return
+          bagTimeStamp = 0
+        end)
+      end
     end
   end
 end)

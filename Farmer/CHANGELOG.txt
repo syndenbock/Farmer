@@ -1,5 +1,6 @@
   version 2.7.7
-- fixed money display after logging in
+- fixed money displaying all money once after logging in
+- fixed loot window being hidden if not all could be looted
 
   version 2.7.6
 - fixed name being displayed for stackable items when only looting one
