@@ -37,7 +37,7 @@ end
 local function storePosition (frame)
   local icon = GetItemIcon(114978)
 
-  icon = ' |T' .. icon .. addon.iconOffset
+  icon = ' |T' .. icon .. addon.vars.iconOffset
   farmerOptions.anchor = {frame:GetPoint()}
   frame:EnableMouse(false)
   frame:SetMovable(false)
@@ -53,7 +53,7 @@ local function moveFrame ()
   local frame = addon.frame
   local icon = GetItemIcon(3334)
 
-  icon = ' |T' .. icon .. addon.iconOffset
+  icon = ' |T' .. icon .. addon.vars.iconOffset
   frame:RegisterForDrag('LeftButton')
   frame:SetFading(false)
   frame:Clear()
@@ -87,11 +87,11 @@ local function setFontSize (size, scale)
   -- i have no idea why, i just figured it out by testing
   addon.font:SetSpacing(size / 9)
 
-  rawset(addon, 'iconOffset', ':'.. size * scale .. ':' .. size * scale .. ':' ..
-                          '0:-' .. (size / 9) .. '|t ')
+  addon.vars.iconOffset = ':'.. size * scale .. ':' .. size * scale .. ':' ..
+                          '0:-' .. (size / 9) .. '|t '
 
   -- addon.textOffset = ':'.. s .. ':' .. s .. ':' .. '0:-' .. (size / 6) .. '|t '
-  -- rawset(addon, 'iconOffset', ':0:0:0:-' .. (size / 6)  .. '|t ')
+  -- addon.vars.iconOffset = ':0:0:0:-' .. (size / 6)  .. '|t '
 end
 
 local function createCheckButton (name, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
@@ -442,7 +442,7 @@ addon:on('PLAYER_LOGIN', function ()
   earningStamp = earningStamp or money
 
   if (farmerOptions.money == true) then
-    rawset(addon, 'moneyStamp', money)
+    addon.vars.moneyStamp = money
   end
 end)
 

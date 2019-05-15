@@ -172,7 +172,7 @@ local function performAutoLoot ()
 end
 
 local function printItem (texture, name, text, colors)
-  local icon = ' |T' .. texture .. addon.iconOffset
+  local icon = ' |T' .. texture .. addon.vars.iconOffset
 
   if (text == nil or text == '') then
     printMessage(icon .. name, unpack(colors))

@@ -1,3 +1,6 @@
+  version 2.7.7
+- fixed money display after logging in
+
   version 2.7.6
 - fixed name being displayed for stackable items when only looting one
 
