@@ -4,87 +4,50 @@ local chipId = 129100
 local font = CreateFont('farmerFont')
 local _, chipName = GetItemInfoInstant(chipId)
 
+
+local itemStringReplacement = {
+  pattern = '%%s',
+  replacement = '(%%|%.+%%|r)'
+}
+
+local itemCountReplacement = {
+  pattern = '%%d',
+  replacement = '(%%d+)'
+}
+
 local messagePatterns = {
-  CHAT_MSG_LOOT = {
-    {
-      LOOT_ITEM_SELF_MULTIPLE, {
-        {
-          '%%s',
-          '(.+)'
-        }, {
-          '(%%d)',
-          '(%%d+)'
-        }
-      }
-    },
-    {
-      LOOT_ITEM_SELF, {
-        {
-          '%%s',
-          '(.+)',
-        }
-      }
-    },
-    {
-      LOOT_ITEM_PUSHED_SELF_MULTIPLE,
-      {
-        {
-          '%%s',
-          '(.+)'
-        },
-        {
-          '(%%d)',
-          '(%%d+)'
-        }
-      }
-    },
-    {
-      LOOT_ITEM_PUSHED_SELF, {
-        {
-          '%%s',
-          '(.+)',
-        }
-      }
-    },
-    {
-      LOOT_ITEM_BONUS_ROLL_SELF_MULTIPLE, {
-        {
-          '%%s',
-          '(.+)'
-        }, {
-          '(%%d)',
-          '(%%d+)'
-        }
-      }
-    },
-    {
-      LOOT_ITEM_BONUS_ROLL_SELF, {
-        {
-          '%%s',
-          '(.+)',
-        }
-      }
-    },
+  {
+    LOOT_ITEM_SELF_MULTIPLE, {
+      itemStringReplacement,
+      itemCountReplacement
+    }
   },
-  CHAT_MSG_CURRENCY = {
+  {
+    LOOT_ITEM_SELF, {
+      itemStringReplacement
+    }
+  },
+  {
+    LOOT_ITEM_PUSHED_SELF_MULTIPLE,
     {
-      CURRENCY_GAINED_MULTIPLE, {
-        {
-          '%%s',
-          '(.+)'
-        }, {
-          '(%%d)',
-          '(%%d+)'
-        }
-      }
-    },
-    {
-      CURRENCY_GAINED, {
-        {
-          '%%s',
-          '(.+)',
-        }
-      }
+      itemStringReplacement,
+      itemCountReplacement
+    }
+  },
+  {
+    LOOT_ITEM_PUSHED_SELF, {
+      itemStringReplacement
+    }
+  },
+  {
+    LOOT_ITEM_BONUS_ROLL_SELF_MULTIPLE, {
+      itemStringReplacement,
+      itemCountReplacement
+    }
+  },
+  {
+    LOOT_ITEM_BONUS_ROLL_SELF, {
+      itemStringReplacement
     }
   }
 }
@@ -111,20 +74,21 @@ local function setTrueScale (frame, scale)
     frame:SetScale(scale / frame:GetEffectiveScale())
 end
 
-for msg, replacements in pairs(messagePatterns) do
-  local new = {}
-  for i = 1, #replacements do
-    local content = replacements[i]
-    local message = content[1]
-    local patterns = content[2]
-    for k = 1, #patterns do
-      local pattern = patterns[k]
-      message = gsub(message, pattern[1], pattern[2])
-    end
-    message = '^' .. message .. '$'
-    new[i] = message
+for i = 1, #messagePatterns do
+  local content = messagePatterns[i]
+  local message = content[1]
+  local patterns = content[2]
+
+  message = message:gsub('%.', '%%.')
+
+  for k = 1, #patterns do
+    local pattern = patterns[k]
+
+    message = message:gsub(pattern.pattern, pattern.replacement)
   end
-  messagePatterns[msg] = new
+
+  message = '^' .. message .. '$'
+  messagePatterns[i] = message
 end
 
 local function fillCurrencyTable()
@@ -559,7 +523,6 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
     return
   end
 
-  local list = messagePatterns.CHAT_MSG_LOOT
   local previous = true
 
   if (lootStack == nil) then
@@ -567,8 +530,8 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
     previous = false
   end
 
-  for k = 1, #list do
-    local v = list[k]
+  for k = 1, #messagePatterns do
+    local v = messagePatterns[k]
     local link, amount = string.match(message, v)
 
     if (link ~= nil) then
