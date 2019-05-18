@@ -1,3 +1,6 @@
+  version 2.7.8
+- fixed bug with item count when looting more than one of an item
+
   version 2.7.7
 - fixed money displaying all money once after logging in
 - fixed loot window being hidden if not all could be looted

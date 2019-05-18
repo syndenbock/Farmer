@@ -604,6 +604,8 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
           bagTimeStamp = 0
         end)
       end
+
+      return
     end
   end
 end)
