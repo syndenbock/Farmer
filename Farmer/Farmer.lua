@@ -57,6 +57,7 @@ local currencyTable = {}
 local mailOpen = false
 local hadChip = false
 local lootFlag = false
+local updateFlag = false
 local lootTimeStamp = 0
 local bagTimeStamp = 0
 local mapShown
@@ -388,7 +389,6 @@ end
 local function checkCurrencyDisplay (id)
   if (farmerOptions.ignoreHonor == true) then
     local honorId = 1585
-    local conquestId = 11600
 
     if (id == honorId) then
       return false
@@ -398,14 +398,15 @@ local function checkCurrencyDisplay (id)
   return true
 end
 
-local function handleCurrency (id, total)
-  local name, amount, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
+local function handleCurrency (id)
+  local name, total, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
         rarity = GetCurrencyInfo(id)
-  local count = currencyTable[id] or 0
-  local count = total - count
+  local amount = currencyTable[id] or 0
+
+  amount = total - amount
 
   -- warfronts show unknown currencies
-  if (not name or not amount or not texture) then
+  if (name == nil or texture == nil) then
     return
   end
 
@@ -414,9 +415,9 @@ local function handleCurrency (id, total)
   if (checkCurrencyDisplay(id) == false or
       checkHideOptions() == false) then return end
 
-  if (count <= 0) then return end
+  if (amount <= 0) then return end
 
-  local text = 'x' .. count .. ' (' .. amount .. ')'
+  local text = 'x' .. amount .. ' (' .. total .. ')'
 
   printItem(texture, name, text, {1, 0.9, 0, 1})
 end
@@ -523,12 +524,7 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
     return
   end
 
-  local previous = true
-
-  if (lootStack == nil) then
-    lootStack = {}
-    previous = false
-  end
+  lootStack = lootStack or {}
 
   for k = 1, #messagePatterns do
     local v = messagePatterns[k]
@@ -555,7 +551,8 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
         lootStack[itemId].totalCount = lootStack[itemId].totalCount + amount
       end
 
-      if (previous == false) then
+      if (updateFlag == false) then
+        updateFlag = true
         -- skipping one frame to accumulate all loot messages in a frame first
         C_Timer.After(0, function ()
           if (elapsed < 0.3) then
@@ -565,6 +562,15 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
           end
 
           bagTimeStamp = 0
+          updateFlag = false
+
+          --[[ Blizzard's event system is very very very very very very very
+            unreliable, so we clean up --]]
+          C_Timer.After(0.3, function ()
+            if (updateFlag == false) then
+              displayLootAfterUpdate()
+            end
+          end)
         end)
       end
 
@@ -582,10 +588,10 @@ addon:on('BAG_UPDATE_DELAYED', function ()
   end
 end)
 
-addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total)
+addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
   if (id == nil) then return end
 
-  handleCurrency(id, total)
+  handleCurrency(id)
 end)
 
 addon:on('PLAYER_MONEY', function ()

@@ -1,5 +1,6 @@
   version 2.7.9
 - improved message pattern matching to match exact messages
+- improved currency display
 
   version 2.7.8
 - fixed bug with item count when looting more than one of an item
