@@ -473,6 +473,12 @@ addon:on('PLAYER_LOGIN', function ()
   fillCurrencyTable()
 end)
 
+--[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
+not fire, so we clear the flag after entering the world --]]
+addon:on('PLAYER_ENTERING_WORLD', function ()
+  mailOpen = false
+end)
+
 addon:on('MAIL_SHOW', function ()
   mailOpen = true
 end)
