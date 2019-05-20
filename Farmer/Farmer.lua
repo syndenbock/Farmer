@@ -55,6 +55,7 @@ local messagePatterns = {
 local farmerFrame
 local currencyTable = {}
 local mailOpen = false
+local platesShown = nil
 local hadChip = false
 local lootFlag = false
 local updateFlag = false
@@ -478,6 +479,11 @@ addon:on('PLAYER_ENTERING_WORLD', function ()
   lootFlag = false
   mailOpen = false
   bagTimeStamp = 0
+
+  if (platesShown ~= nil) then
+    SetCVar('nameplateShowAll', platesShown)
+    platesShown = nil
+  end
 end)
 
 addon:on('MAIL_SHOW', function ()
@@ -626,29 +632,30 @@ end)
 --[[ handling nameplates when fishing --]]
 
 do
-  local FISHING_ID = 131476;
-  local platesShown = nil;
+  local FISHING_NAME = GetSpellInfo(131476);
 
   addon:on('UNIT_SPELLCAST_CHANNEL_START', function (unit, target, spellid)
-    if (farmerOptions.hidePlatesWhenFishing == true and
-        unit == 'player' and
-        spellid == FISHING_ID) then
+    if (farmerOptions.hidePlatesWhenFishing ~= true or
+        unit ~= 'player') then return end
+
+    local spellName = GetSpellInfo(spellid)
+
+    if (spellName == FISHING_NAME) then
       platesShown = GetCVar('nameplateShowAll');
       SetCVar('nameplateShowAll', 0);
     end
   end);
 
   addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function (unit, target, spellid)
-    if (platesShown ~= nil and
-        unit == 'player' and
-        spellid == FISHING_ID) then
-      SetCVar('nameplateShowAll', platesShown);
+    if (platesShown == nil or
+        unit ~= 'player') then return end
 
-      --[[ we change platesShown back to nil, so when someone disables the
-        option and changes nameplates manually, the old value does not get
-        applied anymore --]]
-      platesShown = nil;
-    end
+    SetCVar('nameplateShowAll', platesShown);
+
+    --[[ we change platesShown back to nil, so when someone disables the
+      option and changes nameplates manually, the old value does not get
+      applied anymore --]]
+    platesShown = nil;
   end);
 end
 

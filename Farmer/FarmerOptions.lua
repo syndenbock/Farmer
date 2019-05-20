@@ -31,7 +31,7 @@ InterfaceOptions_AddCategory(farmerOptionsFrame)
 local function setDefaultPosition ()
   local frame = addon.frame
   frame:ClearAllPoints()
-  frame:SetPoint('BOTTOM', nil, 'CENTER', 0, 35)
+  frame:SetPoint('BOTTOM', nil, 'CENTER', 0, 50)
 end
 
 local function storePosition (frame)
