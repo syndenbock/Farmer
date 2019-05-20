@@ -58,7 +58,6 @@ local mailOpen = false
 local hadChip = false
 local lootFlag = false
 local updateFlag = false
-local lootTimeStamp = 0
 local bagTimeStamp = 0
 local mapShown
 local lootStack
@@ -476,7 +475,9 @@ end)
 --[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
 not fire, so we clear the flag after entering the world --]]
 addon:on('PLAYER_ENTERING_WORLD', function ()
+  lootFlag = false
   mailOpen = false
+  bagTimeStamp = 0
 end)
 
 addon:on('MAIL_SHOW', function ()
