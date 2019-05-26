@@ -545,7 +545,6 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
 
     if (link ~= nil) then
       local itemId = GetItemInfoInstant(link)
-      local elapsed = GetTime() - bagTimeStamp
 
       if (amount == nil) then
         amount = 1
@@ -564,25 +563,35 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
         lootStack[itemId].totalCount = lootStack[itemId].totalCount + amount
       end
 
+      -- if (elapsed < 0.3) then
+      --   print('elapsed')
+      --   displayLootAfterUpdate()
+      --   return
+      -- end
+
       if (updateFlag == false) then
         updateFlag = true
         -- skipping one frame to accumulate all loot messages in a frame first
         C_Timer.After(0, function ()
-          if (elapsed < 0.3) then
-            displayLootAfterUpdate()
-          else
-            displayLootBeforeUpdate()
-          end
+          C_Timer.After(0, function ()
+            local elapsed = GetTime() - bagTimeStamp
 
-          bagTimeStamp = 0
-          updateFlag = false
-
-          --[[ Blizzard's event system is very very very very very very very
-            unreliable, so we clean up --]]
-          C_Timer.After(0.3, function ()
-            if (updateFlag == false) then
+            if (elapsed < 0.3) then
               displayLootAfterUpdate()
+            else
+              displayLootBeforeUpdate()
             end
+
+            bagTimeStamp = 0
+            updateFlag = false
+
+            --[[ Blizzard's event system is very very very very very very very
+              unreliable, so we clean up --]]
+            C_Timer.After(0.5, function ()
+              if (updateFlag == false) then
+                displayLootAfterUpdate()
+              end
+            end)
           end)
         end)
       end
