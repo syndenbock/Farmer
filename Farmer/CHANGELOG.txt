@@ -1,3 +1,7 @@
+  version 2.7.10
+- fixed error when caging pets
+- fixed multiple item display
+
   version 2.7.9
 - improved message pattern matching to match exact messages
 - improved currency display

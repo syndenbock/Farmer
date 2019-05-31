@@ -267,7 +267,7 @@ local function checkItemDisplay (itemLink)
 
   -- happens when caging a pet
   if (itemName == nil) then
-    return
+    return false
   end
 
   if (farmerOptions.reagents == true and
@@ -302,6 +302,7 @@ local function handleItem (itemLink, count, totalCount)
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
         itemSetID, isCraftingReagent = GetItemInfo(itemLink)
+
   local colors = addon.rarityColors[itemRarity]
 
   -- crafting reagents
@@ -544,7 +545,7 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
     local link, amount = string.match(message, v)
 
     if (link ~= nil) then
-      local itemId = GetItemInfoInstant(link)
+      local itemId = GetItemInfoInstant(link) or link
 
       if (amount == nil) then
         amount = 1
@@ -562,12 +563,6 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
         lootStack[itemId].count = lootStack[itemId].count + amount
         lootStack[itemId].totalCount = lootStack[itemId].totalCount + amount
       end
-
-      -- if (elapsed < 0.3) then
-      --   print('elapsed')
-      --   displayLootAfterUpdate()
-      --   return
-      -- end
 
       if (updateFlag == false) then
         updateFlag = true
