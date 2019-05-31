@@ -59,7 +59,6 @@ local platesShown = nil
 local hadChip = false
 local lootFlag = false
 local updateFlag = false
-local bagTimeStamp = 0
 local mapShown
 local lootStack
 local playerName
@@ -423,37 +422,22 @@ local function handleCurrency (id)
   printItem(texture, name, text, {1, 0.9, 0, 1})
 end
 
-local function displayLootBeforeUpdate ()
+local function displayLoot ()
   if (lootStack == nil) then
     return
   end
 
   if (checkHideOptions() == false) then
-    lootStack = nil
-    return
-  end
-
-  for key, value in pairs (lootStack) do
-    if (value.count > 0) then
-      handleItem(value.itemLink, value.count, value.totalCount)
+    for key, value in pairs(lootStack) do
       value.count = 0
     end
-  end
-end
-
-local function displayLootAfterUpdate ()
-  if (lootStack == nil) then
-    return
-  end
-
-  if (checkHideOptions() == false) then
-    lootStack = nil
     return
   end
 
   for key, value in pairs (lootStack) do
     if (value.count > 0) then
       handleItem(value.itemLink, value.count, 0)
+      value.count = 0
     end
   end
 
@@ -479,7 +463,6 @@ not fire, so we clear the flag after entering the world --]]
 addon:on('PLAYER_ENTERING_WORLD', function ()
   lootFlag = false
   mailOpen = false
-  bagTimeStamp = 0
 
   if (platesShown ~= nil) then
     SetCVar('nameplateShowAll', platesShown)
@@ -556,37 +539,28 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
       if (lootStack[itemId] == nil) then
         lootStack[itemId] = {
           ['count'] = amount,
-          ['totalCount'] = amount,
+          -- ['totalCount'] = amount,
           ['itemLink'] = link
         }
       else
         lootStack[itemId].count = lootStack[itemId].count + amount
-        lootStack[itemId].totalCount = lootStack[itemId].totalCount + amount
+        -- lootStack[itemId].totalCount = lootStack[itemId].totalCount + amount
       end
 
       if (updateFlag == false) then
         updateFlag = true
         -- skipping one frame to accumulate all loot messages in a frame first
         C_Timer.After(0, function ()
-          C_Timer.After(0, function ()
-            local elapsed = GetTime() - bagTimeStamp
-
-            if (elapsed < 0.3) then
-              displayLootAfterUpdate()
-            else
-              displayLootBeforeUpdate()
-            end
-
-            bagTimeStamp = 0
-            updateFlag = false
-
-            --[[ Blizzard's event system is very very very very very very very
-              unreliable, so we clean up --]]
-            C_Timer.After(0.5, function ()
-              if (updateFlag == false) then
-                displayLootAfterUpdate()
+          updateFlag = false
+          --[[ Blizzard's event system is very very very very very very very
+            unreliable, so we clean up --]]
+          C_Timer.After(0.5, function ()
+            if (updateFlag == false) then
+              if (lootStack ~= nil) then
+                print('Farmer Debug: collected loot was not displayed')
               end
-            end)
+              -- displayLoot()
+            end
           end)
         end)
       end
@@ -596,14 +570,9 @@ addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
   end
 end)
 
-addon:on('BAG_UPDATE_DELAYED', function ()
-  if (lootStack == nil) then
-    bagTimeStamp = GetTime()
-  else
-    bagTimeStamp = 0
-    displayLootAfterUpdate()
-  end
-end)
+addon:on('BAG_UPDATE_DELAYED', displayLoot)
+
+addon:on('QUEST_LOG_UPDATE', displayLoot)
 
 addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
   if (id == nil) then return end

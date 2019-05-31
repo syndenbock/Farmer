@@ -1,6 +1,7 @@
   version 2.7.10
 - fixed error when caging pets
 - fixed multiple item display
+- hopefully fixed rare bug with wrong total count
 
   version 2.7.9
 - improved message pattern matching to match exact messages
