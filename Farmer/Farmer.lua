@@ -13,6 +13,7 @@ local voidStorageOpen = false;
 local platesShown = nil
 local hadChip = false
 local lootFlag = false
+local equipmentStamp = 0
 local mapShown
 local playerName
 local playerFullName
@@ -529,10 +530,14 @@ local function getFirstKey (table)
   end
 end
 
+addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
+  equipmentStamp = GetTime();
+end);
+
 addon:on('BAG_UPDATE_DELAYED', function ()
   local inventory = getInventory();
 
-  if (checkHideOptions() == false) then
+  if (checkHideOptions() == false or GetTime() == equipmentStamp) then
     currentInventory = inventory;
     return;
   end
