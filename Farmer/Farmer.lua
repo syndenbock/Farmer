@@ -4,65 +4,19 @@ local chipId = 129100
 local font = CreateFont('farmerFont')
 local _, chipName = GetItemInfoInstant(chipId)
 
-
-local itemStringReplacement = {
-  pattern = '%%s',
-  replacement = '(%%|%.+%%|r)'
-}
-
-local itemCountReplacement = {
-  pattern = '%%d',
-  replacement = '(%%d+)'
-}
-
-local messagePatterns = {
-  {
-    LOOT_ITEM_SELF_MULTIPLE, {
-      itemStringReplacement,
-      itemCountReplacement
-    }
-  },
-  {
-    LOOT_ITEM_SELF, {
-      itemStringReplacement
-    }
-  },
-  {
-    LOOT_ITEM_PUSHED_SELF_MULTIPLE,
-    {
-      itemStringReplacement,
-      itemCountReplacement
-    }
-  },
-  {
-    LOOT_ITEM_PUSHED_SELF, {
-      itemStringReplacement
-    }
-  },
-  {
-    LOOT_ITEM_BONUS_ROLL_SELF_MULTIPLE, {
-      itemStringReplacement,
-      itemCountReplacement
-    }
-  },
-  {
-    LOOT_ITEM_BONUS_ROLL_SELF, {
-      itemStringReplacement
-    }
-  }
-}
-
 local farmerFrame
 local currencyTable = {}
 local mailOpen = false
+local bankOpen = false;
+local guildBankOpen = false;
+local voidStorageOpen = false;
 local platesShown = nil
 local hadChip = false
 local lootFlag = false
-local updateFlag = false
 local mapShown
-local lootStack
 local playerName
 local playerFullName
+local currentInventory;
 
 local function printMessage (...)
   farmerFrame:AddMessage(...)
@@ -72,23 +26,6 @@ end
 local function setTrueScale (frame, scale)
     frame:SetScale(1)
     frame:SetScale(scale / frame:GetEffectiveScale())
-end
-
-for i = 1, #messagePatterns do
-  local content = messagePatterns[i]
-  local message = content[1]
-  local patterns = content[2]
-
-  message = message:gsub('%.', '%%.')
-
-  for k = 1, #patterns do
-    local pattern = patterns[k]
-
-    message = message:gsub(pattern.pattern, pattern.replacement)
-  end
-
-  message = '^' .. message .. '$'
-  messagePatterns[i] = message
 end
 
 local function fillCurrencyTable()
@@ -104,23 +41,27 @@ local function fillCurrencyTable()
 end
 
 local function checkHideOptions ()
+  if (bankOpen == true or guildBankOpen == true) then
+    return false;
+  end
+
   if (farmerOptions.hideAtMailbox == true and
       mailOpen == true) then
-    return false
+    return false;
   end
 
   if (farmerOptions.hideOnExpeditions == true and
       IslandsPartyPoseFrame and
       IslandsPartyPoseFrame:IsShown() == true) then
-    return false
+    return false;
   end
 
   if (farmerOptions.hideInArena == true and
       IsActiveBattlefieldArena() == true) then
-    return false
+    return false;
   end
 
-  return true
+  return true;
 end
 
 local function performAutoLoot ()
@@ -422,28 +363,6 @@ local function handleCurrency (id)
   printItem(texture, name, text, {1, 0.9, 0, 1})
 end
 
-local function displayLoot ()
-  if (lootStack == nil) then
-    return
-  end
-
-  if (checkHideOptions() == false) then
-    for key, value in pairs(lootStack) do
-      value.count = 0
-    end
-    return
-  end
-
-  for key, value in pairs (lootStack) do
-    if (value.count > 0) then
-      handleItem(value.itemLink, value.count, 0)
-      value.count = 0
-    end
-  end
-
-  lootStack = nil
-end
-
 --[[
 ///#############################################################################
 /// Event listeners
@@ -461,8 +380,11 @@ end)
 --[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
 not fire, so we clear the flag after entering the world --]]
 addon:on('PLAYER_ENTERING_WORLD', function ()
-  lootFlag = false
-  mailOpen = false
+  lootFlag = false;
+  mailOpen = false;
+  bankOpen = false;
+  guildBankOpen = false;
+  voidStorageOpen = false;
 
   if (platesShown ~= nil) then
     SetCVar('nameplateShowAll', platesShown)
@@ -476,6 +398,30 @@ end)
 
 addon:on('MAIL_CLOSED', function ()
   mailOpen = false
+end)
+
+addon:on('BANKFRAME_OPENED', function ()
+  bankOpen = true;
+end)
+
+addon:on('BANKFRAME_CLOSED', function ()
+  bankOpen = false;
+end)
+
+addon:on('GUILDBANKFRAME_OPENED', function ()
+  guildBankOpen = true;
+end)
+
+addon:on('GUILDBANKFRAME_CLOSED', function ()
+  guildBankOpen = false;
+end)
+
+addon:on('VOID_STORAGE_OPEN', function ()
+  voidStorageOpen = true;
+end)
+
+addon:on('VOID_STORAGE_CLOSE', function ()
+  voidStorageOpen = false;
 end)
 
 LootFrame:SetAlpha(0)
@@ -514,66 +460,6 @@ addon:on('LOOT_CLOSED', function ()
   end
 end)
 
-addon:on('CHAT_MSG_LOOT', function (message, _, _, _, unit)
-  -- prevents string parsing in groups/raids
-  if (unit ~= playerName and
-      unit ~= playerFullName) then
-    return
-  end
-
-  lootStack = lootStack or {}
-
-  for k = 1, #messagePatterns do
-    local v = messagePatterns[k]
-    local link, amount = string.match(message, v)
-
-    if (link ~= nil) then
-      local itemId = GetItemInfoInstant(link) or link
-
-      if (amount == nil) then
-        amount = 1
-      else
-        amount = tonumber(amount)
-      end
-
-      if (lootStack[itemId] == nil) then
-        lootStack[itemId] = {
-          ['count'] = amount,
-          -- ['totalCount'] = amount,
-          ['itemLink'] = link
-        }
-      else
-        lootStack[itemId].count = lootStack[itemId].count + amount
-        -- lootStack[itemId].totalCount = lootStack[itemId].totalCount + amount
-      end
-
-      if (updateFlag == false) then
-        updateFlag = true
-        -- skipping one frame to accumulate all loot messages in a frame first
-        C_Timer.After(0, function ()
-          updateFlag = false
-          --[[ Blizzard's event system is very very very very very very very
-            unreliable, so we clean up --]]
-          C_Timer.After(0.5, function ()
-            if (updateFlag == false) then
-              if (lootStack ~= nil) then
-                print('Farmer Debug: collected loot was not displayed')
-              end
-              -- displayLoot()
-            end
-          end)
-        end)
-      end
-
-      return
-    end
-  end
-end)
-
-addon:on('BAG_UPDATE_DELAYED', displayLoot)
-
-addon:on('QUEST_LOG_UPDATE', displayLoot)
-
 addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
   if (id == nil) then return end
 
@@ -601,6 +487,95 @@ addon:on('PLAYER_MONEY', function ()
   printMessage(text, 1, 1, 1, 1)
 end)
 
+local function getInventory ()
+  local inventory = {};
+
+  for i = 0, 4, 1 do
+    local slots = GetContainerNumSlots(i);
+      for j = 1, slots, 1 do
+        local id = GetContainerItemID(i, j);
+
+        if (id ~= nil) then
+
+        local link = GetContainerItemLink(i, j) or id;
+
+        if (inventory[id] == nil) then
+          -- saving all links because gear has same ids, but different links
+          inventory[id] = {
+            links = {
+              [link] = true
+            },
+            count = GetItemCount(id)
+          };
+        else
+          if (inventory[id].links[link] == nil) then
+            inventory[id].links[link] = true;
+          end
+        end
+      end
+    end
+  end
+
+  return inventory;
+end
+
+addon:on('PLAYER_LOGIN', function ()
+  currentInventory = getInventory();
+end);
+
+local function getFirstKey (table)
+  for key, value in pairs(table) do
+    return key;
+  end
+end
+
+addon:on('BAG_UPDATE_DELAYED', function ()
+  local inventory = getInventory();
+
+  if (checkHideOptions() == false) then
+    currentInventory = inventory;
+    return;
+  end
+
+  local new = {};
+
+  for id, info in pairs(inventory) do
+    if (currentInventory[id] == nil) then
+      new[id] = {
+        count = inventory[id].count,
+        link = getFirstKey(inventory[id].links);
+      };
+    elseif (inventory[id].count > currentInventory[id].count) then
+      local links = inventory[id].links;
+      local currentLinks = currentInventory[id].links;
+      local found = false;
+
+      for link, value in pairs(links) do
+        if (currentLinks[link] == nil) then
+          found = true;
+          new[id] = {
+            count = inventory[id].count - currentInventory[id].count,
+            link = link
+          };
+          break;
+        end
+      end
+
+      if (found == false) then
+        new[id] = {
+          count = inventory[id].count - currentInventory[id].count,
+          link = getFirstKey(links)
+        };
+      end
+    end
+  end
+
+  for id, info in pairs(new) do
+    handleItem(info.link, info.count, 0);
+  end
+
+  currentInventory = inventory;
+end);
 
 --[[ handling nameplates when fishing --]]
 
