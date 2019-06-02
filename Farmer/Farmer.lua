@@ -1,8 +1,6 @@
 local addonName, addon = ...
 
-local chipId = 129100
 local font = CreateFont('farmerFont')
-local _, chipName = GetItemInfoInstant(chipId)
 
 local farmerFrame
 local currencyTable = {}
@@ -11,7 +9,6 @@ local bankOpen = false;
 local guildBankOpen = false;
 local voidStorageOpen = false;
 local platesShown = nil
-local hadChip = false
 local lootFlag = false
 local equipmentStamp = 0;
 local tradeStamp = 0;
@@ -175,18 +172,6 @@ local function printEquip (texture, name, text, count, colors)
   printItemCount(texture, name, text, count, colors, false)
 end
 
-local function isGemChip (itemId)
-  if (itemId == nil) then return false end
-
-  if ((itemId >= 130200 and
-       itemId <= 130204) or
-      itemId == 129099) then
-    return true
-  else
-    return false
-  end
-end
-
 local function checkItemDisplay (itemId, itemLink)
   if (itemId and
       farmerOptions.focusItems[itemId] == true) then
@@ -208,8 +193,7 @@ local function checkItemDisplay (itemId, itemLink)
   end
 
   if (farmerOptions.reagents == true and
-      (isGemChip(itemId) == true or
-       isCraftingReagent == true)) then
+      isCraftingReagent == true) then
     return true
   end
 
@@ -248,13 +232,6 @@ local function handleItem (itemId, itemLink, count)
       return
     end
 
-    colors = {0, 0.8, 0.8, 1}
-  end
-
-  -- legion jewelcrafting colored gem chips
-  if (isGemChip(itemId) == true) then
-    hadChip = true
-    itemLink = chipId
     colors = {0, 0.8, 0.8, 1}
   end
 
