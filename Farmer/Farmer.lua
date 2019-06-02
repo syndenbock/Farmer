@@ -109,10 +109,9 @@ local function printItemCount (texture, name, text, count, colors, forceCount)
   printItem(texture, name, text, colors)
 end
 
-local function printStackableItemTotal (id, texture, name, count, totalCount, colors)
+local function printStackableItemTotal (id, texture, name, count, colors)
   local text
-
-  totalCount = totalCount + GetItemCount(id, true)
+  local totalCount = GetItemCount(id, true)
 
   if (totalCount < count) then
     totalCount = count
@@ -123,11 +122,10 @@ local function printStackableItemTotal (id, texture, name, count, totalCount, co
   printItem(texture, name, text, colors)
 end
 
-local function printStackableItemBags (id, texture, name, count, totalCount, colors)
+local function printStackableItemBags (id, texture, name, count, colors)
   local text
-  local bagCount = totalCount + GetItemCount(id, false)
-
-  totalCount = totalCount + GetItemCount(id, true)
+  local bagCount = GetItemCount(id, false)
+  local totalCount = GetItemCount(id, true)
 
   if (totalCount < count) then
     totalCount = count
@@ -139,11 +137,10 @@ local function printStackableItemBags (id, texture, name, count, totalCount, col
   printItem(texture, name, text, colors)
 end
 
-local function printStackableItemTotalAndBags (id, texture, name, count, totalCount, colors)
+local function printStackableItemTotalAndBags (id, texture, name, count, colors)
   local text
-  local bagCount = totalCount + GetItemCount(id, false)
-
-  totalCount = totalCount + GetItemCount(id, true)
+  local bagCount = GetItemCount(id, false)
+  local totalCount = GetItemCount(id, true)
 
   if (totalCount < count) then
     totalCount = count
@@ -155,17 +152,17 @@ local function printStackableItemTotalAndBags (id, texture, name, count, totalCo
   printItem(texture, name, text, colors)
 end
 
-local function printStackableItem (id, texture, name, count, totalCount, colors)
+local function printStackableItem (id, texture, name, count, colors)
   -- this should be the most common case, so we check this first
   if (farmerOptions.showTotal == true and
       farmerOptions.showBags == false) then
-    printStackableItemTotal(id, texture, name, count, totalCount, colors)
+    printStackableItemTotal(id, texture, name, count, colors)
   elseif (farmerOptions.showTotal == true and
           farmerOptions.showBags == true) then
-    printStackableItemTotalAndBags(id, texture, name, count, totalCount, colors)
+    printStackableItemTotalAndBags(id, texture, name, count, colors)
   elseif (farmerOptions.showTotal == false and
           farmerOptions.showBags == true) then
-    printStackableItemBags(id, texture, name, count, totalCount, colors)
+    printStackableItemBags(id, texture, name, count, colors)
   else
     printItemCount(texture, name, '', count, colors, true)
   end
@@ -175,7 +172,7 @@ local function printEquip (texture, name, text, count, colors)
   if (farmerOptions.itemNames == true) then
     text = '[' .. text .. ']'
   end
-  printItemCount(texture, name, text, count, colors)
+  printItemCount(texture, name, text, count, colors, false)
 end
 
 local function isGemChip (itemId)
@@ -234,7 +231,7 @@ local function checkItemDisplay (itemId, itemLink)
   return false
 end
 
-local function handleItem (itemId, itemLink, count, totalCount)
+local function handleItem (itemId, itemLink, count)
   if (checkItemDisplay(itemId, itemLink) ~= true) then return end
 
   local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
@@ -318,12 +315,12 @@ local function handleItem (itemId, itemLink, count, totalCount)
 
   -- stackable items
   if (itemStackCount > 1) then
-    printStackableItem(itemLink, texture, itemName, count, totalCount, colors)
+    printStackableItem(itemLink, texture, itemName, count, colors)
     return
   end
 
   -- all unspecified items
-  printItemCount(texture, itemName, '', count, colors)
+  printItemCount(texture, itemName, '', count, colors, false)
 end
 
 local function checkCurrencyDisplay (id)
@@ -595,7 +592,7 @@ addon:on('BAG_UPDATE_DELAYED', function ()
   end
 
   for id, info in pairs(new) do
-    handleItem(id, info.link, info.count, 0);
+    handleItem(id, info.link, info.count);
   end
 
   currentInventory = inventory;
@@ -657,6 +654,7 @@ addon.font = font
 
 addon:slash('test', function (id)
   if (id ~= nil) then
-    handleItem(id, 1)
+    local _, link = GetItemInfo(id);
+    handleItem(link, id, 1)
   end
 end)
