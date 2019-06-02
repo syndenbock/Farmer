@@ -1,3 +1,6 @@
+  version 2.8.1
+- fixed wrong item count when getting an item while a similar item is already equipped
+
   version 2.8
 - fixed error when caging pets
 - completely reworked item detection to not be dependent on the games event order

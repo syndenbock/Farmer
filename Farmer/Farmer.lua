@@ -190,9 +190,7 @@ local function isGemChip (itemId)
   end
 end
 
-local function checkItemDisplay (itemLink)
-  local itemId = GetItemInfoInstant(itemLink)
-
+local function checkItemDisplay (itemId, itemLink)
   if (itemId and
       farmerOptions.focusItems[itemId] == true) then
     if (farmerOptions.special == true) then
@@ -202,12 +200,12 @@ local function checkItemDisplay (itemLink)
     return false
   end
 
-  local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
+  local itemName, _itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
         itemSetID, isCraftingReagent = GetItemInfo(itemLink)
 
-  -- happens when caging a pet
+  -- happens when caging a pet or when looting mythic keystones
   if (itemName == nil) then
     return false
   end
@@ -236,10 +234,9 @@ local function checkItemDisplay (itemLink)
   return false
 end
 
-local function handleItem (itemLink, count, totalCount)
-  if (checkItemDisplay(itemLink) ~= true) then return end
+local function handleItem (itemId, itemLink, count, totalCount)
+  if (checkItemDisplay(itemId, itemLink) ~= true) then return end
 
-  local itemId = GetItemInfoInstant(itemLink)
   local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
@@ -492,29 +489,44 @@ end)
 local function getInventory ()
   local inventory = {};
 
+  local function addItem (id, link)
+    if (inventory[id] == nil) then
+      -- saving all links because gear has same ids, but different links
+      inventory[id] = {
+        links = {
+          [link] = true
+        },
+        count = GetItemCount(id)
+      };
+    else
+      if (inventory[id].links[link] == nil) then
+        inventory[id].links[link] = true;
+      end
+    end
+  end
+
   for i = 0, 4, 1 do
     local slots = GetContainerNumSlots(i);
-      for j = 1, slots, 1 do
-        local id = GetContainerItemID(i, j);
 
-        if (id ~= nil) then
+    for j = 1, slots, 1 do
+      local id = GetContainerItemID(i, j);
 
+      if (id ~= nil) then
         local link = GetContainerItemLink(i, j) or id;
 
-        if (inventory[id] == nil) then
-          -- saving all links because gear has same ids, but different links
-          inventory[id] = {
-            links = {
-              [link] = true
-            },
-            count = GetItemCount(id)
-          };
-        else
-          if (inventory[id].links[link] == nil) then
-            inventory[id].links[link] = true;
-          end
-        end
+        addItem(id, link);
       end
+    end
+  end
+
+  -- slots 1-19 are gear, 20-23 are equipped bags
+  for i = 0, 23, 1 do
+    local id = GetInventoryItemID('player', i);
+
+    if (id ~= nil) then
+      local link = GetInventoryItemLink('player', j) or id;
+
+      addItem(id, link);
     end
   end
 
@@ -583,7 +595,7 @@ addon:on('BAG_UPDATE_DELAYED', function ()
   end
 
   for id, info in pairs(new) do
-    handleItem(info.link, info.count, 0);
+    handleItem(id, info.link, info.count, 0);
   end
 
   currentInventory = inventory;
@@ -645,6 +657,6 @@ addon.font = font
 
 addon:slash('test', function (id)
   if (id ~= nil) then
-    handleItem(id, 1, 1)
+    handleItem(id, 1)
   end
 end)
