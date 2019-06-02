@@ -6,14 +6,15 @@ local _, chipName = GetItemInfoInstant(chipId)
 
 local farmerFrame
 local currencyTable = {}
-local mailOpen = false
+local mailOpen = false;
 local bankOpen = false;
 local guildBankOpen = false;
 local voidStorageOpen = false;
 local platesShown = nil
 local hadChip = false
 local lootFlag = false
-local equipmentStamp = 0
+local equipmentStamp = 0;
+local tradeStamp = 0;
 local mapShown
 local playerName
 local playerFullName
@@ -42,7 +43,7 @@ local function fillCurrencyTable()
 end
 
 local function checkHideOptions ()
-  if (bankOpen == true or guildBankOpen == true) then
+  if (bankOpen == true or guildBankOpen == true or voidStorageOpen == true) then
     return false;
   end
 
@@ -534,10 +535,16 @@ addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
   equipmentStamp = GetTime();
 end);
 
+addon:on('TRADE_CLOSED', function ()
+  tradeStamp = GetTime();
+end);
+
 addon:on('BAG_UPDATE_DELAYED', function ()
   local inventory = getInventory();
+  local timeStamp = GetTime();
 
-  if (checkHideOptions() == false or GetTime() == equipmentStamp) then
+  if (checkHideOptions() == false or timeStamp == equipmentStamp or
+      timeStamp == tradeStamp) then
     currentInventory = inventory;
     return;
   end
@@ -548,7 +555,7 @@ addon:on('BAG_UPDATE_DELAYED', function ()
     if (currentInventory[id] == nil) then
       new[id] = {
         count = inventory[id].count,
-        link = getFirstKey(inventory[id].links);
+        link = getFirstKey(inventory[id].links)
       };
     elseif (inventory[id].count > currentInventory[id].count) then
       local links = inventory[id].links;
