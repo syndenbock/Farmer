@@ -10,11 +10,8 @@ local guildBankOpen = false;
 local voidStorageOpen = false;
 local platesShown = nil
 local lootFlag = false
-local equipmentStamp = 0;
 local tradeStamp = 0;
 local mapShown
-local playerName
-local playerFullName
 local currentInventory;
 
 local function printMessage (...)
@@ -25,6 +22,12 @@ end
 local function setTrueScale (frame, scale)
     frame:SetScale(1)
     frame:SetScale(scale / frame:GetEffectiveScale())
+end
+
+local function getFirstKey (table)
+  for key, value in pairs(table) do
+    return key;
+  end
 end
 
 local function fillCurrencyTable()
@@ -343,10 +346,6 @@ end
 ]]--
 
 addon:on('PLAYER_LOGIN', function ()
-  playerName = {UnitFullName('player')}
-  playerFullName = playerName[1] .. '-' .. playerName[2]
-  playerName = playerName[1]
-
   fillCurrencyTable()
 end)
 
@@ -511,16 +510,6 @@ addon:on('PLAYER_LOGIN', function ()
   currentInventory = getInventory();
 end);
 
-local function getFirstKey (table)
-  for key, value in pairs(table) do
-    return key;
-  end
-end
-
-addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
-  equipmentStamp = GetTime();
-end);
-
 addon:on('TRADE_CLOSED', function ()
   tradeStamp = GetTime();
 end);
@@ -529,7 +518,7 @@ addon:on('BAG_UPDATE_DELAYED', function ()
   local inventory = getInventory();
   local timeStamp = GetTime();
 
-  if (checkHideOptions() == false or timeStamp == equipmentStamp or
+  if (checkHideOptions() == false or
       timeStamp == tradeStamp) then
     currentInventory = inventory;
     return;
