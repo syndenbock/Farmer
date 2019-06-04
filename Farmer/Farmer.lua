@@ -1,9 +1,10 @@
-local addonName, addon = ...
+local addonName, addon = ...;
 
-local font = CreateFont('farmerFont')
+local UNITID_PLAYER = 'Player';
 
-local farmerFrame
-local currencyTable = {}
+local font = CreateFont('farmerFont');
+local farmerFrame;
+local currencyTable = {};
 local mailOpen = false;
 local bankOpen = false;
 local guildBankOpen = false;
@@ -11,7 +12,7 @@ local voidStorageOpen = false;
 local platesShown = nil
 local lootFlag = false
 local tradeStamp = 0;
-local mapShown
+local mapShown;
 local currentInventory;
 
 local function printMessage (...)
@@ -486,7 +487,6 @@ local function getInventory ()
 
       if (id ~= nil) then
         local link = GetContainerItemLink(i, j) or id;
-
         addItem(id, link);
       end
     end
@@ -494,10 +494,11 @@ local function getInventory ()
 
   -- slots 1-19 are gear, 20-23 are equipped bags
   for i = 0, 23, 1 do
-    local id = GetInventoryItemID('player', i);
+    local id = GetInventoryItemID(UNITID_PLAYER, i);
 
     if (id ~= nil) then
-      local link = GetInventoryItemLink('player', j) or id;
+      local link = GetInventoryItemLink(UNITID_PLAYER, i) or id;
+
 
       addItem(id, link);
     end
@@ -571,7 +572,7 @@ do
 
   addon:on('UNIT_SPELLCAST_CHANNEL_START', function (unit, target, spellid)
     if (farmerOptions.hidePlatesWhenFishing ~= true or
-        unit ~= 'player') then return end
+        unit ~= UNITID_PLAYER) then return end
 
     local spellName = GetSpellInfo(spellid)
 
@@ -583,7 +584,7 @@ do
 
   addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function (unit, target, spellid)
     if (platesShown == nil or
-        unit ~= 'player') then return end
+        unit ~= UNITID_PLAYER) then return end
 
     SetCVar('nameplateShowAll', platesShown);
 
