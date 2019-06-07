@@ -1,19 +1,21 @@
 local addonName, addon = ...;
 
-local UNITID_PLAYER = 'Player';
+local UNITID_PLAYER = 'player';
 
 local font = CreateFont('farmerFont');
 local farmerFrame;
 local currencyTable = {};
-local mailOpen = false;
-local bankOpen = false;
-local guildBankOpen = false;
-local voidStorageOpen = false;
 local platesShown = nil
-local lootFlag = false
 local tradeStamp = 0;
-local mapShown;
 local currentInventory;
+
+local widgetFlags = {
+  mail = false,
+  bank = false,
+  guildbank = false,
+  voidstorage = false,
+  map = false,
+};
 
 local function printMessage (...)
   farmerFrame:AddMessage(...)
@@ -31,6 +33,12 @@ local function getFirstKey (table)
   end
 end
 
+local function clearWidgetFlags ()
+  for key, value in pairs(widgetFlags) do
+    widgetFlags[key] = false;
+  end
+end
+
 local function fillCurrencyTable()
   -- a pretty ugly workaround, but WoW has no table containing the currency ids
   -- does not take long though, so it's fine (2ms on my shitty ass pc)
@@ -44,12 +52,14 @@ local function fillCurrencyTable()
 end
 
 local function checkHideOptions ()
-  if (bankOpen == true or guildBankOpen == true or voidStorageOpen == true) then
+  if (widgetFlags.bank == true or
+      widgetFlags.guildbank == true or
+      widgetFlags.voidstorage == true) then
     return false;
   end
 
   if (farmerOptions.hideAtMailbox == true and
-      mailOpen == true) then
+      widgetFlags.mail == true) then
     return false;
   end
 
@@ -347,66 +357,62 @@ end
 ]]--
 
 addon:on('PLAYER_LOGIN', function ()
-  fillCurrencyTable()
-end)
+  fillCurrencyTable();
+end);
 
 --[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
 not fire, so we clear the flag after entering the world --]]
 addon:on('PLAYER_ENTERING_WORLD', function ()
-  lootFlag = false;
-  mailOpen = false;
-  bankOpen = false;
-  guildBankOpen = false;
-  voidStorageOpen = false;
+  clearWidgetFlags();
 
   if (platesShown ~= nil) then
-    SetCVar('nameplateShowAll', platesShown)
-    platesShown = nil
+    SetCVar('nameplateShowAll', platesShown);
+    platesShown = nil;
   end
-end)
+end);
 
 addon:on('MAIL_SHOW', function ()
-  mailOpen = true
-end)
+  widgetFlags.mail = true;
+end);
 
 addon:on('MAIL_CLOSED', function ()
-  mailOpen = false
-end)
+  widgetFlags.mail = false;
+end);
 
 addon:on('BANKFRAME_OPENED', function ()
-  bankOpen = true;
-end)
+  widgetFlags.bank = true;
+end);
 
 addon:on('BANKFRAME_CLOSED', function ()
-  bankOpen = false;
-end)
+  widgetFlags.bank = false;
+end);
 
 addon:on('GUILDBANKFRAME_OPENED', function ()
-  guildBankOpen = true;
-end)
+  widgetFlags.guildbank = true;
+end);
 
 addon:on('GUILDBANKFRAME_CLOSED', function ()
-  guildBankOpen = false;
-end)
+  widgetFlags.guildbank = false;
+end);
 
 addon:on('VOID_STORAGE_OPEN', function ()
-  voidStorageOpen = true;
-end)
+  widgetFlags.voidstorage = true;
+end);
 
 addon:on('VOID_STORAGE_CLOSE', function ()
-  voidStorageOpen = false;
-end)
+  widgetFlags.voidstorage = false;
+end);
 
-LootFrame:SetAlpha(0)
+LootFrame:SetAlpha(0);
 
 addon:on('LOOT_READY', function (lootSwitch)
   --[[ the LOOT_READY sometimes fires multiple times when looting, so we only
     handle it once until loot is closed ]]
 
-  if (lootFlag == true) then return end
-  lootFlag = true
+  if (widgetFlags.loot == true) then return end
+  widgetFlags.loot = true
 
-  mapShown = WorldMapFrame:IsShown()
+  widgetFlags.map = WorldMapFrame:IsShown()
   if (lootSwitch == true and
       farmerOptions.fastLoot == true) then
     performAutoLoot()
@@ -417,18 +423,18 @@ end)
 
 addon:on('LOOT_OPENED', function ()
   C_Timer.After(0, function ()
-    if (lootFlag == true) then
+    if (widgetFlags.loot == true) then
       LootFrame:SetAlpha(1)
     end
   end)
 end)
 
 addon:on('LOOT_CLOSED', function ()
-  lootFlag = false
+  widgetFlags.loot = false
 
   LootFrame:SetAlpha(0)
 
-  if (mapShown == true) then
+  if (widgetFlags.map == true) then
     WorldMapFrame:Show()
   end
 end)
