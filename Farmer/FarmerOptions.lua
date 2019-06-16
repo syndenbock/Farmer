@@ -80,7 +80,8 @@ end
 local function setFontSize (size, scale)
   -- FRIZQT__ cannot be used because it does not support cyrillic letters
   -- addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
-  addon.font:SetFont(STANDARD_TEXT_FONT, size, 'thickoutline')
+  -- addon.font:SetFont(STANDARD_TEXT_FONT, size, 'thickoutline')
+  addon.font:SetFont(STANDARD_TEXT_FONT, size, 'outline')
   -- addon.font:SetFont('Fonts\\FRIZQT__.ttf', size, 'thickoutline')
   -- adding line spacing makes textures completely off so they need y-offset
   -- for some reason that offset has to be 1.5 times the spacing

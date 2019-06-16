@@ -521,6 +521,12 @@ addon:on('TRADE_CLOSED', function ()
   tradeStamp = GetTime();
 end);
 
+--[[ we need to do this because when equipping artifact weapons, a second weapon
+     appears in the offhand slot --]]
+addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
+  currentInventory = getInventory();
+end)
+
 addon:on('BAG_UPDATE_DELAYED', function ()
   local inventory = getInventory();
   local timeStamp = GetTime();
