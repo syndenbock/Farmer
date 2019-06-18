@@ -1,3 +1,6 @@
+  version 2.8.3
+- fixed nameplate restoring while in combat
+
   version 2.8.2
 - fixed minor issue with item links of equipped items
 - removed redundant code and cleaned up code

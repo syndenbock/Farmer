@@ -581,10 +581,22 @@ end);
 
 do
   local FISHING_NAME = GetSpellInfo(131476);
+  local fishingFlag = false;
+
+  local function restorePlates ()
+    if (platesShown ~= nil) then
+      SetCVar('nameplateShowAll', platesShown);
+      --[[ we change platesShown back to nil, so when someone disables the
+      option and changes nameplates manually, the old value does not get
+      applied anymore --]]
+      platesShown = nil;
+    end
+  end
 
   addon:on('UNIT_SPELLCAST_CHANNEL_START', function (unit, target, spellid)
     if (farmerOptions.hidePlatesWhenFishing ~= true or
-        unit ~= UNITID_PLAYER) then return end
+        unit ~= UNITID_PLAYER or
+        InCombatLockdown() == true) then return end
 
     local spellName = GetSpellInfo(spellid)
 
@@ -594,16 +606,21 @@ do
     end
   end);
 
+  addon:on('PLAYER_REGEN_ENABLED', function ()
+    if (fishingFlag == true) then
+      restorePlates();
+      fishingFlag = false;
+    end
+  end);
+
   addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function (unit, target, spellid)
-    if (platesShown == nil or
-        unit ~= UNITID_PLAYER) then return end
+    if (unit ~= UNITID_PLAYER) then return end
 
-    SetCVar('nameplateShowAll', platesShown);
+    if (InCombatLockdown() == true and platesShown ~= nil) then
+      fishingFlag = true;
+    end
 
-    --[[ we change platesShown back to nil, so when someone disables the
-      option and changes nameplates manually, the old value does not get
-      applied anymore --]]
-    platesShown = nil;
+    restorePlates();
   end);
 end
 
