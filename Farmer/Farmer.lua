@@ -466,24 +466,24 @@ addon:on('PLAYER_MONEY', function ()
   printMessage(text, 1, 1, 1, 1)
 end)
 
-local function getInventory ()
-  local inventory = {};
-
-  local function addItem (id, link)
-    if (inventory[id] == nil) then
-      -- saving all links because gear has same ids, but different links
-      inventory[id] = {
-        links = {
-          [link] = true
-        },
-        count = GetItemCount(id)
-      };
-    else
-      if (inventory[id].links[link] == nil) then
-        inventory[id].links[link] = true;
-      end
+local function addItem (inventory, id, link)
+  if (inventory[id] == nil) then
+    -- saving all links because gear has same ids, but different links
+    inventory[id] = {
+      links = {
+        [link] = true
+      },
+      count = GetItemCount(id)
+    };
+  else
+    if (inventory[id].links[link] == nil) then
+      inventory[id].links[link] = true;
     end
   end
+end
+
+local function getInventory ()
+  local inventory = {};
 
   for i = 0, 4, 1 do
     local slots = GetContainerNumSlots(i);
@@ -493,7 +493,7 @@ local function getInventory ()
 
       if (id ~= nil) then
         local link = GetContainerItemLink(i, j) or id;
-        addItem(id, link);
+        addItem(inventory, id, link);
       end
     end
   end
@@ -506,12 +506,13 @@ local function getInventory ()
       local link = GetInventoryItemLink(UNITID_PLAYER, i) or id;
 
 
-      addItem(id, link);
+      addItem(inventory, id, link);
     end
   end
 
   return inventory;
 end
+
 
 addon:on('PLAYER_LOGIN', function ()
   currentInventory = getInventory();
@@ -521,11 +522,23 @@ addon:on('TRADE_CLOSED', function ()
   tradeStamp = GetTime();
 end);
 
---[[ we need to do this because when equipping artifact weapons, a second weapon
+local function checkSlotForArtifact (slot)
+  local quality = GetInventoryItemQuality(UNITID_PLAYER, slot);
+
+  if (quality == LE_ITEM_QUALITY_ARTIFACT) then
+    local id = GetInventoryItemID(UNITID_PLAYER, slot);
+    local link = GetInventoryItemLink(UNITID_PLAYER, slot);
+
+    addItem(currentInventory, id, link);
+  end
+end
+
+--[[ we need to do this because when equipping artifact weapons, a second item
      appears in the offhand slot --]]
 addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
-  currentInventory = getInventory();
-end)
+  checkSlotForArtifact(INVSLOT_MAINHAND);
+  checkSlotForArtifact(INVSLOT_OFFHAND);
+end);
 
 addon:on('BAG_UPDATE_DELAYED', function ()
   local inventory = getInventory();
