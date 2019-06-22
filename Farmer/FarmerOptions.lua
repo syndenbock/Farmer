@@ -15,9 +15,30 @@ local rarityList = {
   'WoW Token'
 }
 
+local OUTLINE_OPTIONS = {
+  {
+    text = L['None'],
+    value = nil,
+  }, {
+    text = L['Outline'],
+    value = 'OUTLINE',
+  }, {
+    text = L['Thick Outline'],
+    value = 'THICKOUTLINE',
+  }, {
+    text = L['Monochrome'],
+    value = 'MONOCHROME, OUTLINE',
+  }, {
+    text = L['Thick Monochrome'],
+    value = 'MONOCHROME, THICKOUTLINE',
+  }
+};
+
+
 local checkButtonList = {}
 local sliderList = {}
 local editBoxList = {}
+local dropdownList = {}
 
 addon.rarityColors = {}
 for i = 0, 8 do
@@ -77,12 +98,10 @@ local function displayRarity (edit, rarity)
   edit:SetCursorPosition(0)
 end
 
-local function setFontSize (size, scale)
+local function setFontSize (size, scale, outline)
   -- FRIZQT__ cannot be used because it does not support cyrillic letters
   -- addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
-  -- addon.font:SetFont(STANDARD_TEXT_FONT, size, 'thickoutline')
-  addon.font:SetFont(STANDARD_TEXT_FONT, size, 'outline')
-  -- addon.font:SetFont('Fonts\\FRIZQT__.ttf', size, 'thickoutline')
+  addon.font:SetFont(STANDARD_TEXT_FONT, size, outline)
   -- adding line spacing makes textures completely off so they need y-offset
   -- for some reason that offset has to be 1.5 times the spacing
   -- i have no idea why, i just figured it out by testing
@@ -238,6 +257,45 @@ local function createLabel (anchorFrame, xOffset, yOffset, text, anchor, parentA
   return label
 end
 
+local function createDropdown (name, anchorFrame, xOffset, yOffset, text, options, anchor, parentAnchor)
+  local dropdown = CreateFrame('Frame', name .. 'Dropdown', anchorFrame, 'UIDropDownMenuTemplate');
+  local currentValue = farmerOptions[name];
+
+  anchor = anchor or 'TOPLEFT';
+  parentAnchor = parentAnchor or 'BOTTOMLEFT';
+
+  dropdownList[name] = dropdown;
+
+  dropdown:SetPoint(anchor, anchorFrame, parentAnchor, xOffset - 20, yOffset);
+
+  UIDropDownMenu_SetWidth(dropdown, 133);
+  UIDropDownMenu_SetText(dropdown, text);
+
+  UIDropDownMenu_Initialize(dropdown, function (self, level, menuList)
+    local info = UIDropDownMenu_CreateInfo();
+
+    for i = 1, #options do
+      local option = options[i];
+      info.func = self.SetValue;
+
+      info.text = option.text;
+      info.arg1 = option.value;
+      info.checked = (currentValue == option.value);
+      UIDropDownMenu_AddButton(info, level);
+    end
+  end);
+
+  function dropdown:SetValue (value)
+    currentValue = value;
+  end
+
+  function dropdown:GetValue ()
+    return currentValue;
+  end
+
+  return dropdown;
+end
+
 local function initPanel ()
   local anchor = farmerOptionsFrame
   local itemField
@@ -277,11 +335,13 @@ local function initPanel ()
   end)
   anchor:SetValueStep(0.1)
   anchor = createSlider('fontSize', anchor, 3, 40, L['font size'], 8, 64, '8', '64', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
-    setFontSize(value, farmerOptions.iconScale)
+    setFontSize(value, farmerOptions.iconScale, farmerOptions.outline)
   end)
-  createSlider('displayTime', anchor, 23, 0, L['display time'], 1, 10, '1', '10', 'LEFT', 'RIGHT', function (self, value)
+  anchor = createSlider('displayTime', anchor, 23, 0, L['display time'], 1, 10, '1', '10', 'LEFT', 'RIGHT', function (self, value)
     addon.frame:SetTimeVisible(value - addon.frame:GetFadeDuration())
   end)
+
+  createDropdown('outline', anchor, 0, -40, L['outline mode'], OUTLINE_OPTIONS, 'TOPLEFT', 'BOTTOMLEFT')
 
   itemField = createEditBox('focusItems', farmerOptionsFrame, -80, 100, 150, 200, 'BOTTOMRIGHT', 'BOTTOMRIGHT')
   anchor = itemField
@@ -309,7 +369,7 @@ local function applyOptions ()
     addon.vars.moneyStamp = GetMoney()
   end
 
-  setFontSize(farmerOptions.fontSize, farmerOptions.iconScale)
+  setFontSize(farmerOptions.fontSize, farmerOptions.iconScale, farmerOptions.outline)
   addon.frame:SetTimeVisible(farmerOptions.displayTime - addon.frame:GetFadeDuration())
   -- addon.frame:SetTimeVisible(farmerOptions.displayTime)
 end
@@ -363,6 +423,9 @@ local function saveOptions ()
     farmerOptions[k] = v:GetChecked()
   end
   for k, v in pairs(sliderList) do
+    farmerOptions[k] = v:GetValue()
+  end
+  for k, v in pairs(dropdownList) do
     farmerOptions[k] = v:GetValue()
   end
 
@@ -426,6 +489,7 @@ addon:on('ADDON_LOADED', function (name)
   checkOption('fontSize', 24)
   checkOption('iconScale', 1)
   checkOption('displayTime', 4)
+  checkOption('outline', 'OUTLINE')
   checkOption('focusItems', {})
 
   if (farmerOptions.anchor == nil) then
@@ -452,8 +516,6 @@ end)
 /// slash commands
 ///#############################################################################
 --]]
-
-local slashCommands = {}
 
 addon:slash('move', moveFrame)
 

@@ -5,7 +5,7 @@ local UNITID_PLAYER = 'player';
 local font = CreateFont('farmerFont');
 local farmerFrame;
 local currencyTable = {};
-local platesShown = nil
+local platesShown
 local tradeStamp = 0;
 local currentInventory;
 
