@@ -1,7 +1,7 @@
 local addonName, addon = ...
 
 local L = addon.L
-local currentVersion = 0206000
+local currentVersion = 0208030
 
 local rarityList = {
   [0] = 'Poor',
@@ -462,7 +462,7 @@ addon:on('ADDON_LOADED', function (name)
     local text
 
     text = 'New in ' .. addonName .. ' version ' .. version .. ':\n' ..
-           'Ids of farming items can now be entered in the options'
+           'You can now select the text outline style in the options.'
     print(text)
   end
   farmerOptions.version = currentVersion
