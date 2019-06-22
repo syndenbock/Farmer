@@ -266,9 +266,9 @@ local function createDropdown (name, anchorFrame, xOffset, yOffset, text, option
 
   dropdownList[name] = dropdown;
 
-  dropdown:SetPoint(anchor, anchorFrame, parentAnchor, xOffset - 20, yOffset);
+  dropdown:SetPoint(anchor, anchorFrame, parentAnchor, xOffset - 23, yOffset);
 
-  UIDropDownMenu_SetWidth(dropdown, 133);
+  UIDropDownMenu_SetWidth(dropdown, 138);
   UIDropDownMenu_SetText(dropdown, text);
 
   UIDropDownMenu_Initialize(dropdown, function (self, level, menuList)
