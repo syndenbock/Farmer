@@ -28,6 +28,13 @@ L['reset position'] = 'Position zurücksetzen'
 L['font size'] = 'Textgröße'
 L['icon scale'] = 'Iconskalierung'
 L['display time'] = 'Anzeigedauer'
+L['outline mode'] = 'Textumrandung'
+L['None'] = 'Keine'
+L['Thin'] = 'Dünn'
+L['Thick'] = 'Breit'
+L['Monochrome'] = 'Monochrom'
+L['Thick Monochrome'] = 'Breit Monochrom'
+
 
 L['focused item ids:'] = 'Ids fokussierter Items:'
 L['always show focused items'] = 'Zeige Items im Fokus immer an'

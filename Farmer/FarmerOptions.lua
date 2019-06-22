@@ -20,10 +20,10 @@ local OUTLINE_OPTIONS = {
     text = L['None'],
     value = nil,
   }, {
-    text = L['Outline'],
+    text = L['Thin'],
     value = 'OUTLINE',
   }, {
-    text = L['Thick Outline'],
+    text = L['Thick'],
     value = 'THICKOUTLINE',
   }, {
     text = L['Monochrome'],
