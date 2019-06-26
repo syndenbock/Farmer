@@ -662,8 +662,9 @@ addon.frame = farmerFrame
 addon.font = font
 
 addon:slash('test', function (id)
-  if (id ~= nil) then
-    local _, link = GetItemInfo(id);
-    handleItem(link, id, 1)
-  end
+  id = id or 152505
+
+  local _, link = GetItemInfo(id);
+
+  handleItem(link, id, 1)
 end)
