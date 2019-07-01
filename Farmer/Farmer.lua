@@ -4,10 +4,11 @@ local UNITID_PLAYER = 'player';
 
 local font = CreateFont('farmerFont');
 local farmerFrame;
+
 local currencyTable = {};
-local platesShown
 local tradeStamp = 0;
 local currentInventory;
+local platesShown;
 
 local widgetFlags = {
   mail = false,
@@ -15,6 +16,7 @@ local widgetFlags = {
   guildbank = false,
   voidstorage = false,
   map = false,
+  bagUpdate = false,
 };
 
 local function printMessage (...)
@@ -540,9 +542,10 @@ addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
   checkSlotForArtifact(INVSLOT_OFFHAND);
 end);
 
-addon:on('BAG_UPDATE_DELAYED', function ()
+local function updateInventory (timeStamp)
+  timeStamp = timeStamp or GetTime();
+
   local inventory = getInventory();
-  local timeStamp = GetTime();
 
   if (checkHideOptions() == false or
       timeStamp == tradeStamp) then
@@ -588,6 +591,22 @@ addon:on('BAG_UPDATE_DELAYED', function ()
   end
 
   currentInventory = inventory;
+end
+
+addon:on('BAG_UPDATE_DELAYED', function ()
+  --[[ bags can update multiple times in one frame, so we only update once
+       on the next frame --]]
+  if (widgetFlags.bagUpdate == true) then return end
+
+  local timeStamp = GetTime();
+
+  widgetFlags.bagUpdate = true;
+
+  C_Timer.After('0', function ()
+    widgetFlags.bagUpdate = false;
+
+    updateInventory(timeStamp);
+  end);
 end);
 
 --[[ handling nameplates when fishing --]]
