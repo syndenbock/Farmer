@@ -214,12 +214,13 @@ local function checkItemDisplay (itemId, itemLink)
   end
 
   if (farmerOptions.questItems == true and
-      itemClassID == 12) then
+      (itemClassID == LE_ITEM_CLASS_QUESTITEM or
+       itemClassID == LE_ITEM_CLASS_KEY)) then
     return true
   end
 
   if (farmerOptions.recipes == true and
-      itemClassID == 9) then
+      itemClassID == LE_ITEM_CLASS_RECIPE) then
     return true
   end
 
@@ -252,13 +253,14 @@ local function handleItem (itemId, itemLink, count)
   end
 
   -- quest items
-  if (itemClassID == 12) then
+  if (itemClassID == LE_ITEM_CLASS_QUESTITEM or
+      itemClassID == LE_ITEM_CLASS_KEY) then
     colors = {1, 0.8, 0, 1}
   end
 
   -- artifact relics
-  if (itemClassID == 3 and
-      itemSubClassID == 11) then -- gem / artifact relics
+  if (itemClassID == LE_ITEM_CLASS_GEM and
+      itemSubClassID == LE_ITEM_GEM_ARTIFACTRELIC) then -- gem / artifact relics
     local text
 
     itemLevel = GetDetailedItemLevelInfo(itemLink)
@@ -270,13 +272,13 @@ local function handleItem (itemId, itemLink, count)
   -- equippables
   if (itemEquipLoc ~= '') then
     -- bags
-    if (itemClassID == 1) then
+    if (itemClassID == LE_ITEM_CLASS_CONTAINER) then
       printEquip(texture, itemName, itemSubType, count, colors)
       return
     end
 
     -- weapons
-    if (itemClassID == 2) then
+    if (itemClassID == LE_ITEM_CLASS_WEAPON) then
       local text
       itemLevel = GetDetailedItemLevelInfo(itemLink)
       text = itemSubType .. ' ' .. itemLevel
@@ -285,17 +287,18 @@ local function handleItem (itemId, itemLink, count)
     end
 
     -- armor
-    if (itemClassID == 4) then
+    if (itemClassID == LE_ITEM_CLASS_ARMOR) then
       local text = _G[itemEquipLoc]
+
       itemLevel = GetDetailedItemLevelInfo(itemLink)
 
       if (itemEquipLoc == 'INVTYPE_TABARD') then
         -- text is already fine
       elseif (itemEquipLoc ==  'INVTYPE_CLOAK') then
         text = text .. ' ' .. itemLevel
-      elseif (itemSubClassID == 0) then
+      elseif (itemSubClassID == LE_ITEM_ARMOR_GENERIC) then
         text = text .. ' ' .. itemLevel -- fingers/trinkets
-      elseif (itemSubClassID > 4) then -- we all know shields are offhand
+      elseif (itemSubClassID > LE_ITEM_ARMOR_SHIELD) then -- we all know shields are offhand
         text = itemSubType .. ' ' .. itemLevel
       else
         text = itemSubType .. ' ' .. text .. ' ' .. itemLevel
