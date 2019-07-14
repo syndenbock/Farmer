@@ -6,6 +6,7 @@ local font = CreateFont('farmerFont');
 local farmerFrame;
 
 local currencyTable = {};
+local bagCache = {};
 local tradeStamp = 0;
 local currentInventory;
 local platesShown;
@@ -471,81 +472,100 @@ addon:on('PLAYER_MONEY', function ()
   printMessage(text, 1, 1, 1, 1)
 end)
 
-local function addItem (inventory, id, link)
+local function addItem (inventory, id, link, count)
   if (inventory[id] == nil) then
     -- saving all links because gear has same ids, but different links
     inventory[id] = {
       links = {
         [link] = true
       },
-      count = GetItemCount(id)
+      count = count
     };
   else
+    inventory[id].count = inventory[id].count + count;
+
     if (inventory[id].links[link] == nil) then
       inventory[id].links[link] = true;
     end
   end
 end
 
-local function getInventory ()
-  local inventory = {};
+local function updateInventoryItem (inventory, id, count, linkList)
+  if (inventory[id] == nil) then
+    -- saving all links because gear has same ids, but different links
+    inventory[id] = {
+      links = linkList,
+      count = count,
+    };
+  else
+    inventory[id].count = inventory[id].count + count;
 
-  for i = 0, 4, 1 do
-    local slots = GetContainerNumSlots(i);
-
-    for j = 1, slots, 1 do
-      local id = GetContainerItemID(i, j);
-
-      if (id ~= nil) then
-        local link = GetContainerItemLink(i, j) or id;
-        addItem(inventory, id, link);
+    for link in pairs(linkList) do
+      if (inventory[id].links[link] == nil) then
+        inventory[id].links[link] = true;
       end
     end
   end
+end
+
+local function getBagContent (bagIndex)
+  local bagContent = {};
+  local slotCount = GetContainerNumSlots(bagIndex);
+
+  for slotIndex = 1, slotCount, 1 do
+    local id = GetContainerItemID(bagIndex, slotIndex);
+
+    if (id ~= nil) then
+      --[[ manually calculating the bag count is way faster than using
+           GetItemCount --]]
+      local _, count, _, _, _, _, link = GetContainerItemInfo(bagIndex, slotIndex);
+
+      addItem(bagContent, id, link, count);
+    end
+  end
+
+  return bagContent;
+end
+
+local function getEquipment ()
+  local equipment = {};
 
   -- slots 1-19 are gear, 20-23 are equipped bags
-  for i = 0, 23, 1 do
+  for i = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
     local id = GetInventoryItemID(UNITID_PLAYER, i);
 
     if (id ~= nil) then
       local link = GetInventoryItemLink(UNITID_PLAYER, i) or id;
 
-
-      addItem(inventory, id, link);
+      addItem(equipment, id, link, 1);
     end
+  end
+
+  return equipment;
+end
+
+local function getInventory ()
+  local inventory = {};
+  local equipment = getEquipment();
+
+  for i = BACKPACK_CONTAINER, BACKPACK_CONTAINER + NUM_BAG_SLOTS, 1 do
+    local bagContent = bagCache[i];
+
+    if (bagContent ~= nil) then
+      for itemId, itemInfo in pairs(bagContent) do
+        updateInventoryItem(inventory, itemId, itemInfo.count, itemInfo.links);
+      end
+    end
+  end
+
+  for itemId, itemInfo in pairs(equipment) do
+    updateInventoryItem(inventory, itemId, itemInfo.count, itemInfo.links);
   end
 
   return inventory;
 end
 
-
-addon:on('PLAYER_LOGIN', function ()
-  currentInventory = getInventory();
-end);
-
-addon:on('TRADE_CLOSED', function ()
-  tradeStamp = GetTime();
-end);
-
-local function checkSlotForArtifact (slot)
-  local quality = GetInventoryItemQuality(UNITID_PLAYER, slot);
-
-  if (quality == LE_ITEM_QUALITY_ARTIFACT) then
-    local id = GetInventoryItemID(UNITID_PLAYER, slot);
-    local link = GetInventoryItemLink(UNITID_PLAYER, slot);
-
-    addItem(currentInventory, id, link);
-  end
-end
-
---[[ we need to do this because when equipping artifact weapons, a second item
-     appears in the offhand slot --]]
-addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
-  checkSlotForArtifact(INVSLOT_MAINHAND);
-  checkSlotForArtifact(INVSLOT_OFFHAND);
-end);
-
-local function updateInventory (timeStamp)
+local function checkInventory (timeStamp)
   timeStamp = timeStamp or GetTime();
 
   local inventory = getInventory();
@@ -596,20 +616,56 @@ local function updateInventory (timeStamp)
   currentInventory = inventory;
 end
 
-addon:on('BAG_UPDATE_DELAYED', function ()
-  --[[ bags can update multiple times in one frame, so we only update once
-       on the next frame --]]
-  if (widgetFlags.bagUpdate == true) then return end
+addon:on('PLAYER_LOGIN', function ()
+  for i = BACKPACK_CONTAINER, BACKPACK_CONTAINER + NUM_BAG_SLOTS, 1 do
+    bagCache[i] = getBagContent(i);
+  end
 
-  local timeStamp = GetTime();
+  currentInventory = getInventory();
+end);
+
+addon:on('BAG_UPDATE', function (bagIndex)
+  if (bagIndex < BACKPACK_CONTAINER or
+      bagIndex > BACKPACK_CONTAINER + NUM_BAG_SLOTS) then
+    return;
+  end
+
+  bagCache[bagIndex] = getBagContent(bagIndex);
+end);
+
+addon:on('BAG_UPDATE_DELAYED', function ()
+  if (widgetFlags.bagUpdate == true) then return end
 
   widgetFlags.bagUpdate = true;
 
-  C_Timer.After('0', function ()
+  --[[ BAG_UPDATE_DELAYED may fire multiple times in one frame, so we only
+       check bags once on the next frame --]]
+  C_Timer.After(0, function ()
+    checkInventory(GetTime());
     widgetFlags.bagUpdate = false;
-
-    updateInventory(timeStamp);
   end);
+end);
+
+addon:on('TRADE_CLOSED', function ()
+  tradeStamp = GetTime();
+end);
+
+local function checkSlotForArtifact (slot)
+  local quality = GetInventoryItemQuality(UNITID_PLAYER, slot);
+
+  if (quality == LE_ITEM_QUALITY_ARTIFACT) then
+    local id = GetInventoryItemID(UNITID_PLAYER, slot);
+    local link = GetInventoryItemLink(UNITID_PLAYER, slot);
+
+    updateInventoryItem(currentInventory, id, 1, {[link] = true});
+  end
+end
+
+--[[ we need to do this because when equipping artifact weapons, a second item
+     appears in the offhand slot --]]
+addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
+  checkSlotForArtifact(INVSLOT_MAINHAND);
+  checkSlotForArtifact(INVSLOT_OFFHAND);
 end);
 
 --[[ handling nameplates when fishing --]]
