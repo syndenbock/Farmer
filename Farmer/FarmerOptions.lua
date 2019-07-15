@@ -99,19 +99,25 @@ local function displayRarity (edit, rarity)
 end
 
 local function setFontSize (size, scale, outline)
-  -- FRIZQT__ cannot be used because it does not support cyrillic letters
-  -- addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
-  addon.font:SetFont(STANDARD_TEXT_FONT, size, outline)
   -- adding line spacing makes textures completely off so they need y-offset
   -- for some reason that offset has to be 1.5 times the spacing
   -- i have no idea why, i just figured it out by testing
-  addon.font:SetSpacing(size / 9)
+  local maximumIconSize = 128;
+  local minimumIconSize = 8;
+  local iconSize = max(min(size * scale, maximumIconSize), minimumIconSize);
+  local spacing = 0;
+  local iconOffset = -spacing * 1.5;
+  local shadowOffset = size / 10;
 
-  addon.vars.iconOffset = ':'.. size * scale .. ':' .. size * scale .. ':' ..
-                          '0:-' .. (size / 9) .. '|t '
+  -- FRIZQT__ cannot be used because it does not support cyrillic letters
+  -- addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
+  addon.font:SetFont(STANDARD_TEXT_FONT, size, outline);
 
-  -- addon.textOffset = ':'.. s .. ':' .. s .. ':' .. '0:-' .. (size / 6) .. '|t '
-  -- addon.vars.iconOffset = ':0:0:0:-' .. (size / 6)  .. '|t '
+  addon.font:SetSpacing(spacing);
+  addon.font:SetShadowColor(0, 0, 0);
+  addon.font:SetShadowOffset(shadowOffset, -shadowOffset);
+
+  addon.vars.iconOffset = ':'.. iconSize .. ':' .. iconSize .. ':' .. '0:' .. iconOffset .. '|t ';
 end
 
 local function createCheckButton (name, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
@@ -149,7 +155,8 @@ local function createButton (name, anchorFrame, xOffset, yOffset, text, anchor, 
   return button
 end
 
-local function createSlider (name, anchorFrame, xOffset, yOffset, text, min, max, lowText, highText, anchor, parentAnchor, onChange)
+local function createSlider (name, anchorFrame, xOffset, yOffset, text, min, max, lowText, highText, anchor, parentAnchor, onChange, stepSize)
+  stepSize = stepSize or 1
   local slider = CreateFrame('Slider', name .. 'Slider', farmerOptionsFrame, 'OptionsSliderTemplate')
   local edit
 
@@ -159,7 +166,7 @@ local function createSlider (name, anchorFrame, xOffset, yOffset, text, min, max
   slider:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset)
   slider:SetOrientation('HORIZONTAL')
   slider:SetMinMaxValues(min, max)
-  slider:SetValueStep(1)
+  slider:SetValueStep(stepSize)
   slider:SetObeyStepOnDrag(true)
   _G[name .. 'SliderText']:SetText(text)
   _G[name .. 'SliderLow']:SetText(lowText)
@@ -332,8 +339,7 @@ local function initPanel ()
     storePosition(addon.frame)
   end)
   anchor = createSlider('iconScale', anchor, 3, 40, L['icon scale'], 0.1, 3, '0.1', '3', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
-  end)
-  anchor:SetValueStep(0.1)
+  end, 0.1)
   anchor = createSlider('fontSize', anchor, 3, 40, L['font size'], 8, 64, '8', '64', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
     setFontSize(value, farmerOptions.iconScale, farmerOptions.outline)
   end)
