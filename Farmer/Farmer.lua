@@ -472,37 +472,21 @@ addon:on('PLAYER_MONEY', function ()
   printMessage(text, 1, 1, 1, 1)
 end)
 
-local function addItem (inventory, id, link, count)
+local function addItem (inventory, id, count, linkMap)
   if (inventory[id] == nil) then
     -- saving all links because gear has same ids, but different links
     inventory[id] = {
-      links = {
-        [link] = true
-      },
-      count = count
-    };
-  else
-    inventory[id].count = inventory[id].count + count;
-
-    if (inventory[id].links[link] == nil) then
-      inventory[id].links[link] = true;
-    end
-  end
-end
-
-local function updateInventoryItem (inventory, id, count, linkList)
-  if (inventory[id] == nil) then
-    -- saving all links because gear has same ids, but different links
-    inventory[id] = {
-      links = linkList,
+      links = linkMap,
       count = count,
     };
   else
-    inventory[id].count = inventory[id].count + count;
+    local itemInfo = inventory[id];
 
-    for link in pairs(linkList) do
-      if (inventory[id].links[link] == nil) then
-        inventory[id].links[link] = true;
+    itemInfo.count = itemInfo.count + count;
+
+    for link in pairs(linkMap) do
+      if (itemInfo.links[link] == nil) then
+        itemInfo.links[link] = true;
       end
     end
   end
@@ -520,7 +504,7 @@ local function getBagContent (bagIndex)
            GetItemCount --]]
       local _, count, _, _, _, _, link = GetContainerItemInfo(bagIndex, slotIndex);
 
-      addItem(bagContent, id, link, count);
+      addItem(bagContent, id, count, {[link] = true});
     end
   end
 
@@ -537,7 +521,7 @@ local function getEquipment ()
     if (id ~= nil) then
       local link = GetInventoryItemLink(UNITID_PLAYER, i) or id;
 
-      addItem(equipment, id, link, 1);
+      addItem(equipment, id, 1, {[link] = true});
     end
   end
 
@@ -553,13 +537,13 @@ local function getInventory ()
 
     if (bagContent ~= nil) then
       for itemId, itemInfo in pairs(bagContent) do
-        updateInventoryItem(inventory, itemId, itemInfo.count, itemInfo.links);
+        addItem(inventory, itemId, itemInfo.count, itemInfo.links);
       end
     end
   end
 
   for itemId, itemInfo in pairs(equipment) do
-    updateInventoryItem(inventory, itemId, itemInfo.count, itemInfo.links);
+    addItem(inventory, itemId, itemInfo.count, itemInfo.links);
   end
 
   return inventory;
@@ -657,7 +641,7 @@ local function checkSlotForArtifact (slot)
     local id = GetInventoryItemID(UNITID_PLAYER, slot);
     local link = GetInventoryItemLink(UNITID_PLAYER, slot);
 
-    updateInventoryItem(currentInventory, id, 1, {[link] = true});
+    addItem(currentInventory, id, 1, {[link] = true});
   end
 end
 
@@ -745,4 +729,4 @@ addon:slash('test', function (id)
   local _, link = GetItemInfo(id);
 
   handleItem(link, id, 1)
-end)
+end);
