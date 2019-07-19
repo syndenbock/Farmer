@@ -34,7 +34,6 @@ local OUTLINE_OPTIONS = {
   }
 };
 
-
 local checkButtonList = {}
 local sliderList = {}
 local editBoxList = {}
@@ -449,17 +448,13 @@ function checkOption (name, default)
   end
 end
 
-addon:on('ADDON_LOADED', function (name)
-  if (name ~= addonName) then
-    return
-  end
-
-  initPanel()
-
+addon:on('PLAYER_LOGIN', function (name)
   if (farmerOptions == nil) then
     farmerOptions = {}
     farmerOptions.version = currentVersion
   end
+
+  initPanel();
 
   if (farmerOptions.version == nil) then
     print(L['You seem to have used an old Version of Farmer\nCheck out all the new features in the options!'])
@@ -505,9 +500,7 @@ addon:on('ADDON_LOADED', function (name)
   end
 
   applyOptions()
-end)
 
-addon:on('PLAYER_LOGIN', function ()
   local money = GetMoney()
 
   earningStamp = earningStamp or money
@@ -515,7 +508,7 @@ addon:on('PLAYER_LOGIN', function ()
   if (farmerOptions.money == true) then
     addon.vars.moneyStamp = money
   end
-end)
+end);
 
 --[[
 ///#############################################################################
