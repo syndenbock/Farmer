@@ -1,4 +1,4 @@
-  version 2.8.7
+  version 2.9
 - fixed a (dumb) bug making the addon unusable when freshly installing it
 - updated inventory scanning to per-bag updates to greatly improve performance
 - fixed font spacing
