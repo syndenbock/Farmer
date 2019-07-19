@@ -454,8 +454,6 @@ addon:on('PLAYER_LOGIN', function (name)
     farmerOptions.version = currentVersion
   end
 
-  initPanel();
-
   if (farmerOptions.version == nil) then
     print(L['You seem to have used an old Version of Farmer\nCheck out all the new features in the options!'])
   elseif (farmerOptions.version < currentVersion) then
@@ -466,6 +464,7 @@ addon:on('PLAYER_LOGIN', function (name)
            'You can now select the text outline style in the options.'
     print(text)
   end
+
   farmerOptions.version = currentVersion
 
   checkOption('fastLoot', true)
@@ -499,8 +498,6 @@ addon:on('PLAYER_LOGIN', function (name)
     addon.frame:SetPoint(unpack(farmerOptions.anchor))
   end
 
-  applyOptions()
-
   local money = GetMoney()
 
   earningStamp = earningStamp or money
@@ -508,6 +505,9 @@ addon:on('PLAYER_LOGIN', function (name)
   if (farmerOptions.money == true) then
     addon.vars.moneyStamp = money
   end
+
+  initPanel()
+  applyOptions()
 end);
 
 --[[
