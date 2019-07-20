@@ -406,7 +406,7 @@ local function saveItemIds ()
   local text = editBoxList['focusItems']:GetText()
   local list = {}
 
-  text = {strsplit('\n', text)}
+  text = {string.split('\n', text)}
 
   for i = 1, #text do
     local line = text[i]

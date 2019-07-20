@@ -85,14 +85,15 @@ do
   end
 
   local function slashHandler (input)
-    local command, param = input.split(' ', input, 3)
+    local split = {string.split(' ', input)}
+    local command = split[1]
+    local paramList = {unpack(split, 2)}
 
+    command = string.lower(command or 'default')
     command = command == '' and 'default' or command
-    -- command = string.lower(command or 'default')
-    -- param = string.lower(param or '')
 
     if (slashCommands[command] ~= nil) then
-      slashCommands[command](param)
+      slashCommands[command](unpack(paramList))
       return
     end
     print('Farmer: ' .. L['unknown command'] .. ' "' .. input .. '"')
