@@ -1,3 +1,6 @@
+  version 2.10
+- split up the code into separate files for each functionality
+
   version 2.9.1
 - fixed a bug in restoring nameplates while in combat
 

@@ -59,14 +59,14 @@ local function storePosition (frame)
 
   icon = ' |T' .. icon .. addon.vars.iconOffset
   farmerOptions.anchor = {frame:GetPoint()}
-  frame:EnableMouse(false)
-  frame:SetMovable(false)
-  frame:SetFading(true)
-  frame:Clear()
-  frame:AddMessage(icon)
-  frame:StopMovingOrSizing()
-  frame:SetScript('OnDragStart', nil)
-  frame:SetScript('OnReceiveDrag', nil)
+  frame:EnableMouse(false);
+  frame:SetMovable(false);
+  frame:SetFading(true);
+  frame:Clear();
+  frame:AddMessage(icon);
+  frame:StopMovingOrSizing();
+  frame:SetScript('OnDragStart', nil);
+  frame:SetScript('OnReceiveDrag', nil);
 end
 
 local function moveFrame ()
@@ -74,20 +74,20 @@ local function moveFrame ()
   local icon = GetItemIcon(3334)
 
   icon = ' |T' .. icon .. addon.vars.iconOffset
-  frame:RegisterForDrag('LeftButton')
-  frame:SetFading(false)
-  frame:Clear()
-  frame:AddMessage(icon)
-  frame:EnableMouse(true)
-  frame:SetMovable(true)
+  frame:RegisterForDrag('LeftButton');
+  frame:SetFading(false);
+  frame:Clear();
+  frame:AddMessage(icon);
+  frame:EnableMouse(true);
+  frame:SetMovable(true);
   frame:SetScript('OnDragStart', function (self)
     if (self:IsMovable() == true) then
-      self:StartMoving()
+      self:StartMoving();
     end
-  end)
+  end)''
   frame:SetScript('OnReceiveDrag', function (self)
-    storePosition(self)
-  end)
+    storePosition(self);
+  end);
 end
 
 local function displayRarity (edit, rarity)

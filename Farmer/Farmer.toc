@@ -1,7 +1,7 @@
 ## Interface: 80200
 ## Title: Farmer
 ## Title: Farmer
-## Version: 2.9.1
+## Version: 2.10
 ## Author: syndenbock
 ## Notes: Shows information on all the stuff you loot
 ## Notes-deDe: Zeigt Infos über all das Zeug das du lootest
@@ -13,5 +13,10 @@ localizations/German.lua
 localizations/Russian.lua
 
 Core.lua
+Print.lua
 FarmerOptions.lua
-Farmer.lua
+
+Currencies.lua
+Items.lua
+Fishing.lua
+Money.lua
