@@ -673,7 +673,7 @@ do
         unit ~= UNITID_PLAYER or
         InCombatLockdown() == true) then return end
 
-    local spellName = GetSpellInfo(spellid)
+    local spellName = GetSpellInfo(spellid);
 
     if (spellName == FISHING_NAME) then
       platesShown = GetCVar('nameplateShowAll');
@@ -689,13 +689,13 @@ do
   end);
 
   addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function (unit, target, spellid)
-    if (unit ~= UNITID_PLAYER) then return end
+    if (unit ~= UNITID_PLAYER or platesShown == nil) then return end
 
-    if (InCombatLockdown() == true and platesShown ~= nil) then
+    if (InCombatLockdown() == true) then
       fishingFlag = true;
+    else
+      restorePlates();
     end
-
-    restorePlates();
   end);
 end
 
