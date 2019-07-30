@@ -20,3 +20,4 @@ Currencies.lua
 Items.lua
 Fishing.lua
 Money.lua
+Petscan.lua
