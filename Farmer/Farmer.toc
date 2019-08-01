@@ -13,11 +13,12 @@ localizations/German.lua
 localizations/Russian.lua
 
 Core.lua
-Print.lua
-FarmerOptions.lua
 
-Currencies.lua
-Items.lua
-Fishing.lua
-Money.lua
-Petscan.lua
+main/Print.lua
+main/FarmerOptions.lua
+
+modules/Currencies.lua
+modules/Items.lua
+modules/Fishing.lua
+modules/Money.lua
+modules/Petscan.lua
