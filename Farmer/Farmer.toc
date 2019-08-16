@@ -22,3 +22,4 @@ modules/Items.lua
 modules/Fishing.lua
 modules/Money.lua
 modules/Petscan.lua
+modules/Reputation.lua
