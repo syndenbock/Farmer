@@ -18,5 +18,5 @@ addon:on('PLAYER_MONEY', function()
 
   addon.vars.moneyStamp = money;
 
-  addon.Print.printMessage(text, 1, 1, 1, 1);
+  addon.Print.printMessage(text, {1, 1, 1});
 end);

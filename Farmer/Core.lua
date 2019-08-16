@@ -108,10 +108,9 @@ end
 /// utility
 ///#############################################################################
 --]]
-do
-  function addon:printTable (table)
-    for i,v in pairs(table) do
-      print(i, ' - ', v)
-    end
+
+function addon:printTable (table)
+  for i,v in pairs(table) do
+    print(i, ' - ', v)
   end
 end

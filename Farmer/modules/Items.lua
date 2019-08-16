@@ -82,7 +82,11 @@ local function handleItem (itemId, itemLink, count)
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
         itemSetID, isCraftingReagent = GetItemInfo(itemLink)
 
-  local colors = addon.rarityColors[itemRarity]
+  local colors = {
+    ITEM_QUALITY_COLORS[itemRarity].r,
+    ITEM_QUALITY_COLORS[itemRarity].g,
+    ITEM_QUALITY_COLORS[itemRarity].b,
+  };
 
   -- crafting reagents
   if (isCraftingReagent == true) then
@@ -91,7 +95,7 @@ local function handleItem (itemId, itemLink, count)
       return
     end
 
-    colors = {0, 0.8, 0.8, 1}
+    colors = {0, 0.8, 0.8}
   end
 
   -- quest items
@@ -194,18 +198,18 @@ addon:on('LOOT_OPENED', function ()
     if (flags.loot == true) then
       LootFrame:SetAlpha(1);
     end
-  end)
-end)
+  end);
+end);
 
 addon:on('LOOT_CLOSED', function ()
-  flags.loot = false
+  flags.loot = false;
 
-  LootFrame:SetAlpha(0)
+  LootFrame:SetAlpha(0);
 
   if (flags.map == true) then
-    WorldMapFrame:Show()
+    WorldMapFrame:Show();
   end
-end)
+end);
 
 local function addItem (inventory, id, count, linkMap)
   if (inventory[id] == nil) then
@@ -354,12 +358,14 @@ end);
 addon:on('BAG_UPDATE_DELAYED', function ()
   if (flags.bagUpdate == true) then return end
 
+  local stamp = GetTime();
+
   flags.bagUpdate = true;
 
   --[[ BAG_UPDATE_DELAYED may fire multiple times in one frame, so we only
        check bags once on the next frame --]]
   C_Timer.After(0, function ()
-    checkInventory(GetTime());
+    checkInventory(stamp);
     flags.bagUpdate = false;
   end);
 end);

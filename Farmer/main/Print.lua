@@ -19,8 +19,8 @@ local farmerFrame;
 farmerFrame = CreateFrame('ScrollingMessageFrame', 'farmerFrame', UIParent);
 farmerFrame:SetWidth(GetScreenWidth() / 2);
 farmerFrame:SetHeight(GetScreenHeight() / 2);
--- farmerFrame:SetFrameStrata('DIALOG');
-farmerFrame:SetFrameStrata('FULLSCREEN_DIALOG');
+ farmerFrame:SetFrameStrata('DIALOG');
+--farmerFrame:SetFrameStrata('FULLSCREEN_DIALOG');
 farmerFrame:SetFrameLevel(2);
 farmerFrame:SetFading(true);
 -- farmerFrame:SetTimeVisible(2);
@@ -31,8 +31,8 @@ farmerFrame:SetFontObject(font);
 setTrueScale(farmerFrame, 1);
 farmerFrame:Show();
 
-local function printMessage (...)
-  farmerFrame:AddMessage(...)
+local function printMessage (message, colors)
+  farmerFrame:AddMessage(message, unpack(colors, 1, 3));
   -- ChatFrame1:AddMessage(...)
 end
 
@@ -103,10 +103,10 @@ local function checkHideOptions ()
 end
 
 local function printItem (texture, name, text, colors)
-  local icon = ' |T' .. texture .. addon.vars.iconOffset
+  local icon = ' |T' .. texture .. addon.vars.iconOffset .. '|t'
 
   if (text == nil or text == '') then
-    printMessage(icon .. name, unpack(colors))
+    printMessage(icon .. name, colors)
     return
   end
 
@@ -114,7 +114,7 @@ local function printItem (texture, name, text, colors)
     text = name .. ' ' .. text
   end
 
-  printMessage(icon .. text, unpack(colors))
+  printMessage(icon .. text, colors)
 end
 
 local function printItemCount (texture, name, text, count, colors, forceCount)

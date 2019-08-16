@@ -3,18 +3,6 @@ local addonName, addon = ...
 local L = addon.L
 local currentVersion = 0208030
 
-local rarityList = {
-  [0] = 'Poor',
-  'Common',
-  'Uncommon',
-  'Rare',
-  'Epic',
-  'Legendary',
-  'Artifact',
-  'Heirloom',
-  'WoW Token'
-}
-
 local OUTLINE_OPTIONS = {
   {
     text = L['None'],
@@ -39,11 +27,6 @@ local sliderList = {}
 local editBoxList = {}
 local dropdownList = {}
 
-addon.rarityColors = {}
-for i = 0, 8 do
-  addon.rarityColors[i] = {GetItemQualityColor(i)}
-end
-
 local farmerOptionsFrame = CreateFrame('Frame', 'farmerOptionsFrame', UIParent)
 farmerOptionsFrame.name = 'Farmer'
 InterfaceOptions_AddCategory(farmerOptionsFrame)
@@ -57,7 +40,7 @@ end
 local function storePosition (frame)
   local icon = GetItemIcon(114978)
 
-  icon = ' |T' .. icon .. addon.vars.iconOffset
+  icon = ' |T' .. icon .. addon.vars.iconOffset .. '|t'
   farmerOptions.anchor = {frame:GetPoint()}
   frame:EnableMouse(false);
   frame:SetMovable(false);
@@ -73,7 +56,7 @@ local function moveFrame ()
   local frame = addon.frame
   local icon = GetItemIcon(3334)
 
-  icon = ' |T' .. icon .. addon.vars.iconOffset
+  icon = ' |T' .. icon .. addon.vars.iconOffset .. '|t'
   frame:RegisterForDrag('LeftButton');
   frame:SetFading(false);
   frame:Clear();
@@ -91,9 +74,9 @@ local function moveFrame ()
 end
 
 local function displayRarity (edit, rarity)
-  local colorHex
-  colorHex = addon.rarityColors[rarity][4]
-  edit:SetText('|c' .. colorHex .. rarityList[rarity])
+  local colorHex = ITEM_QUALITY_COLORS[rarity].hex
+
+  edit:SetText(colorHex .. _G['ITEM_QUALITY' .. rarity .. '_DESC'] .. '|r')
   edit:SetCursorPosition(0)
 end
 
@@ -116,7 +99,7 @@ local function setFontSize (size, scale, outline)
   addon.font:SetShadowColor(0, 0, 0);
   addon.font:SetShadowOffset(shadowOffset, -shadowOffset);
 
-  addon.vars.iconOffset = ':'.. iconSize .. ':' .. iconSize .. ':' .. '0:' .. iconOffset .. '|t ';
+  addon.vars.iconOffset = ':'.. iconSize .. ':' .. iconSize .. ':' .. '0:' .. iconOffset;
 end
 
 local function createCheckButton (name, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
