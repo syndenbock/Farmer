@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 local MESSAGE_COLORS = {0, 0, 1};
 local reputationCache;
+local updateFlag = false;
 
 local function getRepInfo ()
   local info = {};
@@ -31,13 +32,8 @@ local function getRepInfo ()
   return info;
 end
 
-addon:on('PLAYER_LOGIN', function ()
-  reputationCache = getRepInfo();
-end);
-
---addon:slash('reps', function ()
-addon:on('UPDATE_FACTION', function ()
---[[ UPDATE_FACTION fires multiple times before PLAYER_LOGIN, so we don't
+local function checkReputationChanges ()
+  --[[ UPDATE_FACTION fires multiple times before PLAYER_LOGIN, so we don't
      compare before a cache was created ]]
   if (reputationCache == nil) then
     return
@@ -45,7 +41,8 @@ addon:on('UPDATE_FACTION', function ()
 
   local repInfo = getRepInfo();
 
-  if (farmerOptions.reputation == false) then
+  if (farmerOptions.reputation == false or
+      addon.Print.checkHideOptions() == false) then
     reputationCache = repInfo;
     return;
   end
@@ -63,15 +60,15 @@ addon:on('UPDATE_FACTION', function ()
     if (factionInfo.paragonReputation ~= nil or
         cachedFactionInfo.paragonReputation ~= nil) then
       local paragonRepChange = getCacheDifference('paragonReputation');
-      paragonLevelGained = (getCacheDifference('paragonLevel') > 0);
 
+      paragonLevelGained = (getCacheDifference('paragonLevel') > 0);
       repChange = repChange + paragonRepChange;
     end
 
     if (repChange ~= 0) then
-      --if (repChange > 0) then
-      --  repChange = '+' .. repChange;
-      --end
+      if (repChange > 0) then
+        repChange = '+' .. repChange;
+      end
 
       if (paragonLevelGained == true) then
         repChange = repChange ..
@@ -83,10 +80,24 @@ addon:on('UPDATE_FACTION', function ()
            can afford getting the name now for saving the memory ]]
       local message = repChange .. ' '  .. GetFactionInfoByID(faction);
 
-
       addon.Print.printMessage(message, MESSAGE_COLORS);
     end
   end
 
   reputationCache = repInfo;
+end
+
+addon:on('PLAYER_LOGIN', function ()
+  reputationCache = getRepInfo();
+end);
+
+addon:on('UPDATE_FACTION', function ()
+  if (updateFlag == false) then
+    updateFlag = true;
+
+    C_Timer.After(0, function ()
+      updateFlag = false;
+      checkReputationChanges();
+    end);
+  end
 end);
