@@ -15,6 +15,10 @@ local function fillCurrencyTable()
 end
 
 local function checkCurrencyDisplay (id)
+  if (farmerOptions.currency == false) then
+    return false;
+  end
+
   if (farmerOptions.ignoreHonor == true) then
     local honorId = 1585;
 
@@ -27,19 +31,17 @@ local function checkCurrencyDisplay (id)
 end
 
 local function handleCurrency (id)
-  local name, total, texture, earnedThisWeek, weeklyMax, totalMax, isDicovered,
-  rarity = GetCurrencyInfo(id)
-  local amount = currencyTable[id] or 0
-
-  amount = total - amount
+  local name, total, texture, earnedThisWeek, weeklyMax, totalMax, isDiscovered,
+      rarity = GetCurrencyInfo(id)
 
   -- warfronts show unknown currencies
   if (name == nil or texture == nil) then return end
 
+  local amount = currencyTable[id] or 0;
+
   currencyTable[id] = total;
 
-  if (checkCurrencyDisplay(id) == false or
-      addon.Print.checkHideOptions() == false) then return end
+  amount = total - amount
 
   if (amount <= 0) then return end
 
@@ -54,6 +56,12 @@ end);
 
 addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
   if (id == nil) then return end
+
+  if (checkCurrencyDisplay(id) == false or
+      addon.Print.checkHideOptions() == false) then
+    currencyTable[id] = total;
+    return;
+  end
 
   handleCurrency(id);
 end);
