@@ -1,7 +1,7 @@
 local addonName, addon = ...
 
 local L = addon.L
-local currentVersion = 0208030
+local currentVersion = 0210000
 
 local OUTLINE_OPTIONS = {
   {
@@ -445,7 +445,8 @@ addon:on('PLAYER_LOGIN', function (name)
     local text
 
     text = 'New in ' .. addonName .. ' version ' .. version .. ':\n' ..
-           'You can now select the text outline style in the options.'
+           '- You can automatically put pets you own 3 times in a cage using "/farmer cagepets"\n' ..
+           '- There is now an option to display reputation. This even shows a star when you earn a paragon reward!'
     print(text)
   end
 
