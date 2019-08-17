@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-local MESSAGE_COLORS = {0, 0, 1};
+local MESSAGE_COLORS = {0, 0.35, 1};
 local reputationCache;
 local updateFlag = false;
 

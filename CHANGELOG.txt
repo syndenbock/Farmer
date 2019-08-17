@@ -1,3 +1,6 @@
+  version 2.10.1
+- updated reputation color
+
   version 2.10
 - added slash command for automatically caging pets that are owned 3 times
 - added reputation tracking
