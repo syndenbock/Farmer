@@ -3,14 +3,14 @@ local addonName, addon = ...;
 addon:on('PLAYER_MONEY', function()
   if (farmerOptions.money == false or
       addon.Print.checkHideOptions() == false) then
-    return ;
+    return;
   end
 
   local money = GetMoney()
 
   if (addon.vars.moneyStamp >= money) then
     addon.vars.moneyStamp = money;
-    return ;
+    return;
   end
 
   local difference = money - addon.vars.moneyStamp;

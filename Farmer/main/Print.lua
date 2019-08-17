@@ -31,11 +31,6 @@ farmerFrame:SetFontObject(font);
 setTrueScale(farmerFrame, 1);
 farmerFrame:Show();
 
-local function printMessage (message, colors)
-  farmerFrame:AddMessage(message, unpack(colors, 1, 3));
-  -- ChatFrame1:AddMessage(...)
-end
-
 --[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
 not fire, so we clear the flag after entering the world --]]
 addon:on('PLAYER_ENTERING_WORLD', function ()
@@ -100,6 +95,11 @@ local function checkHideOptions ()
   end
 
   return true;
+end
+
+local function printMessage (message, colors, markers)
+  farmerFrame:AddMessage(message, unpack(colors, 1, 3));
+  -- ChatFrame1:AddMessage(...)
 end
 
 local function printItem (texture, name, text, colors)

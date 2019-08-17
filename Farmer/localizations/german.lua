@@ -14,6 +14,7 @@ L['show total count for stackable items'] = 'Zeige Gesamtanzahl stapelbarer Item
 L['show bag count for stackable items'] = 'Zeige Anzahl stapelbarer Items in der Tasche'
 L['show currencies'] = 'Zeige Währungen'
 L['ignore Honor'] = 'Ignoriere Ehre'
+L['show reputation'] = 'Zeige Ruf'
 L['show money'] = 'Zeige Geld'
 L['enable fast autoloot'] = 'Aktiviere schnelles Autolooten'
 L['show names of all items'] = 'Zeige Namen von allen Items'
