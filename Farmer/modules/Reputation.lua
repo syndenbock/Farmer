@@ -45,6 +45,11 @@ addon:on('UPDATE_FACTION', function ()
 
   local repInfo = getRepInfo();
 
+  if (farmerOptions.reputation == false) then
+    reputationCache = repInfo;
+    return;
+  end
+
   for faction, factionInfo in pairs(repInfo) do
     local cachedFactionInfo = reputationCache[faction] or {};
 
@@ -64,9 +69,9 @@ addon:on('UPDATE_FACTION', function ()
     end
 
     if (repChange ~= 0) then
-      if (repChange > 0) then
-        repChange = '+' .. repChange;
-      end
+      --if (repChange > 0) then
+      --  repChange = '+' .. repChange;
+      --end
 
       if (paragonLevelGained == true) then
         repChange = repChange ..
