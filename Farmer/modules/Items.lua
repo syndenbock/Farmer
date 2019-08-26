@@ -204,6 +204,7 @@ end);
 addon:on('LOOT_CLOSED', function ()
   flags.loot = false;
 
+  LootFrame:Hide();
   LootFrame:SetAlpha(0);
 
   if (flags.map == true) then

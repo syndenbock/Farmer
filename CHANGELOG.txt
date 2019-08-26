@@ -1,5 +1,7 @@
   version 2.10.1
 - updated reputation color
+- updated russian localization
+- fixed the frame being behind arena/island expeditions frame
 
   version 2.10
 - added slash command for automatically caging pets that are owned 3 times
