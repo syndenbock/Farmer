@@ -78,7 +78,7 @@ local function checkReputationChanges ()
 
       --[[ could have stored faction name when generating faction info, but we
            can afford getting the name now for saving the memory ]]
-      local message = repChange .. ' '  .. GetFactionInfoByID(faction);
+      local message = GetFactionInfoByID(faction) .. ' ' .. repChange;
 
       addon.Print.printMessage(message, MESSAGE_COLORS);
     end

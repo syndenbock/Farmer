@@ -1,7 +1,6 @@
 ## Interface: 80200
 ## Title: Farmer
-## Title: Farmer
-## Version: 2.10.1
+## Version: 2.10.2
 ## Author: syndenbock
 ## Notes: Shows information on all the stuff you loot
 ## Notes-deDe: Zeigt Infos über all das Zeug das du lootest

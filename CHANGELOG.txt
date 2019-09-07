@@ -1,3 +1,7 @@
+  version 2.10.2
+- fixed frame moving
+- updated reputation message pattern
+
   version 2.10.1
 - updated reputation color
 - updated russian localization

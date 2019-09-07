@@ -67,7 +67,7 @@ local function moveFrame ()
     if (self:IsMovable() == true) then
       self:StartMoving();
     end
-  end)''
+  end);
   frame:SetScript('OnReceiveDrag', function (self)
     storePosition(self);
   end);
