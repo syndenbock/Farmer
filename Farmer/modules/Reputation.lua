@@ -3,17 +3,35 @@ local addonName, addon = ...;
 local MESSAGE_COLORS = {0, 0.35, 1};
 local reputationCache;
 local updateFlag = false;
+local expandCount = 0;
 
 local function getRepInfo ()
   local info = {};
+  local expandedIndices = {};
+  local numFactions = GetNumFactions();
+  local i = 1;
 
-  for i = 1, GetNumFactions(), 1 do
+  --[[ we have to use a while loop, because a for loop would end when reaching
+       the last loop, even when numFactions increases in that loop --]]
+  while (i <= numFactions) do
     local factionInfo = {GetFactionInfo(i)};
 
     local faction = factionInfo[14];
     local reputation = factionInfo[6];
+    local isHeader = factionInfo[9];
+    local isCollapsed = factionInfo[10];
+    local hasRep = factionInfo[11];
 
-    if (faction ~= nil and reputation ~= nil) then
+    if (isHeader and isCollapsed) then
+      table.insert(expandedIndices, i);
+      --[[ expandCount has to be increased before collapsing, because
+         UPDATE_FACTION are fired and handled immediately --]]
+      expandCount = expandCount + 1;
+      ExpandFactionHeader(i);
+      numFactions = GetNumFactions();
+    end
+
+    if (hasRep or not isHeader) then
       local data = {};
 
       data.reputation = reputation;
@@ -27,18 +45,23 @@ local function getRepInfo ()
 
       info[faction] = data;
     end
+
+    i = i + 1;
+  end
+
+  --[[ the headers have to be collapse from bottom to top, because collapsing
+       top ones first would change the index of the lower ones  --]]
+  for i = #expandedIndices, 1, -1 do
+    --[[ expandCount has to be increased before collapsing, because
+         UPDATE_FACTION are fired and handled immediately --]]
+    expandCount = expandCount + 1;
+    CollapseFactionHeader(expandedIndices[i]);
   end
 
   return info;
 end
 
 local function checkReputationChanges ()
-  --[[ UPDATE_FACTION fires multiple times before PLAYER_LOGIN, so we don't
-     compare before a cache was created ]]
-  if (reputationCache == nil) then
-    return
-  end
-
   local repInfo = getRepInfo();
 
   if (farmerOptions.reputation == false or
@@ -92,6 +115,15 @@ addon:on('PLAYER_LOGIN', function ()
 end);
 
 addon:on('UPDATE_FACTION', function ()
+  if (expandCount > 0) then
+    expandCount = expandCount - 1;
+    return;
+  end
+
+  if (reputationCache == nil) then
+    return;
+  end
+
   if (updateFlag == false) then
     updateFlag = true;
 

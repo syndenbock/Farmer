@@ -1,7 +1,7 @@
 local addonName, addon = ...;
 
 local UNITID_PLAYER = 'player';
-local FISHING_NAME = GetSpellInfo(131476);
+local FISHING_NAME = GetSpellInfo(7620);
 local platesShown;
 local fishingFlag = false;
 
