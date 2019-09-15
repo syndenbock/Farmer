@@ -4,6 +4,8 @@ if (GetLocale() ~= 'deDE') then return end
 
 local L = addon.L;
 
+addon.vars.hasTranslation = true;
+
 L['unknown command'] = 'Unbekannter Befehl'
 L['show items based on rarity'] = 'Zeige Items nach Seltenheit an'
 L['minimum rarity'] = 'Mindestseltenheit'

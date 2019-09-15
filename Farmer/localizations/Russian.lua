@@ -4,6 +4,8 @@ if (GetLocale() ~= 'ruRU') then return end
 
 local L = addon.L;
 
+addon.vars.hasTranslation = true;
+
 L["always show focused items"] = "Всегда показывать\nпредметы из списка"
 L["always show quest items"] = "Всегда показывать предметы для заданий"
 L["always show reagents"] = "Всегда показывать реагенты"

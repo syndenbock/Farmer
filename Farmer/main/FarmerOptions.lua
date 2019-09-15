@@ -27,6 +27,13 @@ local sliderList = {}
 local editBoxList = {}
 local dropdownList = {}
 
+if (addon.vars.hasTranslation == true) then
+  addon.vars.font = STANDARD_TEXT_FONT;
+else
+  addon.vars.font = 'Fonts\\FRIZQT__.ttf';
+end
+
+
 local farmerOptionsFrame = CreateFrame('Frame', 'farmerOptionsFrame', UIParent)
 farmerOptionsFrame.name = 'Farmer'
 InterfaceOptions_AddCategory(farmerOptionsFrame)
@@ -93,7 +100,8 @@ local function setFontSize (size, scale, outline)
 
   -- FRIZQT__ cannot be used because it does not support cyrillic letters
   -- addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
-  addon.font:SetFont(STANDARD_TEXT_FONT, size, outline);
+  -- addon.font:SetFont('Fonts\\FRIZQT__.ttf', size, 'thickoutline')
+  addon.font:SetFont(addon.vars.font, size, outline);
 
   addon.font:SetSpacing(spacing);
   addon.font:SetShadowColor(0, 0, 0);
@@ -215,7 +223,7 @@ local function createEditBox (name, anchorFrame, xOffset, yOffset, width, height
   edit:EnableMouse(true)
   edit:SetMaxLetters(1000)
   -- edit:SetFontObject('ChatFontNormal')
-  edit:SetFont('Fonts\\ARIALN.ttf', 16, 'THINOUTLINE')
+  edit:SetFont(addon.vars.font, 16, 'THINOUTLINE')
   edit:SetWidth(width - 16)
   editBoxList[name] = edit
   -- edit:SetHeight(height)
@@ -239,7 +247,7 @@ local function createLabel (anchorFrame, xOffset, yOffset, text, anchor, parentA
   anchor = anchor or 'TOPLEFT'
   parentAnchor = parentAnchor or 'BOTTOMLEFT'
 
-  label:SetFont('Fonts\\ARIALN.TTF', 16, 'outline')
+  label:SetFont(addon.vars.font, 16, 'outline')
   label:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset)
   label:SetText(text)
 

@@ -1,3 +1,6 @@
+  version 2.10.4a
+- fixed font on game clients with special characters and no translations
+
   version 2.10.3
 - fixed reputation display for collapsed reputation categories
 
