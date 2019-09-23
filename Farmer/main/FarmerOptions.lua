@@ -98,11 +98,9 @@ local function setFontSize (size, scale, outline)
   local iconOffset = -spacing * 1.5;
   local shadowOffset = size / 10;
 
-  -- FRIZQT__ cannot be used because it does not support cyrillic letters
-  -- addon.font:SetFont('Fonts\\ARIALN.ttf', size, 'thickoutline')
-  -- addon.font:SetFont('Fonts\\FRIZQT__.ttf', size, 'thickoutline')
-  addon.font:SetFont(addon.vars.font, size, outline);
-
+  --[[ we have to use the standard font because on screen messages are always
+       localized --]]
+  addon.font:SetFont(STANDARD_TEXT_FONT, size, outline);
   addon.font:SetSpacing(spacing);
   addon.font:SetShadowColor(0, 0, 0);
   addon.font:SetShadowOffset(shadowOffset, -shadowOffset);
