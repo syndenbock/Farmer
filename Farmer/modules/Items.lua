@@ -126,6 +126,7 @@ local function handleItem (itemId, itemLink, count)
     -- weapons
     if (itemClassID == LE_ITEM_CLASS_WEAPON) then
       local text
+
       itemLevel = GetDetailedItemLevelInfo(itemLink)
       text = itemSubType .. ' ' .. itemLevel
       addon.Print.printEquip(texture, itemName, text, count, colors)
@@ -162,7 +163,7 @@ local function handleItem (itemId, itemLink, count)
   end
 
   -- all unspecified items
-  addon.Print.printItemCount(texture, itemName, '', count, colors, false)
+  addon.Print.printUnspecifiedItem(texture, itemName, count, colors)
 end
 
 --[[
@@ -389,10 +390,11 @@ addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
   checkSlotForArtifact(INVSLOT_OFFHAND);
 end);
 
-addon:slash('test', function (id)
+addon:slash('test', function (id, count)
   id = id or 152505
+  count = tonumber(count or 1)
 
   local _, link = GetItemInfo(id);
 
-  handleItem(link, id, 1)
+  handleItem(link, id, count)
 end);

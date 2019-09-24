@@ -47,7 +47,7 @@ end
 local function storePosition (frame)
   local icon = GetItemIcon(114978)
 
-  icon = ' |T' .. icon .. addon.vars.iconOffset .. '|t'
+  icon = addon:getIcon(icon);
   farmerOptions.anchor = {frame:GetPoint()}
   frame:EnableMouse(false);
   frame:SetMovable(false);
@@ -63,7 +63,7 @@ local function moveFrame ()
   local frame = addon.frame
   local icon = GetItemIcon(3334)
 
-  icon = ' |T' .. icon .. addon.vars.iconOffset .. '|t'
+  icon = addon:getIcon(icon);
   frame:RegisterForDrag('LeftButton');
   frame:SetFading(false);
   frame:Clear();
@@ -105,7 +105,8 @@ local function setFontSize (size, scale, outline)
   addon.font:SetShadowColor(0, 0, 0);
   addon.font:SetShadowOffset(shadowOffset, -shadowOffset);
 
-  addon.vars.iconOffset = ':'.. iconSize .. ':' .. iconSize .. ':' .. '0:' .. iconOffset;
+  -- addon.vars.iconOffset = ':'.. iconSize .. ':' .. iconSize .. ':' .. '0:' .. iconOffset;
+  addon.vars.iconOffset = addon:stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
 end
 
 local function createCheckButton (name, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
