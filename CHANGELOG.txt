@@ -1,3 +1,6 @@
+  version 2.10.4
+- updated interface version
+
   version 2.10.4a2
 - fixed on screen font on game clients with special characters and no translations
 
