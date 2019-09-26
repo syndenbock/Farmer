@@ -110,7 +110,7 @@ local function handleItem (itemId, itemLink, count)
     local text
 
     itemLevel = GetDetailedItemLevelInfo(itemLink)
-    text = itemSubType .. ' ' .. itemLevel
+    text = addon:stringJoin({itemLevel, itemSubType}, ' ');
     addon.Print.printEquip(texture, itemName, text, count, colors)
     return
   end
@@ -128,28 +128,32 @@ local function handleItem (itemId, itemLink, count)
       local text
 
       itemLevel = GetDetailedItemLevelInfo(itemLink)
-      text = itemSubType .. ' ' .. itemLevel
+      text = addon:stringJoin({itemLevel, itemSubType}, ' ');
       addon.Print.printEquip(texture, itemName, text, count, colors)
       return
     end
 
     -- armor
     if (itemClassID == LE_ITEM_CLASS_ARMOR) then
-      local text = _G[itemEquipLoc]
+      local slot = _G[itemEquipLoc];
+      local textList;
+      local text;
 
-      itemLevel = GetDetailedItemLevelInfo(itemLink)
+      itemLevel = GetDetailedItemLevelInfo(itemLink);
 
       if (itemEquipLoc == 'INVTYPE_TABARD') then
-        -- text is already fine
+        textList = {slot};
       elseif (itemEquipLoc ==  'INVTYPE_CLOAK') then
-        text = text .. ' ' .. itemLevel
+        textList = {itemLevel, slot};
       elseif (itemSubClassID == LE_ITEM_ARMOR_GENERIC) then
-        text = text .. ' ' .. itemLevel -- fingers/trinkets
+        textList = {itemLevel, slot} -- fingers/trinkets
       elseif (itemSubClassID > LE_ITEM_ARMOR_SHIELD) then -- we all know shields are offhand
-        text = itemSubType .. ' ' .. itemLevel
+        textList = {itemLevel, slot};
       else
-        text = itemSubType .. ' ' .. text .. ' ' .. itemLevel
+        textList = {itemLevel, itemSubType, slot}
       end
+
+      text = addon:stringJoin(textList, ' ');
 
       addon.Print.printEquip(texture, itemName, text, count, colors)
       return
@@ -163,7 +167,7 @@ local function handleItem (itemId, itemLink, count)
   end
 
   -- all unspecified items
-  addon.Print.printUnspecifiedItem(texture, itemName, count, colors)
+  addon.Print.printItem(texture, itemName, count, nil, colors, {forceName = true, minimumCount = 1})
 end
 
 --[[
@@ -399,9 +403,10 @@ addon:slash('test', function (id, count)
   end
 
   local testItems = {
-    152505, -- Riverbud
-    21841, -- Netherweave bag
+    2447, -- Peacebloom
+    4496, -- Small Brown Pouch
     6975, -- Whirlwind Axe
+    4322, -- Enchanter's Cowl
     13521, -- Recipe: Flask of Supreme Power
   };
 

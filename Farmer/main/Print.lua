@@ -105,31 +105,38 @@ local function printMessage (message, colors, markers)
   -- ChatFrame1:AddMessage(...)
 end
 
-local function printItem (texture, name, text, colors)
+local function printItem (texture, name, count, text, colors, options)
+  count = count or 1;
+  options = options or {};
+
   local icon = addon:getIcon(texture);
+  local itemName;
+  local itemCount;
+  local message;
 
-  if (farmerOptions.itemNames ~= true and text ~= nil) then
-    name = nil;
+  if (options.minimumCount == nil or count > options.minimumCount) then
+    itemCount = 'x' .. count;
   end
 
-  printMessage(addon:stringJoin({icon, name, text}, ' '), colors);
-end
-
-local function printItemCount (texture, name, text, count, colors, minimum)
-  minimum = minimum or 0;
-
-  if (count and count > minimum) then
-    text = addon:stringJoin({SYMBOL_MULT .. count, text}, ' ');
+  if (farmerOptions.itemNames == true or options.forceName == true) then
+    itemName = name;
   end
 
-  printItem(texture, name, text, colors);
+  message = addon:stringJoin({itemName, itemCount, text}, ' ');
+
+  if (message == '') then
+    message = name;
+  end
+
+  printMessage(icon .. ' ' .. message, colors);
 end
+
 
 local function printStackableItemTotal (id, texture, name, count, colors)
   local totalCount = GetItemCount(id, true);
   local text = addon:stringJoin({'(', totalCount, ')'}, '');
 
-  printItemCount(texture, name, text, count, colors);
+  printItem(texture, name, count, text, colors);
 end
 
 local function printStackableItemBags (id, texture, name, count, colors)
@@ -137,7 +144,7 @@ local function printStackableItemBags (id, texture, name, count, colors)
   local totalCount = GetItemCount(id, true);
   local text = addon:stringJoin({'(', bagCount, ')'}, '');
 
-  printItemCount(texture, name, text, count, colors);
+  printItem(texture, name, count, text, colors);
 end
 
 local function printStackableItemTotalAndBags (id, texture, name, count, colors)
@@ -145,7 +152,7 @@ local function printStackableItemTotalAndBags (id, texture, name, count, colors)
   local totalCount = GetItemCount(id, true);
   local text = addon:stringJoin({'(', bagCount, '/', totalCount, ')'}, '');
 
-  printItemCount(texture, name, text, count, colors);
+  printItem(texture, name, count, text, colors);
 end
 
 local function printStackableItem (id, texture, name, count, colors)
@@ -160,29 +167,16 @@ local function printStackableItem (id, texture, name, count, colors)
       farmerOptions.showBags == true) then
     printStackableItemBags(id, texture, name, count, colors)
   else
-    printItemCount(texture, name, nil, count, colors)
+    printItem(texture, name, count, nil, colors)
   end
 end
 
 local function printEquip (texture, name, text, count, colors)
-  if (farmerOptions.itemNames == true and text and text ~= '') then
+  if (text ~= nil and text ~= '') then
     text = '[' .. text .. ']';
   end
 
-  printItemCount(texture, name, text, count, colors, 1);
-end
-
-local function printUnspecifiedItem (texture, name, count, colors)
-  local icon = addon:getIcon(texture);
-  local text;
-
-  if (count ~= nil and count > 1) then
-    text = addon:stringJoin({icon, SYMBOL_MULT .. count, name}, ' ');
-  else
-    text = addon:stringJoin({icon, name}, ' ');
-  end
-
-  printMessage(text, colors);
+  printItem(texture, name, count, text, colors, {minimumCount = 1});
 end
 
 --[[
@@ -196,7 +190,6 @@ addon.Print = {
   printItem = printItem,
   printEquip = printEquip,
   printStackableItem = printStackableItem,
-  printUnspecifiedItem = printUnspecifiedItem,
   checkHideOptions = checkHideOptions,
 };
 
