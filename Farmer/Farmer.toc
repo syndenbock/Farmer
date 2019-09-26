@@ -10,6 +10,8 @@
 Localization.lua
 localizations/German.lua
 localizations/Russian.lua
+localizations/Korean.lua
+localizations/Chinese_simplified.lua
 
 Core.lua
 
