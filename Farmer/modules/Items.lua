@@ -402,7 +402,7 @@ addon:slash('test', function (id, count)
     152505, -- Riverbud
     21841, -- Netherweave bag
     6975, -- Whirlwind Axe
-    13521, -- Flask of Supreme Power
+    13521, -- Recipe: Flask of Supreme Power
   };
 
   for i = 1, #testItems, 1 do
@@ -412,5 +412,4 @@ addon:slash('test', function (id, count)
     handleItem(link, id, 1);
     handleItem(link, id, 4);
   end
-
 end);

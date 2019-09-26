@@ -15,7 +15,6 @@ local function setTrueScale (frame, scale)
   frame:SetScale(scale / frame:GetEffectiveScale());
 end
 
-
 local font = CreateFont('farmerFont');
 local farmerFrame;
 
@@ -167,10 +166,10 @@ end
 
 local function printEquip (texture, name, text, count, colors)
   if (farmerOptions.itemNames == true and text and text ~= '') then
-    text = '[' .. text .. ']'
+    text = '[' .. text .. ']';
   end
 
-  printItemCount(texture, name, text, count, colors, 1)
+  printItemCount(texture, name, text, count, colors, 1);
 end
 
 local function printUnspecifiedItem (texture, name, count, colors)

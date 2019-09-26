@@ -33,7 +33,6 @@ else
   addon.vars.font = 'Fonts\\FRIZQT__.ttf';
 end
 
-
 local farmerOptionsFrame = CreateFrame('Frame', 'farmerOptionsFrame', UIParent)
 farmerOptionsFrame.name = 'Farmer'
 InterfaceOptions_AddCategory(farmerOptionsFrame)
@@ -48,7 +47,7 @@ local function storePosition (frame)
   local icon = GetItemIcon(114978)
 
   icon = addon:getIcon(icon);
-  farmerOptions.anchor = {frame:GetPoint()}
+  farmerOptions.anchor = {frame:GetPoint()};
   frame:EnableMouse(false);
   frame:SetMovable(false);
   frame:SetFading(true);
