@@ -391,10 +391,26 @@ addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
 end);
 
 addon:slash('test', function (id, count)
-  id = id or 152505
-  count = tonumber(count or 1)
+  if (id ~= nil) then
+    local _, link = GetItemInfo(id);
+    count = tonumber(count or 1);
+    handleItem(link, id, count);
+    return;
+  end
 
-  local _, link = GetItemInfo(id);
+  local testItems = {
+    152505, -- Riverbud
+    21841, -- Netherweave bag
+    6975, -- Whirlwind Axe
+    13521, -- Flask of Supreme Power
+  };
 
-  handleItem(link, id, count)
+  for i = 1, #testItems, 1 do
+    local id = testItems[i];
+    local _, link = GetItemInfo(id);
+
+    handleItem(link, id, 1);
+    handleItem(link, id, 4);
+  end
+
 end);

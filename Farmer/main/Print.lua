@@ -116,8 +116,12 @@ local function printItem (texture, name, text, colors)
   printMessage(addon:stringJoin({icon, name, text}, ' '), colors);
 end
 
-local function printItemCount (texture, name, text, count, colors)
-  local text = addon:stringJoin({SYMBOL_MULT .. count, text}, ' ');
+local function printItemCount (texture, name, text, count, colors, minimum)
+  minimum = minimum or 0;
+
+  if (count and count > minimum) then
+    text = addon:stringJoin({SYMBOL_MULT .. count, text}, ' ');
+  end
 
   printItem(texture, name, text, colors);
 end
@@ -162,11 +166,11 @@ local function printStackableItem (id, texture, name, count, colors)
 end
 
 local function printEquip (texture, name, text, count, colors)
-  if (farmerOptions.itemNames == true) then
+  if (farmerOptions.itemNames == true and text and text ~= '') then
     text = '[' .. text .. ']'
   end
 
-  printItemCount(texture, name, text, count, colors)
+  printItemCount(texture, name, text, count, colors, 1)
 end
 
 local function printUnspecifiedItem (texture, name, count, colors)
