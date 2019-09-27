@@ -1,3 +1,6 @@
+  version 2.10.5
+- fixed currency display
+
   version 2.10.4
 - updated interface version
 - added translations for korean and simplified chinese

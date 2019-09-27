@@ -45,9 +45,9 @@ local function handleCurrency (id)
 
   if (amount <= 0) then return end
 
-  local text = 'x' .. amount .. ' (' .. total .. ')';
+  local text = '(' .. total .. ')';
 
-  addon.Print.printItem(texture, name, text, {1, 0.9, 0, 1});
+  addon.Print.printItem(texture, name, amount, text, {1, 0.9, 0, 1});
 end
 
 addon:on('PLAYER_LOGIN', function ()
