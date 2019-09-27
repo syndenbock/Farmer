@@ -1,17 +1,68 @@
 local addonName, addon = ...;
 
-local currencyTable = {};
+local HONOR_ID = 1585;
+local CONQUEST_ID = 1602;
 
-local function fillCurrencyTable()
-  -- a pretty ugly workaround, but WoW has no table containing the currency ids
-  -- does not take long though, so it's fine (2ms on my shitty ass pc)
-  for i = 1, 2000 do
-    local info = {GetCurrencyInfo(i)};
+do
+  --[[ trying to read global constants --]]
+  local constant = _G['Constant'];
 
-    if (info[2]) then
-      currencyTable[i] = info[2];
+  if (constant ~= nil) then
+    local currency = constant.Currency;
+
+    if (currency ~= nil) then
+      HONOR_ID = currency.Honor or HONOR_ID;
+      CONQUEST_ID = currency.Conquest or CONQUEST_ID;
     end
   end
+end
+
+local currencyTable = {};
+
+local function getCurrencyAmount (currencyId)
+  local info = {GetCurrencyInfo(currencyId)};
+
+  return info[2];
+end
+
+local function fillCurrencyTable ()
+  local data = {};
+  local expandedIndices = {};
+  local listSize = GetCurrencyListSize();
+  local i = 1;
+
+  while (i <= listSize) do
+    local info = {GetCurrencyListInfo(i)};
+    local isHeader = info[2];
+    local isExpanded = info[3];
+
+    if (isHeader and not isExpanded) then
+      table.insert(expandedIndices, i);
+      ExpandCurrencyList(i, 1);
+      listSize = GetCurrencyListSize();
+    end
+
+    if (not isHeader) then
+      local link = GetCurrencyListLink(i);
+      local id = C_CurrencyInfo.GetCurrencyIDFromLink(link);
+      local count = info[6];
+
+      data[id] = count;
+    end
+
+    i = i + 1;
+  end
+
+  --[[ the headers have to be collapse from bottom to top, because collapsing
+       top ones first would change the index of the lower ones  --]]
+  for i = #expandedIndices, 1, -1 do
+    ExpandCurrencyList(expandedIndices[i], 0);
+  end
+
+  data[HONOR_ID] = getCurrencyAmount(HONOR_ID);
+  data[CONQUEST_ID] = getCurrencyAmount(CONQUEST_ID);
+
+  currencyTable = data;
 end
 
 local function checkCurrencyDisplay (id)
@@ -20,9 +71,7 @@ local function checkCurrencyDisplay (id)
   end
 
   if (farmerOptions.ignoreHonor == true) then
-    local honorId = 1585;
-
-    if (id == honorId) then
+    if (id == HONOR_ID) then
       return false;
     end
   end
@@ -31,17 +80,17 @@ local function checkCurrencyDisplay (id)
 end
 
 local function handleCurrency (id)
-  local name, total, texture, earnedThisWeek, weeklyMax, totalMax, isDiscovered,
-      rarity = GetCurrencyInfo(id)
+  local info = {GetCurrencyInfo(id)}
+  local total = info[2];
+  local texture = info[3];
 
   -- warfronts show unknown currencies
-  if (name == nil or texture == nil) then return end
+  if (total == nil) then return end
 
   local amount = currencyTable[id] or 0;
 
   currencyTable[id] = total;
-
-  amount = total - amount
+  amount = total - amount;
 
   if (amount <= 0) then return end
 

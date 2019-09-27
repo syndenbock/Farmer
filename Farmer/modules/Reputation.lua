@@ -7,8 +7,8 @@ local expandCount = 0;
 
 local function getRepInfo ()
   local info = {};
-  local expandedIndices = {};
   local numFactions = GetNumFactions();
+  local expandedIndices = {};
   local i = 1;
 
   --[[ we have to use a while loop, because a for loop would end when reaching
