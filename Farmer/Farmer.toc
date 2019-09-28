@@ -24,3 +24,4 @@ modules/Fishing.lua
 modules/Money.lua
 modules/Petscan.lua
 modules/Reputation.lua
+modules/Professions.lua
