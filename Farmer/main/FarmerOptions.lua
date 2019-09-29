@@ -27,7 +27,7 @@ local sliderList = {}
 local editBoxList = {}
 local dropdownList = {}
 
-if (addon.vars.hasTranslation == true) then
+if (L.hasTranslation == true) then
   addon.vars.font = STANDARD_TEXT_FONT;
 else
   addon.vars.font = 'Fonts\\FRIZQT__.ttf';

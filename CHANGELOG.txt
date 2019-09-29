@@ -1,3 +1,6 @@
+  version 2.10.6
+- fixed localization support
+
   version 2.10.5
 - fixed currency display
 

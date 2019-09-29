@@ -4,7 +4,7 @@ if (GetLocale() ~= 'zhCN') then return end
 
 local L = addon.L;
 
-addon.vars.hasTranslation = true;
+L.hasTranslation = true;
 
 L["always show focused items"] = "总是显示被关注的物品"
 L["always show quest items"] = "总是显示任务物品"
