@@ -1,7 +1,9 @@
-local addonName, addon = ...
+local addonName, addon = ...;
 
-local L = addon.L
-local currentVersion = 0210000
+local L = addon.L;
+local currentVersion = 0210000;
+
+local ADDON_ICON_ID = 3334;
 
 local OUTLINE_OPTIONS = {
   {
@@ -44,9 +46,8 @@ local function setDefaultPosition ()
 end
 
 local function storePosition (frame)
-  local icon = GetItemIcon(114978)
+  local icon = addon:getIcon(GetItemIcon(ADDON_ICON_ID));
 
-  icon = addon:getIcon(icon);
   farmerOptions.anchor = {frame:GetPoint()};
   frame:EnableMouse(false);
   frame:SetMovable(false);
@@ -59,10 +60,9 @@ local function storePosition (frame)
 end
 
 local function moveFrame ()
-  local frame = addon.frame
-  local icon = GetItemIcon(3334)
+  local frame = addon.frame;
+  local icon = addon:getIcon(GetItemIcon(ADDON_ICON_ID));
 
-  icon = addon:getIcon(icon);
   frame:RegisterForDrag('LeftButton');
   frame:SetFading(false);
   frame:Clear();
