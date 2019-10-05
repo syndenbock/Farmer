@@ -80,12 +80,12 @@ local function checkCurrencyDisplay (id)
 end
 
 local function handleCurrency (id)
-  local info = {GetCurrencyInfo(id)}
+  local info = {GetCurrencyInfo(id)};
   local total = info[2];
   local texture = info[3];
 
-  -- warfronts show unknown currencies
-  if (total == nil) then return end
+  -- warfronts show hidden currencies without icons
+  if (total == nil or texture == nil) then return end
 
   local amount = currencyTable[id] or 0;
 
