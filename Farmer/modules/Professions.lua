@@ -8,8 +8,7 @@ local function getProfessionCategories ()
   local skillList = C_TradeSkillUI.GetAllProfessionTradeSkillLines();
   local data = {};
 
-  for i = 1, #skillList, 1 do
-    local id = skillList[i];
+  for index, id in pairs(skillList) do
     local info = {C_TradeSkillUI.GetTradeSkillLineInfoByID(id)};
     local parentId = info[5];
 

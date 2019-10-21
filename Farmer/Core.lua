@@ -111,11 +111,9 @@ end
 
 function addon:stringJoin (stringList, joiner)
   joiner = joiner or '';
-  local result;
+  local result = nil;
 
-  for i = 1, #stringList, 1 do
-    local fragment = stringList[i];
-
+  for index, fragment in pairs(stringList) do
     if (fragment ~= nil) then
       if (result == nil) then
         result = fragment;
