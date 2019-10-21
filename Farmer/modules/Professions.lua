@@ -11,12 +11,17 @@ local function getProfessionCategories ()
   for i = 1, #skillList, 1 do
     local id = skillList[i];
     local info = {C_TradeSkillUI.GetTradeSkillLineInfoByID(id)};
-    local parentId = info[5] or id;
+    local parentId = info[5];
 
-    if (data[parentId] == nil) then
-      data[parentId] = {id};
-    else
-      table.insert(data[parentId], id);
+    --[[ If parentId is nil, the current line is the main profession.
+         Because Blizzard apparently does not know how to properly code, this
+         will return the same info as the classic category, so we skip it --]]
+    if (parentId ~= nil) then
+      if (data[parentId] == nil) then
+        data[parentId] = {id};
+      else
+        table.insert(data[parentId], id);
+      end
     end
   end
 
@@ -70,6 +75,7 @@ end
 
 addon:on('SKILL_LINES_CHANGED', function ()
   if (professionCache == nil) then return end
+
   local data = getProfessionInfo();
 
   for id, info in pairs(data) do

@@ -357,7 +357,7 @@ local function applyOptions ()
     AlertFrame:RegisterEvent('SHOW_LOOT_TOAST')
     AlertFrame:RegisterEvent('LOOT_ITEM_ROLL_WON')
     AlertFrame:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
-    AlertFrame:UnregisterEvent('BONUS_ROLL_RESULT')
+    AlertFrame:RegisterEvent('BONUS_ROLL_RESULT')
   end
 
   if (farmerOptions.money == true) then
