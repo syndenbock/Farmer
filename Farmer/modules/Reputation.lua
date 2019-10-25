@@ -23,9 +23,9 @@ local function getRepInfo ()
     local hasRep = factionInfo[11];
 
     if (isHeader and isCollapsed) then
-      table.insert(expandedIndices, i);
+      expandedIndices[#expandedIndices + 1] = i;
       --[[ expandCount has to be increased before collapsing, because
-         UPDATE_FACTION are fired and handled immediately --]]
+           UPDATE_FACTION are fired and handled immediately --]]
       expandCount = expandCount + 1;
       ExpandFactionHeader(i);
       numFactions = GetNumFactions();

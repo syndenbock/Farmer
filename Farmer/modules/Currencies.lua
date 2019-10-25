@@ -37,7 +37,7 @@ local function fillCurrencyTable ()
     local isExpanded = info[3];
 
     if (isHeader and not isExpanded) then
-      table.insert(expandedIndices, i);
+      expandedIndices[#expandedIndices + 1] = i;
       ExpandCurrencyList(i, 1);
       listSize = GetCurrencyListSize();
     end

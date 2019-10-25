@@ -375,7 +375,7 @@ local function loadItemIds ()
   local text = {}
 
   for key in pairs(list) do
-    table.insert(text, key)
+    text[#text + 1] = key;
   end
 
   edit:SetText(table.concat(text, '\n'))

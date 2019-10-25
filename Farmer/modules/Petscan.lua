@@ -59,7 +59,7 @@ local function scanPets ()
           if (info[6] == true) then
             print(info[8] .. ' is owned 3 times, but favorited');
           else
-            table.insert(petQueue, info[1]);
+            petQueue[#petQueue + 1] = info[1];
           end
         end
       end

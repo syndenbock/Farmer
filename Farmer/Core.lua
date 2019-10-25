@@ -2,6 +2,8 @@ local addonName, addon = ...
 
 local L = addon.L
 
+addon.vars = {}
+
 --[[
 ///#############################################################################
 /// proxy
@@ -16,14 +18,14 @@ do
 
   function proxy:__newindex (key, value)
     if (proxy[key] ~= nil) then
-      error('Farmer: addon key already in use: ' .. key)
+      error(addonName .. ': addon key already in use: ' .. key)
     end
     proxy[key] = value
   end
 
   function proxy:__index (key)
     if (proxy[key] == nil) then
-      error('Farmer: addon key does not exist: ' .. key)
+      error(addonName .. ': addon key does not exist: ' .. key)
     end
 
     return proxy[key]
@@ -31,8 +33,6 @@ do
 
   setmetatable(addon, proxy)
 end
-
-addon.vars = {}
 
 --[[
 ///#############################################################################
@@ -44,11 +44,15 @@ do
   local addonFrame = CreateFrame('frame')
 
   function addon:on (event, callback)
-    if (events[event] == nil) then
-      events[event] = {}
+    local list = events[event];
+
+    if (list == nil) then
+      events[event] = {callback}
       addonFrame:RegisterEvent(event)
+    else
+
+      list[#list + 1] = callback;
     end
-    events[event][#events[event] + 1] = callback
   end
 
   local function eventHandler (self, event, ...)
@@ -56,13 +60,6 @@ do
       events[event][i](...)
     end
   end
-
-  addon:on('ADDON_LOADED', function (name)
-    if (name == addonName) then
-      options = options or {}
-      charOptions = charOptions or {}
-    end
-  end)
 
   addonFrame:SetScript('OnEvent', eventHandler)
 end
@@ -77,7 +74,7 @@ do
 
   function addon:slash (command, callback)
     if (slashCommands[command] ~= nil) then
-      error('Farmer: slash handler already exists for ' .. command)
+      error(addonName .. ': slash handler already exists for ' .. command)
       return
     end
 
@@ -96,42 +93,9 @@ do
       slashCommands[command](unpack(paramList))
       return
     end
-    print('Farmer: ' .. L['unknown command'] .. ' "' .. input .. '"')
+    print(addonName .. ': ' .. L['unknown command'] .. ' "' .. input .. '"')
   end
 
-  SLASH_FARMER1 = '/farmer'
+  SLASH_FARMER1 = '/' .. addonName
   SlashCmdList.FARMER = slashHandler
-end
-
---[[
-///#############################################################################
-/// utility
-///#############################################################################
---]]
-
-function addon:stringJoin (stringList, joiner)
-  joiner = joiner or '';
-  local result = nil;
-
-  for index, fragment in pairs(stringList) do
-    if (fragment ~= nil) then
-      if (result == nil) then
-        result = fragment;
-      else
-        result = result .. joiner .. fragment;
-      end
-    end
-  end
-
-  return result or '';
-end
-
-function addon:getIcon (texture)
-  return addon:stringJoin({'|T', texture, addon.vars.iconOffset, '|t'}, '');
-end
-
-function addon:printTable (table)
-  for i,v in pairs(table) do
-    print(i, ' - ', v)
-  end
 end

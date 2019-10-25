@@ -16,10 +16,12 @@ local function getProfessionCategories ()
          Because Blizzard apparently does not know how to properly code, this
          will return the same info as the classic category, so we skip it --]]
     if (parentId ~= nil) then
-      if (data[parentId] == nil) then
+      local list = data[parentId];
+
+      if (list == nil) then
         data[parentId] = {id};
       else
-        table.insert(data[parentId], id);
+        list[#list + 1] = id;
       end
     end
   end
