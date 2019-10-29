@@ -6,7 +6,6 @@ local bagCache = {};
 local currentInventory;
 local flags = {
   loot = false,
-  map = false,
   bagUpdate = false,
 };
 
@@ -189,7 +188,6 @@ addon:on('LOOT_READY', function (lootSwitch)
   if (flags.loot == true) then return end
   flags.loot = true
 
-  flags.map = WorldMapFrame:IsShown()
   if (lootSwitch == true and
       farmerOptions.fastLoot == true) then
     performAutoLoot()
@@ -211,10 +209,6 @@ addon:on('LOOT_CLOSED', function ()
 
   LootFrame:Hide();
   LootFrame:SetAlpha(0);
-
-  if (flags.map == true) then
-    WorldMapFrame:Show();
-  end
 end);
 
 local function addItem (inventory, id, count, linkMap)
