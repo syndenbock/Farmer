@@ -36,13 +36,13 @@ local function fillCurrencyTable ()
     local isHeader = info[2];
     local isExpanded = info[3];
 
-    if (isHeader and not isExpanded) then
-      expandedIndices[#expandedIndices + 1] = i;
-      ExpandCurrencyList(i, 1);
-      listSize = GetCurrencyListSize();
-    end
-
-    if (not isHeader) then
+    if (isHeader) then
+      if (not isExpanded) then
+        expandedIndices[#expandedIndices + 1] = i;
+        ExpandCurrencyList(i, 1);
+        listSize = GetCurrencyListSize();
+      end
+    else
       local link = GetCurrencyListLink(i);
       local id = C_CurrencyInfo.GetCurrencyIDFromLink(link);
       local count = info[6];
