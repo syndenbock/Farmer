@@ -71,6 +71,7 @@ local function checkReputationChanges ()
   end
 
   for faction, factionInfo in pairs(repInfo) do
+    local threshold = 10;
     local cachedFactionInfo = reputationCache[faction] or {};
 
     local function getCacheDifference (key)
@@ -88,7 +89,7 @@ local function checkReputationChanges ()
       repChange = repChange + paragonRepChange;
     end
 
-    if (repChange ~= 0) then
+    if (paragonLevelGained or abs(repChange) > threshold) then
       if (repChange > 0) then
         repChange = '+' .. repChange;
       end
