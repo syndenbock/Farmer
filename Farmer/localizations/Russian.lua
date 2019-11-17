@@ -37,6 +37,7 @@ L["show items based on rarity"] = "Показывать добычу на осн
 L["show reputation"] = "Показывать репутацию"
 L["show money"] = "Показывать деньги"
 L["show names of all items"] = "Показывать названия всех предметов"
+L["show skill levelups"] = "Показывать уровень профессий и навыков"
 L["show total count for stackable items"] = "Показывать общее количество\nкаждого из собранных предметов"
 L["Thick"] = "Жирный"
 L["Thick Monochrome"] = "Жирный одноцветный"
