@@ -71,7 +71,7 @@ local function checkReputationChanges ()
   end
 
   for faction, factionInfo in pairs(repInfo) do
-    local threshold = 10;
+    local threshold = farmerOptions.reputationThreshold;
     local cachedFactionInfo = reputationCache[faction] or {};
 
     local function getCacheDifference (key)
