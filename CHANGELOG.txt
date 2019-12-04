@@ -1,3 +1,7 @@
+  version 2.11
+- Added option to show levelups of main professions
+- Added slider to set the minimum for reputation changes to be displayed
+
   version 2.10.7
 - minor bug fixes
 
