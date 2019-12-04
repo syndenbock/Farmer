@@ -79,6 +79,11 @@ addon:on('SKILL_LINES_CHANGED', function ()
 
   local data = getProfessionInfo();
 
+  if (not farmerOptions.skills) then
+    professionCache = data;
+    return;
+  end
+
   for id, info in pairs(data) do
     local oldInfo = professionCache[id] or {};
     local change = info.rank - (oldInfo.rank or 0);
