@@ -87,6 +87,7 @@ local function handleCurrency (id)
   -- warfronts show hidden currencies without icons
   if (total == nil or texture == nil) then return end
 
+  local name = info[1];
   local amount = currencyTable[id] or 0;
 
   currencyTable[id] = total;
