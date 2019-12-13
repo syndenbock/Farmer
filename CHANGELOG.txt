@@ -1,3 +1,6 @@
+  version 2.11.1
+- fixed currency names
+
   version 2.11
 - Added option to show levelups of main professions
 - Added slider to set the minimum for reputation changes to be displayed
