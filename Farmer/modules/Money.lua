@@ -1,22 +1,26 @@
 local addonName, addon = ...;
 
+local moneyStamp = nil;
+
+addon:on('PLAYER_LOGIN', function ()
+  moneyStamp = GetMoney();
+end);
+
 addon:on('PLAYER_MONEY', function()
-  if (farmerOptions.money == false or
-      addon.Print.checkHideOptions() == false) then
+  local money = GetMoney();
+
+  if (moneyStamp == nil or
+      farmerOptions.money == false or
+      addon.Print.checkHideOptions() == false or
+      moneyStamp >= money) then
+    moneyStamp = money;
     return;
   end
 
-  local money = GetMoney()
-
-  if (addon.vars.moneyStamp >= money) then
-    addon.vars.moneyStamp = money;
-    return;
-  end
-
-  local difference = money - addon.vars.moneyStamp;
+  local difference = money - moneyStamp;
   local text = GetCoinTextureString(difference);
 
-  addon.vars.moneyStamp = money;
+  moneyStamp = money;
 
   addon.Print.printMessage(text, {1, 1, 1});
 end);

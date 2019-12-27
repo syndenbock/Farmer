@@ -362,10 +362,6 @@ local function applyOptions ()
     AlertFrame:RegisterEvent('BONUS_ROLL_RESULT')
   end
 
-  if (farmerOptions.money == true) then
-    addon.vars.moneyStamp = GetMoney()
-  end
-
   setFontSize(farmerOptions.fontSize, farmerOptions.iconScale, farmerOptions.outline)
   addon.frame:SetTimeVisible(farmerOptions.displayTime - addon.frame:GetFadeDuration())
   -- addon.frame:SetTimeVisible(farmerOptions.displayTime)
@@ -494,13 +490,7 @@ addon:on('PLAYER_LOGIN', function (name)
     addon.frame:SetPoint(unpack(farmerOptions.anchor))
   end
 
-  local money = GetMoney()
-
-  earningStamp = earningStamp or money
-
-  if (farmerOptions.money == true) then
-    addon.vars.moneyStamp = money
-  end
+  earningStamp = earningStamp or GetMoney()
 
   initPanel()
   applyOptions()
@@ -525,6 +515,7 @@ addon:slash('gold', function (param)
     print(L['Money counter was reset'])
     return
   end
+
   local difference = GetMoney() - earningStamp
   local text = GetCoinTextureString(math.abs(difference))
 
