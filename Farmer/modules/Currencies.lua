@@ -104,14 +104,31 @@ addon:on('PLAYER_LOGIN', function ()
   fillCurrencyTable();
 end);
 
-addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
-  if (id == nil) then return end
+do
+  local batch = {};
+  local flag = false;
 
-  if (checkCurrencyDisplay(id) == false or
-      addon.Print.checkHideOptions() == false) then
-    currencyTable[id] = total;
-    return;
-  end
+  addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
+    if (id == nil) then return end
 
-  handleCurrency(id);
-end);
+    if (checkCurrencyDisplay(id) == false or
+        addon.Print.checkHideOptions() == false) then
+      currencyTable[id] = total;
+      return;
+    end
+
+    batch[id] = total;
+
+    if (flag == false) then
+      flag = true;
+      C_Timer.After(0, function ()
+        for id, total in pairs(batch) do
+          handleCurrency(id);
+        end
+
+        batch = {};
+        flag = false;
+      end);
+    end
+  end);
+end
