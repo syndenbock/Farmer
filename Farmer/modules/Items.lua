@@ -12,19 +12,19 @@ local flags = {
 LootFrame:SetAlpha(0);
 
 local function getFirstKey (table)
-  for key, value in pairs(table) do
-    return key;
-  end
+  return next(table, nil);
 end
 
 local function performAutoLoot ()
+  local numloot = GetNumLootItems();
+
+  for i = 1, numloot, 1 do
   -- for i = GetNumLootItems(), 1, -1 do
-  for i = 1, GetNumLootItems(), 1 do
-    local info = {GetLootSlotInfo(i)}
+    local info = {GetLootSlotInfo(i)};
     local locked = info[6]
 
-    if (locked ~= true) then
-      LootSlot(i)
+    if (not locked) then
+      LootSlot(i);
     end
   end
 end
