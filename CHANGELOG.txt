@@ -1,4 +1,7 @@
- version 2.11.2
+  version 2.11.3
+- Hopefully fixed rare error with paragon reputation
+
+  version 2.11.2
 - Updated toc version
 
   version 2.11.1
