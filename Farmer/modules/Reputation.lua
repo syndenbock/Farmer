@@ -6,7 +6,6 @@ local IsFactionParagon = C_Reputation.IsFactionParagon;
 local MESSAGE_COLORS = {0, 0.35, 1};
 local reputationCache;
 local updateFlag = false;
-local expandCount = 0;
 
 local function getRepInfo ()
   local info = {};
@@ -27,9 +26,6 @@ local function getRepInfo ()
 
     if (isHeader and isCollapsed) then
       expandedIndices[#expandedIndices + 1] = i;
-      --[[ expandCount has to be increased before collapsing, because
-           UPDATE_FACTION are fired and handled immediately --]]
-      expandCount = expandCount + 1;
       ExpandFactionHeader(i);
       numFactions = GetNumFactions();
     end
@@ -57,9 +53,6 @@ local function getRepInfo ()
   --[[ the headers have to be collapse from bottom to top, because collapsing
        top ones first would change the index of the lower ones  --]]
   for i = #expandedIndices, 1, -1 do
-    --[[ expandCount has to be increased before collapsing, because
-         UPDATE_FACTION are fired and handled immediately --]]
-    expandCount = expandCount + 1;
     CollapseFactionHeader(expandedIndices[i]);
   end
 
@@ -121,11 +114,6 @@ addon:on('PLAYER_LOGIN', function ()
 end);
 
 addon:on('UPDATE_FACTION', function ()
-  if (expandCount > 0) then
-    expandCount = expandCount - 1;
-    return;
-  end
-
   if (reputationCache == nil) then
     return;
   end
@@ -134,8 +122,10 @@ addon:on('UPDATE_FACTION', function ()
     updateFlag = true;
 
     C_Timer.After(0, function ()
-      updateFlag = false;
       checkReputationChanges();
+      --[[ it's important to reset the flag after checking reputations, as
+            checking can trigger additional events --]]
+      updateFlag = false;
     end);
   end
 end);
