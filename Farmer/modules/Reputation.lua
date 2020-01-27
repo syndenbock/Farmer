@@ -1,5 +1,8 @@
 local addonName, addon = ...;
 
+local GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo;
+local IsFactionParagon = C_Reputation.IsFactionParagon;
+
 local MESSAGE_COLORS = {0, 0.35, 1};
 local reputationCache;
 local updateFlag = false;
@@ -36,11 +39,13 @@ local function getRepInfo ()
 
       data.reputation = reputation;
 
-      if (C_Reputation.IsFactionParagon(faction)) then
-        local paragonInfo = {C_Reputation.GetFactionParagonInfo(faction)};
+      if (IsFactionParagon(faction)) then
+        local paragonInfo = {GetFactionParagonInfo(faction)};
 
-        data.paragonReputation = paragonInfo[1];
-        data.paragonLevel = floor(paragonInfo[1] / paragonInfo[2]);
+        if (paragonInfo[1] ~= nil and paragonInfo[2] ~= nil) then
+          data.paragonReputation = paragonInfo[1];
+          data.paragonLevel = floor(paragonInfo[1] / paragonInfo[2]);
+        end
       end
 
       info[faction] = data;
