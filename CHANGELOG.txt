@@ -1,3 +1,6 @@
+  version 2.11.5
+- Updated event triggers to prevent unnecessary scans
+
   version 2.11.4
 - Fixed interference by other addons when handling reputation
 
