@@ -74,7 +74,7 @@ local function getProfessionInfo ()
   return data;
 end
 
-addon:on('SKILL_LINES_CHANGED', function ()
+addon:on('CHAT_MSG_SKILL', function ()
   if (professionCache == nil) then return end
 
   local data = getProfessionInfo();
