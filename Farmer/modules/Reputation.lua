@@ -5,7 +5,6 @@ local IsFactionParagon = C_Reputation.IsFactionParagon;
 
 local MESSAGE_COLORS = {0, 0.35, 1};
 local reputationCache;
-local updateFlag = false;
 
 local function getRepInfo ()
   local info = {};
