@@ -120,11 +120,9 @@ addon:on('UPDATE_FACTION', function ()
 
   if (updateFlag == false) then
     updateFlag = true;
+    checkReputationChanges();
 
     C_Timer.After(0, function ()
-      checkReputationChanges();
-      --[[ it's important to reset the flag after checking reputations, as
-            checking can trigger additional events --]]
       updateFlag = false;
     end);
   end
