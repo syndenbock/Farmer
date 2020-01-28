@@ -113,17 +113,10 @@ addon:on('PLAYER_LOGIN', function ()
   reputationCache = getRepInfo();
 end);
 
-addon:on('UPDATE_FACTION', function ()
+addon:on('CHAT_MSG_COMBAT_FACTION_CHANGE', function ()
   if (reputationCache == nil) then
     return;
   end
 
-  if (updateFlag == false) then
-    updateFlag = true;
-    checkReputationChanges();
-
-    C_Timer.After(0, function ()
-      updateFlag = false;
-    end);
-  end
+  checkReputationChanges();
 end);
