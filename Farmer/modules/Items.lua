@@ -288,9 +288,7 @@ local function getInventory ()
   return inventory;
 end
 
-local function checkInventory (timeStamp)
-  timeStamp = timeStamp or GetTime();
-
+local function checkInventory ()
   local inventory = getInventory();
 
   if (addon.Print.checkHideOptions() == false) then
@@ -358,14 +356,12 @@ end);
 addon:on('BAG_UPDATE_DELAYED', function ()
   if (flags.bagUpdate == true) then return end
 
-  local stamp = GetTime();
-
   flags.bagUpdate = true;
 
   --[[ BAG_UPDATE_DELAYED may fire multiple times in one frame, so we only
        check bags once on the next frame --]]
   C_Timer.After(0, function ()
-    checkInventory(stamp);
+    checkInventory();
     flags.bagUpdate = false;
   end);
 end);
