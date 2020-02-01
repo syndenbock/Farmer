@@ -65,6 +65,44 @@ do
 end
 
 --[[
+//##############################################################################
+// event funneling
+//##############################################################################
+--]]
+function addon:funnel (eventList, ...)
+  local arguments = {...};
+  local flag = false;
+  local timeSpan;
+  local callback;
+
+  if (#arguments >= 2) then
+    timeSpan = arguments[1];
+    callback = arguments[2];
+  else
+    timeSpan = 0;
+    callback = arguments[1];
+  end
+
+  local funnel = function (...)
+    local args = {...};
+
+    if (flag == false) then
+      flag = true;
+
+      C_Timer.After(timeSpan, function ()
+        flag = false;
+        callback(unpack(args));
+      end);
+    end
+  end
+
+  addon:on(eventList, funnel);
+
+  -- returning funnel for manual call
+  return funnel;
+end
+
+--[[
 ///#############################################################################
 /// slash command handling
 ///#############################################################################

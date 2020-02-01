@@ -6,7 +6,6 @@ local bagCache = {};
 local currentInventory;
 local flags = {
   loot = false,
-  bagUpdate = false,
 };
 
 LootFrame:SetAlpha(0);
@@ -20,6 +19,7 @@ local function performAutoLoot ()
 
   for i = 1, numloot, 1 do
   -- for i = GetNumLootItems(), 1, -1 do
+  -- for i = 1, GetNumLootItems(), 1 do
     local info = {GetLootSlotInfo(i)};
     local locked = info[6]
 
@@ -196,12 +196,10 @@ addon:on('LOOT_READY', function (lootSwitch)
   end
 end)
 
-addon:on('LOOT_OPENED', function ()
-  C_Timer.After(0, function ()
-    if (flags.loot == true) then
-      LootFrame:SetAlpha(1);
-    end
-  end);
+addon:funnel('LOOT_OPENED', function ()
+  if (flags.loot == true) then
+    LootFrame:SetAlpha(1);
+  end
 end);
 
 addon:on('LOOT_CLOSED', function ()
@@ -353,18 +351,7 @@ addon:on('BAG_UPDATE', function (bagIndex)
   bagCache[bagIndex] = getBagContent(bagIndex);
 end);
 
-addon:on('BAG_UPDATE_DELAYED', function ()
-  if (flags.bagUpdate == true) then return end
-
-  flags.bagUpdate = true;
-
-  --[[ BAG_UPDATE_DELAYED may fire multiple times in one frame, so we only
-       check bags once on the next frame --]]
-  C_Timer.After(0, function ()
-    checkInventory();
-    flags.bagUpdate = false;
-  end);
-end);
+addon:funnel('BAG_UPDATE_DELAYED', checkInventory);
 
 local function checkSlotForArtifact (slot)
   local quality = GetInventoryItemQuality(UNITID_PLAYER, slot);

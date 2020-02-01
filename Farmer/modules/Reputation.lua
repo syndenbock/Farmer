@@ -59,6 +59,8 @@ local function getRepInfo ()
 end
 
 local function checkReputationChanges ()
+  if (reputationCache == nil) then return end
+
   local repInfo = getRepInfo();
 
   if (farmerOptions.reputation == false or
@@ -112,10 +114,4 @@ addon:on('PLAYER_LOGIN', function ()
   reputationCache = getRepInfo();
 end);
 
-addon:on('CHAT_MSG_COMBAT_FACTION_CHANGE', function ()
-  if (reputationCache == nil) then
-    return;
-  end
-
-  checkReputationChanges();
-end);
+addon:funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputationChanges);
