@@ -114,4 +114,4 @@ addon:on('PLAYER_LOGIN', function ()
   reputationCache = getRepInfo();
 end);
 
-addon:funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputationChanges);
+addon:on('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputationChanges);

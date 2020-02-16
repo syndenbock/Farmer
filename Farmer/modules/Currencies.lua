@@ -117,18 +117,6 @@ do
       return;
     end
 
-    batch[id] = total;
-
-    if (flag == false) then
-      flag = true;
-      C_Timer.After(0, function ()
-        for id, total in pairs(batch) do
-          handleCurrency(id);
-        end
-
-        batch = {};
-        flag = false;
-      end);
-    end
+    handleCurrency(id);
   end);
 end

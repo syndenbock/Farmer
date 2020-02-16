@@ -16,11 +16,11 @@ local function setTrueScale (frame, scale)
 end
 
 local font = CreateFont('farmerFont');
-local farmerFrame;
+local farmerFrame = CreateFrame('ScrollingMessageFrame', 'farmerFrame', UIParent);
 
-farmerFrame = CreateFrame('ScrollingMessageFrame', 'farmerFrame', UIParent);
 farmerFrame:SetWidth(GetScreenWidth() / 2);
 farmerFrame:SetHeight(GetScreenHeight() / 2);
+
  -- farmerFrame:SetFrameStrata('DIALOG');
 -- farmerFrame:SetFrameStrata('FULLSCREEN_DIALOG');
 farmerFrame:SetFrameStrata('TOOLTIP');

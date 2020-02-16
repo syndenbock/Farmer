@@ -351,7 +351,7 @@ addon:on('BAG_UPDATE', function (bagIndex)
   bagCache[bagIndex] = getBagContent(bagIndex);
 end);
 
-addon:funnel('BAG_UPDATE_DELAYED', checkInventory);
+addon:on('BAG_UPDATE_DELAYED', checkInventory);
 
 local function checkSlotForArtifact (slot)
   local quality = GetInventoryItemQuality(UNITID_PLAYER, slot);
