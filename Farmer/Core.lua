@@ -35,36 +35,6 @@ do
 end
 
 --[[
-///#############################################################################
-/// event handling
-///#############################################################################
---]]
-do
-  local events = {}
-  local addonFrame = CreateFrame('frame')
-
-  function addon:on (event, callback)
-    local list = events[event];
-
-    if (list == nil) then
-      events[event] = {callback}
-      addonFrame:RegisterEvent(event)
-    else
-
-      list[#list + 1] = callback;
-    end
-  end
-
-  local function eventHandler (self, event, ...)
-    for i = 1, #events[event] do
-      events[event][i](...)
-    end
-  end
-
-  addonFrame:SetScript('OnEvent', eventHandler)
-end
-
---[[
 //##############################################################################
 // event funneling
 //##############################################################################

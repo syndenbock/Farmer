@@ -15,6 +15,11 @@ localizations/Chinese_simplified.lua
 
 Core.lua
 
+core/Yell.lua
+core/Events.lua
+
+detectors/Items.lua
+
 main/Utils.lua
 main/Print.lua
 main/FarmerOptions.lua
