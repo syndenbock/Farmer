@@ -4,10 +4,8 @@ local SYMBOL_MULT = '×';
 
 local widgetFlags = {
   mail = false,
-  bank = false,
   guildbank = false,
   voidstorage = false,
-  bagUpdate = false,
 };
 
 local function setTrueScale (frame, scale)
@@ -50,14 +48,6 @@ addon:on('MAIL_CLOSED', function ()
   widgetFlags.mail = false;
 end);
 
-addon:on('BANKFRAME_OPENED', function ()
-  widgetFlags.bank = true;
-end);
-
-addon:on('BANKFRAME_CLOSED', function ()
-  widgetFlags.bank = false;
-end);
-
 addon:on('GUILDBANKFRAME_OPENED', function ()
   widgetFlags.guildbank = true;
 end);
@@ -75,10 +65,9 @@ addon:on('VOID_STORAGE_CLOSE', function ()
 end);
 
 local function checkHideOptions ()
-  if (widgetFlags.bank == true or
-      widgetFlags.guildbank == true or
+  if (widgetFlags.guildbank == true or
       widgetFlags.voidstorage == true) then
-    return false;
+    --return false;
   end
 
   if (farmerOptions.hideAtMailbox == true and

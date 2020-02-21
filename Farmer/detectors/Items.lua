@@ -2,7 +2,15 @@ local addonName, addon = ...;
 
 local UNITID_PLAYER = 'player';
 
-local FIRST_SLOT = BANK_CONTAINER;
+local INVSLOT_MAINHAND = _G.INVSLOT_MAINHAND;
+local INVSLOT_OFFHAND = _G.INVSLOT_OFFHAND;
+local INVSLOT_FIRST_EQUIPPED = _G.INVSLOT_FIRST_EQUIPPED;
+local INVSLOT_LAST_EQUIPPED = _G.INVSLOT_LAST_EQUIPPED;
+local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
+local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
+local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
+
+local FIRST_SLOT = REAGENTBANK_CONTAINER;
 local LAST_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
 
 local bagCache = {};
@@ -158,6 +166,10 @@ end);
 
 addon:on('BAG_UPDATE', function (bagIndex)
   bagCache[bagIndex] = getBagContent(bagIndex);
+end);
+
+addon:on('PLAYERREAGENTBANKSLOTS_CHANGED', function ()
+  bagCache[REAGENTBANK_CONTAINER] = getBagContent(REAGENTBANK_CONTAINER);
 end);
 
 addon:on('BAG_UPDATE_DELAYED', checkInventory);
