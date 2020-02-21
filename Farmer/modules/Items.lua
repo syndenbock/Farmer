@@ -1,19 +1,5 @@
 local addonName, addon = ...;
 
-local UNITID_PLAYER = 'player';
-
-local bagCache = {};
-local currentInventory;
-local flags = {
-  loot = false,
-};
-
-LootFrame:SetAlpha(0);
-
-local function getFirstKey (table)
-  return next(table, nil);
-end
-
 local function checkItemDisplay (itemId, itemLink)
   if (itemId and
       farmerOptions.focusItems[itemId] == true) then
