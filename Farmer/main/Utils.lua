@@ -17,6 +17,33 @@ function addon:stringJoin (stringList, joiner)
   return result or '';
 end
 
+function addon:formatNumber (number, stepSize, separator)
+  stepSize = stepSize or 3;
+  separator = separator or ',';
+
+  number = tostring(number);
+
+  -- this check improves performance because it can prevent unnecessary array
+  -- operations
+  if (strlen(number) <= stepSize) then
+    return number;
+  end
+
+  local fragments = {};
+
+  repeat
+    local fragment = strsub(number, -stepSize);
+
+    number = strsub(number, 1, -stepSize - 1);
+    table.insert(fragments, 1, fragment);
+  until (strlen(number) <= stepSize)
+
+  table.insert(fragments, 1, number);
+
+  return addon:stringJoin(fragments, ',');
+end
+
+
 function addon:getIcon (texture)
   return addon:stringJoin({'|T', texture, addon.vars.iconOffset, '|t'}, '');
 end
