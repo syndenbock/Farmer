@@ -15,8 +15,9 @@ localizations/Chinese_simplified.lua
 
 Core.lua
 
-core/Yell.lua
 core/Events.lua
+core/Slashcommands.lua
+core/Yell.lua
 
 detectors/Items.lua
 
