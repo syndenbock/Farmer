@@ -14,21 +14,6 @@ local function getFirstKey (table)
   return next(table, nil);
 end
 
-local function performAutoLoot ()
-  local numloot = GetNumLootItems();
-
-  for i = 1, numloot, 1 do
-  -- for i = GetNumLootItems(), 1, -1 do
-  -- for i = 1, GetNumLootItems(), 1 do
-    local info = {GetLootSlotInfo(i)};
-    local locked = info[6]
-
-    if (not locked) then
-      LootSlot(i);
-    end
-  end
-end
-
 local function checkItemDisplay (itemId, itemLink)
   if (itemId and
       farmerOptions.focusItems[itemId] == true) then
@@ -168,46 +153,6 @@ local function handleItem (itemId, itemLink, count)
   -- all unspecified items
   addon.Print.printItem(texture, itemName, count, nil, colors, {forceName = true, minimumCount = 1})
 end
-
---[[
-///#############################################################################
-/// Event listeners
-///#############################################################################
-]]--
-
-addon:on('PLAYER_ENTERING_WORLD', function ()
-  for key in pairs(flags) do
-    flags[key] = false;
-  end
-end);
-
-addon:on('LOOT_READY', function (lootSwitch)
-  --[[ the LOOT_READY sometimes fires multiple times when looting, so we only
-    handle it once until loot is closed ]]
-
-  if (flags.loot == true) then return end
-  flags.loot = true
-
-  if (lootSwitch == true and
-      farmerOptions.fastLoot == true) then
-    performAutoLoot()
-  else
-    LootFrame:SetAlpha(1)
-  end
-end)
-
-addon:funnel('LOOT_OPENED', function ()
-  if (flags.loot == true) then
-    LootFrame:SetAlpha(1);
-  end
-end);
-
-addon:on('LOOT_CLOSED', function ()
-  flags.loot = false;
-
-  LootFrame:Hide();
-  LootFrame:SetAlpha(0);
-end);
 
 addon:listen('NEW_ITEM', function (itemId, itemLink, count)
   if (addon.Print:checkHideOptions() == false) then return end
