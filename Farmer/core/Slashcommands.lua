@@ -3,10 +3,8 @@ local addonName, addon = ...;
 local slashCommands = {};
 
 function addon:slash (command, callback)
-  if (slashCommands[command] ~= nil) then
-    error(addonName .. ': slash handler already exists for ' .. command);
-    return;
-  end
+  assert(slashCommands[command] == nil,
+      addonName .. ': slash handler already exists for ' .. command);
 
   slashCommands[command] = callback;
 end

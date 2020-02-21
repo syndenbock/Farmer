@@ -18,6 +18,8 @@ function addon:stringJoin (stringList, joiner)
 end
 
 function addon:formatNumber (number, stepSize, separator)
+  assert(type(number) == 'number', 'argument is not a number');
+
   stepSize = stepSize or 3;
   separator = separator or ',';
 

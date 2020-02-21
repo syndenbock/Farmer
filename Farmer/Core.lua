@@ -10,24 +10,19 @@ addon.vars = {}
 ///#############################################################################
 --]]
 do
-  local proxy = {}
+  local proxy = {};
 
   function proxy:__index (key)
-    return proxy[key]
+    return proxy[key];
   end
 
   function proxy:__newindex (key, value)
-    if (proxy[key] ~= nil) then
-      error(addonName .. ': addon key already in use: ' .. key)
-    end
-    proxy[key] = value
+    assert(proxy[key] == nil, addonName .. ': addon key already in use: ' .. key);
+    proxy[key] = value;
   end
 
   function proxy:__index (key)
-    if (proxy[key] == nil) then
-      error(addonName .. ': addon key does not exist: ' .. key)
-    end
-
+    assert(proxy[key] ~= nil, addonName .. ': addon key does not exist: ' .. key);
     return proxy[key]
   end
 
