@@ -20,6 +20,7 @@ core/Slashcommands.lua
 core/Yell.lua
 
 detectors/Items.lua
+detectors/Reputation.lua
 
 main/Utils.lua
 main/Print.lua
