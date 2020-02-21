@@ -9,23 +9,24 @@ addon:listen('REPUTATION_CHANGED', function (faction, repChange, paragonLevelGai
   end
 
   local threshold = farmerOptions.reputationThreshold;
+  local text = addon:formatNumber(repChange);
 
   if (paragonLevelGained or abs(repChange) > threshold) then
     if (repChange > 0) then
-      repChange = '+' .. repChange;
+      text = '+' .. text;
     end
 
     if (paragonLevelGained) then
-      repChange = repChange ..
+      text = text ..
           '|TInterface/TargetingFrame/UI-RaidTargetingIcon_1' ..
           addon.vars.iconOffset .. '|t';
     end
 
     --[[ could have stored faction name when generating faction info, but we
          can afford getting the name now for saving the memory ]]
-    local message = GetFactionInfoByID(faction) .. ' ' .. repChange;
+    text = GetFactionInfoByID(faction) .. ' ' .. text;
 
-    addon.Print.printMessage(message, MESSAGE_COLORS);
+    addon.Print.printMessage(text, MESSAGE_COLORS);
   end
 end);
 

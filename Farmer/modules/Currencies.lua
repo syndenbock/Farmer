@@ -37,7 +37,5 @@ addon:listen('CURRENCY_CHANGED', function (id, amount, total)
 
   local text = '(' .. addon:formatNumber(total) .. ')';
 
-  amount = addon:formatNumber(amount);
-
   addon.Print.printItem(texture, name, amount, text, {1, 0.9, 0, 1});
 end);
