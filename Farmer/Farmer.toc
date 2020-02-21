@@ -21,6 +21,7 @@ core/Yell.lua
 
 detectors/Items.lua
 detectors/Reputation.lua
+detectors/Money.lua
 
 main/Utils.lua
 main/Print.lua
