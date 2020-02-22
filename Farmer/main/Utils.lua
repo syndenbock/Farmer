@@ -42,7 +42,7 @@ function addon:formatNumber (number, stepSize, separator)
 
   table.insert(fragments, 1, number);
 
-  return addon:stringJoin(fragments, separatorform);
+  return addon:stringJoin(fragments, separator);
 end
 
 
