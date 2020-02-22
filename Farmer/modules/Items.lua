@@ -145,28 +145,3 @@ addon:listen('NEW_ITEM', function (itemId, itemLink, count)
 
   handleItem(itemId, itemLink, count)
 end);
-
-addon:slash('test', function (id, count)
-  if (id ~= nil) then
-    local _, link = GetItemInfo(id);
-    count = tonumber(count or 1);
-    handleItem(link, id, count);
-    return;
-  end
-
-  local testItems = {
-    2447, -- Peacebloom
-    4496, -- Small Brown Pouch
-    6975, -- Whirlwind Axe
-    4322, -- Enchanter's Cowl
-    13521, -- Recipe: Flask of Supreme Power
-  };
-
-  for i = 1, #testItems, 1 do
-    local id = testItems[i];
-    local _, link = GetItemInfo(id);
-
-    handleItem(link, id, 1);
-    handleItem(link, id, 4);
-  end
-end);

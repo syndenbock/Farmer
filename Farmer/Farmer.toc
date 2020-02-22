@@ -36,3 +36,5 @@ modules/Petscan.lua
 modules/Reputation.lua
 modules/Professions.lua
 modules/Autoloot.lua
+
+modules/Tests.lua
