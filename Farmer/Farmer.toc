@@ -24,6 +24,7 @@ detectors/Items.lua
 detectors/Currencies.lua
 detectors/Reputation.lua
 detectors/Money.lua
+detectors/Professions.lua
 
 main/Print.lua
 main/FarmerOptions.lua
