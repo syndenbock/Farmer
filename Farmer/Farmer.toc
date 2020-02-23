@@ -15,6 +15,7 @@ localizations/Chinese_simplified.lua
 
 Core.lua
 
+core/Utils.lua
 core/Events.lua
 core/Slashcommands.lua
 core/Yell.lua
@@ -24,7 +25,6 @@ detectors/Currencies.lua
 detectors/Reputation.lua
 detectors/Money.lua
 
-main/Utils.lua
 main/Print.lua
 main/FarmerOptions.lua
 

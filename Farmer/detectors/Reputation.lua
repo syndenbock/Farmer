@@ -1,7 +1,7 @@
 local addonName, addon = ...;
 
-local GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo;
-local IsFactionParagon = C_Reputation.IsFactionParagon;
+local GetFactionParagonInfo = C_Reputation and C_Reputation.GetFactionParagonInfo or nil;
+local IsFactionParagon = C_Reputation and C_Reputation.IsFactionParagon or nil;
 
 local reputationCache;
 
@@ -33,7 +33,7 @@ local function getRepInfo ()
 
       data.reputation = reputation;
 
-      if (IsFactionParagon(faction)) then
+      if (IsFactionParagon ~= nil and IsFactionParagon(faction)) then
         local paragonInfo = {GetFactionParagonInfo(faction)};
 
         if (paragonInfo[1] ~= nil and paragonInfo[2] ~= nil) then

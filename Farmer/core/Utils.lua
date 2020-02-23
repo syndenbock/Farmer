@@ -1,5 +1,11 @@
 local addonName, addon = ...;
 
+local isClassic = (_G.REAGENTBANK_CONTAINER == nil);
+
+function addon:isClassic ()
+  return isClassic;
+end
+
 function addon:stringJoin (stringList, joiner)
   joiner = joiner or '';
   local result = nil;

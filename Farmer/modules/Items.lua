@@ -21,8 +21,8 @@ local function checkItemDisplay (itemId, itemLink)
   end
 
   if (farmerOptions.reagents == true and
-      isCraftingReagent == true or
-      itemClassID == LE_ITEM_CLASS_TRADEGOODS) then
+      (isCraftingReagent == true or
+       itemClassID == LE_ITEM_CLASS_TRADEGOODS)) then
     return true;
   end
 
