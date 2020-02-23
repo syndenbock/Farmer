@@ -1,9 +1,7 @@
 local addonName, addon = ...;
 
-local isClassic = (_G.REAGENTBANK_CONTAINER == nil);
-
 function addon:isClassic ()
-  return isClassic;
+  return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
 end
 
 function addon:stringJoin (stringList, joiner)
