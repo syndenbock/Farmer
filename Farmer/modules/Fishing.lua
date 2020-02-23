@@ -49,4 +49,4 @@ addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function(unit, target, spellid)
   end
 end);
 
-addon:on('PLAYER_ENTERING_WORLD', restorePlates());
+addon:on('PLAYER_ENTERING_WORLD', restorePlates);

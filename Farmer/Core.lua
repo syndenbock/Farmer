@@ -1,8 +1,8 @@
-local addonName, addon = ...
+local addonName, addon = ...;
 
-local L = addon.L
+local L = addon.L;
 
-addon.vars = {}
+addon.vars = {};
 
 --[[
 ///#############################################################################
@@ -23,7 +23,7 @@ do
 
   function proxy:__index (key)
     assert(proxy[key] ~= nil, addonName .. ': addon key does not exist: ' .. key);
-    return proxy[key]
+    return proxy[key];
   end
 
   setmetatable(addon, proxy)

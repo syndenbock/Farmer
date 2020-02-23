@@ -1,47 +1,48 @@
 local addonName, addon = ...;
 
 local function checkItemDisplay (itemId, itemLink)
-  if (itemId and
+  if (itemId ~= nil and
       farmerOptions.focusItems[itemId] == true) then
     if (farmerOptions.special == true) then
-      return true
+      return true;
     end
   elseif (farmerOptions.focus == true) then
-    return false
+    return false;
   end
 
   local itemName, _itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
-        itemSetID, isCraftingReagent = GetItemInfo(itemLink)
+        itemSetID, isCraftingReagent = GetItemInfo(itemLink);
 
   -- happens when caging a pet or when looting mythic keystones
   if (itemName == nil) then
-    return false
+    return false;
   end
 
   if (farmerOptions.reagents == true and
-      isCraftingReagent == true) then
-    return true
+      isCraftingReagent == true or
+      itemClassID == LE_ITEM_CLASS_TRADEGOODS) then
+    return true;
   end
 
   if (farmerOptions.questItems == true and
       (itemClassID == LE_ITEM_CLASS_QUESTITEM or
        itemClassID == LE_ITEM_CLASS_KEY)) then
-    return true
+    return true;
   end
 
   if (farmerOptions.recipes == true and
       itemClassID == LE_ITEM_CLASS_RECIPE) then
-    return true
+    return true;
   end
 
   if (farmerOptions.rarity == true and
       itemRarity >= farmerOptions.minimumRarity) then
-    return true
+    return true;
   end
 
-  return false
+  return false;
 end
 
 local function handleItem (itemId, itemLink, count)
@@ -58,49 +59,39 @@ local function handleItem (itemId, itemLink, count)
     ITEM_QUALITY_COLORS[itemRarity].b,
   };
 
-  -- crafting reagents
-  if (isCraftingReagent == true) then
-    if (itemId == chipId and hadChip == true) then
-      hadChip = false
-      return
-    end
-
-    colors = {0, 0.8, 0.8}
-  end
-
   -- quest items
   if (itemClassID == LE_ITEM_CLASS_QUESTITEM or
       itemClassID == LE_ITEM_CLASS_KEY) then
-    colors = {1, 0.8, 0, 1}
+    colors = {1, 0.8, 0, 1};
   end
 
   -- artifact relics
   if (itemClassID == LE_ITEM_CLASS_GEM and
       itemSubClassID == LE_ITEM_GEM_ARTIFACTRELIC) then -- gem / artifact relics
-    local text
+    local text;
 
-    itemLevel = GetDetailedItemLevelInfo(itemLink)
+    itemLevel = GetDetailedItemLevelInfo(itemLink);
     text = addon:stringJoin({itemLevel, itemSubType}, ' ');
-    addon.Print.printEquip(texture, itemName, text, count, colors)
-    return
+    addon.Print.printEquip(texture, itemName, text, count, colors);
+    return;
   end
 
   -- equippables
   if (itemEquipLoc ~= '') then
     -- bags
     if (itemClassID == LE_ITEM_CLASS_CONTAINER) then
-      addon.Print.printEquip(texture, itemName, itemSubType, count, colors)
-      return
+      addon.Print.printEquip(texture, itemName, itemSubType, count, colors);
+      return;
     end
 
     -- weapons
     if (itemClassID == LE_ITEM_CLASS_WEAPON) then
-      local text
+      local text;
 
-      itemLevel = GetDetailedItemLevelInfo(itemLink)
+      itemLevel = GetDetailedItemLevelInfo(itemLink);
       text = addon:stringJoin({itemLevel, itemSubType}, ' ');
-      addon.Print.printEquip(texture, itemName, text, count, colors)
-      return
+      addon.Print.printEquip(texture, itemName, text, count, colors);
+      return;
     end
 
     -- armor
