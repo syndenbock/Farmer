@@ -19,6 +19,8 @@ core/Utils.lua
 core/Events.lua
 core/Slashcommands.lua
 core/Yell.lua
+core/OptionFactory.lua
+core/Options.lua
 
 detectors/Items.lua
 detectors/Currencies.lua
