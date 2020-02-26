@@ -169,6 +169,10 @@ addon:on('BAG_UPDATE', function (bagIndex)
   bagCache[bagIndex] = getBagContent(bagIndex);
 end);
 
+addon:on('PLAYERBANKSLOTS_CHANGED', function ()
+  bagCache[BANK_CONTAINER] = getBagContent(BANK_CONTAINER);
+end);
+
 if (addon:isClassic() == false) then
   addon:on('PLAYERREAGENTBANKSLOTS_CHANGED', function ()
     bagCache[REAGENTBANK_CONTAINER] = getBagContent(REAGENTBANK_CONTAINER);
