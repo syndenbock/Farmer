@@ -8,6 +8,8 @@ mainPanel:addButton('test', function ()
   print('test!');
 end);
 
+mainPanel:addCheckbox('henlo');
+
 local subPanel = Factory.Panel:New('suberino', mainPanel.panel);
 
 subPanel:addButton('test2', function ()
