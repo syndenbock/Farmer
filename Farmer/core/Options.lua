@@ -10,6 +10,8 @@ end);
 
 mainPanel:addCheckbox('henlo');
 
+mainPanel:addSlider(1, 10, 'slider', '1', '2', 1);
+
 local subPanel = Factory.Panel:New('suberino', mainPanel.panel);
 
 subPanel:addButton('test2', function ()

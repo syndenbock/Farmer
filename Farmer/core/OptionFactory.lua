@@ -34,7 +34,6 @@ do
       y = 10,
     };
 
-
     panel.name = name;
     panel.parent = parent.name;
 
@@ -50,24 +49,36 @@ do
     return this;
   end
 
-  function Panel:addButton (text, onClick)
+  function Panel:getChildName ()
     local name = self.name .. 'child' .. self.childCount;
-    local button = Factory.Button:New(self.panel, name, self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
 
     self.childCount = self.childCount + 1;
+
+    return name;
+  end
+
+  function Panel:addButton (text, onClick)
+    local button = Factory.Button:New(self.panel, self:getChildName(), self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
+
     self.anchor.y = self.anchor.y - 7 - button.button:GetHeight();
 
     return button;
   end
 
   function Panel:addCheckbox (text)
-    local name = self.name .. 'child' .. self.childCount;
-    local checkBox = Factory.CheckBox:New(self.panel, name, self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
+    local checkBox = Factory.CheckBox:New(self.panel, self:getChildName(), self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
 
-    self.childCount = self.childCount + 1;
     self.anchor.y = self.anchor.y - 7 - checkBox.checkBox:GetHeight();
 
     return checkBox;
+  end
+
+  function Panel:addSlider (min, max, text, lowText, highText, stepSize)
+    local slider = Factory.Slider:New(self.panel, self:getChildName(), self.panel, self.anchor.x, self.anchor.y, text, min, max, lowText, highText, 'TOPLEFT', 'TOPLEFT', stepSize);
+
+    self.anchor.y = self.anchor.y - 7 - slider.slider:GetHeight();
+
+    return slider;
   end
 
   Factory.Panel = Panel;
@@ -146,4 +157,69 @@ do
   end
 
   Factory.CheckBox = CheckBox;
+end
+
+do
+  local Slider = {};
+
+  Slider.__index = Slider;
+
+  function Slider:New (parent, name, anchorFrame, xOffset, yOffset, text, min, max, lowText, highText, anchor, parentAnchor, stepSize)
+    stepSize = stepSize or 1;
+
+    local this = {};
+    local slider = CreateFrame('Slider', name .. 'Slider', parent, 'OptionsSliderTemplate');
+    local edit;
+
+    setmetatable(this, Slider);
+
+    this.slider = slider;
+    this.edit = edit;
+
+    anchor = anchor or 'TOPLEFT';
+    parentAnchor = parentAnchor or 'BOTTOMLEFT';
+
+    slider:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
+    slider:SetOrientation('HORIZONTAL');
+    slider:SetMinMaxValues(min, max);
+    slider:SetValueStep(stepSize);
+    slider:SetObeyStepOnDrag(true);
+    _G[name .. 'SliderText']:SetText(text);
+    _G[name .. 'SliderLow']:SetText(lowText);
+    _G[name .. 'SliderHigh']:SetText(highText);
+
+    slider:SetScript('OnValueChanged', function (self, value)
+      value = math.floor((value * 10) + 0.5) / 10;
+      self.edit:SetText(value);
+      self.edit:SetCursorPosition(0);
+
+      if (this.onChange ~= nil) then
+        this.onChange(self, value);
+      end
+    end);
+
+    anchor = slider;
+    edit = CreateFrame('EditBox', name .. 'EditBox', parent);
+    edit:SetAutoFocus(false);
+    edit:Disable();
+    edit:SetPoint('TOP', anchor, 'BOTTOM', 0, 0);
+    edit:SetFontObject('ChatFontNormal');
+    edit:SetHeight(20);
+    edit:SetWidth(slider:GetWidth());
+    edit:SetTextInsets(8, 8, 0, 0);
+    edit:SetJustifyH('CENTER');
+    edit:Show();
+    -- edit:SetBackdrop(slider:GetBackdrop())
+    -- edit:SetBackdropColor(0, 0, 0, 0.8)
+    -- edit:SetBackdropBorderColor(1, 1, 1, 1)
+    slider.edit = edit;
+
+    return this;
+  end
+
+  function Slider:GetValue ()
+    return self.edit:GetValue();
+  end
+
+  Factory.Slider = Slider;
 end
