@@ -74,11 +74,15 @@ do
   end
 
   function Panel:addSlider (min, max, text, lowText, highText, stepSize)
-    local slider = Factory.Slider:New(self.panel, self:getChildName(), self.panel, self.anchor.x, self.anchor.y, text, min, max, lowText, highText, 'TOPLEFT', 'TOPLEFT', stepSize);
+    local slider = Factory.Slider:New(self.panel, self:getChildName(), self.panel, self.anchor.x + 5, self.anchor.y - 7, text, min, max, lowText, highText, 'TOPLEFT', 'TOPLEFT', stepSize);
 
-    self.anchor.y = self.anchor.y - 7 - slider.slider:GetHeight();
+    self.anchor.y = self.anchor.y - 7 - slider.slider:GetHeight() - slider.edit:GetHeight();
 
     return slider;
+  end
+
+  function Panel:addLabel (text)
+    local label = Factory.Label:New(self.panel, self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT')
   end
 
   Factory.Panel = Panel;
@@ -140,14 +144,8 @@ do
     _G[name .. 'CheckButtonText']:SetText(text);
     _G[name .. 'CheckButtonText']:SetJustifyH('LEFT');
 
-    print(checkBox.Text);
-    print(checkBox.text);
-
     -- Blizzard broke something in the BfA beta, so we have to fix it
-    checkBox.SetValue = function (table, value)
-      addon:printTable(table);
-      print(value);
-    end
+    checkBox.SetValue = function (table, value) end
 
     return this;
   end
@@ -169,7 +167,7 @@ do
 
     local this = {};
     local slider = CreateFrame('Slider', name .. 'Slider', parent, 'OptionsSliderTemplate');
-    local edit;
+    local edit = CreateFrame('EditBox', name .. 'EditBox', parent);
 
     setmetatable(this, Slider);
 
@@ -199,7 +197,6 @@ do
     end);
 
     anchor = slider;
-    edit = CreateFrame('EditBox', name .. 'EditBox', parent);
     edit:SetAutoFocus(false);
     edit:Disable();
     edit:SetPoint('TOP', anchor, 'BOTTOM', 0, 0);
@@ -222,4 +219,32 @@ do
   end
 
   Factory.Slider = Slider;
+end
+
+do
+  local Label = {};
+
+  Label.__index = Label;
+
+  function Label:New (parent, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
+    local this = {};
+    local label = parent:CreateFontString('FontString');
+
+    setmetatable(this, Label);
+
+    this.label = label;
+
+    anchor = anchor or 'TOPLEFT';
+    parentAnchor = parentAnchor or 'BOTTOMLEFT';
+
+    --label:SetFont(addon.vars.font, 16, 'outline');
+    --label:SetFont('ChatFontNormal', 16, 'outline');
+    label:SetFont(STANDARD_TEXT_FONT, 14, 'outline');
+    label:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
+    label:SetText(text);
+
+    return this;
+  end
+
+  Factory.Label = Label;
 end
