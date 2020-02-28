@@ -17,7 +17,7 @@ do
   end
 end
 
-local currencyTable = {};
+local currencyTable;
 
 local function getCurrencyAmount (currencyId)
   local info = {GetCurrencyInfo(currencyId)};
@@ -73,12 +73,13 @@ local function handleCurrency (id, total)
   addon:yell('CURRENCY_CHANGED', id, amount, total);
 end
 
-addon:on('PLAYER_LOGIN', function ()
-  fillCurrencyTable();
-end);
-
 -- amount is always positive so we cannot use it
 addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
+  if (currencyTable == nil) then
+    fillCurrencyTable();
+    return;
+  end
+
   if (id == nil) then return end
 
   if (amount < 0) then
