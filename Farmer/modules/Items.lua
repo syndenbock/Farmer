@@ -59,6 +59,12 @@ local function handleItem (itemId, itemLink, count)
     ITEM_QUALITY_COLORS[itemRarity].b,
   };
 
+  -- crafting reagens
+  if (isCraftingReagent or
+     itemClassID == LE_ITEM_CLASS_TRADEGOODS) then
+    colors = {0, 0.8, 0.8};
+  end
+
   -- quest items
   if (itemClassID == LE_ITEM_CLASS_QUESTITEM or
       itemClassID == LE_ITEM_CLASS_KEY) then
@@ -107,24 +113,24 @@ local function handleItem (itemId, itemLink, count)
       elseif (itemEquipLoc ==  'INVTYPE_CLOAK') then
         textList = {itemLevel, slot};
       elseif (itemSubClassID == LE_ITEM_ARMOR_GENERIC) then
-        textList = {itemLevel, slot} -- fingers/trinkets
+        textList = {itemLevel, slot}; -- fingers/trinkets
       elseif (itemSubClassID > LE_ITEM_ARMOR_SHIELD) then -- we all know shields are offhand
         textList = {itemLevel, slot};
       else
-        textList = {itemLevel, itemSubType, slot}
+        textList = {itemLevel, itemSubType, slot};
       end
 
       text = addon:stringJoin(textList, ' ');
 
-      addon.Print.printEquip(texture, itemName, text, count, colors)
-      return
+      addon.Print.printEquip(texture, itemName, text, count, colors);
+      return;
     end
   end
 
   -- stackable items
   if (itemStackCount > 1) then
-    addon.Print.printStackableItem(itemLink, texture, itemName, count, colors)
-    return
+    addon.Print.printStackableItem(itemLink, texture, itemName, count, colors);
+    return;
   end
 
   -- all unspecified items
