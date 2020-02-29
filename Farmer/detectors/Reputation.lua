@@ -9,6 +9,7 @@ local function getRepInfo ()
   local info = {};
   local numFactions = GetNumFactions();
   local expandedIndices = {};
+  local expandCount = 0;
   local i = 1;
 
   --[[ we have to use a while loop, because a for loop would end when reaching
@@ -23,7 +24,8 @@ local function getRepInfo ()
     local hasRep = factionInfo[11];
 
     if (isHeader and isCollapsed) then
-      expandedIndices[#expandedIndices + 1] = i;
+      expandCount = expandCount + 1;
+      expandedIndices[expandCount] = i;
       ExpandFactionHeader(i);
       numFactions = GetNumFactions();
     end
@@ -50,7 +52,7 @@ local function getRepInfo ()
 
   --[[ the headers have to be collapse from bottom to top, because collapsing
        top ones first would change the index of the lower ones  --]]
-  for i = #expandedIndices, 1, -1 do
+  for i = expandCount, 1, -1 do
     CollapseFactionHeader(expandedIndices[i]);
   end
 
