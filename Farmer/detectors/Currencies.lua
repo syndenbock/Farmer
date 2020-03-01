@@ -30,6 +30,7 @@ local function fillCurrencyTable ()
   local expandedIndices = {};
   local listSize = GetCurrencyListSize();
   local i = 1;
+  local expandCount = 0;
 
   while (i <= listSize) do
     local info = {GetCurrencyListInfo(i)};
@@ -38,7 +39,8 @@ local function fillCurrencyTable ()
 
     if (isHeader) then
       if (not isExpanded) then
-        expandedIndices[#expandedIndices + 1] = i;
+        expandCount = expandCount + 1;
+        expandedIndices[expandCount] = i;
         ExpandCurrencyList(i, 1);
         listSize = GetCurrencyListSize();
       end
@@ -73,18 +75,15 @@ local function handleCurrency (id, total)
   addon:yell('CURRENCY_CHANGED', id, amount, total);
 end
 
+addon:on('PLAYER_LOGIN', fillCurrencyTable);
+
 -- amount is always positive so we cannot use it
 addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
   if (currencyTable == nil) then
-    fillCurrencyTable();
     return;
   end
 
   if (id == nil) then return end
-
-  if (amount < 0) then
-    print(GetCurrencyInfo(id));
-  end
 
   handleCurrency(id, total);
 end);
