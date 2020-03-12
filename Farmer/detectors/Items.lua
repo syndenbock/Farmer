@@ -14,11 +14,16 @@ local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
 local FIRST_SLOT = REAGENTBANK_CONTAINER ~= nil and REAGENTBANK_CONTAINER or BANK_CONTAINER;
 local LAST_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
 
+local flaggedBags = {};
 local bagCache = {};
 local currentInventory;
 
 local function getFirstKey (table)
   return next(table, nil);
+end
+
+local function flagBag (index)
+  flaggedBags[index] = true;
 end
 
 local function addItem (inventory, id, count, linkMap)
@@ -54,9 +59,6 @@ local function getBagContent (bagIndex)
       --[[ Manually calculating the bag count is way faster than using
            GetItemCount --]]
       local _, count, _, _, _, _, link, _, _, _id = GetContainerItemInfo(bagIndex, slotIndex);
-
-      --[[ I have to figure out how to properly handle when container info is
-           not ready yet --]]
 
       addItem(bagContent, id, count, {[link] = true});
     end
@@ -113,8 +115,19 @@ local function getInventory ()
   return getCachedInventory();
 end
 
+local function updateFlaggedBags ()
+  for bagIndex in pairs(flaggedBags) do
+    bagCache[bagIndex] = getBagContent(bagIndex);
+  end
+
+  flaggedBags = {};
+end
+
 local function checkInventory ()
-  local inventory = getCachedInventory();
+  local inventory;
+
+  updateFlaggedBags();
+  inventory = getCachedInventory();
 
   if (currentInventory == nil) then
     currentInventory = inventory;
@@ -177,16 +190,16 @@ addon:on({'PLAYER_LOGIN', 'BANKFRAME_OPENED', 'BANKFRAME_CLOSED'}, function ()
 end);
 
 addon:on('BAG_UPDATE', function (bagIndex)
-  bagCache[bagIndex] = getBagContent(bagIndex);
+  flagBag(bagIndex);
 end);
 
 addon:on('PLAYERBANKSLOTS_CHANGED', function ()
-  bagCache[BANK_CONTAINER] = getBagContent(BANK_CONTAINER);
+  flagBag(BANK_CONTAINER);
 end);
 
 if (addon:isClassic() == false) then
   addon:on('PLAYERREAGENTBANKSLOTS_CHANGED', function ()
-    bagCache[REAGENTBANK_CONTAINER] = getBagContent(REAGENTBANK_CONTAINER);
+    flagBag(REAGENTBANK_CONTAINER);
   end);
 end
 
