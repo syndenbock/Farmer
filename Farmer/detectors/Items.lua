@@ -13,6 +13,8 @@ local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
 
 local FIRST_SLOT = REAGENTBANK_CONTAINER ~= nil and REAGENTBANK_CONTAINER or BANK_CONTAINER;
 local LAST_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
+local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;
+local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
 
 local flaggedBags = {};
 local bagCache = {};
@@ -107,6 +109,7 @@ end
 
 local function getInventory ()
   bagCache = {};
+  flaggedBags = {};
 
   for i = FIRST_SLOT, LAST_SLOT, 1 do
     bagCache[i] = getBagContent(i);
@@ -185,8 +188,30 @@ local function checkSlotForArtifact (slot)
   end
 end
 
-addon:on({'PLAYER_LOGIN', 'BANKFRAME_OPENED', 'BANKFRAME_CLOSED'}, function ()
+addon:on('PLAYER_LOGIN', function ()
   currentInventory = getInventory();
+end);
+
+addon:on('BANKFRAME_OPENED', function ()
+  for index = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
+    bagCache[index] = getBagContent(index);
+  end
+
+  bagCache[BANK_CONTAINER] = getBagContent(BANK_CONTAINER);
+  bagCache[REAGENTBANK_CONTAINER] = getBagContent(REAGENTBANK_CONTAINER);
+
+  currentInventory = getCachedInventory();
+end);
+
+addon:on('BANKFRAME_CLOSED', function ()
+  for index = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
+    bagCache[index] = nil
+  end
+
+  bagCache[BANK_CONTAINER] = nil;
+  bagCache[REAGENTBANK_CONTAINER] = nil;
+
+  currentInventory = getCachedInventory();
 end);
 
 addon:on('BAG_UPDATE', function (bagIndex)
