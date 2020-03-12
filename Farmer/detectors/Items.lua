@@ -46,12 +46,17 @@ local function getBagContent (bagIndex)
   local slotCount = GetContainerNumSlots(bagIndex);
 
   for slotIndex = 1, slotCount, 1 do
+    --[[ GetContainerItemId has to be used, as GetContainerItemInfo returns
+         nil if data is not ready --]]
     local id = GetContainerItemID(bagIndex, slotIndex);
 
     if (id ~= nil) then
-      --[[ manually calculating the bag count is way faster than using
+      --[[ Manually calculating the bag count is way faster than using
            GetItemCount --]]
-      local _, count, _, _, _, _, link = GetContainerItemInfo(bagIndex, slotIndex);
+      local _, count, _, _, _, _, link, _, _, _id = GetContainerItemInfo(bagIndex, slotIndex);
+
+      --[[ I have to figure out how to properly handle when container info is
+           not ready yet --]]
 
       addItem(bagContent, id, count, {[link] = true});
     end
@@ -110,6 +115,12 @@ end
 
 local function checkInventory ()
   local inventory = getCachedInventory();
+
+  if (currentInventory == nil) then
+    currentInventory = inventory;
+    return;
+  end
+
   local new = {};
 
   for id, info in pairs(inventory) do
