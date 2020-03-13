@@ -1,3 +1,6 @@
+  version 2.12
+- Reworked internal structure to enable upcoming plugin support
+
   version 2.11.5
 - Updated event triggers to prevent unnecessary scans
 
