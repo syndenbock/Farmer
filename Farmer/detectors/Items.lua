@@ -23,6 +23,7 @@ local flaggedBags = {};
 local bagCache = {};
 local currentInventory;
 local awaitedItems = nil;
+local bankIsOpen = false;
 
 local function getFirstKey (table)
   return next(table, nil);
@@ -57,8 +58,9 @@ local function awaitItem (id, bagIndex, slotIndex)
 
   awaitedItems[id] = awaitedItems[id] or {};
   awaitedItems[id][bagIndex] = awaitedItems[id][bagIndex] or {};
+
   if (awaitedItems[id][bagIndex][slotIndex] == nil) then
-    print('awaiting item:', id);
+    -- print('awaiting item:', id);
     awaitedItems[id][bagIndex][slotIndex] = true;
   end
 end
@@ -81,8 +83,14 @@ local function updateBagCache (bagIndex)
            GetItemCount --]]
       local name, count, _, _, _, _, link, _, _, _id = GetContainerItemInfo(bagIndex, slotIndex);
 
-      if (name == nil) then
-        --print('no information for bag item available');
+      --[[ On login, information is not available yet but the game will not
+           fire GET_ITEM_INFO_RECEIVED. But there will be a ton of BAG_UPDATE
+           events which would cause the entire bags to be displayed. Therefor
+           items are added even without information if awaitedItems has not
+           been initialized yet which is done after reading the inventory on
+           login --]]
+      if (_id == nil and awaitedItems ~= nil) then
+        -- print('no information for bag item available');
         awaitItem(id, bagIndex, slotIndex);
       else
         addItem(bagContent, id, count, {[link] = true});
@@ -209,16 +217,15 @@ local function checkAwaitedItems (itemId)
   checkInventory();
 end
 
-local function initInventory ()
+local function readInventory ()
   bagCache = {};
   flaggedBags = {};
 
-  for i = FIRST_BAG_SLOT, LAST_BAG_SLOT, 1 do
+  for i = FIRST_SLOT, LAST_SLOT, 1 do
     updateBagCache(i);
   end
 
   currentInventory = getCachedInventory();
-  awaitedItems = {};
 end
 
 local function checkSlotForArtifact (slot)
@@ -232,36 +239,29 @@ local function checkSlotForArtifact (slot)
   end
 end
 
-addon:on('PLAYER_LOGIN', initInventory);
+addon:on('PLAYER_LOGIN', function ()
+  readInventory();
+  --[[ On login, inventory data is not available, but the game also never
+       fires "GET_ITEM_INFO_RECEIVED". Blizzard code at its best once again.
+       --]]
+  awaitedItems = {};
+end);
 
 addon:on('BANKFRAME_OPENED', function ()
-  for index = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
-    updateBagCache(index);
-  end
+  bankIsOpen = true;
+  readInventory();
+end);
 
-  updateBagCache(BANK_CONTAINER);
-
-  if (not addon:isClassic()) then
-    updateBagCache(REAGENTBANK_CONTAINER);
-  end
-
-  currentInventory = getCachedInventory();
+addon:on('BANKFRAME_CLOSED', function ()
+  bankIsOpen = false;
 end);
 
 --[[ BANKFRAME_CLOSED fires multiple times and bank slots are still available
-     on the event frame, so we funnel to execute only once on the next
-     frame --]]
-addon:funnel('BANKFRAME_CLOSED', function ()
-  for index = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
-    bagCache[index] = nil
-  end
+     on the event frame, so we funnel to execute only once one second later --]]
+addon:funnel('BANKFRAME_CLOSED', 1, function ()
+  if (bankIsOpen == true) then return end
 
-  bagCache[BANK_CONTAINER] = nil;
-  if (not addon:isClassic()) then
-    bagCache[REAGENTBANK_CONTAINER] = nil;
-  end
-
-  currentInventory = getCachedInventory();
+  readInventory();
 end);
 
 addon:on('BAG_UPDATE', function (bagIndex)
@@ -279,7 +279,6 @@ if (addon:isClassic() == false) then
 end
 
 addon:on('BAG_UPDATE_DELAYED', checkInventory);
-
 addon:on('GET_ITEM_INFO_RECEIVED', checkAwaitedItems);
 
 --[[ we need to do this because when equipping artifact weapons, a second item
