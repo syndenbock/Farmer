@@ -1,11 +1,11 @@
 local addonName, addon = ...;
 
 addon:slash('test', function (id, count)
-  print(addon:formatNumber(1500));
-  print(addon:formatNumber(15357));
-  addon:yell('CURRENCY_CHANGED', 1755, 1500, 15357);
+  --print(addon:formatNumber(1500));
+  --print(addon:formatNumber(15357));
+  --addon:yell('CURRENCY_CHANGED', 1755, 1500, 15357);
 
-  if (true) then return end
+  --if (true) then return end
 
   if (id ~= nil) then
     local _, link = GetItemInfo(id);

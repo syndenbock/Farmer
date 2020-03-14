@@ -8,11 +8,14 @@ local INVSLOT_FIRST_EQUIPPED = _G.INVSLOT_FIRST_EQUIPPED;
 local INVSLOT_LAST_EQUIPPED = _G.INVSLOT_LAST_EQUIPPED;
 local BANK_CONTAINER = _G.BANK_CONTAINER;
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
+local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
 
 local FIRST_SLOT = REAGENTBANK_CONTAINER ~= nil and REAGENTBANK_CONTAINER or BANK_CONTAINER;
 local LAST_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
+local FIRST_BAG_SLOT = BACKPACK_CONTAINER;
+local LAST_BAG_SLOT = BACKPACK_CONTAINER + NUM_BAG_SLOTS;
 local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;
 local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
 
@@ -55,17 +58,21 @@ local function awaitItem (id, bagIndex, slotIndex)
   awaitedItems[id] = awaitedItems[id] or {};
   awaitedItems[id][bagIndex] = awaitedItems[id][bagIndex] or {};
   if (awaitedItems[id][bagIndex][slotIndex] == nil) then
-    -- print('awaiting item:', id);
+    print('awaiting item:', id);
     awaitedItems[id][bagIndex][slotIndex] = true;
   end
 end
 
-local function getBagContent (bagIndex)
+local function updateBagCache (bagIndex)
   local bagContent = {};
   local slotCount = GetContainerNumSlots(bagIndex);
 
+  if (awaitedItems ~= nil) then
+    awaitedItems[bagIndex] = nil;
+  end
+
   for slotIndex = 1, slotCount, 1 do
-    --[[ GetContainerItemId has to be used, as GetContainerItemInfo returns
+    --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
          nil if data is not ready --]]
     local id = GetContainerItemID(bagIndex, slotIndex);
 
@@ -83,7 +90,7 @@ local function getBagContent (bagIndex)
     end
   end
 
-  return bagContent;
+  bagCache[bagIndex] = bagContent;
 end
 
 local function getEquipment ()
@@ -107,9 +114,7 @@ local function getCachedInventory ()
   local inventory = {};
   local equipment = getEquipment();
 
-  for i = FIRST_SLOT, LAST_SLOT, 1 do
-    local bagContent = bagCache[i];
-
+  for bagIndex, bagContent in pairs(bagCache) do
     if (bagContent ~= nil) then
       for itemId, itemInfo in pairs(bagContent) do
         addItem(inventory, itemId, itemInfo.count, itemInfo.links);
@@ -126,7 +131,7 @@ end
 
 local function updateFlaggedBags ()
   for bagIndex in pairs(flaggedBags) do
-    bagCache[bagIndex] = getBagContent(bagIndex);
+    updateBagCache(bagIndex);
   end
 
   flaggedBags = {};
@@ -205,11 +210,11 @@ local function checkAwaitedItems (itemId)
 end
 
 local function initInventory ()
-  --bagCache = {};
-  --flaggedBags = {};
+  bagCache = {};
+  flaggedBags = {};
 
-  for i = FIRST_SLOT, LAST_SLOT, 1 do
-    bagCache[i] = getBagContent(i);
+  for i = FIRST_BAG_SLOT, LAST_BAG_SLOT, 1 do
+    updateBagCache(i);
   end
 
   currentInventory = getCachedInventory();
@@ -231,22 +236,30 @@ addon:on('PLAYER_LOGIN', initInventory);
 
 addon:on('BANKFRAME_OPENED', function ()
   for index = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
-    bagCache[index] = getBagContent(index);
+    updateBagCache(index);
   end
 
-  bagCache[BANK_CONTAINER] = getBagContent(BANK_CONTAINER);
-  bagCache[REAGENTBANK_CONTAINER] = getBagContent(REAGENTBANK_CONTAINER);
+  updateBagCache(BANK_CONTAINER);
+
+  if (not addon:isClassic()) then
+    updateBagCache(REAGENTBANK_CONTAINER);
+  end
 
   currentInventory = getCachedInventory();
 end);
 
-addon:on('BANKFRAME_CLOSED', function ()
+--[[ BANKFRAME_CLOSED fires multiple times and bank slots are still available
+     on the event frame, so we funnel to execute only once on the next
+     frame --]]
+addon:funnel('BANKFRAME_CLOSED', function ()
   for index = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
     bagCache[index] = nil
   end
 
   bagCache[BANK_CONTAINER] = nil;
-  bagCache[REAGENTBANK_CONTAINER] = nil;
+  if (not addon:isClassic()) then
+    bagCache[REAGENTBANK_CONTAINER] = nil;
+  end
 
   currentInventory = getCachedInventory();
 end);
