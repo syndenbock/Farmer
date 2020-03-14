@@ -19,6 +19,7 @@ local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
 local flaggedBags = {};
 local bagCache = {};
 local currentInventory;
+local awaitedItems = nil;
 
 local function getFirstKey (table)
   return next(table, nil);
@@ -48,6 +49,17 @@ local function addItem (inventory, id, count, linkMap)
   end
 end
 
+local function awaitItem (id, bagIndex, slotIndex)
+  if (awaitedItems == nil) then return end
+
+  awaitedItems[id] = awaitedItems[id] or {};
+  awaitedItems[id][bagIndex] = awaitedItems[id][bagIndex] or {};
+  if (awaitedItems[id][bagIndex][slotIndex] == nil) then
+    -- print('awaiting item:', id);
+    awaitedItems[id][bagIndex][slotIndex] = true;
+  end
+end
+
 local function getBagContent (bagIndex)
   local bagContent = {};
   local slotCount = GetContainerNumSlots(bagIndex);
@@ -60,9 +72,14 @@ local function getBagContent (bagIndex)
     if (id ~= nil) then
       --[[ Manually calculating the bag count is way faster than using
            GetItemCount --]]
-      local _, count, _, _, _, _, link, _, _, _id = GetContainerItemInfo(bagIndex, slotIndex);
+      local name, count, _, _, _, _, link, _, _, _id = GetContainerItemInfo(bagIndex, slotIndex);
 
-      addItem(bagContent, id, count, {[link] = true});
+      if (name == nil) then
+        --print('no information for bag item available');
+        awaitItem(id, bagIndex, slotIndex);
+      else
+        addItem(bagContent, id, count, {[link] = true});
+      end
     end
   end
 
@@ -105,17 +122,6 @@ local function getCachedInventory ()
   end
 
   return inventory;
-end
-
-local function getInventory ()
-  bagCache = {};
-  flaggedBags = {};
-
-  for i = FIRST_SLOT, LAST_SLOT, 1 do
-    bagCache[i] = getBagContent(i);
-  end
-
-  return getCachedInventory();
 end
 
 local function updateFlaggedBags ()
@@ -177,6 +183,39 @@ local function checkInventory ()
   currentInventory = inventory;
 end
 
+local function checkAwaitedItems (itemId)
+  if (awaitedItems == nil) then return end
+
+  local bagMap = awaitedItems[itemId];
+
+  if (bagMap == nil) then return end
+
+  for bagIndex, slotMap in pairs(bagMap) do
+    local bagContent = bagCache[bagIndex];
+
+    for slotIndex in pairs(slotMap) do
+      local _, count, _, _, _, _, link, _, _, id = GetContainerItemInfo(bagIndex, slotIndex);
+
+      addItem(bagContent, id, count, {[link] = true});
+      --print('received awaited item:', itemId);
+    end
+  end
+
+  checkInventory();
+end
+
+local function initInventory ()
+  --bagCache = {};
+  --flaggedBags = {};
+
+  for i = FIRST_SLOT, LAST_SLOT, 1 do
+    bagCache[i] = getBagContent(i);
+  end
+
+  currentInventory = getCachedInventory();
+  awaitedItems = {};
+end
+
 local function checkSlotForArtifact (slot)
   local quality = GetInventoryItemQuality(UNITID_PLAYER, slot);
 
@@ -188,9 +227,7 @@ local function checkSlotForArtifact (slot)
   end
 end
 
-addon:on('PLAYER_LOGIN', function ()
-  currentInventory = getInventory();
-end);
+addon:on('PLAYER_LOGIN', initInventory);
 
 addon:on('BANKFRAME_OPENED', function ()
   for index = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
@@ -229,6 +266,8 @@ if (addon:isClassic() == false) then
 end
 
 addon:on('BAG_UPDATE_DELAYED', checkInventory);
+
+addon:on('GET_ITEM_INFO_RECEIVED', checkAwaitedItems);
 
 --[[ we need to do this because when equipping artifact weapons, a second item
      appears in the offhand slot --]]
