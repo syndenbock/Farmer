@@ -274,15 +274,15 @@ local function addEventHooks ()
   end);
 end
 
-addon:on('BAG_UPDATE_DELAYED', function ()
-  if (initialized == true) then return end
-
+local function initInventory ()
   currentInventory = readInventory();
 
   if (next(awaitedItems) == nil) then
-    initialized = true;
+    addon:off('BAG_UPDATE_DELAYED', initInventory);
     addEventHooks();
   else
     awaitedItems = {};
   end
-end);
+end
+
+addon:on('BAG_UPDATE_DELAYED', initInventory);
