@@ -1,5 +1,6 @@
 local addonName, addon = ...;
 
+local L = addon.L;
 local slashCommands = {};
 
 function addon:slash (command, callback)

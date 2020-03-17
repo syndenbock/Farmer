@@ -19,10 +19,11 @@ local LAST_BAG_SLOT = BACKPACK_CONTAINER + NUM_BAG_SLOTS;
 local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;
 local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
 
+local isInitialized = false;
 local flaggedBags = {};
 local bagCache = {};
 local currentInventory;
-local awaitedItems = nil;
+local awaitedItems = {};
 local bankIsOpen = false;
 
 local function getFirstKey (table)
@@ -54,8 +55,6 @@ local function addItem (inventory, id, count, linkMap)
 end
 
 local function awaitItem (id, bagIndex, slotIndex)
-  if (awaitedItems == nil) then return end
-
   awaitedItems[id] = awaitedItems[id] or {};
   awaitedItems[id][bagIndex] = awaitedItems[id][bagIndex] or {};
 
@@ -89,7 +88,7 @@ local function updateBagCache (bagIndex)
            items are added even without information if awaitedItems has not
            been initialized yet which is done after reading the inventory on
            login --]]
-      if (_id == nil and awaitedItems ~= nil) then
+      if (_id == nil) then
         -- print('no information for bag item available');
         awaitItem(id, bagIndex, slotIndex);
       else
@@ -151,11 +150,6 @@ local function checkInventory ()
   updateFlaggedBags();
   inventory = getCachedInventory();
 
-  if (currentInventory == nil) then
-    currentInventory = inventory;
-    return;
-  end
-
   local new = {};
 
   for id, info in pairs(inventory) do
@@ -197,8 +191,6 @@ local function checkInventory ()
 end
 
 local function checkAwaitedItems (itemId)
-  if (awaitedItems == nil) then return end
-
   local bagMap = awaitedItems[itemId];
 
   if (bagMap == nil) then return end
@@ -225,7 +217,7 @@ local function readInventory ()
     updateBagCache(i);
   end
 
-  currentInventory = getCachedInventory();
+  return getCachedInventory();
 end
 
 local function checkSlotForArtifact (slot)
@@ -239,51 +231,58 @@ local function checkSlotForArtifact (slot)
   end
 end
 
-addon:on('PLAYER_LOGIN', function ()
-  readInventory();
-  --[[ On login, inventory data is not available, but the game also never
-       fires "GET_ITEM_INFO_RECEIVED". Blizzard code at its best once again.
-       --]]
-  awaitedItems = {};
-end);
+local function addEventHooks ()
+  addon:on('BANKFRAME_OPENED', function ()
+    bankIsOpen = true;
+    currentInventory = readInventory();
+  end);
 
-addon:on('BANKFRAME_OPENED', function ()
-  bankIsOpen = true;
-  readInventory();
-end);
+  addon:on('BANKFRAME_CLOSED', function ()
+    bankIsOpen = false;
+  end);
 
-addon:on('BANKFRAME_CLOSED', function ()
-  bankIsOpen = false;
-end);
+  --[[ BANKFRAME_CLOSED fires multiple times and bank slots are still available
+       on the event frame, so we funnel to execute only once one second later --]]
+  addon:funnel('BANKFRAME_CLOSED', 1, function ()
+    if (bankIsOpen == true) then return end
 
---[[ BANKFRAME_CLOSED fires multiple times and bank slots are still available
-     on the event frame, so we funnel to execute only once one second later --]]
-addon:funnel('BANKFRAME_CLOSED', 1, function ()
-  if (bankIsOpen == true) then return end
+    currentInventory = readInventory();
+  end);
 
-  readInventory();
-end);
+  addon:on('BAG_UPDATE', function (bagIndex)
+    flagBag(bagIndex);
+  end);
 
-addon:on('BAG_UPDATE', function (bagIndex)
-  flagBag(bagIndex);
-end);
+  addon:on('PLAYERBANKSLOTS_CHANGED', function ()
+    flagBag(BANK_CONTAINER);
+  end);
 
-addon:on('PLAYERBANKSLOTS_CHANGED', function ()
-  flagBag(BANK_CONTAINER);
-end);
+  if (addon:isClassic() == false) then
+    addon:on('PLAYERREAGENTBANKSLOTS_CHANGED', function ()
+      flagBag(REAGENTBANK_CONTAINER);
+    end);
+  end
 
-if (addon:isClassic() == false) then
-  addon:on('PLAYERREAGENTBANKSLOTS_CHANGED', function ()
-    flagBag(REAGENTBANK_CONTAINER);
+  addon:on('BAG_UPDATE_DELAYED', checkInventory);
+  addon:on('GET_ITEM_INFO_RECEIVED', checkAwaitedItems);
+
+  --[[ we need to do this because when equipping artifact weapons, a second item
+       appears in the offhand slot --]]
+  addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
+    checkSlotForArtifact(INVSLOT_MAINHAND);
+    checkSlotForArtifact(INVSLOT_OFFHAND);
   end);
 end
 
-addon:on('BAG_UPDATE_DELAYED', checkInventory);
-addon:on('GET_ITEM_INFO_RECEIVED', checkAwaitedItems);
+addon:on('BAG_UPDATE_DELAYED', function ()
+  if (initialized == true) then return end
 
---[[ we need to do this because when equipping artifact weapons, a second item
-     appears in the offhand slot --]]
-addon:on('PLAYER_EQUIPMENT_CHANGED', function ()
-  checkSlotForArtifact(INVSLOT_MAINHAND);
-  checkSlotForArtifact(INVSLOT_OFFHAND);
+  currentInventory = readInventory();
+
+  if (next(awaitedItems) == nil) then
+    initialized = true;
+    addEventHooks();
+  else
+    awaitedItems = {};
+  end
 end);
