@@ -21,6 +21,30 @@ function addon:on (eventList, callback)
   end
 end
 
+function addon:off (eventList, callback)
+  if (type(eventList) ~= 'table') then
+    eventList = {eventList};
+  end
+
+  for x = 1, #eventList, 1 do
+    local event = eventList[x];
+    local list = events[event];
+    local success = false;
+
+    assert(list ~= nil, addonName .. ': no hook was registered for event ' .. event);
+
+    for y = 1, #list, 1 do
+      if (callback == list[y]) then
+        success = true;
+        list[y] = nil;
+        y = y - 1;
+      end
+    end
+
+    assert(success == true, addonName .. ': no hook was registered for event ' .. event);
+  end
+end
+
 local function eventHandler (self, event, ...)
   for i = 1, #events[event] do
     events[event][i](...);
