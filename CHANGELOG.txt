@@ -1,3 +1,7 @@
+  version 2.12.1
+- Void storage is now handled
+- Improved internal code
+
   version 2.12
 - Reworked internal structure to enable upcoming plugin support
 - Improved item detection
