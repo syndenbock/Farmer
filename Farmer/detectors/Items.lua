@@ -14,6 +14,8 @@ local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
 
 local FIRST_SLOT = REAGENTBANK_CONTAINER ~= nil and REAGENTBANK_CONTAINER or KEYRING_CONTAINER;
 local LAST_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
+local VOIDSTORAGE_SLOT = FIRST_SLOT - 1;
+local NUM_VOIDSTORAGE_SLOTS = 80 * 2;
 
 local flaggedBags = {};
 local bagCache = {};
@@ -226,6 +228,27 @@ local function checkSlotForArtifact (slot)
   end
 end
 
+local function readVoidStorage ()
+  local bagContent = {};
+
+  if (awaitedItems ~= nil) then
+    awaitedItems[VOIDSTORAGE_SLOT] = nil;
+  end
+
+  for slotIndex = 1, NUM_VOIDSTORAGE_SLOTS, 1 do
+    local link = GetVoidItemHyperlinkString(slotIndex);
+
+    if (link ~= nil) then
+      local id = GetItemInfoInstant(link);
+
+      addItem(bagContent, id, 1, {[link] = true});
+    end
+  end
+
+  bagCache[VOIDSTORAGE_SLOT] = bagContent;
+  currentInventory = getCachedInventory();
+end
+
 local function addEventHooks ()
   addon:on('BANKFRAME_OPENED', function ()
     bankIsOpen = true;
@@ -260,6 +283,12 @@ local function addEventHooks ()
 
   addon:on('BAG_UPDATE_DELAYED', checkInventory);
   addon:on('GET_ITEM_INFO_RECEIVED', checkAwaitedItems);
+
+  addon:on({'VOID_STORAGE_OPEN', 'VOID_TRANSFER_DONE'}, readVoidStorage);
+  addon:on('VOID_STORAGE_CLOSE', function ()
+    bagCache[VOIDSTORAGE_SLOT] = nil;
+    currentInventory = getCachedInventory();
+  end);
 
   --[[ we need to do this because when equipping artifact weapons, a second item
        appears in the offhand slot --]]
