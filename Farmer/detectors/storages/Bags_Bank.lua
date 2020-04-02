@@ -14,30 +14,16 @@ local LAST_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
 
 local flaggedBags = {};
 local bagCache = {};
-local awaitedItems = {};
 local bankIsOpen = false;
 
 local function flagBag (index)
   flaggedBags[index] = true;
 end
 
-local function awaitItem (id, bagIndex, slotIndex)
-  awaitedItems[id] = awaitedItems[id] or {};
-  awaitedItems[id][bagIndex] = awaitedItems[id][bagIndex] or {};
-
-  if (awaitedItems[id][bagIndex][slotIndex] == nil) then
-    -- print('awaiting item:', id);
-    awaitedItems[id][bagIndex][slotIndex] = true;
-  end
-end
-
 local function updateBagCache (bagIndex)
   local bagContent = {};
   local slotCount = GetContainerNumSlots(bagIndex);
-
-  if (awaitedItems ~= nil) then
-    awaitedItems[bagIndex] = nil;
-  end
+  local hasEmpty = false;
 
   for slotIndex = 1, slotCount, 1 do
     --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
@@ -49,15 +35,19 @@ local function updateBagCache (bagIndex)
            GetItemCount --]]
       local name, count, _, _, _, _, link, _, _, _id = GetContainerItemInfo(bagIndex, slotIndex);
 
-      --[[ On login, information is not available yet but the game will not
-           fire GET_ITEM_INFO_RECEIVED. But there will be a ton of BAG_UPDATE
-           events which would cause the entire bags to be displayed. Therefor
-           items are added even without information if awaitedItems has not
-           been initialized yet which is done after reading the inventory on
-           login --]]
+      --[[ On login or on generated items like Mage cookies info may not be
+           available yet. When it is available, another "BAG_UPDATE_DELAYED"
+           event is fired, so luckily we don't need to handle asynchroneously ]]
       if (_id == nil) then
-        -- print('no information for bag item available');
-        awaitItem(id, bagIndex, slotIndex);
+        --[[ If this for some reason ever stops working, this would be the way
+             to receive the info ]]
+        --local item = Item:CreateFromBagAndSlot(bagIndex, slotIndex);
+        --
+        --item:ContinueOnItemLoad(function ()
+        --  addItem(bagContent, id, count, link);
+        --end);
+
+        hasEmpty = true;
       else
         addItem(bagContent, id, count, link);
       end
@@ -65,14 +55,20 @@ local function updateBagCache (bagIndex)
   end
 
   bagCache[bagIndex] = bagContent;
+
+  return hasEmpty;
 end
 
 local function updateFlaggedBags ()
+  local hasEmpty = false;
+
   for bagIndex in pairs(flaggedBags) do
-    updateBagCache(bagIndex);
+    hasEmpty = updateBagCache(bagIndex) or hasEmpty;
   end
 
   flaggedBags = {};
+
+  return hasEmpty;
 end
 
 local function checkInventory ()
@@ -80,31 +76,17 @@ local function checkInventory ()
   Items:checkInventory();
 end
 
-local function checkAwaitedItems (itemId)
-  local bagMap = awaitedItems[itemId];
-
-  if (bagMap == nil) then return end
-
-  for bagIndex, slotMap in pairs(bagMap) do
-    local bagContent = bagCache[bagIndex];
-
-    for slotIndex in pairs(slotMap) do
-      local _, count, _, _, _, _, link, _, _, id = GetContainerItemInfo(bagIndex, slotIndex);
-
-      addItem(bagContent, id, count, link);
-      Items:addNewItem(id, count, link);
-      --print('received awaited item:', itemId);
-    end
-  end
-end
-
 local function readInventory ()
+  local hasEmpty = false;
+
   bagCache = {};
   flaggedBags = {};
 
   for i = FIRST_SLOT, LAST_SLOT, 1 do
-    updateBagCache(i);
+    hasEmpty = updateBagCache(i) or hasEmpty;
   end
+
+  return hasEmpty;
 end
 
 local function addEventHooks ()
@@ -142,18 +124,15 @@ local function addEventHooks ()
   end
 
   addon:on('BAG_UPDATE_DELAYED', checkInventory);
-  addon:on('GET_ITEM_INFO_RECEIVED', checkAwaitedItems);
 end
 
 local function initInventory ()
-  readInventory();
+  local hasEmpty = readInventory();
 
-  if (next(awaitedItems) == nil) then
+  if (hasEmpty == false) then
     addon:off('BAG_UPDATE_DELAYED', initInventory);
     Items:updateCurrentInventory();
     addEventHooks();
-  else
-    awaitedItems = {};
   end
 end
 

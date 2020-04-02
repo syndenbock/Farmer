@@ -55,7 +55,17 @@ function addon:getIcon (texture)
 end
 
 function addon:printTable (table)
+  if (type(table) ~= 'table') then
+    print(table);
+    return;
+  end
+
+  if (next(table, nil)) then
+    print('table is empty');
+    return;
+  end
+
   for i,v in pairs(table) do
-    print(i, ' - ', v)
+    print(i, ' - ', v);
   end
 end

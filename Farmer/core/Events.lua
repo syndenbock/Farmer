@@ -4,6 +4,8 @@ local events = {};
 local eventFrame = CreateFrame('frame');
 
 function addon:on (eventList, callback)
+  assert(type(callback) == 'function', 'callback is not a function');
+
   if (type(eventList) ~= 'table') then
     eventList = {eventList};
   end
@@ -22,6 +24,8 @@ function addon:on (eventList, callback)
 end
 
 function addon:off (eventList, callback)
+  assert(type(callback) == 'function', 'callback is not a function');
+
   if (type(eventList) ~= 'table') then
     eventList = {eventList};
   end
@@ -36,7 +40,7 @@ function addon:off (eventList, callback)
     for y = 1, #list, 1 do
       if (callback == list[y]) then
         success = true;
-        list[y] = nil;
+        table.remove(list, y)
         y = y - 1;
       end
     end
@@ -46,8 +50,10 @@ function addon:off (eventList, callback)
 end
 
 local function eventHandler (self, event, ...)
-  for i = 1, #events[event] do
-    events[event][i](...);
+  local callbackList = events[event];
+
+  for i = 1, #callbackList, 1 do
+    callbackList[i](...);
   end
 end
 
