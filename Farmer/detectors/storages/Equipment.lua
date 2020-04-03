@@ -3,6 +3,9 @@ local addonName, addon = ...;
 local addItem = addon.StorageUtils.addItem;
 local Items = addon.Items;
 
+local GetInventoryItemID = _G.GetInventoryItemID;
+local GetInventoryItemLink = _G.GetInventoryItemLink;
+local GetInventoryItemQuality = _G.GetInventoryItemQuality;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local INVSLOT_FIRST_EQUIPPED = _G.INVSLOT_FIRST_EQUIPPED;
 local INVSLOT_LAST_EQUIPPED = _G.INVSLOT_LAST_EQUIPPED;

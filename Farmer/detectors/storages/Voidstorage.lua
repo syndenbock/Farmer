@@ -1,16 +1,16 @@
 local addonName, addon = ...;
 
 local Items = addon.Items;
+local addItem = addon.StorageUtils.addItem;
+
+local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
+local GetItemInfoInstant = _G.GetItemInfoInstant;
 
 local NUM_VOIDSTORAGE_SLOTS = 80 * 2;
 local storage;
 
 local function readVoidStorage ()
   local bagContent = {};
-
-  if (awaitedItems ~= nil) then
-    awaitedItems[VOIDSTORAGE_SLOT] = nil;
-  end
 
   for slotIndex = 1, NUM_VOIDSTORAGE_SLOTS, 1 do
     local link = GetVoidItemHyperlinkString(slotIndex);
@@ -25,14 +25,17 @@ local function readVoidStorage ()
   storage = bagContent;
 end
 
-addon:on({'VOID_STORAGE_OPEN', 'VOID_TRANSFER_DONE'}, function ()
+addon:on('VOID_STORAGE_OPEN', function ()
   readVoidStorage();
   Items:updateCurrentInventory();
 end);
 
+addon:on('VOID_TRANSFER_DONE', function ()
+  readVoidStorage();
+end);
+
 addon:on('VOID_STORAGE_CLOSE', function ()
   storage = nil;
-  Items:updateCurrentInventory();
 end);
 
 Items:addStorage(function ()
