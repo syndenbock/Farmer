@@ -1,3 +1,8 @@
+  version 2.12.2
+- Fixed compatibility with ArkInventory
+- Fixed handling of bank bags
+- Improved internal code
+
   version 2.12.1
 - Void storage is now handled
 - Improved internal code
