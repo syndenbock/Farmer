@@ -8,13 +8,14 @@ local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
 local BANK_CONTAINER = _G.BANK_CONTAINER;
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
-local KEYRING_CONTAINER = _G.KEYRING_CONTAINER;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
 
 local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;
 local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
-local FIRST_SLOT = REAGENTBANK_CONTAINER ~= nil and REAGENTBANK_CONTAINER or KEYRING_CONTAINER;
+-- for some reason there is no constant for bank bag container
+local BANKBAG_CONTAINER = -4;
+local FIRST_SLOT = BANKBAG_CONTAINER;
 local LAST_SLOT = LAST_BANK_SLOT;
 
 local flaggedBags = {};
@@ -26,7 +27,9 @@ end
 
 local function updateBagCache (bagIndex)
   local bagContent = {};
-  local slotCount = GetContainerNumSlots(bagIndex);
+  -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
+  local slotCount = bagIndex == BANKBAG_CONTAINER and NUM_BANKBAGSLOTS or
+      GetContainerNumSlots(bagIndex);
   local hasEmpty = false;
 
   for slotIndex = 1, slotCount, 1 do
@@ -37,7 +40,8 @@ local function updateBagCache (bagIndex)
     if (id ~= nil) then
       --[[ Manually calculating the bag count is way faster than using
            GetItemCount --]]
-      local name, count, _, _, _, _, link, _, _, _id = GetContainerItemInfo(bagIndex, slotIndex);
+      local name, count, _, _, _, _, link, _, _, _id =
+        GetContainerItemInfo(bagIndex, slotIndex);
 
       --[[ On login or on generated items like Mage cookies info may not be
            available yet. When it is available, another "BAG_UPDATE_DELAYED"
@@ -95,6 +99,7 @@ end
 
 local function addEventHooks ()
   addon:on('BANKFRAME_OPENED', function ()
+    updateBagCache(BANKBAG_CONTAINER);
     updateBagCache(BANK_CONTAINER);
 
     for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
@@ -105,6 +110,7 @@ local function addEventHooks ()
   end);
 
   addon:on('BANKFRAME_CLOSED', function ()
+    bagCache[BANKBAG_CONTAINER] = nil;
     bagCache[BANK_CONTAINER] = nil;
 
     for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
@@ -117,7 +123,8 @@ local function addEventHooks ()
   end);
 
   addon:on('PLAYERBANKSLOTS_CHANGED', function ()
-    flagBag(BANK_CONTAINER);
+    updateBagCache(BANKBAG_CONTAINER);
+    updateBagCache(BANK_CONTAINER);
   end);
 
   if (addon:isClassic() == false) then
