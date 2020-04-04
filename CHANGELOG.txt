@@ -1,3 +1,6 @@
+  version 2.12.3
+- Fixed bug when bank info is not available
+
   version 2.12.2
 - Fixed compatibility with ArkInventory
 - Fixed handling of bank bags
