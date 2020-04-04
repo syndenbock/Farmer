@@ -1,5 +1,11 @@
 local addonName, addon = ...;
 
+local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
+local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
+local unpack = _G.unpack;
+local strsub = _G.strsub;
+local strlen = _G.strlen;
+
 function addon:isClassic ()
   return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
 end
@@ -60,12 +66,45 @@ function addon:printTable (table)
     return;
   end
 
-  if (next(table, nil)) then
+  if (next(table) == nil) then
     print('table is empty');
     return;
   end
 
   for i,v in pairs(table) do
     print(i, ' - ', v);
+  end
+end
+
+function addon:waitForCallbacks (callbackList, callback)
+  local count = #callbackList;
+
+  if (count == 0) then
+    callback();
+    return;
+  end
+
+  local results = {};
+
+  --[[ make sure to not use count for iterating, because if a callback is
+       synchroneous it would modify the iteration variable ]]
+
+  for x = 1, #callbackList, 1 do
+    callbackList[x](function (result)
+      results[x] = result;
+      count = count - 1;
+
+      if (count == 0) then
+        callback(results);
+      end
+    end);
+  end
+end
+
+function addon:bindParams (func, ...)
+  local params = {...};
+
+  return function (...)
+    func(unpack(params), ...);
   end
 end

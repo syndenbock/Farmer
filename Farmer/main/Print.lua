@@ -121,7 +121,7 @@ local function printItem (texture, name, count, text, colors, options)
 end
 
 local function getFormattedItemCount (id, includeBank)
-  return addon:formatNumber(GetItemCount(id, includeBank));
+  return addon:formatNumber(GetItemCount(id, includeBank, false));
 end
 
 local function printStackableItemTotal (id, texture, name, count, colors)

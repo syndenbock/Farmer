@@ -3,6 +3,9 @@ local addonName, addon = ...;
 local Items = addon.Items;
 local addItem = addon.StorageUtils.addItem;
 
+local Item = _G.Item;
+local C_Item = _G.C_Item;
+local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local GetContainerNumSlots = _G.GetContainerNumSlots;
 local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
@@ -25,20 +28,16 @@ local LAST_SLOT = LAST_BANK_SLOT;
 local flaggedBags = {};
 local bagCache = {};
 
-local function isBagSlot (index)
-  return (FIRST_BAG_SLOT <= index and LAST_BANK_SLOT >= index);
-end
-
 local function flagBag (index)
   flaggedBags[index] = true;
 end
 
-local function updateBagCache (bagIndex)
-  local bagContent = {};
+local function updateBagCache (bagIndex, callback)
   -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
   local slotCount = bagIndex == BANKBAG_CONTAINER and NUM_BANKBAGSLOTS or
       GetContainerNumSlots(bagIndex);
-  local hasEmpty = false;
+  local bagContent = {};
+  local callbackList = {};
 
   for slotIndex = 1, slotCount, 1 do
     --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
@@ -46,77 +45,80 @@ local function updateBagCache (bagIndex)
     local id = GetContainerItemID(bagIndex, slotIndex);
 
     if (id ~= nil) then
-      --[[ Manually calculating the bag count is way faster than using
-           GetItemCount --]]
-      local name, count, _, _, _, _, link, _, _, _id =
-        GetContainerItemInfo(bagIndex, slotIndex);
+      local info = {GetContainerItemInfo(bagIndex, slotIndex)};
+      local count = info[2];
 
-      --[[ On login or on generated items like Mage cookies info may not be
-           available yet. When it is available, another "BAG_UPDATE_DELAYED"
-           event is fired, so luckily we don't need to handle asynchroneously ]]
-      if (_id == nil) then
-        --[[ If this for some reason ever stops working, this would be the way
-             to receive the info ]]
-        --local item = Item:CreateFromBagAndSlot(bagIndex, slotIndex);
-        --
-        --item:ContinueOnItemLoad(function ()
-        --  addItem(bagContent, id, count, link);
-        --end);
+      if (IsItemDataCachedByID(id)) then
+        local link = info[7];
 
-        hasEmpty = true;
-      end
-
-      if (_id ~= nil or isBagSlot(bagIndex) == true) then
         addItem(bagContent, id, count, link);
+      else
+        --[[ Info may not be available yet. We only use asynchronous callbacks
+             in that case because they have quite a bit of overhead. --]]
+        --[[ Own implementation is a bit faster, but I don't want to risk
+             bugs in code that is only very rarely executed --]]
+        table.insert(callbackList, function (callback)
+          local item = Item:CreateFromBagAndSlot(bagIndex, slotIndex);
+
+          item:ContinueOnItemLoad(function ()
+            addItem(bagContent, id, count, item:GetItemLink());
+            callback();
+          end);
+        end);
       end
     end
   end
 
-  bagCache[bagIndex] = bagContent;
-
-  return hasEmpty;
+  addon:waitForCallbacks(callbackList, function ()
+    bagCache[bagIndex] = bagContent;
+    callback();
+  end);
 end
 
-local function updateFlaggedBags ()
-  local hasEmpty = false;
+local function updateFlaggedBags (callback)
+  local callbackList = {};
 
   for bagIndex in pairs(flaggedBags) do
-    hasEmpty = updateBagCache(bagIndex) or hasEmpty;
+    table.insert(callbackList, addon:bindParams(updateBagCache, bagIndex));
   end
 
-  flaggedBags = {};
-
-  return hasEmpty;
+  addon:waitForCallbacks(callbackList, function ()
+    flaggedBags = {};
+    callback();
+  end);
 end
 
-local function checkInventory ()
-  updateFlaggedBags();
-  Items:checkInventory();
-end
-
-local function readInventory ()
-  local hasEmpty = false;
+local function readInventory (callback)
+  local callbackList = {};
 
   bagCache = {};
   flaggedBags = {};
 
-  for i = FIRST_SLOT, LAST_SLOT, 1 do
-    hasEmpty = updateBagCache(i) or hasEmpty;
+
+  for x = FIRST_SLOT, LAST_SLOT, 1 do
+    table.insert(callbackList, addon:bindParams(updateBagCache, x));
   end
 
-  return hasEmpty;
+  addon:waitForCallbacks(callbackList, function ()
+    flaggedBags = {};
+    callback();
+  end);
 end
 
 local function addEventHooks ()
   addon:on('BANKFRAME_OPENED', function ()
-    updateBagCache(BANKBAG_CONTAINER)
-    updateBagCache(BANK_CONTAINER)
+    local callbackList = {};
+
+    table.insert(callbackList, addon:bindParams(updateBagCache, BANKBAG_CONTAINER));
+    table.insert(callbackList, addon:bindParams(updateBagCache, BANK_CONTAINER));
 
     for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
-      updateBagCache(x)
+      table.insert(callbackList, addon:bindParams(updateBagCache, x));
     end
 
-    Items:updateCurrentInventory();
+    addon:waitForCallbacks(callbackList, function ()
+      Items:updateCurrentInventory();
+    end);
   end);
 
   addon:on('BANKFRAME_CLOSED', function ()
@@ -133,8 +135,8 @@ local function addEventHooks ()
   end);
 
   addon:on('PLAYERBANKSLOTS_CHANGED', function ()
-    updateBagCache(BANKBAG_CONTAINER);
-    updateBagCache(BANK_CONTAINER);
+    flagBag(BANKBAG_CONTAINER);
+    flagBag(BANK_CONTAINER);
   end);
 
   if (addon:isClassic() == false) then
@@ -143,21 +145,19 @@ local function addEventHooks ()
     end);
   end
 
-  addon:on('BAG_UPDATE_DELAYED', checkInventory);
+  addon:on('BAG_UPDATE_DELAYED', function ()
+    updateFlaggedBags(function ()
+      Items:checkInventory();
+    end);
+  end);
 end
 
-local function initInventory ()
-  local hasEmpty = readInventory();
-
-  --[[ the game needs a few iterations until all items are loaded ]]
-  if (hasEmpty == false) then
-    addon:off('BAG_UPDATE_DELAYED', initInventory);
-    Items:updateCurrentInventory();
+addon:on('PLAYER_LOGIN', function ()
+  readInventory(function ()
     addEventHooks();
-  end
-end
-
-addon:on('BAG_UPDATE_DELAYED', initInventory);
+    Items:updateCurrentInventory();
+  end);
+end);
 
 Items:addStorage(function ()
   return bagCache;

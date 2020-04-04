@@ -4,7 +4,7 @@ local events = {};
 local eventFrame = CreateFrame('frame');
 
 function addon:on (eventList, callback)
-  assert(type(callback) == 'function', addonName .. 'callback is not a function');
+  assert(type(callback) == 'function', addonName .. ': callback is not a function');
 
   if (type(eventList) ~= 'table') then
     eventList = {eventList};
@@ -24,7 +24,7 @@ function addon:on (eventList, callback)
 end
 
 function addon:off (eventList, callback)
-  assert(type(callback) == 'function', addonName .. 'callback is not a function');
+  assert(type(callback) == 'function', addonName .. ': callback is not a function');
 
   if (type(eventList) ~= 'table') then
     eventList = {eventList};
