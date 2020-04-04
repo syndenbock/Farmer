@@ -1,7 +1,7 @@
 local addonName, addon = ...;
 
 local L = addon.L;
-local currentVersion = 0210000;
+local currentVersion = 0210001;
 local tocVersion = GetAddOnMetadata(addonName, 'version');
 
 local ADDON_ICON_ID = 3334;
@@ -439,8 +439,9 @@ end
 
 addon:on('PLAYER_LOGIN', function (name)
   if (farmerOptions == nil) then
-    farmerOptions = {}
-    farmerOptions.version = currentVersion
+    farmerOptions = {
+      version = currentVersion
+    };
   end
 
   if (farmerOptions.version == nil) then
@@ -448,9 +449,10 @@ addon:on('PLAYER_LOGIN', function (name)
   elseif (farmerOptions.version < currentVersion) then
     local text
 
-    text = 'New in ' .. addonName .. ' version ' .. tocVersion .. ':\n' ..
-           '- You can automatically put pets you own 3 times in a cage using "/farmer cagepets"\n' ..
-           '- There is now an option to display reputation. This even shows a star when you earn a paragon reward!'
+    --text = 'New in ' .. addonName .. ' version ' .. tocVersion .. ':\n' ..
+    --       '- You can automatically put pets you own 3 times in a cage using "/farmer cagepets"\n' ..
+    --       '- There is now an option to display reputation. This even shows a star when you earn a paragon reward!'
+    text = addonName .. ': Sorry for the many bugs and fixes lately! \n I hope I get everything resolved soon.';
     print(text)
   end
 
