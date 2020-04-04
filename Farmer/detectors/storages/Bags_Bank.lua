@@ -7,9 +7,13 @@ local GetContainerNumSlots = _G.GetContainerNumSlots;
 local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
 local BANK_CONTAINER = _G.BANK_CONTAINER;
+local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER;
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
+
+local FIRST_BAG_SLOT = BACKPACK_CONTAINER;
+local LAST_BAG_SLOT = BACKPACK_CONTAINER + NUM_BAG_SLOTS;
 
 local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;
 local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
@@ -20,6 +24,10 @@ local LAST_SLOT = LAST_BANK_SLOT;
 
 local flaggedBags = {};
 local bagCache = {};
+
+local function isBagSlot (index)
+  return (FIRST_BAG_SLOT <= index and LAST_BANK_SLOT >= index);
+end
 
 local function flagBag (index)
   flaggedBags[index] = true;
@@ -56,7 +64,9 @@ local function updateBagCache (bagIndex)
         --end);
 
         hasEmpty = true;
-      else
+      end
+
+      if (_id ~= nil or isBagSlot(bagIndex) == true) then
         addItem(bagContent, id, count, link);
       end
     end
@@ -99,11 +109,11 @@ end
 
 local function addEventHooks ()
   addon:on('BANKFRAME_OPENED', function ()
-    updateBagCache(BANKBAG_CONTAINER);
-    updateBagCache(BANK_CONTAINER);
+    updateBagCache(BANKBAG_CONTAINER)
+    updateBagCache(BANK_CONTAINER)
 
     for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
-      updateBagCache(x);
+      updateBagCache(x)
     end
 
     Items:updateCurrentInventory();
