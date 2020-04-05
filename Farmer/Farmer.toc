@@ -26,6 +26,7 @@ core/Storageutils.lua
 detectors/Items.lua
 detectors/storages/Bags_Bank.lua
 detectors/storages/Equipment.lua
+detectors/storages/Guildbank.lua
 detectors/storages/Voidstorage.lua
 detectors/Currencies.lua
 detectors/Reputation.lua
