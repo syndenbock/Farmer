@@ -10,13 +10,9 @@ local GetContainerNumSlots = _G.GetContainerNumSlots;
 local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
 local BANK_CONTAINER = _G.BANK_CONTAINER;
-local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER;
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
-
-local FIRST_BAG_SLOT = BACKPACK_CONTAINER;
-local LAST_BAG_SLOT = BACKPACK_CONTAINER + NUM_BAG_SLOTS;
 
 local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;
 local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
@@ -94,7 +90,6 @@ local function readInventory (callback)
   bagCache = {};
   flaggedBags = {};
 
-
   for x = FIRST_SLOT, LAST_SLOT, 1 do
     table.insert(callbackList, addon:bindParams(updateBagCache, x));
   end
@@ -134,9 +129,14 @@ local function addEventHooks ()
     flagBag(bagIndex);
   end);
 
-  addon:on('PLAYERBANKSLOTS_CHANGED', function ()
-    flagBag(BANKBAG_CONTAINER);
-    flagBag(BANK_CONTAINER);
+  addon:on('PLAYERBANKSLOTS_CHANGED', function (slot)
+    local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
+
+    if (slot <= maxSlot) then
+      flagBag(BANK_CONTAINER);
+    else
+      flagBag(BANKBAG_CONTAINER);
+    end
   end);
 
   if (addon:isClassic() == false) then
