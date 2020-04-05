@@ -3,6 +3,9 @@ local addonName, addon = ...;
 local addItem = addon.StorageUtils.addItem;
 local Items = addon.Items;
 
+local C_Item = _G.C_Item;
+local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
+local Item = _G.Item;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
 local GetInventoryItemQuality = _G.GetInventoryItemQuality;
@@ -18,30 +21,47 @@ local UNITID_PLAYER = 'player';
 local currentEquipment = {};
 local storage = {};
 
-local function getEquipmentSlot (slot)
+local function getEquipmentSlot (slot, callback)
   local id = GetInventoryItemID(UNITID_PLAYER, slot);
 
   if (id ~= nil) then
-    local link = GetInventoryItemLink(UNITID_PLAYER, slot) or id;
+    if (IsItemDataCachedByID(id)) then
+      callback({
+        id = id,
+        link = GetInventoryItemLink(UNITID_PLAYER, slot),
+      });
+    else
+      local item = Item:CreateFromEquipmentSlot(slot);
 
-    return {
-      id = id,
-      link = link,
-    };
+      item:ContinueOnItemLoad(function ()
+        callback({
+          id = id,
+          link = item:GetItemLink(),
+        });
+      end);
+    end
+  else
+    callback(nil);
   end
-
-  return nil;
 end
 
-local function getEquipment ()
+local function getEquipment (callback)
+  local callbackList = {};
   local equipment = {};
 
   -- slots 1-19 are gear, 20-23 are equipped bags
   for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
-    equipment[x] = getEquipmentSlot(x);
+    table.insert(callbackList, function (callback)
+      getEquipmentSlot(x, function (data)
+        equipment[x] = data;
+        callback();
+      end);
+    end);
   end
 
-  return equipment;
+  addon:waitForCallbacks(callbackList, function ()
+    callback(equipment);
+  end);
 end
 
 local function updateStorage ()
@@ -68,27 +88,33 @@ local function checkSlotForArtifact (slot)
 end
 
 addon:on('PLAYER_LOGIN', function ()
-  currentEquipment = getEquipment();
-  updateStorage();
-  Items:updateCurrentInventory();
+  getEquipment(function (data)
+    currentEquipment = data;
+    updateStorage();
+    Items:updateCurrentInventory();
+  end);
 end);
 
---[[ we need to do this because when equipping artifact weapons, a second item
-       appears in the offhand slot --]]
 addon:on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
+  --[[ we need to do this because when equipping artifact weapons, a second item
+         appears in the offhand slot --]]
   if (slot == INVSLOT_OFFHAND) then
     checkSlotForArtifact(INVSLOT_OFFHAND);
   end
 
+  --[[ Seems like this is not needed, but will keep it here if a bug with
+       artifact weapons occurs ]]
   -- checkSlotForArtifact(INVSLOT_MAINHAND);
 
-    if (isEmpty == true) then
-      currentEquipment[slot] = nil;
-    else
-      currentEquipment[slot] = getEquipmentSlot(slot);
-    end
-
-  updateStorage();
+  if (isEmpty == true) then
+    currentEquipment[slot] = nil;
+    updateStorage();
+  else
+    getEquipmentSlot(slot, function (data)
+      currentEquipment[slot] = data;
+      updateStorage();
+    end);
+  end
 end);
 
 Items:addStorage(function ()
