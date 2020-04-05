@@ -13,10 +13,13 @@ local MAX_GUILDBANK_TABS = _G.MAX_GUILDBANK_TABS;
 
 local storage;
 
-local function readGuildBank (callback)
+local function readGuildBank ()
   --[[ This variable only becomes available after the guild bank has been
-       opened ]]
-  local MAX_GUILDBANK_SLOTS_PER_TAB = _G.MAX_GUILDBANK_SLOTS_PER_TAB;
+       opened. If the guild bank frame is replaced by an addon, it will stay
+       unavailable and we use the hardcoded value from Blizzard's code.
+       Again, I have no clue why did not put a global constant in the code for
+       this.]]
+  local MAX_GUILDBANK_SLOTS_PER_TAB = _G.MAX_GUILDBANK_SLOTS_PER_TAB or 98;
   local guildContent = {};
   local callbackList = {};
 
@@ -49,28 +52,21 @@ local function readGuildBank (callback)
   end
 
   addon:waitForCallbacks(callbackList, function ()
+    local init = (storage == nil);
+
     storage = guildContent;
 
-    if (type(callback) == 'function') then
-      callback();
+    if (init == true) then
+      Items:updateCurrentInventory();
     end
   end);
 end
 
-addon:on('GUILDBANKFRAME_OPENED', function ()
-  readGuildBank(function ()
-    Items:updateCurrentInventory();
-  end);
-end);
-
-addon:on('GUILDBANKBAGSLOTS_CHANGED', function ()
-  readGuildBank();
-end);
+addon:on('GUILDBANKBAGSLOTS_CHANGED', readGuildBank);
 
 addon:on('GUILDBANKFRAME_CLOSED', function ()
   storage = nil;
 end);
-
 
 Items:addStorage(function ()
   return {storage};
