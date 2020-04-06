@@ -1,7 +1,8 @@
 local addonName, addon = ...;
 
-local StorageUtils = addon.StorageUtils;
+local C_Timer = _G.C_Timer;
 
+local StorageUtils = addon.StorageUtils;
 local addItem = StorageUtils.addItem;
 
 local Items = {};
@@ -15,6 +16,8 @@ local function getFirstKey (table)
 end
 
 local function readStorage (inventory, storage)
+  if (storage == nil) then return end
+
   for containerIndex, container in pairs(storage) do
     if (container ~= nil) then
       for itemId, itemInfo in pairs(container) do
@@ -24,8 +27,7 @@ local function readStorage (inventory, storage)
   end
 end
 
-local function getCachedInventory (callback)
-  local callbackList = {};
+local function getCachedInventory ()
   local inventory = {};
 
   for storageIndex = 1, #storageList, 1 do
@@ -36,31 +38,18 @@ local function getCachedInventory (callback)
       storage = handler();
     end
 
-    if (type(storage) == 'function') then
-      table.insert(callbackList, function (done)
-        storage(function (storage)
-          readStorage(inventory, storage);
-          done();
-        end);
-      end);
-    else
-      readStorage(inventory, storage);
-    end
+    readStorage(inventory, storage);
   end
 
-  addon:waitForCallbacks(callbackList, function ()
-    callback(inventory);
-  end);
+  return inventory;
 end
 
-function Items:addStorage (getter)
-  table.insert(storageList, getter);
+function Items:addStorage (storage)
+  table.insert(storageList, storage);
 end
 
 function Items:updateCurrentInventory ()
-  getCachedInventory(function (inventory)
-    currentInventory = inventory;
-  end);
+  currentInventory = getCachedInventory();
 end
 
 function Items:addItemToCurrentInventory (id, count, linkMap)
@@ -72,45 +61,53 @@ function Items:addNewItem (id, count, link)
   addon:yell('NEW_ITEM', id, link, count);
 end
 
-function Items:checkInventory ()
-  getCachedInventory(function (inventory)
-    local new = {};
+local function checkInventory ()
+  local inventory = getCachedInventory();
 
-    for id, info in pairs(inventory) do
-      if (currentInventory[id] == nil) then
-        new[id] = {
-          count = inventory[id].count,
-          link = getFirstKey(inventory[id].links)
-        };
-      elseif (inventory[id].count > currentInventory[id].count) then
-        local links = inventory[id].links;
-        local currentLinks = currentInventory[id].links;
-        local found = false;
+  local new = {};
 
-        for link, value in pairs(links) do
-          if (currentLinks[link] == nil) then
-            found = true;
-            new[id] = {
-              count = inventory[id].count - currentInventory[id].count,
-              link = link
-            };
-            break;
-          end
-        end
+  for id, info in pairs(inventory) do
+    if (currentInventory[id] == nil) then
+      new[id] = {
+        count = inventory[id].count,
+        link = getFirstKey(inventory[id].links)
+      };
+    elseif (inventory[id].count > currentInventory[id].count) then
+      local links = inventory[id].links;
+      local currentLinks = currentInventory[id].links;
+      local found = false;
 
-        if (found == false) then
+      for link, value in pairs(links) do
+        if (currentLinks[link] == nil) then
+          found = true;
           new[id] = {
             count = inventory[id].count - currentInventory[id].count,
-            link = getFirstKey(links)
+            link = link
           };
+          break;
         end
       end
-    end
 
-    for id, info in pairs(new) do
-      addon:yell('NEW_ITEM', id, info.link, info.count);
+      if (found == false) then
+        new[id] = {
+          count = inventory[id].count - currentInventory[id].count,
+          link = getFirstKey(links)
+        };
+      end
     end
+  end
 
-    currentInventory = inventory;
-  end);
+  for id, info in pairs(new) do
+    addon:yell('NEW_ITEM', id, info.link, info.count);
+  end
+
+  currentInventory = inventory;
 end
+
+--[[ Funneling the check so it executes on the next frame after
+     BAG_UPDATE_DELAYED. This allows storages to update first to avoid race
+     conditions ]]
+-- addon:funnel('BAG_UPDATE_DELAYED', checkInventory);
+addon:on('BAG_UPDATE_DELAYED', function ()
+  C_Timer.After(0, checkInventory);
+end);

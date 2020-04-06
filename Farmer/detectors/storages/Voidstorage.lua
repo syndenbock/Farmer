@@ -3,9 +3,6 @@ local addonName, addon = ...;
 local Items = addon.Items;
 local addItem = addon.StorageUtils.addItem;
 
-local Item = _G.Item;
-local C_Item = _G.C_Item;
-local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local GetVoidItemInfo = _G.GetVoidItemInfo;
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
 
@@ -17,9 +14,8 @@ local function getCombinedIndex (tabIndex, slotIndex)
   return (tabIndex - 1) * NUM_VOIDSTORAGE_SLOTS + slotIndex;
 end
 
-local function readVoidStorage (callback)
+local function readVoidStorage ()
   local bagContent = {};
-  local callbackList = {};
 
   for tabIndex = 1, NUM_VOIDSTORAGE_TABS, 1 do
     for slotIndex = 1, NUM_VOIDSTORAGE_SLOTS, 1 do
@@ -27,48 +23,25 @@ local function readVoidStorage (callback)
 
       if (id ~= nil) then
         local combinedIndex = getCombinedIndex(tabIndex, slotIndex);
+        --[[ For some reason, one function requires tabIndex and slotIndex
+             and a related function requires slotIndex as if there was only
+             one tab. Blizzard code at its best once again. ]]
+        local link = GetVoidItemHyperlinkString(combinedIndex);
 
-        if (IsItemDataCachedByID(id)) then
-          --[[ For some reason, one function requires tabIndex and slotIndex
-               and a related function requires slotIndex as if there was only
-               one tab. Blizzard code at its best once again. ]]
-          local link = GetVoidItemHyperlinkString(combinedIndex);
-
-          addItem(bagContent, id, 1, link);
-        else
-          table.insert(callbackList, function (callback)
-            local item = Item:CreateFromItemID(id);
-
-            item:ContinueOnItemLoad(function ()
-              local link = GetVoidItemHyperlinkString(combinedIndex);
-
-              addItem(bagContent, id, 1, link);
-              callback();
-            end);
-          end);
-        end
+        addItem(bagContent, id, 1, link);
       end
     end
   end
 
-  addon:waitForCallbacks(callbackList, function ()
-    storage = bagContent;
-
-    if (type(callback) == 'function') then
-      callback();
-    end
-  end);
+  storage = bagContent;
 end
 
 addon:on('VOID_STORAGE_OPEN', function ()
-  readVoidStorage(function ()
-    Items:updateCurrentInventory();
-  end);
+  readVoidStorage();
+  Items:updateCurrentInventory();
 end);
 
-addon:on('VOID_TRANSFER_DONE', function ()
-  readVoidStorage();
-end);
+addon:on('VOID_TRANSFER_DONE', readVoidStorage);
 
 addon:on('VOID_STORAGE_CLOSE', function ()
   storage = nil;

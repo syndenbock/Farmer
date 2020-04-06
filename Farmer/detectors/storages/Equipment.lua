@@ -3,9 +3,6 @@ local addonName, addon = ...;
 local addItem = addon.StorageUtils.addItem;
 local Items = addon.Items;
 
-local C_Item = _G.C_Item;
-local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
-local Item = _G.Item;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
 local GetInventoryItemQuality = _G.GetInventoryItemQuality;
@@ -21,47 +18,28 @@ local UNITID_PLAYER = 'player';
 local currentEquipment = {};
 local storage = {};
 
-local function getEquipmentSlot (slot, callback)
+local function getEquipmentSlot (slot)
   local id = GetInventoryItemID(UNITID_PLAYER, slot);
 
   if (id ~= nil) then
-    if (IsItemDataCachedByID(id)) then
-      callback({
-        id = id,
-        link = GetInventoryItemLink(UNITID_PLAYER, slot),
-      });
-    else
-      local item = Item:CreateFromEquipmentSlot(slot);
-
-      item:ContinueOnItemLoad(function ()
-        callback({
-          id = id,
-          link = item:GetItemLink(),
-        });
-      end);
-    end
+    return {
+      id = id,
+      link = GetInventoryItemLink(UNITID_PLAYER, slot),
+    };
   else
-    callback(nil);
+    return nil;
   end
 end
 
-local function getEquipment (callback)
-  local callbackList = {};
+local function getEquipment ()
   local equipment = {};
 
   -- slots 1-19 are gear, 20-23 are equipped bags
   for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
-    table.insert(callbackList, function (callback)
-      getEquipmentSlot(x, function (data)
-        equipment[x] = data;
-        callback();
-      end);
-    end);
+    equipment[x] = getEquipmentSlot(x);
   end
 
-  addon:waitForCallbacks(callbackList, function ()
-    callback(equipment);
-  end);
+  return equipment;
 end
 
 local function updateStorage ()
@@ -88,11 +66,9 @@ local function checkSlotForArtifact (slot)
 end
 
 addon:on('PLAYER_LOGIN', function ()
-  getEquipment(function (data)
-    currentEquipment = data;
-    updateStorage();
-    Items:updateCurrentInventory();
-  end);
+  currentEquipment = getEquipment();
+  updateStorage();
+  Items:updateCurrentInventory();
 end);
 
 addon:on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
@@ -110,10 +86,8 @@ addon:on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
     currentEquipment[slot] = nil;
     updateStorage();
   else
-    getEquipmentSlot(slot, function (data)
-      currentEquipment[slot] = data;
-      updateStorage();
-    end);
+    currentEquipment[slot] = getEquipmentSlot(slot);
+    updateStorage();
   end
 end);
 

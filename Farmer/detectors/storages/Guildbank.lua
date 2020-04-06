@@ -3,9 +3,6 @@ local addonName, addon = ...;
 local Items = addon.Items;
 local addItem = addon.StorageUtils.addItem;
 
-local Item = _G.Item;
-local C_Item = _G.C_Item;
-local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local GetItemInfoInstant = _G.GetItemInfoInstant;
 local GetGuildBankItemInfo = _G.GetGuildBankItemInfo;
 local GetGuildBankItemLink = _G.GetGuildBankItemLink;
@@ -21,7 +18,6 @@ local function readGuildBank ()
        this.]]
   local MAX_GUILDBANK_SLOTS_PER_TAB = _G.MAX_GUILDBANK_SLOTS_PER_TAB or 98;
   local guildContent = {};
-  local callbackList = {};
 
   for tabIndex = 1, MAX_GUILDBANK_TABS, 1 do
     for slotIndex = 1, MAX_GUILDBANK_SLOTS_PER_TAB, 1 do
@@ -32,37 +28,22 @@ local function readGuildBank ()
         local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
         local count = info[2];
 
-        if (IsItemDataCachedByID(id)) then
-          addItem(guildContent, id, count, link);
-        else
-          table.insert(callbackList, function (callback)
-            local item = Item:CreateFromItemID(id);
-
-            item:ContinueOnItemLoad(function ()
-              --[[ If data was not ready yet, link is not nil but has no data.
-                   Therefor we refresh the link.]]
-              link = GetGuildBankItemLink(tabIndex, slotIndex);
-              addItem(guildContent, id, count, link);
-              callback();
-            end);
-          end);
-        end
+        addItem(guildContent, id, count, link);
       end
     end
   end
 
-  addon:waitForCallbacks(callbackList, function ()
-    local init = (storage == nil);
-
-    storage = guildContent;
-
-    if (init == true) then
-      Items:updateCurrentInventory();
-    end
-  end);
+  storage = guildContent;
 end
 
-addon:on('GUILDBANKBAGSLOTS_CHANGED', readGuildBank);
+addon:on('GUILDBANKBAGSLOTS_CHANGED', function ()
+  if (storage == nil) then
+    readGuildBank();
+    Items:updateCurrentInventory();
+  else
+    readGuildBank();
+  end
+end);
 
 addon:on('GUILDBANKFRAME_CLOSED', function ()
   storage = nil;
