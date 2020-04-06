@@ -1,3 +1,6 @@
+  version 2.12.4
+- Reworked handling of unavailable item information to work stable
+
   version 2.12.3
 - Fixed bug when bank info is not available
 
