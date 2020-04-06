@@ -75,36 +75,3 @@ function addon:printTable (table)
     print(i, ' - ', v);
   end
 end
-
-function addon:waitForCallbacks (callbackList, callback)
-  local count = #callbackList;
-
-  if (count == 0) then
-    callback();
-    return;
-  end
-
-  local results = {};
-
-  --[[ make sure to not use count for iterating, because if a callback is
-       synchroneous it would modify the iteration variable ]]
-
-  for x = 1, #callbackList, 1 do
-    callbackList[x](function (result)
-      results[x] = result;
-      count = count - 1;
-
-      if (count == 0) then
-        callback(results);
-      end
-    end);
-  end
-end
-
-function addon:bindParams (func, ...)
-  local params = {...};
-
-  return function (...)
-    func(unpack(params), ...);
-  end
-end
