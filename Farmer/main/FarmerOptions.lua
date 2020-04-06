@@ -1,7 +1,7 @@
 local addonName, addon = ...;
 
 local L = addon.L;
-local currentVersion = 0210001;
+local currentVersion = 0210002;
 local tocVersion = GetAddOnMetadata(addonName, 'version');
 
 local ADDON_ICON_ID = 3334;
@@ -452,7 +452,8 @@ addon:on('PLAYER_LOGIN', function (name)
     --text = 'New in ' .. addonName .. ' version ' .. tocVersion .. ':\n' ..
     --       '- You can automatically put pets you own 3 times in a cage using "/farmer cagepets"\n' ..
     --       '- There is now an option to display reputation. This even shows a star when you earn a paragon reward!'
-    text = addonName .. ': Sorry for the many bugs and fixes lately! \n I hope I get everything resolved soon.';
+    text = addonName .. ': Sorry for the many bugs and new versions lately! \n' ..
+      'They should finally be resolved in this version but please let me know when you still encounter an issue.';
     print(text)
   end
 
