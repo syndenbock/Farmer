@@ -7,40 +7,40 @@
 ## SavedVariablesPerCharacter: earningStamp
 ## SavedVariables: farmerOptions
 
-Localization.lua
-localizations/German.lua
-localizations/Russian.lua
-localizations/Korean.lua
-localizations/Chinese_simplified.lua
+shared/core/Localization.lua
+shared/localizations/German.lua
+shared/localizations/Russian.lua
+shared/localizations/Korean.lua
+shared/localizations/Chinese_simplified.lua
 
-Core.lua
+shared/core/Core.lua
+shared/core/Utils.lua
+shared/core/Events.lua
+shared/core/Slashcommands.lua
+shared/core/Yell.lua
+shared/core/Storageutils.lua
 
-core/Utils.lua
-core/Events.lua
-core/Slashcommands.lua
-core/Yell.lua
-core/Storageutils.lua
+shared/detectors/Items.lua
+shared/detectors/storages/Bags_Bank.lua
+shared/detectors/storages/Equipment.lua
+shared/detectors/storages/Guildbank.lua
+shared/detectors/storages/Voidstorage.lua
+shared/detectors/Currencies.lua
+shared/detectors/Reputation.lua
+shared/detectors/Money.lua
+shared/detectors/Professions.lua
 
-detectors/Items.lua
-detectors/storages/Bags_Bank.lua
-detectors/storages/Equipment.lua
-detectors/storages/Guildbank.lua
-detectors/storages/Voidstorage.lua
-detectors/Currencies.lua
-detectors/Reputation.lua
-detectors/Money.lua
-detectors/Professions.lua
+shared/core/Print.lua
 
-main/Print.lua
 main/FarmerOptions.lua
 
-modules/Currencies.lua
-modules/Items.lua
-modules/Fishing.lua
-modules/Money.lua
-modules/Petscan.lua
-modules/Reputation.lua
-modules/Professions.lua
-modules/Autoloot.lua
+shared/modules/Currencies.lua
+shared/modules/Items.lua
+shared/modules/Fishing.lua
+shared/modules/Money.lua
+shared/modules/Petscan.lua
+shared/modules/Reputation.lua
+shared/modules/Professions.lua
+shared/modules/Autoloot.lua
 
-modules/Tests.lua
+shared/modules/Tests.lua
