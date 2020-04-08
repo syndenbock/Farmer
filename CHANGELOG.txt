@@ -1,3 +1,7 @@
+  version 2.14.5
+- Fixed bug when information on non-existent items is unavailable
+  (Yes, in the WoW API actually exist non-existent items)
+
   version 2.12.4
 - Reworked handling of unavailable item information to work stable
 
