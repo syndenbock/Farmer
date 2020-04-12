@@ -1,4 +1,7 @@
-  version 2.14.5
+  version 2.12.6
+- Fixed guild bank bug
+
+  version 2.12.5
 - Fixed bug when information on non-existent items is unavailable
   (Yes, in the WoW API actually exist non-existent items)
 
