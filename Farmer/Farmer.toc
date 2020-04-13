@@ -19,8 +19,6 @@ shared/core/Events.lua
 shared/core/Slashcommands.lua
 shared/core/Yell.lua
 shared/core/Storageutils.lua
-shared/core/OptionFactory.lua
-shared/core/Options.lua
 
 shared/detectors/Items.lua
 shared/detectors/storages/Bags_Bank.lua
@@ -34,6 +32,15 @@ shared/detectors/Professions.lua
 
 shared/core/Print.lua
 
+shared/factories/OptionFactory.lua
+shared/factories/options/Button.lua
+shared/factories/options/CheckBox.lua
+shared/factories/options/Dropdown.lua
+shared/factories/options/Label.lua
+shared/factories/options/Panel.lua
+shared/factories/options/Slider.lua
+shared/core/Options.lua
+
 main/FarmerOptions.lua
 
 shared/modules/Currencies.lua
@@ -45,4 +52,4 @@ shared/modules/Reputation.lua
 shared/modules/Professions.lua
 shared/modules/Autoloot.lua
 
-shared/modules/Tests.lua
+shared/tests/Items.lua
