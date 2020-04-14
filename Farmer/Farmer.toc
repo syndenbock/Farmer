@@ -42,5 +42,6 @@ shared/modules/Petscan.lua
 shared/modules/Reputation.lua
 shared/modules/Professions.lua
 shared/modules/Autoloot.lua
+shared/modules/Farmradar.lua
 
 shared/modules/Tests.lua
