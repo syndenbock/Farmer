@@ -19,6 +19,7 @@ shared/core/Events.lua
 shared/core/Slashcommands.lua
 shared/core/Yell.lua
 shared/core/Storageutils.lua
+shared/core/Keybindings.lua
 
 shared/detectors/Items.lua
 shared/detectors/storages/Bags_Bank.lua
