@@ -1,0 +1,5 @@
+<Bindings>
+  <Binding name="FARMER_TOGGLERADAR" header="FARMER_HEADER" category="ADDONS">
+    BINDING_NAME_FARMER_TOGGLERADAR_HANDLER();
+  </Binding>
+</Bindings>

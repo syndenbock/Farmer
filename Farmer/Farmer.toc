@@ -19,6 +19,8 @@ shared/core/Events.lua
 shared/core/Slashcommands.lua
 shared/core/Yell.lua
 shared/core/Storageutils.lua
+shared/core/Keybindings.lua
+shared/core/Factory.lua
 
 shared/detectors/Items.lua
 shared/detectors/storages/Bags_Bank.lua
@@ -42,5 +44,6 @@ shared/modules/Petscan.lua
 shared/modules/Reputation.lua
 shared/modules/Professions.lua
 shared/modules/Autoloot.lua
+shared/modules/Farmradar.lua
 
 shared/modules/Tests.lua
