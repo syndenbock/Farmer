@@ -1,7 +1,7 @@
 local addonName, addon = ...;
 
 local L = addon.L;
-local currentVersion = 0210002;
+local currentVersion = 0210003;
 local tocVersion = GetAddOnMetadata(addonName, 'version');
 
 local ADDON_ICON_ID = 3334;
@@ -449,11 +449,9 @@ addon:on('PLAYER_LOGIN', function (name)
   elseif (farmerOptions.version < currentVersion) then
     local text
 
-    --text = 'New in ' .. addonName .. ' version ' .. tocVersion .. ':\n' ..
-    --       '- You can automatically put pets you own 3 times in a cage using "/farmer cagepets"\n' ..
-    --       '- There is now an option to display reputation. This even shows a star when you earn a paragon reward!'
-    text = addonName .. ': Sorry for the many bugs and new versions lately! \n' ..
-      'They should finally be resolved in this version but please let me know when you still encounter an issue.';
+    text = 'New in ' .. addonName .. ' version ' .. tocVersion .. ':\n' ..
+           'Farmer has a brand new farm mode!\n' ..
+           'You can toggle it using "/farmer radar" or by setting a keybind in the WoW keybinding options.';
     print(text)
   end
 

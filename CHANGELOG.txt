@@ -1,3 +1,6 @@
+  version 2.13
+- Added new farmradar feature
+
   version 2.12.6
 - Fixed guild bank bug
 
