@@ -518,7 +518,7 @@ addon:slash('gold', function (param)
   end
 
   local difference = GetMoney() - earningStamp
-  local text = GetCoinTextureString(math.abs(difference))
+  local text = addon:formatMoney(math.abs(difference))
 
   if (difference >= 0) then
     print(L['Money earned this session: '] .. text)
