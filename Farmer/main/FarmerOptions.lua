@@ -25,10 +25,14 @@ local OUTLINE_OPTIONS = {
   }
 };
 
+local savedVariables = addon.SavedVariablesHandler(addonName,  {'earningStamp', 'farmerOptions'});
+
 local checkButtonList = {}
 local sliderList = {}
 local editBoxList = {}
 local dropdownList = {}
+
+addon.savedVariables = savedVariables;
 
 if (L.hasTranslation == true) then
   addon.vars.font = STANDARD_TEXT_FONT;
@@ -49,7 +53,7 @@ end
 local function storePosition (frame)
   local icon = addon:getIcon(GetItemIcon(ADDON_ICON_ID));
 
-  farmerOptions.anchor = {frame:GetPoint()};
+  savedVariables.farmerOptions.anchor = {frame:GetPoint()};
   frame:EnableMouse(false);
   frame:SetMovable(false);
   frame:SetFading(true);
@@ -333,7 +337,7 @@ local function initPanel ()
   anchor = createSlider('iconScale', anchor, 3, 30, L['icon scale'], 0.1, 3, '0.1', '3', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
   end, 0.1)
   anchor = createSlider('fontSize', anchor, 3, 40, L['font size'], 8, 64, '8', '64', 'BOTTOMLEFT', 'TOPLEFT', function (self, value)
-    setFontSize(value, farmerOptions.iconScale, farmerOptions.outline)
+    setFontSize(value, savedVariables.farmerOptions.iconScale, savedVariables.farmerOptions.outline)
   end)
   anchor = createSlider('displayTime', anchor, 23, 0, L['display time'], 1, 10, '1', '10', 'LEFT', 'RIGHT', function (self, value)
     addon.frame:SetTimeVisible(value - addon.frame:GetFadeDuration())
@@ -351,7 +355,7 @@ local function initPanel ()
 end
 
 local function applyOptions ()
-  if (farmerOptions.hideLootToasts == true) then
+  if (savedVariables.farmerOptions.hideLootToasts == true) then
     AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST')
     AlertFrame:UnregisterEvent('LOOT_ITEM_ROLL_WON')
     AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST_UPGRADE')
@@ -363,9 +367,9 @@ local function applyOptions ()
     AlertFrame:RegisterEvent('BONUS_ROLL_RESULT')
   end
 
-  setFontSize(farmerOptions.fontSize, farmerOptions.iconScale, farmerOptions.outline)
-  addon.frame:SetTimeVisible(farmerOptions.displayTime - addon.frame:GetFadeDuration())
-  -- addon.frame:SetTimeVisible(farmerOptions.displayTime)
+  setFontSize(savedVariables.farmerOptions.fontSize, savedVariables.farmerOptions.iconScale, savedVariables.farmerOptions.outline)
+  addon.frame:SetTimeVisible(savedVariables.farmerOptions.displayTime - addon.frame:GetFadeDuration())
+  -- addon.frame:SetTimeVisible(savedVariables.farmerOptions.displayTime)
 end
 
 local function loadItemIds ()
@@ -444,9 +448,9 @@ addon:on('PLAYER_LOGIN', function (name)
     };
   end
 
-  if (farmerOptions.version == nil) then
+  if (savedVariables.farmerOptions.version == nil) then
     print(L['You seem to have used an old Version of Farmer\nCheck out all the new features in the options!'])
-  elseif (farmerOptions.version < currentVersion) then
+  elseif (savedVariables.farmerOptions.version < currentVersion) then
     local text
 
     text = 'New in ' .. addonName .. ' version ' .. tocVersion .. ':\n' ..
@@ -455,7 +459,7 @@ addon:on('PLAYER_LOGIN', function (name)
     print(text)
   end
 
-  farmerOptions.version = currentVersion
+  savedVariables.farmerOptions.version = currentVersion
 
   checkOption('fastLoot', true)
   checkOption('itemNames', true)
@@ -485,13 +489,13 @@ addon:on('PLAYER_LOGIN', function (name)
   checkOption('outline', 'OUTLINE')
   checkOption('focusItems', {})
 
-  if (farmerOptions.anchor == nil) then
+  if (savedVariables.farmerOptions.anchor == nil) then
     setDefaultPosition()
   else
-    addon.frame:SetPoint(unpack(farmerOptions.anchor))
+    addon.frame:SetPoint(unpack(savedVariables.farmerOptions.anchor))
   end
 
-  earningStamp = earningStamp or GetMoney()
+  savedVariables.earningStamp = savedVariables.earningStamp or GetMoney()
 
   initPanel()
   applyOptions()
@@ -512,12 +516,12 @@ end)
 
 addon:slash('gold', function (param)
   if (param == 'reset') then
-    earningStamp = GetMoney()
+    savedVariables.earningStamp = GetMoney()
     print(L['Money counter was reset'])
     return
   end
 
-  local difference = GetMoney() - earningStamp
+  local difference = GetMoney() - savedVariables.earningStamp
   local text = addon:formatMoney(math.abs(difference))
 
   if (difference >= 0) then

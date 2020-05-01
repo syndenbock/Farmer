@@ -16,6 +16,7 @@ shared/localizations/Chinese_simplified.lua
 shared/core/Core.lua
 shared/core/Utils.lua
 shared/core/Events.lua
+shared/core/Savedvars.lua
 shared/core/Slashcommands.lua
 shared/core/Yell.lua
 shared/core/Storageutils.lua
