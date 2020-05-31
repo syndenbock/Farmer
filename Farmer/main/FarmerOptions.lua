@@ -314,7 +314,6 @@ local function initPanel ()
   anchor = createCheckButton('skills', anchor, 0, -5, L['show skill levelups'])
   anchor = createCheckButton('money', anchor, 0, -5, L['show money'])
 
-  anchor = createCheckButton('fastLoot', farmerOptionsFrame, 330, -15, L['enable fast autoloot'], 'TOPLEFT', 'TOPLEFT')
   anchor = createCheckButton('itemNames', anchor, 0, -5, L['show names of all items'])
   anchor = createCheckButton('hideLootToasts', anchor, 0, -5, L['hide loot and item roll toasts'])
   anchor = createCheckButton('hidePlatesWhenFishing', anchor, 0, -5, L['hide health bars while fishing'])
@@ -459,7 +458,6 @@ addon:on('PLAYER_LOGIN', function (name)
 
   farmerOptions.version = currentVersion
 
-  checkOption('fastLoot', true)
   checkOption('itemNames', true)
   checkOption('hideLootToasts', false)
   checkOption('hidePlatesWhenFishing', true)

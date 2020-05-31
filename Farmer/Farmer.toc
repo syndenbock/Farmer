@@ -50,6 +50,11 @@ shared/modules/Money.lua
 shared/modules/Petscan.lua
 shared/modules/Reputation.lua
 shared/modules/Professions.lua
-shared/modules/Autoloot.lua
+
+shared/pluginAPI/API.lua
+shared/pluginAPI/Options.lua
+
+shared/plugins/Autoloot/Autoloot.lua
+shared/plugins/Autoloot/Options.lua
 
 shared/tests/Items.lua
