@@ -1,3 +1,17 @@
+  version 2.13.1
+- Hide directions on radar when they are not available
+- Format big money amounts with commats for better readability
+
+  version 2.13
+- Added new farmradar feature
+
+  version 2.12.6
+- Fixed guild bank bug
+
+  version 2.12.5
+- Fixed bug when information on non-existent items is unavailable
+  (Yes, in the WoW API actually exist non-existent items)
+
   version 2.12.4
 - Reworked handling of unavailable item information to work stable
 

@@ -1,6 +1,6 @@
 ## Interface: 80300
 ## Title: Farmer
-## Version: 2.12.4
+## Version: 2.13.1
 ## Author: syndenbock
 ## Notes: Shows information on all the stuff you loot
 ## Notes-deDe: Zeigt Infos über all das Zeug das du lootest
@@ -16,9 +16,12 @@ shared/localizations/Chinese_simplified.lua
 shared/core/Core.lua
 shared/core/Utils.lua
 shared/core/Events.lua
+shared/core/Savedvars.lua
 shared/core/Slashcommands.lua
 shared/core/Yell.lua
 shared/core/Storageutils.lua
+shared/core/Keybindings.lua
+shared/core/Factory.lua
 
 shared/detectors/Items.lua
 shared/detectors/storages/Bags_Bank.lua
@@ -50,6 +53,7 @@ shared/modules/Money.lua
 shared/modules/Petscan.lua
 shared/modules/Reputation.lua
 shared/modules/Professions.lua
+shared/modules/Farmradar.lua
 
 shared/pluginAPI/API.lua
 shared/pluginAPI/Options.lua
