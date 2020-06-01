@@ -25,7 +25,7 @@ local OUTLINE_OPTIONS = {
   }
 };
 
-local savedVariables = addon.SavedVariablesHandler(addonName,  {'earningStamp', 'farmerOptions'});
+local savedVariables = addon.SavedVariablesHandler(addonName,  {'earningStamp', 'farmerOptions'}).vars;
 
 local checkButtonList = {}
 local sliderList = {}
@@ -434,7 +434,7 @@ farmerOptionsFrame.okay = saveOptions
 farmerOptionsFrame.refresh = loadOptions
 farmerOptionsFrame.cancel = applyOptions
 
-function checkOption (name, default)
+local function checkOption (name, default)
   if (farmerOptions[name] == nil) then
     farmerOptions[name] = default
   end
