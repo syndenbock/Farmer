@@ -19,10 +19,6 @@ function detectors:on(hook, callback)
   assert(ALLOWED_HOOKS[hook] ~= nil, addonName .. ': unknown detector: ' .. hook);
 
   addon:listen(hook, function (...)
-    local params = {...};
-
-    pcall(function ()
-      callback(unpack(params));
-    end);
+    pcall(callback, ...);
   end);
 end

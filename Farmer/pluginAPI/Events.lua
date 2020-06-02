@@ -8,10 +8,6 @@ addon.API.events = events;
 
 function events:on(eventName, callback)
   addon:on(eventName, function (...)
-    local params = {...};
-
-    pcall(function ()
-      callback(unpack(params));
-    end);
+    pcall(callback, ...);
   end);
 end
