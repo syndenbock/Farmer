@@ -48,17 +48,16 @@ core/Options.lua
 modules/Petscan.lua
 modules/Farmradar.lua
 
-plugins/Autoloot/Options.lua
-plugins/Autoloot/Autoloot.lua
 
 plugins/Currencies/Options.lua
 plugins/Currencies/Currencies.lua
 
-plugins/Fishing/Options.lua
-plugins/Fishing/Fishing.lua
-
 plugins/Items/Options.lua
 plugins/Items/Items.lua
+
+plugins/Misc/Options.lua
+plugins/Misc/Autoloot.lua
+plugins/Misc/Fishing.lua
 
 plugins/Money/Options.lua
 plugins/Money/Money.lua
