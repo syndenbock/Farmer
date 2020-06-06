@@ -227,7 +227,7 @@ end
 saved:OnLoad(function (vars)
   local options = vars.farmerOptions;
 
-  if (options.version == nil) then
+  if (not options.version) then
     print(L['You seem to have used an old Version of Farmer\nCheck out all the new features in the options!'])
   elseif (options.version < VERSION_CURRENT) then
     local text

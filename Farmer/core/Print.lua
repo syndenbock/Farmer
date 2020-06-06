@@ -85,7 +85,8 @@ local function printItem (texture, name, count, text, colors, options)
     itemCount = 'x' .. BreakUpLargeNumbers(count);
   end
 
-  if (addon.savedVariables.farmerOptions.itemNames == true or options.forceName == true) then
+  if (addon.savedVariables.farmerOptions.itemNames == true or
+      options.forceName == true) then
     itemName = name;
   end
 

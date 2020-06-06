@@ -171,9 +171,7 @@ local function hideChildren (children, hook)
       child = _G[child];
     end
 
-    if (child ~= nil and
-        child.IsShown ~= nil and
-        trackedFrames[child] == nil) then
+    if (child and child.IsShown and not trackedFrames[child]) then
       trackedFrames[child] = child:IsShown();
       setFrameShown(child, false);
       setFrameMouseEnabled(child, false);
@@ -186,9 +184,7 @@ local function hideChildren (children, hook)
 end
 
 local function isMinimapButton (frame)
-  if (frame == nil or frame.GetName == nil) then return false end
-
-  local name = frame:GetName();
+  local name = frame and frame.GetName and frame:GetName();
 
   if (name == nil) then return false end
 

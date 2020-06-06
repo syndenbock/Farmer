@@ -7,9 +7,7 @@ addon.Factory = Factory;
 local function createMetaTable (baseMap, mode)
   local metaTable = {__mode = mode};
 
-  if (baseMap == nil) then
-    baseMap = {};
-  end
+  baseMap = baseMap or {};
 
   setmetatable(baseMap, metaTable);
 

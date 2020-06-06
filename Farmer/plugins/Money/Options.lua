@@ -17,9 +17,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 saved:OnLoad(function (vars)
   --[[ GetMoney is not ready immediately, so we have to call it when variables
        are loaded ]]
-  if (vars.earningStamp == nil) then
-    vars.earningStamp = GetMoney();
-  end
+  vars.earningStamp = vars.earningStamp or GetMoney();
 end);
 
 saved = saved.vars;

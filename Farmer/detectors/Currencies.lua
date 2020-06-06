@@ -81,11 +81,7 @@ addon:on('PLAYER_LOGIN', fillCurrencyTable);
 
 -- amount is always positive so we cannot use it
 addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total, amount)
-  if (currencyTable == nil) then
-    return;
-  end
-
-  if (id == nil) then return end
+  if (not currencyTable or not id) then return end
 
   handleCurrency(id, total);
 end);

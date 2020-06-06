@@ -17,12 +17,8 @@ function addon:stringJoin (stringList, joiner)
   local result;
 
   for _, fragment in pairs(stringList) do
-    if (fragment ~= nil) then
-      if (result == nil) then
-        result = fragment;
-      else
-        result = result .. joiner .. fragment;
-      end
+    if (fragment) then
+      result = result and result .. joiner .. fragment or fragment;
     end
   end
 
