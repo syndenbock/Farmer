@@ -1,3 +1,9 @@
+  version 3.0.0
+- Reworked options UI to have separate categories
+- Improved internal code
+- Added plugin API (will be extended and a wiki will be created)
+- Merged Classic and Retail versions into a single addon
+
   version 2.13.1
 - Hide directions on radar when they are not available
 - Format big money amounts with commats for better readability

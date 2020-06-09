@@ -12,7 +12,7 @@ local AlertFrame = _G.AlertFrame;
 
 local L = addon.L;
 
-local VERSION_CURRENT = 0210003;
+local VERSION_CURRENT = 0300000;
 local ADDON_ICON_ID = 3334;
 local VERSION_TOC = GetAddOnMetadata(addonName, 'version');
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
@@ -227,14 +227,14 @@ end
 saved:OnLoad(function (vars)
   local options = vars.farmerOptions;
 
-  if (not options.version) then
-    print(L['You seem to have used an old Version of Farmer\nCheck out all the new features in the options!'])
-  elseif (options.version < VERSION_CURRENT) then
+  vars.farmerOptions = vars.farmerOptions or {};
+
+  if (options.version < VERSION_CURRENT) then
     local text
 
     text = 'New in ' .. addonName .. ' version ' .. VERSION_TOC .. ':\n' ..
-           'Farmer has a brand new farm mode!\n' ..
-           'You can toggle it using "/farmer radar" or by setting a keybind in the WoW keybinding options.';
+           '- Options have been cleaned up and are now separated into categories! \n' ..
+           '- Farmer now has an API for plugins, a wiki will be created soon';
     print(text)
   end
 
