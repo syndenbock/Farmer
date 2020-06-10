@@ -5,25 +5,25 @@ local utils = {};
 addon.StorageUtils = utils;
 
 utils.addItem = function (inventory, id, count, linkMap)
+  local itemInfo = inventory[id];
+
   if (type(linkMap) ~= 'table') then
-    linkMap = {[linkMap] = true};
+    linkMap = {[linkMap] = count};
   end
 
-  if (inventory[id] == nil) then
+  if (not itemInfo) then
     -- saving all links because gear has same ids, but different links
     inventory[id] = {
       links = linkMap,
       count = count,
     };
   else
-    local itemInfo = inventory[id];
+    local links = itemInfo.links;
 
     itemInfo.count = itemInfo.count + count;
 
     for link in pairs(linkMap) do
-      if (itemInfo.links[link] == nil) then
-        itemInfo.links[link] = true;
-      end
+      links[link] = (links[link] or 0) + count;
     end
   end
 end

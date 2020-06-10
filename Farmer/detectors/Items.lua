@@ -1,5 +1,6 @@
 local _, addon = ...;
 
+local tinsert = _G.tinsert;
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local DoesItemExistByID = C_Item.DoesItemExistByID;
@@ -16,7 +17,10 @@ local currentInventory = {};
 addon.Items = Items;
 
 local function getFirstKey (table)
-  return next(table, nil);
+  -- keep this so only the first return value is returned
+  local key = next(table);
+
+  return key;
 end
 
 local function readStorage (inventory, storage)
@@ -49,7 +53,7 @@ local function getCachedInventory ()
 end
 
 function Items:addStorage (storage)
-  table.insert(storageList, storage);
+  tinsert(storageList, storage);
 end
 
 function Items:updateCurrentInventory ()
@@ -90,13 +94,28 @@ local function fetchItem (id, info)
 end
 
 local function broadcastItems (new)
-  for id, info in pairs(new) do
-    if (IsItemDataCachedByID(id)) then
-      addon:yell('NEW_ITEM', id, info.link, info.count);
-    else
-      fetchItem(id, info);
+  for id, itemList in pairs(new) do
+    for x = 1, #itemList, 1 do
+      local info = itemList[x];
+
+      if (IsItemDataCachedByID(id)) then
+        addon:yell('NEW_ITEM', id, info.link, info.count);
+      else
+        fetchItem(id, info);
+      end
     end
   end
+end
+
+local function addNewItem (new, id, link, count)
+  local data = new[id] or {};
+
+  new[id] = data;
+
+  tinsert(data, {
+    link = link,
+    count = count,
+  });
 end
 
 local function checkInventory ()
@@ -104,33 +123,28 @@ local function checkInventory ()
 
   local new = {};
 
-  for id in pairs(inventory) do
-    if (currentInventory[id] == nil) then
-      new[id] = {
-        count = inventory[id].count,
-        link = getFirstKey(inventory[id].links)
-      };
-    elseif (inventory[id].count > currentInventory[id].count) then
-      local links = inventory[id].links;
-      local currentLinks = currentInventory[id].links;
+  for id, data in pairs(inventory) do
+    local currentData = currentInventory[id];
+
+    if (not currentData) then
+      addNewItem(new, id, getFirstKey(data.links), count);
+    elseif (data.count > currentData.count) then
+      local links = data.links;
+      local currentLinks = currentData.links;
       local found = false;
 
-      for link in pairs(links) do
-        if (currentLinks[link] == nil) then
+      for link, count in pairs(links) do
+        local currentCount = currentLinks[link] or 0;
+
+        if (count > currentCount) then
           found = true;
-          new[id] = {
-            count = inventory[id].count - currentInventory[id].count,
-            link = link
-          };
-          break;
+
+          addNewItem(new, id, link, count - currentCount);
         end
       end
 
-      if (found == false) then
-        new[id] = {
-          count = inventory[id].count - currentInventory[id].count,
-          link = getFirstKey(links)
-        };
+      if (not found) then
+        addNewItem(new, id, getFirstKey(links), data.count - currentData.count);
       end
     end
   end
