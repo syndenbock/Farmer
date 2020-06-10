@@ -125,11 +125,13 @@ local function checkInventory ()
 
   for id, data in pairs(inventory) do
     local currentData = currentInventory[id];
+    local links = data.links;
 
     if (not currentData) then
-      addNewItem(new, id, getFirstKey(data.links), count);
+      for link, count in pairs(links) do
+        addNewItem(new, id, link, count);
+      end
     elseif (data.count > currentData.count) then
-      local links = data.links;
       local currentLinks = currentData.links;
       local found = false;
 
@@ -138,7 +140,6 @@ local function checkInventory ()
 
         if (count > currentCount) then
           found = true;
-
           addNewItem(new, id, link, count - currentCount);
         end
       end
