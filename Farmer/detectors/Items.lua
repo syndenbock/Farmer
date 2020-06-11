@@ -69,10 +69,10 @@ function Items:addNewItem (id, count, link)
   addon:yell('NEW_ITEM', id, link, count);
 end
 
-local function fetchItem (id, info)
+local function fetchItem (id, link, count)
   --[[ Apparently you can actually have non-existent items in your bags ]]
   if (not DoesItemExistByID(id)) then
-    addon:yell('NEW_ITEM', id, info.link, info.count);
+    addon:yell('NEW_ITEM', id, link, count);
     return;
   end
 
@@ -81,27 +81,23 @@ local function fetchItem (id, info)
   item:ContinueOnItemLoad(function()
     --[[ The original link does contain enough information for a call to
          GetItemInfo which then returns a complete itemLink ]]
-    local link = select(2, GetItemInfo(info.link));
+    local _link = select(2, GetItemInfo(link));
 
     --[[ Some items like mythic keystones and caged pets don't get a new link
          by GetItemInfo ]]
-    if (link ~= nil) then
-      info.link = link;
-    end
+    link = _link or link;
 
-    addon:yell('NEW_ITEM', id, info.link, info.count);
+    addon:yell('NEW_ITEM', id, link, count);
   end);
 end
 
 local function broadcastItems (new)
-  for id, itemList in pairs(new) do
-    for x = 1, #itemList, 1 do
-      local info = itemList[x];
-
+  for id, linkMap in pairs(new) do
+    for link, count in pairs(linkMap) do
       if (IsItemDataCachedByID(id)) then
-        addon:yell('NEW_ITEM', id, info.link, info.count);
+        addon:yell('NEW_ITEM', id, link, count);
       else
-        fetchItem(id, info);
+        fetchItem(id, link, count);
       end
     end
   end
@@ -110,12 +106,8 @@ end
 local function addNewItem (new, id, link, count)
   local data = new[id] or {};
 
+  data[link] = (data[link] or 0) + count;
   new[id] = data;
-
-  tinsert(data, {
-    link = link,
-    count = count,
-  });
 end
 
 local function checkInventory ()
