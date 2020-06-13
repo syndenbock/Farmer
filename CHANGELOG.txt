@@ -1,5 +1,6 @@
   version 3.0.0
 - Reworked options UI to have separate categories
+- Fixed wrong item level being displayed if a similar item with a different item is already in the bags
 - Improved internal code
 - Added plugin API (will be extended and a wiki will be created)
 - Merged Classic and Retail versions into a single addon
