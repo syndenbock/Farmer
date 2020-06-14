@@ -14,8 +14,8 @@ local UIParent = _G.UIParent;
 local L = addon.L;
 local Factory = addon.Factory;
 
-local RADAR_CIRCLE_TEXTURE = 'Interface\\Addons\\' .. addonName .. '\\shared\\media\\radar_circle.tga';
-local RADAR_DIRECTION_TEXTURE = 'Interface\\Addons\\' .. addonName .. '\\shared\\media\\radar_directions.tga';
+local RADAR_CIRCLE_TEXTURE = 'Interface\\Addons\\' .. addonName .. '\\media\\radar_circle.tga';
+local RADAR_DIRECTION_TEXTURE = 'Interface\\Addons\\' .. addonName .. '\\media\\radar_directions.tga';
 local UPDATE_FREQUENCY_S = 0.01;
 
 local DEFAULT_CHILD_LIST = {
