@@ -1,4 +1,7 @@
-  version 3.0.0
+  version 3.0.1
+- Fixed farm radar textures
+
+  version 3.0
 - Reworked options UI to have separate categories
 - Fixed wrong item level being displayed if a similar item with a different item is already in the bags
 - Improved internal code
@@ -7,7 +10,7 @@
 
   version 2.13.1
 - Hide directions on radar when they are not available
-- Format big money amounts with commats for better readability
+- Format big money amounts with commas for better readability
 
   version 2.13
 - Added new farmradar feature
