@@ -5,6 +5,8 @@ local utils = {};
 addon.StorageUtils = utils;
 
 utils.addItem = function (inventory, id, count, linkMap)
+  -- This is the main inventory handling function and gets called a lot.
+  -- Therefor, performance has priority over code shortage.
   local itemInfo = inventory[id];
 
   if (type(linkMap) ~= 'table') then
@@ -12,18 +14,28 @@ utils.addItem = function (inventory, id, count, linkMap)
   end
 
   if (not itemInfo) then
-    -- saving all links because gear has same ids, but different links
-    inventory[id] = {
-      links = linkMap,
-      count = count,
-    };
-  else
-    local links = itemInfo.links;
+    -- it's important to create a new object without copying references to avoid
+    -- manipulating the origin linkMap when updating the inventory afterwards
+    local links = {};
 
-    itemInfo.count = itemInfo.count + count;
-
-    for link in pairs(linkMap) do
-      links[link] = (links[link] or 0) + count;
+    for link, linkCount in pairs(linkMap) do
+      links[link] = linkCount;
     end
+
+    inventory[id] = {
+      count = 0,
+      links = links,
+    };
+
+    return;
+  end
+
+  local links = itemInfo.links;
+
+  itemInfo.count = itemInfo.count + count;
+
+  -- saving all links because gear has same ids, but different links
+  for link, linkCount in pairs(linkMap) do
+    links[link] = (links[link] or 0) + linkCount;
   end
 end
