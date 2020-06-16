@@ -35,7 +35,7 @@ function Slider:New (parent, name, anchorFrame, xOffset, yOffset, text, min, max
     self.edit:SetText(value);
     self.edit:SetCursorPosition(0);
 
-    if (this.onChange ~= nil) then
+    if (this.onChange) then
       this.onChange(self, value);
     end
   end);

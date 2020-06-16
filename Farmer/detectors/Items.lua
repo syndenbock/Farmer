@@ -24,10 +24,10 @@ local function getFirstKey (table)
 end
 
 local function readStorage (inventory, storage)
-  if (storage == nil) then return end
+  if (not storage) then return end
 
   for _, container in pairs(storage) do
-    if (container ~= nil) then
+    if (container) then
       for itemId, itemInfo in pairs(container) do
         addItem(inventory, itemId, itemInfo.count, itemInfo.links);
       end
@@ -39,11 +39,10 @@ local function getCachedInventory ()
   local inventory = {};
 
   for storageIndex = 1, #storageList, 1 do
-    local handler = storageList[storageIndex];
-    local storage;
+    local storage = storageList[storageIndex];
 
-    if (type(handler) == 'function') then
-      storage = handler();
+    if (type(storage) == 'function') then
+      storage = storage();
     end
 
     readStorage(inventory, storage);

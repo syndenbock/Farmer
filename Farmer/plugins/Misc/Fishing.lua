@@ -7,7 +7,7 @@ local fishingFlag = false;
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
 
 local function restorePlates ()
-  if (platesShown ~= nil) then
+  if (platesShown) then
     SetCVar('nameplateShowAll', platesShown);
     --[[ we change platesShown back to nil, so when someone disables the
     option and changes nameplates manually, the old value does not get
@@ -39,7 +39,7 @@ addon:on('PLAYER_REGEN_ENABLED', function()
 end);
 
 addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function(unit, target, spellid)
-  if (unit ~= UNITID_PLAYER or platesShown == nil) then
+  if (not platesShown or unit ~= UNITID_PLAYER) then
     return
   end
 

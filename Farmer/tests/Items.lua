@@ -3,7 +3,7 @@ local addonName, addon = ...;
 local tests = {};
 
 function tests.testItems (id, count)
-  if (id ~= nil) then
+  if (id) then
     id = tonumber(id);
     local _, link = GetItemInfo(id);
 

@@ -81,7 +81,7 @@ local function printItem (texture, name, count, text, colors, options)
   local itemCount;
   local message;
 
-  if (options.minimumCount == nil or count > options.minimumCount) then
+  if (not options.minimumCount or count > options.minimumCount) then
     itemCount = 'x' .. BreakUpLargeNumbers(count);
   end
 
@@ -142,7 +142,7 @@ local function printStackableItem (id, texture, name, count, colors)
 end
 
 local function printEquip (texture, name, text, count, colors)
-  if (text ~= nil and text ~= '') then
+  if (text and text ~= '') then
     text = '[' .. text .. ']';
   end
 

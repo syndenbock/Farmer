@@ -16,10 +16,10 @@ local function getProfessionCategories ()
     --[[ If parentId is nil, the current line is the main profession.
          Because Blizzard apparently does not know how to properly code, this
          will return the same info as the classic category, so we skip it --]]
-    if (parentId ~= nil) then
+    if (parentId) then
       local list = data[parentId];
 
-      if (list == nil) then
+      if (not list) then
         data[parentId] = {id};
       else
         list[#list + 1] = id;
@@ -54,7 +54,7 @@ local function getProfessionInfo ()
   for parentId, parentInfo in pairs(learnedProfessions) do
     local skillList = PROFESSION_CATEGORIES[parentId];
 
-    if (skillList ~= nil) then
+    if (skillList) then
       for i = 1, #skillList, 1 do
         local skillId = skillList[i];
         local info = {C_TradeSkillUI.GetTradeSkillLineInfoByID(skillId)};
@@ -76,7 +76,7 @@ local function getProfessionInfo ()
 end
 
 addon:on('CHAT_MSG_SKILL', function ()
-  if (professionCache == nil) then return end
+  if (not professionCache) then return end
 
   local data = getProfessionInfo();
 

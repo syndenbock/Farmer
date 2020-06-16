@@ -3,7 +3,7 @@ local addonName, addon = ...;
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
 
 local function checkItemDisplay (itemId, itemLink)
-  if (itemId == nil or itemLink == nil) then return end
+  if (not itemId or not itemLink) then return end
 
   if (saved.farmerOptions.focusItems[itemId] == true) then
     if (saved.farmerOptions.special == true) then
@@ -19,7 +19,7 @@ local function checkItemDisplay (itemId, itemLink)
         itemSetID, isCraftingReagent = GetItemInfo(itemLink);
 
   -- happens when caging a pet or when looting mythic keystones
-  if (itemName == nil) then
+  if (not itemName) then
     return false;
   end
 

@@ -4,7 +4,8 @@ local events = {};
 local eventFrame = CreateFrame('frame');
 
 function addon:on (eventList, callback)
-  assert(type(callback) == 'function', addonName .. ': callback is not a function');
+  assert(type(callback) == 'function',
+    addonName .. ': callback is not a function');
 
   if (type(eventList) ~= 'table') then
     eventList = {eventList};
@@ -14,7 +15,7 @@ function addon:on (eventList, callback)
     local event = eventList[x];
     local list = events[event];
 
-    if (list == nil) then
+    if (not list) then
       events[event] = {callback};
       eventFrame:RegisterEvent(event);
     else
@@ -24,7 +25,8 @@ function addon:on (eventList, callback)
 end
 
 function addon:off (eventList, callback)
-  assert(type(callback) == 'function', addonName .. ': callback is not a function');
+  assert(type(callback) == 'function',
+    addonName .. ': callback is not a function');
 
   if (type(eventList) ~= 'table') then
     eventList = {eventList};
@@ -35,7 +37,8 @@ function addon:off (eventList, callback)
     local list = events[event];
     local success = false;
 
-    assert(list ~= nil, addonName .. ': no hook was registered for event ' .. event);
+    assert(list ~= nil,
+      addonName .. ': no hook was registered for event ' .. event);
 
     for y = 1, #list, 1 do
       if (callback == list[y]) then
@@ -69,6 +72,8 @@ do
   function executeUpdateCallbacks ()
     local list = updateList;
 
+    -- updateList has to be swapped out before executing callbacks so if
+    -- callbacks add new hooks they are not immediately executed
     updateFrame:SetScript('OnUpdate', nil);
     updateList = nil;
 
@@ -78,7 +83,7 @@ do
   end
 
   function addon:executeOnNextFrame (callback)
-    if (updateList == nil) then
+    if (not updateList) then
       updateList = {callback};
       updateFrame:SetScript('OnUpdate', executeUpdateCallbacks);
     else

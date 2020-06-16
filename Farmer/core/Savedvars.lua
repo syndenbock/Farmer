@@ -36,7 +36,7 @@ end
 local function readAddonVariables(addonName)
   local vars = awaiting[addonName];
 
-  if (vars == nil) then
+  if (not vars) then
     return;
   end
 
@@ -56,7 +56,7 @@ end
 local function executeLoadCallbacks (addonName)
   local callbackList = loadCallbacks[addonName];
 
-  if (callbackList == nil) then return end
+  if (not callbackList) then return end
 
   local vars = variableStorage[addonName];
 

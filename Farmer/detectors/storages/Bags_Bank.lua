@@ -36,7 +36,7 @@ local function updateBagCache (bagIndex)
          nil if data is not ready --]]
     local id = GetContainerItemID(bagIndex, slotIndex);
 
-    if (id ~= nil) then
+    if (id) then
       local info = {GetContainerItemInfo(bagIndex, slotIndex)};
       local count = info[2];
       local link = info[7];
@@ -117,7 +117,6 @@ addon:on('PLAYER_LOGIN', function ()
   initInventory();
   addEventListeners();
 end);
-
 
 Items:addStorage(function ()
   return bagCache;

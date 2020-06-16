@@ -9,10 +9,10 @@ do
   --[[ trying to read global constants --]]
   local constant = _G['Constant'];
 
-  if (constant ~= nil) then
+  if (constant) then
     local currency = constant.Currency;
 
-    if (currency ~= nil) then
+    if (currency) then
       HONOR_ID = currency.Honor or HONOR_ID;
       CONQUEST_ID = currency.Conquest or CONQUEST_ID;
     end

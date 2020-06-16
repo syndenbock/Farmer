@@ -17,7 +17,7 @@ local function slashHandler (input)
   command = string.lower(command or 'default');
   command = command == '' and 'default' or command;
 
-  if (slashCommands[command] ~= nil) then
+  if (slashCommands[command]) then
     slashCommands[command](unpack(paramList));
     return;
   end

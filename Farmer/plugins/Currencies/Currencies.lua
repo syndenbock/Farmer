@@ -32,7 +32,7 @@ addon:listen('CURRENCY_CHANGED', function (id, amount, total)
   local texture = info[3];
 
   -- warfronts show hidden currencies without icons
-  if (name == nil or texture == nil) then return end
+  if (not name or not texture) then return end
 
   local text = '(' .. BreakUpLargeNumbers(total) .. ')';
 

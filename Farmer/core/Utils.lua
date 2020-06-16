@@ -65,7 +65,7 @@ function addon:printTable (table)
     return;
   end
 
-  if (next(table) == nil) then
+  if (not next(table)) then
     print('table is empty');
     return;
   end

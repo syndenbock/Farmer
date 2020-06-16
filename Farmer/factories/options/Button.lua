@@ -21,7 +21,7 @@ function Button:New (parent, name, anchorFrame, xOffset, yOffset, text, anchor, 
   button:SetSize(150, 25);
   button:SetText(text);
 
-  if (onClick ~= nil) then
+  if (onClick) then
     this:onClick(onClick);
   end
 

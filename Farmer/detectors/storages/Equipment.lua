@@ -20,14 +20,10 @@ local storage = {};
 local function getEquipmentSlot (slot)
   local id = GetInventoryItemID(UNITID_PLAYER, slot);
 
-  if (id ~= nil) then
-    return {
-      id = id,
-      link = GetInventoryItemLink(UNITID_PLAYER, slot),
-    };
-  else
-    return nil;
-  end
+  return id and {
+    id = id,
+    link = GetInventoryItemLink(UNITID_PLAYER, slot),
+  };
 end
 
 local function getEquipment ()
@@ -47,7 +43,7 @@ local function updateStorage ()
   for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
     local info = currentEquipment[x];
 
-    if (info ~= nil) then
+    if (info) then
       addItem(storage, info.id, 1, info.link);
     end
   end

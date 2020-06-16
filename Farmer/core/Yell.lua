@@ -12,7 +12,7 @@ end
 function addon:yell (message, ...)
   local callbackList = callbacks[message];
 
-  if (callbackList == nil) then return end
+  if (not callbackList) then return end
 
   for x = 1, #callbackList, 1 do
     callbackList[x](...);

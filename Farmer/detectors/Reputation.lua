@@ -45,10 +45,10 @@ local function getRepInfo ()
         standing = standing,
       };
 
-      if (IsFactionParagon ~= nil and IsFactionParagon(faction)) then
+      if (IsFactionParagon and IsFactionParagon(faction)) then
         local paragonInfo = {GetFactionParagonInfo(faction)};
 
-        if (paragonInfo[1] ~= nil and paragonInfo[2] ~= nil) then
+        if (paragonInfo[1] and paragonInfo[2]) then
           data.paragonReputation = paragonInfo[1];
           data.paragonLevel = floor(paragonInfo[1] / paragonInfo[2]);
         end
@@ -70,7 +70,7 @@ local function getRepInfo ()
 end
 
 local function checkReputationChanges ()
-  if (reputationCache == nil) then return end
+  if (not reputationCache) then return end
 
   local repInfo = getRepInfo();
 

@@ -7,7 +7,7 @@ addon:on('PLAYER_LOGIN', function ()
 end);
 
 addon:on('PLAYER_MONEY', function ()
-  if (moneyStamp == nil) then return end
+  if (not moneyStamp) then return end
 
   local money = GetMoney();
   local difference = money - moneyStamp;

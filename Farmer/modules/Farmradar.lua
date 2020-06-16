@@ -118,10 +118,10 @@ end
 
 local function hookFrameToggle (frame)
   --[[ Some frames only exist in classic or retail ]]
-  if (frame == nil) then return end
+  if (not frame) then return end
 
   --[[ Frame was already hooked ]]
-  if (hookedFrames[frame] ~= nil) then return end
+  if (hookedFrames[frame]) then return end
 
   hookedFrames[frame] = true;
 
@@ -186,7 +186,7 @@ end
 local function isMinimapButton (frame)
   local name = frame and frame.GetName and frame:GetName();
 
-  if (name == nil) then return false end
+  if (not name) then return false end
 
   local baseString = 'LibDBIcon';
 
@@ -218,7 +218,7 @@ local function SetIgnoreParentAlpha (children, ignore)
       child = _G[child];
     end
 
-    if (child ~= nil) then
+    if (child) then
       setFrameMouseEnabled(child, not ignore);
       child:SetIgnoreParentAlpha(ignore);
     end
@@ -269,7 +269,7 @@ local function updateRadar (_, elapsed)
   local rotation = GetPlayerFacing();
 
   --[[ After using a transport or in instances GetPlayerFacing returns nil ]]
-  if (rotation == nil) then
+  if (not rotation) then
     directionTexture:Hide();
     return;
   end

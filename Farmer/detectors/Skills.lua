@@ -59,7 +59,7 @@ local function checkProfessionData ()
 end
 
 addon:on('CHAT_MSG_SKILL', function ()
-  if (professionCache == nil) then return end
+  if (not professionCache) then return end
 
   checkProfessionData();
 end);

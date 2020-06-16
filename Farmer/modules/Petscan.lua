@@ -50,7 +50,7 @@ local function scanPets ()
     if (info[16] == true) then
       local petId = info[11];
 
-      if (petMap[petId] == nil) then
+      if (not petMap[petId]) then
         petMap[petId] = 1;
       else
         petMap[petId] = petMap[petId] + 1;

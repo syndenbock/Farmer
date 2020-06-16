@@ -24,7 +24,7 @@ local function readVoidStorage ()
     for slotIndex = 1, NUM_VOIDSTORAGE_SLOTS, 1 do
       local id = GetVoidItemInfo(tabIndex, slotIndex);
 
-      if (id ~= nil) then
+      if (id) then
         local combinedIndex = getCombinedIndex(tabIndex, slotIndex);
         --[[ For some reason, one function requires tabIndex and slotIndex
              and a related function requires slotIndex as if there was only

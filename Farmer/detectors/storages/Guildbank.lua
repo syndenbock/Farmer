@@ -26,7 +26,7 @@ local function readGuildBankSlot (tabIndex)
   for slotIndex = 1, MAX_GUILDBANK_SLOTS_PER_TAB, 1 do
     local link = GetGuildBankItemLink(tabIndex, slotIndex);
 
-    if (link ~= nil) then
+    if (link) then
       local id = GetItemInfoInstant(link);
       local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
       local count = info[2];
