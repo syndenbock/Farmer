@@ -23,7 +23,7 @@ utils.addItem = function (inventory, id, count, linkMap)
     end
 
     inventory[id] = {
-      count = 0,
+      count = count,
       links = links,
     };
 
