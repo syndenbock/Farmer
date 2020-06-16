@@ -1,3 +1,6 @@
+  version 3.0.2
+- Fixed wrong inventory item counts in some cases
+
   version 3.0.1
 - Fixed farm radar textures
 
