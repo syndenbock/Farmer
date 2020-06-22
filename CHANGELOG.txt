@@ -1,3 +1,6 @@
+  version 3.0.3
+- Removed error message when non existent API methods are accessed
+
   version 3.0.2
 - Fixed wrong inventory item counts in some cases
 
