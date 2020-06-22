@@ -14,11 +14,6 @@ function proxy:__newindex (key, value)
   proxy[key] = value;
 end
 
-function proxy:__index (key)
-  assert(proxy[key] ~= nil, addonName .. ': addon key does not exist: ' .. key);
-  return proxy[key];
-end
-
 setmetatable(API, proxy);
 
 _G.FARMER_API = API;
