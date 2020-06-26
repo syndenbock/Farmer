@@ -117,7 +117,7 @@ function addon:funnel (eventList, ...)
     local args = {...};
 
     if (flag == true) then
-      return print('funneled', eventList);
+      return;
     end
 
     flag = true;
