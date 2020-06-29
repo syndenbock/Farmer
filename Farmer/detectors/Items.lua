@@ -80,11 +80,9 @@ local function fetchItem (id, link, count)
   item:ContinueOnItemLoad(function()
     --[[ The original link does contain enough information for a call to
          GetItemInfo which then returns a complete itemLink ]]
-    local _link = select(2, GetItemInfo(link));
-
     --[[ Some items like mythic keystones and caged pets don't get a new link
          by GetItemInfo ]]
-    link = _link or link;
+    link = select(2, GetItemInfo(link)) or link;
 
     addon:yell('NEW_ITEM', id, link, count);
   end);

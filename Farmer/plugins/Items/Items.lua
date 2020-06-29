@@ -51,7 +51,7 @@ end
 local function handleItem (itemId, itemLink, count)
   if (checkItemDisplay(itemId, itemLink) ~= true) then return end
 
-  local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
+  local itemName, _itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
         itemSubType, itemStackCount, itemEquipLoc, texture,
         itemSellPrice, itemClassID, itemSubClassID, bindType, expacID,
         itemSetID, isCraftingReagent = GetItemInfo(itemLink)
@@ -64,7 +64,7 @@ local function handleItem (itemId, itemLink, count)
 
   -- crafting reagens
   if (isCraftingReagent or
-     itemClassID == LE_ITEM_CLASS_TRADEGOODS) then
+      itemClassID == LE_ITEM_CLASS_TRADEGOODS) then
     colors = {0, 0.8, 0.8};
   end
 
