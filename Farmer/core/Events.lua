@@ -43,17 +43,11 @@ function addon:off (eventList, callback)
     for y = 1, #list, 1 do
       if (callback == list[y]) then
         success = true;
-        table.remove(list, y);
-        y = y - 1;
+        table[y] = nil;
       end
     end
 
     assert(success == true, addonName .. ': no hook was registered for event ' .. event);
-
-    if (#list == 0) then
-      events[event] = nil;
-      eventFrame:UnregisterEvent(event);
-    end
   end
 end
 
@@ -61,7 +55,11 @@ local function eventHandler (self, event, ...)
   local callbackList = events[event];
 
   for i = 1, #callbackList, 1 do
-    callbackList[i](...);
+    local callback = callbackList[i];
+
+    if (callback) then
+      callbackList[i](...);
+    end
   end
 end
 
