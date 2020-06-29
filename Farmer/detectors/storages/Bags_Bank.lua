@@ -113,10 +113,13 @@ local function addEventListeners ()
   end
 end
 
-addon:on('PLAYER_LOGIN', function ()
+local function init ()
   initInventory();
   addEventListeners();
-end);
+  addon:off('BAG_UPDATE_DELAYED', init);
+end
+
+addon:on('BAG_UPDATE_DELAYED', init);
 
 Items:addStorage(function ()
   return bagCache;
