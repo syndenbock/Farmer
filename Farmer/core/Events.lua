@@ -43,7 +43,7 @@ function addon:off (eventList, callback)
     for y = 1, #list, 1 do
       if (callback == list[y]) then
         success = true;
-        table[y] = nil;
+        list[y] = false;
       end
     end
 
@@ -58,7 +58,7 @@ local function eventHandler (self, event, ...)
     local callback = callbackList[i];
 
     if (callback) then
-      callbackList[i](...);
+      callback(...);
     end
   end
 end
