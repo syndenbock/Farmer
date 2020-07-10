@@ -1,6 +1,7 @@
 local _, addon = ...;
 
 local tinsert = _G.tinsert;
+local min = _G.min;
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local DoesItemExistByID = C_Item.DoesItemExistByID;
@@ -123,13 +124,14 @@ local function checkInventory ()
     elseif (data.count > currentData.count) then
       local currentLinks = currentData.links;
       local found = false;
+      local totalDifference = data.count - currentData.count;
 
       for link, count in pairs(links) do
         local currentCount = currentLinks[link] or 0;
 
         if (count > currentCount) then
           found = true;
-          addNewItem(new, id, link, count - currentCount);
+          addNewItem(new, id, link, min(totalDifference, count - currentCount));
         end
       end
 
