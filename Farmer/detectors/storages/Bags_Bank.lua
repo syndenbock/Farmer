@@ -1,7 +1,7 @@
 local _, addon = ...;
 
 local Items = addon.Items;
-local Storage = addon.Storage;
+local Storage = addon.Factory.Storage;
 
 local BANK_CONTAINER = _G.BANK_CONTAINER;
 local GetContainerItemID = _G.GetContainerItemID;

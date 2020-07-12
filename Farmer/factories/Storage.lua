@@ -1,10 +1,12 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 local strmatch = _G.strmatch;
 
+local Factory = addon:share('Factory');
+
 local Storage = {};
 
-addon.Storage = Storage;
+Factory.Storage = Storage;
 
 Storage.__index = Storage;
 
@@ -12,11 +14,12 @@ function Storage:create (options)
   local this = {};
 
   setmetatable(this, Storage);
-  this.storage = {};
 
   if (options) then
     this.normalized = options.normalized;
   end
+
+  this.storage = {};
 
   return this;
 end

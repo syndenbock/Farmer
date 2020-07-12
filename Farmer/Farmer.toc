@@ -20,8 +20,8 @@ core/Savedvars.lua
 core/Slashcommands.lua
 core/Yell.lua
 core/Keybindings.lua
-core/Factory.lua
 
+factories/Maps.lua
 factories/Storage.lua
 factories/OptionFactory.lua
 factories/options/Button.lua

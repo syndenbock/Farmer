@@ -8,7 +8,7 @@ local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
 local Item = _G.Item;
 
-local Storage = addon.Storage;
+local Storage = addon.Factory.Storage;
 
 local Items = {};
 local storageList = {};

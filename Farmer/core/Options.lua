@@ -11,6 +11,7 @@ local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 local AlertFrame = _G.AlertFrame;
 
 local L = addon.L;
+local addonVars = addon:share('vars');
 
 local VERSION_CURRENT = 0300000;
 local ADDON_ICON_ID = 3334;
@@ -18,9 +19,9 @@ local VERSION_TOC = GetAddOnMetadata(addonName, 'version');
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
 if (L.hasTranslation == true) then
-  addon.vars.font = STANDARD_TEXT_FONT;
+  addonVars.font = STANDARD_TEXT_FONT;
 else
-  addon.vars.font = 'Fonts\\FRIZQT__.ttf';
+  addonVars.font = 'Fonts\\FRIZQT__.ttf';
 end
 
 local Factory = addon.OptionFactory;
@@ -105,8 +106,8 @@ local function setFontSize (size, scale, outline)
   addon.font:SetShadowColor(0, 0, 0);
   addon.font:SetShadowOffset(shadowOffset, -shadowOffset);
 
-  -- addon.vars.iconOffset = ':'.. iconSize .. ':' .. iconSize .. ':' .. '0:' .. iconOffset;
-  addon.vars.iconOffset = addon:stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
+  -- addonVars.iconOffset = ':'.. iconSize .. ':' .. iconSize .. ':' .. '0:' .. iconOffset;
+  addonVars.iconOffset = addon:stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
 end
 
 local function applyOptions ()

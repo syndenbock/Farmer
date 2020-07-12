@@ -1,8 +1,6 @@
 local addonName, addon = ...;
 
-local Factory = {};
-
-addon.Factory = Factory;
+local Factory = addon:share('Factory');
 
 local function createMetaTable (baseMap, mode)
   local metaTable = {__mode = mode};

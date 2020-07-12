@@ -2,7 +2,7 @@ local _, addon = ...;
 
 if (addon:isClassic()) then return end
 
-local Storage = addon.Storage;
+local Storage = addon.Factory.Storage;
 local Items = addon.Items;
 
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
