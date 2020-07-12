@@ -24,9 +24,11 @@ local function readStorage (inventory, storage)
     if (container) then
       containerStorage = container.storage;
 
-      for itemLink, itemCount in pairs(containerStorage) do
-        itemLink = StorageUtils.normalizeItemLink(itemLink);
-        inventory:addItem(itemLink, itemCount);
+      for itemId, itemInfo in pairs(containerStorage) do
+        for itemLink, itemCount in pairs(itemInfo.links) do
+          itemLink = StorageUtils.normalizeItemLink(itemLink);
+          inventory:addItem(itemId, itemLink, itemCount);
+        end
       end
     end
   end
@@ -56,8 +58,8 @@ function Items:updateCurrentInventory ()
   currentInventory = getCachedInventory();
 end
 
-function Items:addItemToCurrentInventory (link, count)
-  currentInventory:addItem(link, count);
+function Items:addItemToCurrentInventory (id, link, count)
+  currentInventory:addItem(id, link, count);
 end
 
 local function fetchItem (id, link, count)
@@ -81,13 +83,13 @@ local function fetchItem (id, link, count)
 end
 
 local function broadcastItems (new)
-  for link, count in pairs(new) do
-    local id = GetItemInfoInstant(link);
-
-    if (IsItemDataCachedByID(id)) then
-      addon:yell('NEW_ITEM', id, link, count);
-    else
-      fetchItem(id, link, count);
+  for itemId, itemInfo in pairs(new) do
+    for itemLink, itemCount in pairs(itemInfo.links) do
+      if (IsItemDataCachedByID(itemId)) then
+        addon:yell('NEW_ITEM', itemId, itemLink, itemCount);
+      else
+        fetchItem(itemId, itemLink, itemCount);
+      end
     end
   end
 end
@@ -97,11 +99,24 @@ local function checkInventory ()
   local currentInventoryStorage = currentInventory.storage;
   local new = Storage:create();
 
-  for link, count in pairs(inventory.storage) do
-    local difference = count - (currentInventoryStorage[link] or 0 );
+  for itemId, itemInfo in pairs(inventory.storage) do
+    local currentInfo = currentInventoryStorage[itemId];
 
-    if (difference > 0) then
-      new:addItem(link, difference);
+    if (not currentInfo) then
+      for itemLink, itemCount in pairs(itemInfo.links) do
+        new:addItem(itemId, itemLink, itemCount);
+      end
+    elseif (itemInfo.count > currentInfo.count) then
+      local currentInfoLinks = currentInfo.links;
+      local found = false;
+
+      for itemLink, itemCount in pairs(itemInfo.links) do
+        local currentCount = currentInfoLinks[itemLink] or 0;
+
+        if (itemCount > currentCount) then
+          new:addItem(itemId, itemLink, itemCount - currentCount);
+        end
+      end
     end
   end
 

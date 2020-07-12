@@ -41,7 +41,7 @@ local function updateBagCache (bagIndex)
       local count = info[2];
       local link = info[7];
 
-      bagContent:addItem(link, count);
+      bagContent:addItem(id, link, count);
     end
   end
 

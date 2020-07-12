@@ -31,7 +31,7 @@ local function readVoidStorage ()
              one tab. Blizzard code at its best once again. ]]
         local link = GetVoidItemHyperlinkString(combinedIndex);
 
-        bagContent:addItem(link, 1);
+        bagContent:addItem(id, link, 1);
       end
     end
   end

@@ -20,7 +20,10 @@ local storage = Storage:create();
 local function getEquipmentSlot (slot)
   local id = GetInventoryItemID(UNITID_PLAYER, slot);
 
-  return id and GetInventoryItemLink(UNITID_PLAYER, slot);
+  return id and {
+    id = id,
+    link = GetInventoryItemLink(UNITID_PLAYER, slot),
+  };
 end
 
 local function getEquipment ()
@@ -38,10 +41,10 @@ local function updateStorage ()
   storage = Storage:create();
 
   for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
-    local slotItemLink = currentEquipment[x];
+    local slotInfo = currentEquipment[x];
 
-    if (slotItemLink) then
-      storage:addItem(slotItemLink, 1);
+    if (slotInfo) then
+      storage:addItem(slotInfo.id, slotInfo.link, 1);
     end
   end
 end
@@ -53,7 +56,7 @@ local function checkSlotForArtifact (slot)
     local id = GetInventoryItemID(UNITID_PLAYER, slot);
     local link = GetInventoryItemLink(UNITID_PLAYER, slot);
 
-    Items:addItemToCurrentInventory(link, 1);
+    Items:addItemToCurrentInventory(id, link, 1);
   end
 end
 

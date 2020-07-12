@@ -27,10 +27,11 @@ local function readGuildBankSlot (tabIndex)
     local link = GetGuildBankItemLink(tabIndex, slotIndex);
 
     if (link) then
+      local id = GetItemInfoInstant(link);
       local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
       local count = info[2];
 
-      tabContent:addItem(link, count);
+      tabContent:addItem(id, link, count);
     end
   end
 

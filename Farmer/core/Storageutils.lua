@@ -6,16 +6,6 @@ local utils = {};
 
 addon.StorageUtils = utils;
 
-function utils.normalizeItemLink (itemLink)
-  local itemString = strmatch(itemLink, "item[%-?%d:]+")
-
-  if not itemString then return itemLink end
-
-  local newLink = '|cffffffff' .. itemString .. '|hh|r'
-
-  return newLink
-end
-
 local Storage = {}
 
 addon.Storage = Storage
@@ -31,8 +21,33 @@ function Storage:create()
   return this
 end
 
-function Storage:addItem (itemLink, count)
-  local storage = self.storage
+function Storage:addItem (itemId, itemLink, itemCount)
+  -- This is the main inventory handling function and gets called a lot.
+  -- Therefor, performance has priority over code shortage.
+  local storage = self.storage;
+  local itemInfo = storage[itemId];
 
-  storage[itemLink] = (storage[itemLink] or 0) + count
+  if (not itemInfo) then
+    storage[itemId] = {
+      count = itemCount,
+      links = {
+        [itemLink] = itemCount,
+      },
+    };
+  else
+    local links = itemInfo.links;
+
+    itemInfo.count = itemInfo.count + itemCount;
+    links[itemLink] = (links[itemLink] or 0) + itemCount;
+  end
+end
+
+function utils.normalizeItemLink (itemLink)
+  local itemString = strmatch(itemLink, "item[%-?%d:]+")
+
+  if not itemString then return itemLink end
+
+  local newLink = '|cffffffff' .. itemString .. '|hh|r'
+
+  return newLink
 end
