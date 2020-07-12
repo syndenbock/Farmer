@@ -1,10 +1,22 @@
 local addonName, addon = ...;
 
+local strmatch = _G.strmatch;
+
 local utils = {};
 
 addon.StorageUtils = utils;
 
-utils.addItem = function (inventory, id, count, linkMap)
+function utils.normalizeItemLink (itemLink)
+  local itemString = strmatch(itemLink, "item[%-?%d:]+")
+
+  if not itemString then return itemLink end
+
+  local newLink = '|cffffffff' .. itemString .. '|hh|r'
+
+  return newLink
+end
+
+function utils.addItem (inventory, id, count, linkMap)
   -- This is the main inventory handling function and gets called a lot.
   -- Therefor, performance has priority over code shortage.
   local itemInfo = inventory[id];
@@ -19,6 +31,7 @@ utils.addItem = function (inventory, id, count, linkMap)
     local links = {};
 
     for link, linkCount in pairs(linkMap) do
+      link = utils.normalizeItemLink(link);
       links[link] = linkCount;
     end
 
@@ -36,6 +49,7 @@ utils.addItem = function (inventory, id, count, linkMap)
 
   -- saving all links because gear has same ids, but different links
   for link, linkCount in pairs(linkMap) do
+    link = utils.normalizeItemLink(link);
     links[link] = (links[link] or 0) + linkCount;
   end
 end
