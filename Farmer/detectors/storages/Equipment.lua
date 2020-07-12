@@ -53,7 +53,7 @@ local function checkSlotForArtifact (slot)
     local id = GetInventoryItemID(UNITID_PLAYER, slot);
     local link = GetInventoryItemLink(UNITID_PLAYER, slot);
 
-    Items:addItemToCurrentInventory(id, 1, link);
+    Items:addItemToCurrentInventory(link, 1);
   end
 end
 

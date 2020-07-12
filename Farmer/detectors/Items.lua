@@ -17,13 +17,6 @@ local currentInventory = {};
 
 addon.Items = Items;
 
-local function getFirstKey (table)
-  -- keep this so only the first return value is returned
-  local key = next(table);
-
-  return key;
-end
-
 local function readStorage (inventory, storage)
   if (not storage) then return end
 
@@ -63,13 +56,8 @@ function Items:updateCurrentInventory ()
   currentInventory = getCachedInventory();
 end
 
-function Items:addItemToCurrentInventory (id, count, link)
+function Items:addItemToCurrentInventory (link, count)
   currentInventory:addItem(link, count);
-end
-
-function Items:addNewItem (id, count, link)
-  currentInventory:addItem(link, count);
-  addon:yell('NEW_ITEM', id, link, count);
 end
 
 local function fetchItem (id, link, count)
@@ -102,13 +90,6 @@ local function broadcastItems (new)
       fetchItem(id, link, count);
     end
   end
-end
-
-local function addNewItem (new, id, link, count)
-  local data = new[id] or {};
-
-  data[link] = (data[link] or 0) + count;
-  new[id] = data;
 end
 
 local function checkInventory ()
