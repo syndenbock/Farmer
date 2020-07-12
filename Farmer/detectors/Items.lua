@@ -17,7 +17,9 @@ local currentInventory = {};
 addon.Items = Items;
 
 local function getCachedInventory ()
-  local inventory = Storage:create();
+  local inventory = Storage:create({
+    normalized = true,
+  });
 
   for storageIndex = 1, #storageList, 1 do
     local storage = storageList[storageIndex];
@@ -26,7 +28,7 @@ local function getCachedInventory ()
       storage = storage();
     end
 
-    inventory:update(storage, true);
+    inventory:addMultipleStorages(storage);
   end
 
   return inventory;

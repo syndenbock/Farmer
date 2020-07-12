@@ -1,24 +1,24 @@
 local addonName, addon = ...;
 
 local strmatch = _G.strmatch;
-local Storage = {}
 
-addon.Storage = Storage
+local Storage = {};
 
-Storage.__index = Storage
+addon.Storage = Storage;
 
-function Storage:create()
-  local this = {}
+Storage.__index = Storage;
 
-  setmetatable(this, Storage)
-  this.storage = {}
+function Storage:create (options)
+  local this = {};
 
-  return this
-end
+  setmetatable(this, Storage);
+  this.storage = {};
 
-function Storage:normalizeAndAddItem (itemId, itemLink, itemCount)
-  itemLink = Storage.normalizeItemLink(itemLink);
-  self:addItem(itemId, itemLink, itemCount);
+  if (options) then
+    this.normalized = options.normalized;
+  end
+
+  return this;
 end
 
 function Storage:createItem (itemId, itemLink, itemCount)
@@ -43,6 +43,10 @@ function Storage:addItem (itemId, itemLink, itemCount)
   -- Therefor, performance has priority over code shortage.
   local itemInfo = self.storage[itemId];
 
+  if (self.normalized) then
+    itemLink = Storage.normalizeItemLink(itemLink);
+  end
+
   if (not itemInfo) then
     self:createItem(itemId, itemLink, itemCount);
   else
@@ -50,21 +54,21 @@ function Storage:addItem (itemId, itemLink, itemCount)
   end
 end
 
-function Storage:update (updateStorage, normalize)
-  if (not updateStorage) then return end
+function Storage:addItemInfo (itemId, itemInfo)
+  for itemLink, itemCount in pairs(itemInfo.links) do
+    self:addItem(itemId, itemLink, itemCount);
+  end
+end
 
-  for _, container in pairs(updateStorage) do
-    if (container) then
-      for itemId, itemInfo in pairs(container.storage) do
-        for itemLink, itemCount in pairs(itemInfo.links) do
-          if (normalze) then
-            self:normalizeAndAddItem(itemId, itemLink, itemCount);
-          else
-            self:addItem(itemId, itemLink, itemCount);
-          end
-        end
-      end
-    end
+function Storage:addStorage (updateStorage)
+  for itemId, itemInfo in pairs(updateStorage.storage) do
+    self:addItemInfo(itemId, itemInfo);
+  end
+end
+
+function Storage:addMultipleStorages (storageMap)
+  for _, storage in pairs(storageMap) do
+    self:addStorage(storage);
   end
 end
 
@@ -96,11 +100,7 @@ function Storage:compare (compareStorage)
 end
 
 function Storage.normalizeItemLink (itemLink)
-  local itemString = strmatch(itemLink, "item[%-?%d:]+")
+  local itemString = strmatch(itemLink, "item[%-?%d:]+");
 
-  if not itemString then return itemLink end
-
-  local newLink = '|cffffffff' .. itemString .. '|hh|r'
-
-  return newLink
+  return itemString and '|cffffffff' .. itemString .. '|hh|r' or itemLink;
 end
