@@ -9,7 +9,7 @@ local GetItemInfo = _G.GetItemInfo;
 local Item = _G.Item;
 
 local StorageUtils = addon.StorageUtils;
-local addItem = StorageUtils.addItem;
+local Storage = addon.Storage;
 
 local Items = {};
 local storageList = {};
@@ -30,14 +30,17 @@ local function readStorage (inventory, storage)
   for _, container in pairs(storage) do
     if (container) then
       for itemId, itemInfo in pairs(container) do
-        addItem(inventory, itemId, itemInfo.count, itemInfo.links);
+        for itemLink, itemCount in pairs(itemInfo.links) do
+          itemLink = StorageUtils.normalizeItemLink(itemLink);
+          inventory:addItem(itemLink, itemCount);
+        end
       end
     end
   end
 end
 
 local function getCachedInventory ()
-  local inventory = {};
+  local inventory = Storage:create();
 
   for storageIndex = 1, #storageList, 1 do
     local storage = storageList[storageIndex];
@@ -60,12 +63,12 @@ function Items:updateCurrentInventory ()
   currentInventory = getCachedInventory();
 end
 
-function Items:addItemToCurrentInventory (id, count, linkMap)
-  addItem(currentInventory, id, count, linkMap);
+function Items:addItemToCurrentInventory (id, count, link)
+  currentInventory:addItem(link, count);
 end
 
 function Items:addNewItem (id, count, link)
-  addItem(currentInventory, id, count, link);
+  currentInventory:addItem(link, count);
   addon:yell('NEW_ITEM', id, link, count);
 end
 
@@ -90,13 +93,13 @@ local function fetchItem (id, link, count)
 end
 
 local function broadcastItems (new)
-  for id, linkMap in pairs(new) do
-    for link, count in pairs(linkMap) do
-      if (IsItemDataCachedByID(id)) then
-        addon:yell('NEW_ITEM', id, link, count);
-      else
-        fetchItem(id, link, count);
-      end
+  for link, count in pairs(new) do
+    local id = GetItemInfoInstant(link);
+
+    if (IsItemDataCachedByID(id)) then
+      addon:yell('NEW_ITEM', id, link, count);
+    else
+      fetchItem(id, link, count);
     end
   end
 end
@@ -110,39 +113,19 @@ end
 
 local function checkInventory ()
   local inventory = getCachedInventory();
+  local currentInventoryStorage = currentInventory.storage;
+  local new = Storage:create();
 
-  local new = {};
+  for link, count in pairs(inventory.storage) do
+    local difference = count - (currentInventoryStorage[link] or 0 );
 
-  for id, data in pairs(inventory) do
-    local currentData = currentInventory[id];
-    local links = data.links;
-
-    if (not currentData) then
-      for link, count in pairs(links) do
-        addNewItem(new, id, link, count);
-      end
-    elseif (data.count > currentData.count) then
-      local currentLinks = currentData.links;
-      local found = false;
-      local totalDifference = data.count - currentData.count;
-
-      for link, count in pairs(links) do
-        local currentCount = currentLinks[link] or 0;
-
-        if (count > currentCount) then
-          found = true;
-          addNewItem(new, id, link, min(totalDifference, count - currentCount));
-        end
-      end
-
-      if (not found) then
-        addNewItem(new, id, getFirstKey(links), data.count - currentData.count);
-      end
+    if (difference > 0) then
+      new:addItem(link, difference);
     end
   end
 
   currentInventory = inventory;
-  broadcastItems(new);
+  broadcastItems(new.storage);
 end
 
 --[[ Funneling the check so it executes on the next frame after
