@@ -2,8 +2,8 @@ local _, addon = ...;
 
 if (addon:isClassic()) then return end
 
+local Storage = addon.Storage;
 local Items = addon.Items;
-local addItem = addon.StorageUtils.addItem;
 
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
 local GetVoidItemInfo = _G.GetVoidItemInfo;
@@ -18,7 +18,7 @@ local function getCombinedIndex (tabIndex, slotIndex)
 end
 
 local function readVoidStorage ()
-  local bagContent = {};
+  local bagContent = Storage:create();
 
   for tabIndex = 1, NUM_VOIDSTORAGE_TABS, 1 do
     for slotIndex = 1, NUM_VOIDSTORAGE_SLOTS, 1 do
@@ -31,7 +31,7 @@ local function readVoidStorage ()
              one tab. Blizzard code at its best once again. ]]
         local link = GetVoidItemHyperlinkString(combinedIndex);
 
-        addItem(bagContent, id, 1, link);
+        bagContent:addItem(link, 1);
       end
     end
   end

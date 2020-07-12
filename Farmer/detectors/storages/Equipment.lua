@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local addItem = addon.StorageUtils.addItem;
+local Storage = addon.Storage;
 local Items = addon.Items;
 
 local GetInventoryItemID = _G.GetInventoryItemID;
@@ -15,15 +15,12 @@ local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local UNITID_PLAYER = 'player';
 
 local currentEquipment = {};
-local storage = {};
+local storage = Storage:create();
 
 local function getEquipmentSlot (slot)
   local id = GetInventoryItemID(UNITID_PLAYER, slot);
 
-  return id and {
-    id = id,
-    link = GetInventoryItemLink(UNITID_PLAYER, slot),
-  };
+  return id and GetInventoryItemLink(UNITID_PLAYER, slot);
 end
 
 local function getEquipment ()
@@ -38,13 +35,13 @@ local function getEquipment ()
 end
 
 local function updateStorage ()
-  storage = {};
+  storage = Storage:create();
 
   for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
-    local info = currentEquipment[x];
+    local slotItemLink = currentEquipment[x];
 
-    if (info) then
-      addItem(storage, info.id, 1, info.link);
+    if (slotItemLink) then
+      storage:addItem(slotItemLink, 1);
     end
   end
 end

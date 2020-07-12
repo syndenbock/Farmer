@@ -29,11 +29,11 @@ local function readStorage (inventory, storage)
 
   for _, container in pairs(storage) do
     if (container) then
-      for itemId, itemInfo in pairs(container) do
-        for itemLink, itemCount in pairs(itemInfo.links) do
-          itemLink = StorageUtils.normalizeItemLink(itemLink);
-          inventory:addItem(itemLink, itemCount);
-        end
+      containerStorage = container.storage;
+
+      for itemLink, itemCount in pairs(containerStorage) do
+        itemLink = StorageUtils.normalizeItemLink(itemLink);
+        inventory:addItem(itemLink, itemCount);
       end
     end
   end

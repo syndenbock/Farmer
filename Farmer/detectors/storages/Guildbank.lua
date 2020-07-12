@@ -2,8 +2,8 @@ local _, addon = ...;
 
 if (addon:isClassic()) then return end
 
+local Storage = addon.Storage;
 local Items = addon.Items;
-local addItem = addon.StorageUtils.addItem;
 
 local GetCurrentGuildBankTab = _G.GetCurrentGuildBankTab;
 local GetGuildBankItemInfo = _G.GetGuildBankItemInfo;
@@ -21,17 +21,16 @@ local function readGuildBankSlot (tabIndex)
        Again, I have no clue why did not put a global constant in the code for
        this.]]
   local MAX_GUILDBANK_SLOTS_PER_TAB = _G.MAX_GUILDBANK_SLOTS_PER_TAB or 98;
-  local tabContent = {};
+  local tabContent = Storage:create();
 
   for slotIndex = 1, MAX_GUILDBANK_SLOTS_PER_TAB, 1 do
     local link = GetGuildBankItemLink(tabIndex, slotIndex);
 
     if (link) then
-      local id = GetItemInfoInstant(link);
       local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
       local count = info[2];
 
-      addItem(tabContent, id, count, link);
+      tabContent:addItem(link, count);
     end
   end
 

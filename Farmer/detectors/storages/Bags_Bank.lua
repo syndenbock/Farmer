@@ -1,7 +1,7 @@
 local _, addon = ...;
 
 local Items = addon.Items;
-local addItem = addon.StorageUtils.addItem;
+local Storage = addon.Storage;
 
 local BANK_CONTAINER = _G.BANK_CONTAINER;
 local GetContainerItemID = _G.GetContainerItemID;
@@ -29,7 +29,7 @@ local function updateBagCache (bagIndex)
   -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
   local slotCount = bagIndex == BANKBAG_CONTAINER and NUM_BANKBAGSLOTS or
       GetContainerNumSlots(bagIndex);
-  local bagContent = {};
+  local bagContent = Storage:create();
 
   for slotIndex = 1, slotCount, 1 do
     --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
@@ -41,7 +41,7 @@ local function updateBagCache (bagIndex)
       local count = info[2];
       local link = info[7];
 
-      addItem(bagContent, id, count, link);
+      bagContent:addItem(link, count);
     end
   end
 
