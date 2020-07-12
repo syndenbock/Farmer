@@ -8,7 +8,6 @@ local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
 local Item = _G.Item;
 
-local StorageUtils = addon.StorageUtils;
 local Storage = addon.Storage;
 
 local Items = {};
@@ -16,23 +15,6 @@ local storageList = {};
 local currentInventory = {};
 
 addon.Items = Items;
-
-local function readStorage (inventory, storage)
-  if (not storage) then return end
-
-  for _, container in pairs(storage) do
-    if (container) then
-      containerStorage = container.storage;
-
-      for itemId, itemInfo in pairs(containerStorage) do
-        for itemLink, itemCount in pairs(itemInfo.links) do
-          itemLink = StorageUtils.normalizeItemLink(itemLink);
-          inventory:addItem(itemId, itemLink, itemCount);
-        end
-      end
-    end
-  end
-end
 
 local function getCachedInventory ()
   local inventory = Storage:create();
@@ -44,7 +26,7 @@ local function getCachedInventory ()
       storage = storage();
     end
 
-    readStorage(inventory, storage);
+    inventory:update(storage, true);
   end
 
   return inventory;
@@ -96,32 +78,10 @@ end
 
 local function checkInventory ()
   local inventory = getCachedInventory();
-  local currentInventoryStorage = currentInventory.storage;
-  local new = Storage:create();
-
-  for itemId, itemInfo in pairs(inventory.storage) do
-    local currentInfo = currentInventoryStorage[itemId];
-
-    if (not currentInfo) then
-      for itemLink, itemCount in pairs(itemInfo.links) do
-        new:addItem(itemId, itemLink, itemCount);
-      end
-    elseif (itemInfo.count > currentInfo.count) then
-      local currentInfoLinks = currentInfo.links;
-      local found = false;
-
-      for itemLink, itemCount in pairs(itemInfo.links) do
-        local currentCount = currentInfoLinks[itemLink] or 0;
-
-        if (itemCount > currentCount) then
-          new:addItem(itemId, itemLink, itemCount - currentCount);
-        end
-      end
-    end
-  end
+  local newItems = currentInventory:compare(inventory);
 
   currentInventory = inventory;
-  broadcastItems(new.storage);
+  broadcastItems(newItems.storage);
 end
 
 --[[ Funneling the check so it executes on the next frame after
