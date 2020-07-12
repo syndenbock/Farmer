@@ -31,7 +31,6 @@ function utils.addItem (inventory, id, count, linkMap)
     local links = {};
 
     for link, linkCount in pairs(linkMap) do
-      link = utils.normalizeItemLink(link);
       links[link] = linkCount;
     end
 
@@ -49,7 +48,27 @@ function utils.addItem (inventory, id, count, linkMap)
 
   -- saving all links because gear has same ids, but different links
   for link, linkCount in pairs(linkMap) do
-    link = utils.normalizeItemLink(link);
     links[link] = (links[link] or 0) + linkCount;
   end
+end
+
+local Storage = {}
+
+addon.Storage = Storage
+
+Storage.__index = Storage
+
+function Storage:create()
+  local this = {}
+
+  setmetatable(this, Storage)
+  this.storage = {}
+
+  return this
+end
+
+function Storage:addItem (itemLink, count)
+  local storage = self.storage
+
+  storage[itemLink] = (storage[itemLink] or 0) + count
 end
