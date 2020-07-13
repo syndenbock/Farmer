@@ -1,7 +1,6 @@
 local _, addon = ...;
 
 local tinsert = _G.tinsert;
-local min = _G.min;
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local DoesItemExistByID = C_Item.DoesItemExistByID;
@@ -16,19 +15,21 @@ local currentInventory = {};
 
 addon.Items = Items;
 
+local function addStorageContainerToInventory (inventory, storage)
+  if (type(storage) == 'function') then
+    storage = storage();
+  end
+
+  inventory:addMultipleStorages(storage);
+end
+
 local function getCachedInventory ()
   local inventory = Storage:create({
     normalized = true,
   });
 
-  for storageIndex = 1, #storageList, 1 do
-    local storage = storageList[storageIndex];
-
-    if (type(storage) == 'function') then
-      storage = storage();
-    end
-
-    inventory:addMultipleStorages(storage);
+  for x = 1, #storageList, 1 do
+    addStorageContainerToInventory(inventory, storageList[x]);
   end
 
   return inventory;
@@ -66,15 +67,23 @@ local function fetchItem (id, link, count)
   end);
 end
 
-local function broadcastItems (new)
-  for itemId, itemInfo in pairs(new) do
-    for itemLink, itemCount in pairs(itemInfo.links) do
-      if (IsItemDataCachedByID(itemId)) then
-        addon:yell('NEW_ITEM', itemId, itemLink, itemCount);
-      else
-        fetchItem(itemId, itemLink, itemCount);
-      end
-    end
+local function broadCastItem (itemId, itemLink, itemCount)
+  if (IsItemDataCachedByID(itemId)) then
+    addon:yell('NEW_ITEM', itemId, itemLink, itemCount);
+  else
+    fetchItem(itemId, itemLink, itemCount);
+  end
+end
+
+local function broadCastItemInfo (itemId, itemInfo)
+  for itemLink, itemCount in pairs(itemInfo.links) do
+    broadCastItem(itemId, itemLink, itemCount);
+  end
+end
+
+local function broadcastItems (items)
+  for itemId, itemInfo in pairs(items) do
+    broadCastItemInfo(itemId, itemInfo);
   end
 end
 
