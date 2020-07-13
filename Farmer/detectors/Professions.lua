@@ -1,33 +1,52 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 if (addon:isClassic()) then return end;
 
+local tinsert = _G.tinsert;
+local TradeSkillUI = _G.C_TradeSkillUI;
+local GetAllProfessionTradeSkillLines = TradeSkillUI.GetAllProfessionTradeSkillLines;
+local GetTradeSkillLineInfoByID = TradeSkillUI.GetTradeSkillLineInfoByID;
+local GetProfessions = _G.GetProfessions;
+local GetProfessionInfo = _G.GetProfessionInfo;
+
 local PROFESSION_CATEGORIES;
-local professionCache = nil;
+local professionCache;
+
+local function readProfessionSkillLine (data, id)
+  local info = {GetTradeSkillLineInfoByID(id)};
+  local parentId = info[5];
+
+  --[[ If parentId is nil, the current line is the main profession.
+       Because Blizzard apparently does not know how to properly code, this
+       will return the same info as the classic category, so we skip it --]]
+  if (not parentId) then return end
+
+  local list = data[parentId];
+
+  if (not list) then
+    data[parentId] = {id};
+  else
+    tinsert(list, id);
+  end
+end
 
 local function getProfessionCategories ()
-  local skillList = C_TradeSkillUI.GetAllProfessionTradeSkillLines();
+  local skillList = GetAllProfessionTradeSkillLines();
   local data = {};
 
-  for index, id in pairs(skillList) do
-    local info = {C_TradeSkillUI.GetTradeSkillLineInfoByID(id)};
-    local parentId = info[5];
-
-    --[[ If parentId is nil, the current line is the main profession.
-         Because Blizzard apparently does not know how to properly code, this
-         will return the same info as the classic category, so we skip it --]]
-    if (parentId) then
-      local list = data[parentId];
-
-      if (not list) then
-        data[parentId] = {id};
-      else
-        list[#list + 1] = id;
-      end
-    end
+  for _, id in pairs(skillList) do
+    readProfessionSkillLine(data, id);
   end
 
   return data;
+end
+
+local function readLearnedProfession (data, professionId)
+  local info = {GetProfessionInfo(professionId)};
+  local skillId = info[7];
+  local icon = info[2];
+
+  data[skillId] = icon;
 end
 
 local function getLearnedProfessions ()
@@ -36,63 +55,70 @@ local function getLearnedProfessions ()
 
   --[[ array may contain nil values, so we have to iterate as an object --]]
   for _, professionId in pairs(professions) do
-    local info = {GetProfessionInfo(professionId)};
-    local skillId = info[7];
-
-    data[skillId] = {
-      icon = info[2]
-    };
+    readLearnedProfession(data, professionId);
   end
 
   return data;
 end
 
-local function getProfessionInfo ()
+local function readSkillLineInfo (data, skillId, icon)
+  local info = {GetTradeSkillLineInfoByID(skillId)};
+
+  data[skillId] = {
+    name = info[1],
+    rank = info[2],
+    maxRank = info[3],
+    icon = icon,
+  };
+end
+
+local function readProfessionCategoryInfo (data, professionId, icon)
+  local skillList = PROFESSION_CATEGORIES[professionId];
+
+  if (not skillList) then
+    readSkillLineInfo(data, professionId, icon);
+    return
+  end
+
+  for x = 1, #skillList, 1 do
+    readSkillLineInfo(data, skillList[x], icon);
+  end
+end
+
+local function getLearnedProfessionInfo ()
   local learnedProfessions = getLearnedProfessions();
   local data = {};
 
-  for parentId, parentInfo in pairs(learnedProfessions) do
-    local skillList = PROFESSION_CATEGORIES[parentId];
-
-    if (skillList) then
-      for i = 1, #skillList, 1 do
-        local skillId = skillList[i];
-        local info = {C_TradeSkillUI.GetTradeSkillLineInfoByID(skillId)};
-
-        data[skillId] = {
-          name = info[1],
-          rank = info[2],
-          maxRank = info[3],
-          icon = parentInfo.icon,
-        };
-      end
-    -- else
-      -- print(parentId);
-      -- print('A PARENT WAS EMPTY, HELP!!!');
-    end
+  for professionId, icon in pairs(learnedProfessions) do
+    readProfessionCategoryInfo(data, professionId, icon);
   end
 
   return data;
 end
+
+local function checkProfessionChange (id, info)
+  local oldInfo = professionCache[id] or {};
+  local change = info.rank - (oldInfo.rank or 0);
+
+  if (change ~= 0) then
+    addon:yell('PROFESSION_CHANGED', id, change, info.name, info.icon, info.rank, info.maxRank);
+  end
+end
+
+addon:on('PLAYER_LOGIN', function ()
+  PROFESSION_CATEGORIES = getProfessionCategories();
+  professionCache = getLearnedProfessionInfo();
+end);
 
 addon:on('CHAT_MSG_SKILL', function ()
   if (not professionCache) then return end
 
-  local data = getProfessionInfo();
+  local data = getLearnedProfessionInfo();
 
   for id, info in pairs(data) do
-    local oldInfo = professionCache[id] or {};
-    local change = info.rank - (oldInfo.rank or 0);
-
-    if (change ~= 0) then
-      addon:yell('PROFESSION_CHANGED', id, change, info.name, info.icon, info.rank, info.maxRank);
-    end
+    checkProfessionChange(id, info);
   end
 
   professionCache = data;
 end);
 
-addon:on('PLAYER_LOGIN', function ()
-  PROFESSION_CATEGORIES = getProfessionCategories();
-  professionCache = getProfessionInfo();
-end);
