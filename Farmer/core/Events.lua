@@ -1,26 +1,64 @@
 local addonName, addon = ...;
 
+local tinsert = _G.tinsert;
+local unpack = _G.unpack;
+local CreateFrame = _G.CreateFrame;
+local C_Timer = _G.C_Timer;
+
 local events = {};
 local eventFrame = CreateFrame('frame');
+
+local function hookEvent (eventName, callback)
+  local list = events[eventName];
+
+  if (not list) then
+    events[eventName] = {callback};
+    eventFrame:RegisterEvent(eventName);
+  else
+    tinsert(list, callback);
+  end
+end
+
+local function hookMultipleEvents (eventList, callback)
+  for x = 1, #eventList, 1 do
+    hookEvent(eventList[x], callback);
+  end
+end
 
 function addon:on (eventList, callback)
   assert(type(callback) == 'function',
     addonName .. ': callback is not a function');
 
-  if (type(eventList) ~= 'table') then
-    eventList = {eventList};
+  if (type(eventList) == 'table') then
+    hookMultipleEvents(eventList, callback);
+  else
+    hookEvent(eventList, callback);
   end
 
-  for x = 1, #eventList, 1 do
-    local event = eventList[x];
-    local list = events[event];
+end
 
-    if (not list) then
-      events[event] = {callback};
-      eventFrame:RegisterEvent(event);
-    else
-      list[#list + 1] = callback;
+local function unhookEvent (eventName, callback)
+  local list = events[eventName];
+
+  assert(list ~= nil,
+      addonName .. ': no hook was registered for event ' .. eventName);
+
+  local success = false;
+
+  for x = 1, #list, 1 do
+    if (callback == list[x]) then
+      success = true;
+      list[x] = false;
     end
+  end
+
+  assert(success == true,
+      addonName .. ': no hook was registered for event ' .. eventName);
+end
+
+local function unhookMultipleEvents (eventList, callback)
+  for x = 1, #eventList, 1 do
+    unhookEvent(eventList[x], callback);
   end
 end
 
@@ -28,34 +66,18 @@ function addon:off (eventList, callback)
   assert(type(callback) == 'function',
     addonName .. ': callback is not a function');
 
-  if (type(eventList) ~= 'table') then
-    eventList = {eventList};
-  end
-
-  for x = 1, #eventList, 1 do
-    local event = eventList[x];
-    local list = events[event];
-    local success = false;
-
-    assert(list ~= nil,
-      addonName .. ': no hook was registered for event ' .. event);
-
-    for y = 1, #list, 1 do
-      if (callback == list[y]) then
-        success = true;
-        list[y] = false;
-      end
-    end
-
-    assert(success == true, addonName .. ': no hook was registered for event ' .. event);
+  if (type(eventList) == 'table') then
+    unhookMultipleEvents(eventList, callback);
+  else
+    unhookEvent(eventList, callback);
   end
 end
 
-local function eventHandler (self, event, ...)
+local function eventHandler (_, event, ...)
   local callbackList = events[event];
 
-  for i = 1, #callbackList, 1 do
-    local callback = callbackList[i];
+  for x = 1, #callbackList, 1 do
+    local callback = callbackList[x];
 
     if (callback) then
       callback(...);
@@ -67,7 +89,7 @@ do
   local updateFrame = CreateFrame('Frame');
   local updateList;
 
-  function executeUpdateCallbacks ()
+  local function executeUpdateCallbacks ()
     local list = updateList;
 
     -- updateList has to be swapped out before executing callbacks so if
@@ -95,13 +117,43 @@ end
 // event funneling
 //##############################################################################
 --]]
-function addon:funnel (eventList, ...)
+local function generateFunnel (timeSpan, callback)
   local minTime = 0.01;
-  local arguments = {...};
   local flag = false;
-  local timeSpan;
+  local handler = function ()
+    flag = false;
+    callback();
+  end
+
+  local funnel = function ()
+    if (flag) then
+      return;
+    end
+
+    flag = true;
+
+    if (timeSpan < minTime) then
+      addon:executeOnNextFrame(handler);
+    else
+      C_Timer.After(timeSpan, handler);
+    end
+  end
+
+  return funnel;
+end
+
+local function registerFunnel (eventList, timeSpan, callback)
+  local funnel = generateFunnel(timeSpan, callback);
+
+  addon:on(eventList, funnel);
+
+  return funnel;
+end
+
+function addon:funnel (eventList, ...)
+  local arguments = {...};
   local callback;
-  local funnel;
+  local timeSpan;
 
   if (#arguments >= 2) then
     timeSpan = arguments[1];
@@ -111,31 +163,7 @@ function addon:funnel (eventList, ...)
     callback = arguments[1];
   end
 
-  funnel = function (...)
-    local args = {...};
-
-    if (flag == true) then
-      return;
-    end
-
-    flag = true;
-
-    local handler = function ()
-      flag = false;
-      callback(unpack(args));
-    end
-
-    if (timeSpan < minTime) then
-      addon:executeOnNextFrame(handler);
-    else
-      C_Timer.After(timeSpan, handler);
-    end
-  end
-
-  addon:on(eventList, funnel);
-
-  -- returning funnel for manual call
-  return funnel;
+  return registerFunnel(eventList, timeSpan, callback);
 end
 
 eventFrame:SetScript('OnEvent', eventHandler);
