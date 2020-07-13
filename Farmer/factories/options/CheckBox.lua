@@ -1,14 +1,20 @@
 local _, addon = ...;
 
+local CreateFrame = _G.CreateFrame;
+
 local Factory = addon:share('OptionFactory');
 
 local CheckBox = {};
 
+Factory.CheckBox = CheckBox;
+
 CheckBox.__index = CheckBox;
 
-function CheckBox:New (parent, name, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
+function CheckBox:New (parent, name, anchorFrame, xOffset, yOffset, text,
+                       anchor, parentAnchor)
   local this = {};
-  local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent, 'OptionsCheckButtonTemplate')
+  local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent,
+      'OptionsCheckButtonTemplate')
 
   setmetatable(this, CheckBox);
 
@@ -24,7 +30,7 @@ function CheckBox:New (parent, name, anchorFrame, xOffset, yOffset, text, anchor
   _G[name .. 'CheckButtonText']:SetJustifyH('LEFT');
 
   -- Blizzard broke something in the BfA beta, so we have to fix it
-  checkBox.SetValue = function (table, value) end
+  checkBox.SetValue = function () end
 
   return this;
 end
@@ -36,5 +42,3 @@ end
 function CheckBox:SetValue (checked)
   return self.checkBox:SetChecked(checked);
 end
-
-Factory.CheckBox = CheckBox;
