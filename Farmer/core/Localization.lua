@@ -1,8 +1,8 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 local L = setmetatable({}, {
-  __index = function (table, key)
-      return key;
+  __index = function (_, key)
+    return key;
   end,
 });
 
