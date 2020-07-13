@@ -1,33 +1,38 @@
 local _, addon = ...;
 
+local CreateFrame = _G.CreateFrame;
+local GameFontNormal = _G.GameFontNormal;
+
 local Factory = addon:share('OptionFactory');
 
 local EditBox = {};
 
+Factory.EditBox = EditBox;
+
 EditBox.__index = EditBox;
 
-function EditBox:New (parent, name, anchorFrame, xOffset, yOffset, width, height, anchor, parentAnchor)
-  local back = CreateFrame('Frame', name .. 'Back', parent)
-  local edit = CreateFrame('EditBox', name .. 'EditBox', back);
-  local scroll = CreateFrame('ScrollFrame', name .. 'ScrollFrame', back, 'UIPanelScrollFrameTemplate');
-  local this = {};
+local function createScroll (name, parent, editBox)
+  local scroll = CreateFrame('ScrollFrame', name .. 'ScrollFrame', parent,
+      'UIPanelScrollFrameTemplate');
 
-  setmetatable(this, EditBox);
+  scroll:SetPoint('TOPLEFT', parent, 'TOPLEFT', 0, -4);
+  scroll:SetPoint('BOTTOMRIGHT', parent, 'BOTTOMRIGHT', -6, 4);
+  scroll:SetScrollChild(editBox);
+  scroll:HookScript('OnMouseDown', function ()
+    editBox:SetFocus();
+  end);
+  scroll:HookScript('OnScrollRangeChanged', function (self, _, yrange)
+    if (editBox:GetNumLetters() == editBox:GetCursorPosition()) then
+      self:SetVerticalScroll(yrange);
+    end
+  end);
 
-  this.edit = edit;
+  return scroll;
+end
 
-  anchor = anchor or 'TOPLEFT';
-  parentAnchor = parentAnchor or 'BOTTOMLEFT';
-
-  back:SetBackdrop({
-    -- bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
-    edgeFile = 'Interface\\PVPFrame\\UI-Character-PVP-Highlight',
-    edgeSize = 10,
-    -- insets = { left = 20, right = 20, top = 20, bottom = 20 },
-  });
-
-  back:SetSize(width, height);
-  back:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
+local function createEditbox (name, parent, width, height)
+  local edit = CreateFrame('EditBox', name .. 'EditBox', parent);
+  local scroll = createScroll(name, parent, edit);
 
   edit:SetAutoFocus(false);
   edit:SetMultiLine(true);
@@ -43,35 +48,62 @@ function EditBox:New (parent, name, anchorFrame, xOffset, yOffset, width, height
 
   edit:SetPoint('TOPLEFT', scroll, 'TOPLEFT', 0, 0);
   edit:SetPoint('BOTTOMRIGHT', scroll, 'BOTTOMRIGHT', 0, 0);
-   edit:SetTextInsets(8, 8, 8, 8);
-  edit:SetScript('OnEscapePressed', edit.ClearFocus);
+  edit:SetTextInsets(8, 8, 8, 8);
+  edit:HookScript('OnEscapePressed', edit.ClearFocus);
   edit:Show();
 
+  return edit;
+end
 
-  scroll:SetPoint('TOPLEFT', back, 'TOPLEFT', 0, -4);
-  scroll:SetPoint('BOTTOMRIGHT', back, 'BOTTOMRIGHT', -6, 4);
-  scroll:SetScrollChild(edit);
-  scroll:SetScript('OnMouseDown', function ()
-    edit:SetFocus();
-  end);
-  scroll:SetScript('OnVerticalScroll', function ()
-    print(edit:HasFocus());
+local function createBack (name, parent, width, height, anchors)
+  local back = CreateFrame('Frame', name .. 'Back', parent);
 
-  end);
+  back:SetBackdrop({
+    -- bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',
+    edgeFile = 'Interface\\PVPFrame\\UI-Character-PVP-Highlight',
+    edgeSize = 10,
+    -- insets = { left = 20, right = 20, top = 20, bottom = 20 },
+  });
+
+  back:SetSize(width, height);
+  back:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
+      anchors.xOffset, anchors.yOffset);
+
+  return back;
+end
+
+local function createTextField (name, parent, width, height, anchors)
+  local back = createBack(name, parent, width, height, anchors);
+  local edit = createEditbox(name, back, width, height);
+
+  return edit;
+end
+
+function EditBox:New (parent, name, anchorFrame, xOffset, yOffset, width,
+                      height, anchor, parentAnchor)
+  local this = {};
+
+  setmetatable(this, EditBox);
+
+  this.textField = createTextField(name, parent, width, height, {
+    anchor = anchor or 'TOPLEFT',
+    parent = anchorFrame,
+    parentAnchor = parentAnchor or 'BOTTOMLEFT',
+    xOffset = xOffset,
+    yOffset = yOffset,
+  });
 
   return this;
 end
 
 function EditBox:GetText ()
-  return self.edit:GetText();
+  return self.textField:GetText();
 end
 
 EditBox.GetValue = EditBox.GetText;
 
 function EditBox:SetText (text)
-  self.edit:SetText(text);
+  self.textField:SetText(text);
 end
 
 EditBox.SetValue = EditBox.SetText;
-
-Factory.EditBox = EditBox;
