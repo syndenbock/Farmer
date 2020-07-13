@@ -25,6 +25,20 @@ local function flagBag (index)
   flaggedBags[index] = true;
 end
 
+local function readBagSlot (bagContent, bagIndex, slotIndex)
+  --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
+         nil if data is not ready --]]
+  local id = GetContainerItemID(bagIndex, slotIndex);
+
+  if (not id) then return end
+
+  local info = {GetContainerItemInfo(bagIndex, slotIndex)};
+  local count = info[2];
+  local link = info[7];
+
+  bagContent:addItem(id, link, count);
+end
+
 local function updateBagCache (bagIndex)
   -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
   local slotCount = bagIndex == BANKBAG_CONTAINER and NUM_BANKBAGSLOTS or
@@ -32,17 +46,7 @@ local function updateBagCache (bagIndex)
   local bagContent = Storage:create();
 
   for slotIndex = 1, slotCount, 1 do
-    --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
-         nil if data is not ready --]]
-    local id = GetContainerItemID(bagIndex, slotIndex);
-
-    if (id) then
-      local info = {GetContainerItemInfo(bagIndex, slotIndex)};
-      local count = info[2];
-      local link = info[7];
-
-      bagContent:addItem(id, link, count);
-    end
+    readBagSlot(bagContent, bagIndex, slotIndex);
   end
 
   bagCache[bagIndex] = bagContent;
@@ -88,9 +92,7 @@ local function addEventListeners ()
     end
   end);
 
-  addon:on('BAG_UPDATE', function (bagIndex)
-    flagBag(bagIndex);
-  end);
+  addon:on('BAG_UPDATE', flagBag);
 
   addon:on('PLAYERBANKSLOTS_CHANGED', function (slot)
     local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
