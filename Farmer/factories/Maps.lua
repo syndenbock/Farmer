@@ -1,4 +1,4 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 local Factory = addon:share('Factory');
 
