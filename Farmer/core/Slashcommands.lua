@@ -1,5 +1,9 @@
 local addonName, addon = ...;
 
+local strsplit = _G.strsplit;
+local tremove = _G.tremove;
+local unpack = _G.unpack;
+
 local L = addon.L;
 local slashCommands = {};
 
@@ -10,6 +14,16 @@ function addon:slash (command, callback)
   slashCommands[command] = callback;
 end
 
+local function executeSlashCommand (command, ...)
+  local handler = slashCommands[command];
+
+  if (not handler) then
+    return print(addonName .. ': ' .. L['unknown command'] .. ' "' .. command .. '"');
+  end
+
+  handler(...);
+end
+
 local function slashHandler (input)
   local paramList = {strsplit(' ', input)}
   local command = tremove(paramList, 1)
@@ -17,13 +31,8 @@ local function slashHandler (input)
   command = string.lower(command or 'default');
   command = command == '' and 'default' or command;
 
-  if (slashCommands[command]) then
-    slashCommands[command](unpack(paramList));
-    return;
-  end
-
-  print(addonName .. ': ' .. L['unknown command'] .. ' "' .. input .. '"');
+  executeSlashCommand(command, unpack(paramList));
 end
 
 _G['SLASH_' .. addonName .. '1'] = '/' .. addonName;
-SlashCmdList[addonName] = slashHandler;
+_G.SlashCmdList[addonName] = slashHandler;
