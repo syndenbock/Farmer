@@ -14,25 +14,29 @@ local storage;
 local currentTab;
 local isOpen = false;
 
-local function readGuildBankSlot (tabIndex)
+local function readGuildBankSlot (tabContent, tabIndex, slotIndex)
+  local link = GetGuildBankItemLink(tabIndex, slotIndex);
+
+  if (not link) then return end
+
+  local id = GetItemInfoInstant(link);
+  local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
+  local count = info[2];
+
+  tabContent:addItem(id, link, count);
+end
+
+local function readGuildBankTab (tabIndex)
   --[[ This variable only becomes available after the guild bank has been
        opened. If the guild bank frame is replaced by an addon, it will stay
        unavailable and we use the hardcoded value from Blizzard's code.
-       Again, I have no clue why did not put a global constant in the code for
-       this.]]
+       Again, I have no clue why they did not put a global constant in the code
+       for this.]]
   local MAX_GUILDBANK_SLOTS_PER_TAB = _G.MAX_GUILDBANK_SLOTS_PER_TAB or 98;
   local tabContent = Storage:create();
 
   for slotIndex = 1, MAX_GUILDBANK_SLOTS_PER_TAB, 1 do
-    local link = GetGuildBankItemLink(tabIndex, slotIndex);
-
-    if (link) then
-      local id = GetItemInfoInstant(link);
-      local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
-      local count = info[2];
-
-      tabContent:addItem(id, link, count);
-    end
+    readGuildBankSlot(tabContent. tabIndex, slotIndex);
   end
 
   return tabContent;
@@ -41,7 +45,7 @@ end
 local function readCurrentTab ()
   local tabIndex = GetCurrentGuildBankTab();
 
-  storage = readGuildBankSlot(tabIndex);
+  storage = readGuildBankTab(tabIndex);
 end
 
 addon:on('GUILDBANKFRAME_OPENED', function ()
