@@ -1,14 +1,19 @@
 local _, addon = ...;
 
-local Factory = addon:share('OptionFactory');
+local CreateFrame = _G.CreateFrame;
 
+local Factory = addon:share('OptionFactory');
 local Button = {};
+
+Factory.Button = Button;
 
 Button.__index = Button;
 
-function Button:New (parent, name, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor, onClick)
+function Button:New (parent, name, anchorFrame, xOffset, yOffset, text, anchor,
+                     parentAnchor, onClick)
   local this = {};
-  local button = CreateFrame('Button', name .. 'Button', parent, 'OptionsButtonTemplate');
+  local button = CreateFrame('Button', name .. 'Button', parent,
+      'OptionsButtonTemplate');
 
   setmetatable(this, Button);
 
@@ -31,5 +36,3 @@ end
 function Button:onClick (callback)
   self.button:SetScript('OnClick', callback);
 end
-
-Factory.Button = Button;
