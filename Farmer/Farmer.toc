@@ -14,15 +14,10 @@ localizations/Korean.lua
 localizations/Chinese_simplified.lua
 
 core/Core.lua
-core/Utils.lua
-core/Events.lua
-core/Savedvars.lua
-core/Slashcommands.lua
-core/Yell.lua
-core/Keybindings.lua
 
 factories/Maps.lua
 factories/Storage.lua
+factories/Set.lua
 factories/OptionFactory.lua
 factories/options/Button.lua
 factories/options/CheckBox.lua
@@ -31,6 +26,13 @@ factories/options/Label.lua
 factories/options/Panel.lua
 factories/options/Slider.lua
 factories/options/EditBox.lua
+
+core/Utils.lua
+core/Events.lua
+core/Savedvars.lua
+core/Slashcommands.lua
+core/Yell.lua
+core/Keybindings.lua
 
 detectors/Items.lua
 detectors/storages/Bags_Bank.lua
