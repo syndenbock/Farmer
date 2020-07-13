@@ -33,6 +33,8 @@ core/Savedvars.lua
 core/Slashcommands.lua
 core/Yell.lua
 core/Keybindings.lua
+core/Print.lua
+core/Options.lua
 
 detectors/Items.lua
 detectors/storages/Bags_Bank.lua
@@ -44,12 +46,8 @@ detectors/Reputation.lua
 detectors/Money.lua
 detectors/Professions.lua
 
-core/Print.lua
-core/Options.lua
-
 modules/Petscan.lua
 modules/Farmradar.lua
-
 
 plugins/Currencies/Options.lua
 plugins/Currencies/Currencies.lua
