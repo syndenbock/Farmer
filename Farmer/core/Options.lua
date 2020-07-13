@@ -26,7 +26,7 @@ end
 
 local Factory = addon.OptionFactory;
 local mainPanel = Factory.Panel:New(addonName);
-local farmerFrame = addon.frame;
+local farmerFrame = addon.Print.frame;
 
 addon.mainPanel = mainPanel.panel;
 
@@ -84,7 +84,7 @@ end
 
 local function setFramePosition (position)
   farmerFrame:ClearAllPoints();
-  farmerFrame:SetPoint(unpack, position);
+  farmerFrame:SetPoint(unpack(position));
 end
 
 local function setDefaultPosition ()
@@ -102,13 +102,14 @@ local function setFontSize (size, scale, outline)
   local spacing = 0;
   local iconOffset = -spacing * 1.5;
   local shadowOffset = size / 10;
+  local font = addon.Print.font;
 
   --[[ we have to use the standard font because on screen messages are always
        localized --]]
-  addon.font:SetFont(STANDARD_TEXT_FONT, size, outline);
-  addon.font:SetSpacing(spacing);
-  addon.font:SetShadowColor(0, 0, 0);
-  addon.font:SetShadowOffset(shadowOffset, -shadowOffset);
+  font:SetFont(STANDARD_TEXT_FONT, size, outline);
+  font:SetSpacing(spacing);
+  font:SetShadowColor(0, 0, 0);
+  font:SetShadowOffset(shadowOffset, -shadowOffset);
 
   addonVars.iconOffset = addon:stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
 end

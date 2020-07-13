@@ -1,12 +1,10 @@
 local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
-local unpack = _G.unpack;
-local CreateFrame = _G.CreateFrame;
 local C_Timer = _G.C_Timer;
 
 local events = {};
-local eventFrame = CreateFrame('frame');
+local eventFrame = _G.CreateFrame('frame');
 
 local function hookEvent (eventName, callback)
   local list = events[eventName];
@@ -86,7 +84,7 @@ local function eventHandler (_, event, ...)
 end
 
 do
-  local updateFrame = CreateFrame('Frame');
+  local updateFrame = _G.CreateFrame('Frame');
   local updateList;
 
   local function executeUpdateCallbacks ()
