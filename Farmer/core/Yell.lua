@@ -9,12 +9,16 @@ function addon:listen (message, callback)
   tinsert(callbacks[message], callback);
 end
 
+local function executeCallbackList (callbackList, ...)
+  for x = 1, #callbackList, 1 do
+    callbackList[x](...);
+  end
+end
+
 function addon:yell (message, ...)
   local callbackList = callbacks[message];
 
   if (not callbackList) then return end
 
-  for x = 1, #callbackList, 1 do
-    callbackList[x](...);
-  end
+  executeCallbackList(callbackList, ...);
 end
