@@ -1,6 +1,8 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
-local moneyStamp = nil;
+local GetMoney = _G.GetMoney;
+
+local moneyStamp;
 
 addon:on('PLAYER_LOGIN', function ()
   moneyStamp = GetMoney();
