@@ -34,7 +34,7 @@ local function getCurrencyAmount (currencyId)
   return info[2];
 end
 
-local function expandCollapsedCurrencies (expandedIndices)
+local function collapseExpandedCurrencies (expandedIndices)
   --[[ the headers have to be collapsed from bottom to top, because collapsing
        top ones first would change the index of the lower ones  --]]
   for x = #expandedIndices, 1, -1 do
@@ -70,7 +70,7 @@ local function fillCurrencyTable ()
     i = i + 1;
   end
 
-  expandCollapsedCurrencies(expandedIndices);
+  collapseExpandedCurrencies(expandedIndices);
 
   data[HONOR_ID] = getCurrencyAmount(HONOR_ID);
   data[CONQUEST_ID] = getCurrencyAmount(CONQUEST_ID);
