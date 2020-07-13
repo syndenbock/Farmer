@@ -82,9 +82,13 @@ local function moveFrame ()
   farmerFrame:SetScript('OnReceiveDrag', storePosition);
 end
 
-local function setDefaultPosition ()
+local function setFramePosition (position)
   farmerFrame:ClearAllPoints();
-  farmerFrame:SetPoint(unpack(ANCHOR_DEFAULT));
+  farmerFrame:SetPoint(unpack, position);
+end
+
+local function setDefaultPosition ()
+  setFramePosition(ANCHOR_DEFAULT);
   storePosition();
 end
 
@@ -106,7 +110,6 @@ local function setFontSize (size, scale, outline)
   addon.font:SetShadowColor(0, 0, 0);
   addon.font:SetShadowOffset(shadowOffset, -shadowOffset);
 
-  -- addonVars.iconOffset = ':'.. iconSize .. ':' .. iconSize .. ':' .. '0:' .. iconOffset;
   addonVars.iconOffset = addon:stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
 end
 
@@ -228,8 +231,6 @@ end
 saved:OnLoad(function (vars)
   local options = vars.farmerOptions;
 
-  vars.farmerOptions = vars.farmerOptions or {};
-
   if (options.version < VERSION_CURRENT) then
     local text
 
@@ -241,8 +242,7 @@ saved:OnLoad(function (vars)
 
   options.version = VERSION_CURRENT;
 
-  farmerFrame:ClearAllPoints();
-  farmerFrame:SetPoint(unpack(options.anchor));
+  setFramePosition(options.anchor);
   initPanel();
 end);
 
