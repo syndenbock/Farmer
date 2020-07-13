@@ -1,11 +1,22 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 if (not addon:isClassic()) then return end
 
-local MESSAGE_COLORS = {0.9, 0.3, 0};
-local professionCache = nil;
+local tinsert = _G.tinsert;
+local GetNumSkillLines = _G.GetNumSkillLines;
+local GetSkillLineInfo = _G.GetSkillLineInfo;
+local ExpandSkillHeader = _G.ExpandSkillHeader;
+local CollapseSkillHeader = _G.CollapseSkillHeader;
 
-local function getProfessionInfo ()
+local skillCache;
+
+local function collapseExpandedHeaders (expandedHeaders)
+  for x = #expandedHeaders, 1, -1 do
+    CollapseSkillHeader(expandedHeaders[x]);
+  end
+end
+
+local function getSkillInfo ()
   local data = {};
   local numSkills = GetNumSkillLines();
   local expandedHeaders = {};
@@ -19,7 +30,7 @@ local function getProfessionInfo ()
       local isExpanded = info[3];
 
       if (not isExpanded) then
-        expandedHeaders[#expandedHeaders + 1] = i;
+        tinsert(expandedHeaders, i);
         ExpandSkillHeader(i);
         numSkills = GetNumSkillLines();
       end
@@ -36,34 +47,37 @@ local function getProfessionInfo ()
     i = i + 1;
   end
 
-  for i = #expandedHeaders, 1, -1 do
-    CollapseSkillHeader(expandedHeaders[i]);
-  end
+  collapseExpandedHeaders(expandedHeaders);
 
   return data;
 end
 
-local function checkProfessionData ()
-  local data = getProfessionInfo();
+local function checkSkillChange (skillName, skillInfo)
+  local oldInfo = skillCache[skillName] or {};
+  local change = skillInfo.rank - (oldInfo.rank or 0);
+
+  if (change == 0) then return end
+
+  addon:yell('SKILL_CHANGED', skillName, change, skillInfo.rank,
+      skillInfo.maxRank);
+end
+
+local function checkSkills ()
+  local data = getSkillInfo();
 
   for name, info in pairs(data) do
-    local oldInfo = professionCache[name] or {};
-    local change = info.rank - (oldInfo.rank or 0);
-
-    if (change ~= 0) then
-      addon:yell('SKILL_CHANGED', name, change, info.rank, info.maxRank);
-    end
+    checkSkillChange(name, info);
   end
 
-  professionCache = data;
+  skillCache = data;
 end
 
 addon:on('CHAT_MSG_SKILL', function ()
-  if (not professionCache) then return end
+  if (not skillCache) then return end
 
-  checkProfessionData();
+  checkSkills();
 end);
 
 addon:on('PLAYER_LOGIN', function ()
-  professionCache = getProfessionInfo();
+  skillCache = getSkillInfo();
 end);
