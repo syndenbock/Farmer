@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local Factory = addon.OptionFactory;
+local Factory = addon:share('OptionFactory');
 
 local EditBox = {};
 

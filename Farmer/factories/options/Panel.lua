@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-local Factory = addon.OptionFactory;
+local Factory = addon:share('OptionFactory');
 
 local Panel = {};
 local panelCount = 0;

@@ -18,7 +18,6 @@ core/Core.lua
 factories/Maps.lua
 factories/Storage.lua
 factories/Set.lua
-factories/OptionFactory.lua
 factories/options/Button.lua
 factories/options/CheckBox.lua
 factories/options/Dropdown.lua
