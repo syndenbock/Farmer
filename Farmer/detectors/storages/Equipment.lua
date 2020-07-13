@@ -73,13 +73,9 @@ addon:on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
     checkSlotForArtifact(INVSLOT_OFFHAND);
   end
 
-  if (isEmpty == true) then
-    currentEquipment[slot] = nil;
-    updateStorage();
-  else
-    currentEquipment[slot] = getEquipmentSlot(slot);
-    updateStorage();
-  end
+  currentEquipment[slot] = (not isEmpty and getEquipmentSlot(slot)) or nil;
+
+  updateStorage();
 end);
 
 Items:addStorage(function ()
