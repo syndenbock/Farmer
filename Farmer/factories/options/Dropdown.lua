@@ -15,38 +15,7 @@ Factory.Dropdown = Dropdown;
 
 Dropdown.__index = Dropdown;
 
-function Dropdown:New (parent, name, anchorFrame, xOffset, yOffset, text,
-                       options, anchor, parentAnchor)
-  local this = {};
-  local dropdown = CreateFrame('Frame', name .. 'Dropdown', parent,
-      'UIDropDownMenuTemplate');
-
-  setmetatable(this, Dropdown);
-
-  this.dropdown = dropdown;
-  this.currentValue = options[1].value;
-
-  anchor = anchor or 'TOPLEFT';
-  parentAnchor = parentAnchor or 'BOTTOMLEFT';
-
-  dropdown:SetPoint(anchor, anchorFrame, parentAnchor, xOffset - 23, yOffset);
-
-  UIDropDownMenu_SetWidth(dropdown, 138);
-  UIDropDownMenu_SetText(dropdown, text);
-
-  UIDropDownMenu_Initialize(dropdown,
-      this:GenerateInitializer(dropdown, options));
-
-  function dropdown:SetValue (value)
-    this:SetValue(value);
-  end
-
-  return this;
-end
-
-function Dropdown:GenerateInitializer (dropdown, options)
-  local this = self;
-
+local function generateDropdownInitializer (dropdown, options)
   local function initializer (_, level)
     local info = UIDropDownMenu_CreateInfo();
 
@@ -56,7 +25,7 @@ function Dropdown:GenerateInitializer (dropdown, options)
       info.func = dropdown.SetValue;
       info.text = option.text;
       info.arg1 = option.value;
-      info.checked = (this.currentValue == option.value);
+      info.checked = (dropdown.value == option.value);
       UIDropDownMenu_AddButton(info, level);
     end
   end
@@ -64,10 +33,51 @@ function Dropdown:GenerateInitializer (dropdown, options)
   return initializer;
 end
 
+local function createDropdown (name, parent, text, options, anchors)
+  local dropdown = CreateFrame('Frame', name .. 'Dropdown', parent,
+      'UIDropDownMenuTemplate');
+
+  dropdown:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
+      anchors.xOffset - 23, anchors.yOffset);
+
+  function dropdown:SetValue (value)
+    dropdown.value = value;
+  end
+
+  function dropdown:GetValue ()
+    return dropdown.value;
+  end
+
+  UIDropDownMenu_SetWidth(dropdown, 138);
+  UIDropDownMenu_SetText(dropdown, text);
+
+  UIDropDownMenu_Initialize(dropdown,
+      generateDropdownInitializer(dropdown, options));
+
+  return dropdown;
+end
+
+function Dropdown:New (parent, name, anchorFrame, xOffset, yOffset, text,
+                       options, anchor, parentAnchor)
+  local this = {};
+
+  setmetatable(this, Dropdown);
+
+  this.dropdown = createDropdown(name, parent, text, options, {
+    anchor = anchor or 'TOPLEFT',
+    parent = anchorFrame,
+    parentAnchor = parentAnchor or 'BOTTOMLEFT',
+    xOffset = xOffset,
+    yOffset = yOffset,
+  });
+
+  return this;
+end
+
 function Dropdown:SetValue (value)
-  self.currentValue = value;
+  self.dropdown:SetValue(value);
 end
 
 function Dropdown:GetValue ()
-  return self.currentValue;
+  return self.dropdown:GetValue();
 end
