@@ -1,13 +1,19 @@
 local addonName, addon = ...;
 
+local CreateFrame = _G.CreateFrame;
+local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
+local UIParent = _G.UIParent;
+
 local Factory = addon:share('OptionFactory');
 
 local Panel = {};
 local panelCount = 0;
 
+Factory.Panel = Panel;
+
 Panel.__index = Panel;
 
-local function getPanelName ()
+local function generatePanelName ()
   local panelName = addonName .. 'Panel' .. panelCount;
 
   panelCount = panelCount + 1;
@@ -19,7 +25,7 @@ function Panel:New (name, parent)
   parent = parent or UIParent;
 
   local this = {};
-  local panel = CreateFrame('Frame', getPanelName(), parent);
+  local panel = CreateFrame('Frame', generatePanelName(), parent);
 
   setmetatable(this, Panel);
 
@@ -67,15 +73,18 @@ function Panel:OnLoad (callback)
 end
 
 function Panel:addButton (text, onClick)
-  local button = Factory.Button:New(self.panel, self:getChildName(), self.panel, self.anchor.x + 3, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
+  local button = Factory.Button:New(self.panel, self:getChildName(), self.panel,
+      self.anchor.x + 3, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
 
   self.anchor.y = self.anchor.y - 7 - button.button:GetHeight();
 
   return button;
 end
 
-function Panel:addCheckBox (text)
-  local checkBox = Factory.CheckBox:New(self.panel, self:getChildName(), self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
+function Panel:addCheckBox (text, onClick)
+  local checkBox = Factory.CheckBox:New(self.panel, self:getChildName(),
+      self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT',
+      onClick);
 
   self.anchor.y = self.anchor.y - 7 - checkBox.checkBox:GetHeight();
 
@@ -83,15 +92,19 @@ function Panel:addCheckBox (text)
 end
 
 function Panel:addSlider (min, max, text, lowText, highText, stepSize)
-  local slider = Factory.Slider:New(self.panel, self:getChildName(), self.panel, self.anchor.x + 12, self.anchor.y - 15, text, min, max, lowText, highText, 'TOPLEFT', 'TOPLEFT', stepSize);
+  local slider = Factory.Slider:New(self.panel, self:getChildName(), self.panel,
+      self.anchor.x + 12, self.anchor.y - 15, text, min, max, lowText, highText,
+      'TOPLEFT', 'TOPLEFT', stepSize);
 
-  self.anchor.y = self.anchor.y - 25 - slider.slider:GetHeight() - slider.edit:GetHeight();
+  self.anchor.y = self.anchor.y - 25 - slider.slider:GetHeight() -
+      slider.edit:GetHeight();
 
   return slider;
 end
 
 function Panel:addLabel (text)
-  local label = Factory.Label:New(self.panel, self.panel, self.anchor.x + 3, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT')
+  local label = Factory.Label:New(self.panel, self.panel, self.anchor.x + 3,
+      self.anchor.y, text, 'TOPLEFT', 'TOPLEFT')
 
   self.anchor.y = self.anchor.y - 7 - label.label:GetHeight();
 
@@ -99,7 +112,9 @@ function Panel:addLabel (text)
 end
 
 function Panel:addDropdown (text, options)
-  local dropdown = Factory.Dropdown:New(self.panel, self:getChildName(), self.panel, self.anchor.x + 10, self.anchor.y, text, options, 'TOPLEFT', 'TOPLEFT');
+  local dropdown = Factory.Dropdown:New(self.panel, self:getChildName(),
+      self.panel, self.anchor.x + 10, self.anchor.y, text, options, 'TOPLEFT',
+      'TOPLEFT');
 
   self.anchor.y = self.anchor.y - 7 - dropdown.dropdown:GetHeight();
 
@@ -107,11 +122,11 @@ function Panel:addDropdown (text, options)
 end
 
 function Panel:addEditBox (width, height)
-  local editBox = Factory.EditBox:New(self.panel, self:getChildName(), self.panel, self.anchor.x + 2, self.anchor.y, width, height, 'TOPLEFT', 'TOPLEFT');
+  local editBox = Factory.EditBox:New(self.panel, self:getChildName(),
+      self.panel, self.anchor.x + 2, self.anchor.y, width, height, 'TOPLEFT',
+      'TOPLEFT');
 
   self.anchor.y = self.anchor.y - 7 - height;
 
   return editBox;
 end
-
-Factory.Panel = Panel;
