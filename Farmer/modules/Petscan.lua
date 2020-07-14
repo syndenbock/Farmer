@@ -1,30 +1,41 @@
-local addonName, addon = ...
+local _, addon = ...
+
+local tinsert = _G.tinsert;
+local tremove = _G.tremove;
+local C_Timer = _G.C_Timer;
+local PetJournal = _G.C_PetJournal;
+local CagePetByID = PetJournal.CagePetByID;
+local GetPetInfoByIndex = PetJournal.GetPetInfoByIndex;
+local ClearSearchFilter = PetJournal.ClearSearchFilter;
+local GetNumPets = PetJournal.GetNumPets;
+local ContainerIDToInventoryID = _G.ContainerIDToInventoryID;
+local GetInventoryItemLink = _G.GetInventoryItemLink;
+local GetItemInfoInstant = _G.GetItemInfoInstant;
+local GetContainerNumFreeSlots = _G.GetContainerNumFreeSlots;
+local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 
 local UNITID_PLAYER = 'player';
-local PJ = C_PetJournal;
 
-local function GetFreeBagSlots ()
+local function getBagFreeSlots (bagIndex)
+  local generalBagType = 0;
+  local freeSlots, bagType = GetContainerNumFreeSlots(bagIndex);
+
+  return bagType == generalBagType and freeSlots or 0;
+end
+
+local function getInventoryFreeSlots ()
   local freeSlots = 0;
 
-  for i = 1, NUM_BAG_SLOTS, 1 do
-    local index = ContainerIDToInventoryID(i);
-    local link = GetInventoryItemLink(UNITID_PLAYER, index);
-
-    local info = {GetItemInfoInstant(link)};
-    local subclassId = info[7];
-    local standardContainerSubclass = 0;
-
-    if (subclassId == standardContainerSubclass) then
-      freeSlots = freeSlots + GetContainerNumFreeSlots(i);
-    end
+  for x = 1, NUM_BAG_SLOTS, 1 do
+    freeSlots = freeSlots + getBagFreeSlots(x);
   end
 
   return freeSlots;
 end
 
 local function processPetQueue (petQueue, freeSlots)
-  PJ.CagePetByID(petQueue[1]);
-  table.remove(petQueue, 1);
+  CagePetByID(petQueue[1]);
+  tremove(petQueue, 1);
 
   --[[ we want to process queue once with no slots left, so the game displays
        an "inventory is full" message once --]]
@@ -35,38 +46,55 @@ local function processPetQueue (petQueue, freeSlots)
   end
 end
 
--- addon:on('BAG_UPDATE_DELAYED', processPetQueue);
+local function checkPetById (petMap, petQueue, petId, petInfo)
+  local minCount = 2;
+
+  if (petMap[petId] <= minCount) then return end
+
+  local isFavorite = petInfo[6];
+
+  if (isFavorite) then
+    local petName = petInfo[8];
+
+    print(petName .. ' is owned 3 times, but favorited');
+    return;
+  end
+
+  local identifier = petInfo[1];
+
+  tinsert(petQueue, identifier);
+end
+
+local function readPetByIndex (petMap, petQueue, petIndex)
+  local petInfo = {GetPetInfoByIndex(petIndex)};
+  local isTradeable = petInfo[16];
+
+  if (not isTradeable) then return end
+
+  local petId = petInfo[11];
+
+  petMap[petId] = (petMap[petId] or 0) + 1;
+  checkPetById(petMap, petQueue, petId, petInfo);
+end
 
 local function scanPets ()
-  PJ.ClearSearchFilter();
+  local freeSlots = getInventoryFreeSlots();
 
-  local _, ownedPets = PJ.GetNumPets();
+  if (freeSlots == 0) then return end;
+
+  --[[ Filters have to be cleared because PetJournal functions can only access
+       pets that are currently displayed ]]
+  ClearSearchFilter();
+
+  local _, ownedPets = GetNumPets();
   local petMap = {};
   local petQueue = {};
 
-  for i = 1, ownedPets, 1 do
-    local info = {PJ.GetPetInfoByIndex(i)};
-
-    if (info[16] == true) then
-      local petId = info[11];
-
-      if (not petMap[petId]) then
-        petMap[petId] = 1;
-      else
-        petMap[petId] = petMap[petId] + 1;
-
-        if (petMap[petId] == 3) then
-          if (info[6] == true) then
-            print(info[8] .. ' is owned 3 times, but favorited');
-          else
-            petQueue[#petQueue + 1] = info[1];
-          end
-        end
-      end
-    end
+  for x = 1, ownedPets, 1 do
+    readPetByIndex(petMap, petQueue, x);
   end
 
-  processPetQueue(petQueue, GetFreeBagSlots());
+  processPetQueue(petQueue, freeSlots);
 end
 
 addon:slash('cagepets', scanPets);
