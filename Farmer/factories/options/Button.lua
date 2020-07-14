@@ -9,22 +9,31 @@ Factory.Button = Button;
 
 Button.__index = Button;
 
-function Button:New (parent, name, anchorFrame, xOffset, yOffset, text, anchor,
-                     parentAnchor, onClick)
-  local this = {};
+local function createButton (name, parent, text, anchors)
   local button = CreateFrame('Button', name .. 'Button', parent,
       'OptionsButtonTemplate');
 
-  setmetatable(this, Button);
-
-  this.button = button;
-
-  anchor = anchor or 'TOPLEFT';
-  parentAnchor = parentAnchor or 'BOTTOMLEFT';
-
-  button:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
+  button:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
+      anchors.xOffset, anchors.yOffset);
   button:SetSize(150, 25);
   button:SetText(text);
+
+  return button;
+end
+
+function Button:New (parent, name, anchorFrame, xOffset, yOffset, text, anchor,
+                     parentAnchor, onClick)
+  local this = {};
+
+  setmetatable(this, Button);
+
+  this.button = createButton(name, parent, text, {
+    anchor = anchor or 'TOPLEFT',
+    parent = anchorFrame,
+    parentAnchor = parentAnchor or 'BOTTOMLEFT',
+    xOffset = xOffset,
+    yOffset = yOffset,
+  });
 
   if (onClick) then
     this:onClick(onClick);
