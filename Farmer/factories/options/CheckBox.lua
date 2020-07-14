@@ -10,27 +10,38 @@ Factory.CheckBox = CheckBox;
 
 CheckBox.__index = CheckBox;
 
-function CheckBox:New (parent, name, anchorFrame, xOffset, yOffset, text,
-                       anchor, parentAnchor)
-  local this = {};
+local function doNothing () end
+
+local function createCheckBox (name, parent, text, anchors)
   local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent,
-      'OptionsCheckButtonTemplate')
-
-  setmetatable(this, CheckBox);
-
-  this.checkBox = checkBox;
-
-  anchor = anchor or 'TOPLEFT';
-  parentAnchor = parentAnchor or 'BOTTOMLEFT';
-
-  checkBox:SetPoint(anchor, anchorFrame, parentAnchor, xOffset, yOffset);
+      'OptionsCheckButtonTemplate');
 
   -- Blizzard really knows how to write APIs. Not.
   _G[name .. 'CheckButtonText']:SetText(text);
   _G[name .. 'CheckButtonText']:SetJustifyH('LEFT');
 
+  checkBox:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
+      anchors.xOffset, anchors.yOffset);
+
   -- Blizzard broke something in the BfA beta, so we have to fix it
-  checkBox.SetValue = function () end
+  checkBox.SetValue = doNothing;
+
+  return checkBox;
+end
+
+function CheckBox:New (parent, name, anchorFrame, xOffset, yOffset, text,
+                       anchor, parentAnchor)
+  local this = {};
+
+  setmetatable(this, CheckBox);
+
+  this.checkBox = createCheckBox(name, parent, text, {
+    anchor = anchor or 'TOPLEFT',
+    parent = anchorFrame,
+    parentAnchor = parentAnchor or 'BOTTOMLEFT',
+    xOffset = xOffset,
+    yOffset = yOffset,
+  });
 
   return this;
 end
