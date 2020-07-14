@@ -164,7 +164,7 @@ local function initPanel ()
   local outLineDrop = mainPanel:addDropdown(L['outline mode'], {
     {
       text = L['None'],
-      value = nil,
+      value = '',
     }, {
       text = L['Thin'],
       value = 'OUTLINE',
