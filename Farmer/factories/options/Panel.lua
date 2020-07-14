@@ -96,8 +96,7 @@ function Panel:addSlider (min, max, text, lowText, highText, stepSize)
       self.anchor.x + 12, self.anchor.y - 15, text, min, max, lowText, highText,
       'TOPLEFT', 'TOPLEFT', stepSize);
 
-  self.anchor.y = self.anchor.y - 25 - slider.slider:GetHeight() -
-      slider.edit:GetHeight();
+  self.anchor.y = self.anchor.y - 25 - slider:GetHeight();
 
   return slider;
 end
