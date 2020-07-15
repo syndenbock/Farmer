@@ -1,34 +1,6 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
-local tests = {};
-
-function tests.testItems (id, count)
-  if (id) then
-    id = tonumber(id);
-    local _, link = GetItemInfo(id);
-
-    count = tonumber(count or 1);
-
-    addon:yell('NEW_ITEM', id, link, count);
-    return;
-  end
-
-  local testItems = {
-    2447, -- Peacebloom
-    4496, -- Small Brown Pouch
-    6975, -- Whirlwind Axe
-    4322, -- Enchanter's Cowl
-    13521, -- Recipe: Flask of Supreme Power
-  };
-
-  for i = 1, #testItems, 1 do
-    local id = testItems[i];
-    local _, link = GetItemInfo(id);
-
-    addon:yell('NEW_ITEM', id, link, 1);
-    addon:yell('NEW_ITEM', id, link, 4);
-  end
-end
+local tests = addon:share('tests');
 
 function tests.testReputation ()
   addon:yell('REPUTATION_CHANGED', {

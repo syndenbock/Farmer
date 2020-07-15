@@ -1,4 +1,4 @@
-local _, addon = ...;
+local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
 local C_Item = _G.C_Item;
@@ -72,11 +72,14 @@ local function packItemInfo (itemId, itemLink)
   };
 end
 
+local function yellItem (itemId, itemLink, itemCount)
+  addon:yell('NEW_ITEM', packItemInfo(itemId, itemLink), itemCount);
+end
+
 local function fetchItem (id, link, count)
   --[[ Apparently you can actually have non-existent items in your bags ]]
   if (not DoesItemExistByID(id)) then
-    addon:yell('NEW_ITEM', packItemInfo(id, link), count);
-    return;
+    return yellItem(id, link, count);
   end
 
   local item = Item:CreateFromItemID(id);
@@ -88,13 +91,13 @@ local function fetchItem (id, link, count)
          by GetItemInfo ]]
     link = select(2, GetItemInfo(link)) or link;
 
-    addon:yell('NEW_ITEM', packItemInfo(id, link), count);
+    yellItem(id, link, count);
   end);
 end
 
 local function broadCastItem (itemId, itemLink, itemCount)
   if (IsItemDataCachedByID(itemId)) then
-    addon:yell('NEW_ITEM', itemId, itemLink, itemCount);
+    yellItem(itemId, itemLink, itemCount);
   else
     fetchItem(itemId, itemLink, itemCount);
   end
@@ -124,3 +127,44 @@ end
      BAG_UPDATE_DELAYED. This allows storages to update first to avoid race
      conditions ]]
 addon:funnel('BAG_UPDATE_DELAYED', checkInventory);
+
+--[[
+################################################################################
+# testing
+################################################################################
+]]
+
+local tests = addon:share('tests');
+
+local function testItem (id, count)
+  local _, link = GetItemInfo(id);
+
+  if (link) then
+    yellItem(id, link, count);
+  else
+    print(addonName .. ': no data for item id', id);
+  end
+end
+
+local function testPredefinedItems ()
+  local testItems = {
+    2447, -- Peacebloom
+    4496, -- Small Brown Pouch
+    6975, -- Whirlwind Axe
+    4322, -- Enchanter's Cowl
+    13521, -- Recipe: Flask of Supreme Power
+  };
+
+  for x = 1, #testItems, 1 do
+    testItem(testItems[x], 1);
+    testItem(testItems[x], 4);
+  end
+end
+
+function tests.testItems (id, count)
+  if (id) then
+    testItem(tonumber(id), count or 1);
+  else
+    testPredefinedItems()
+  end
+end
