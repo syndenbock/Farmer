@@ -41,21 +41,21 @@ local function stringifyItemIds (map)
   return table.concat(text, '\n');
 end
 
+local function parseItemIdLine (list, line)
+  line = strtrim(line);
+
+  if (line ~= '') then
+    list[tonumber(line)] = true;
+  end
+end
+
 local function parseItemIds (text)
   local list = {};
 
   text = {string.split('\n', text)};
 
-  for i = 1, #text do
-    local line = text[i];
-
-    if (line) then
-      line = strtrim(line);
-
-      if (line ~= '') then
-        list[tonumber(line)] = true;
-      end
-    end
+  for x = 1, #text, 1 do
+    parseItemIdLine(list, text[x]);
   end
 
   return list;
