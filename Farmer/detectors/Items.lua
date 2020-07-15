@@ -47,10 +47,35 @@ function Items:addItemToCurrentInventory (id, link, count)
   currentInventory:addItem(id, link, count);
 end
 
+local function packItemInfo (itemId, itemLink)
+  local info = {GetItemInfo(itemLink)};
+
+  return {
+    id = itemId,
+    name = info[1],
+    link = info[2],
+    rarity = info[3],
+    level = info[4],
+    minLevel = info[5],
+    type = info[6],
+    subType = info[7],
+    stackSize = info[8],
+    equipLocation = info[9],
+    texture = info[10],
+    sellPrice = info[11],
+    classId = info[12],
+    subClassId = info[13],
+    bindType = info[14],
+    expansionId = info[15],
+    itemSetId = info[16],
+    isCraftingReagent = info[17],
+  };
+end
+
 local function fetchItem (id, link, count)
   --[[ Apparently you can actually have non-existent items in your bags ]]
   if (not DoesItemExistByID(id)) then
-    addon:yell('NEW_ITEM', id, link, count);
+    addon:yell('NEW_ITEM', packItemInfo(id, link), count);
     return;
   end
 
@@ -63,7 +88,7 @@ local function fetchItem (id, link, count)
          by GetItemInfo ]]
     link = select(2, GetItemInfo(link)) or link;
 
-    addon:yell('NEW_ITEM', id, link, count);
+    addon:yell('NEW_ITEM', packItemInfo(id, link), count);
   end);
 end
 
