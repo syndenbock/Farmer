@@ -153,6 +153,7 @@ local function testPredefinedItems ()
     6975, -- Whirlwind Axe
     4322, -- Enchanter's Cowl
     13521, -- Recipe: Flask of Supreme Power
+    156631 -- Silas' Sphere of Transmutation
   };
 
   for x = 1, #testItems, 1 do
@@ -165,6 +166,6 @@ function tests.testItems (id, count)
   if (id) then
     testItem(tonumber(id), count or 1);
   else
-    testPredefinedItems()
+    testPredefinedItems();
   end
 end

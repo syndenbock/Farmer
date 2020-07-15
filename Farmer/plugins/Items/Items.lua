@@ -125,7 +125,7 @@ local function displayEquipment (item, text, count, colors)
 end
 
 local function displayCraftingReagent (item, count)
-  displayStackableItem(item, count, {0, 0.8, 0.8});
+  displayItem(item, count, {0, 0.8, 0.8});
 end
 
 local function isCraftingReagent (item)
