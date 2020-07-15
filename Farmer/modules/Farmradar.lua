@@ -188,7 +188,7 @@ local function createRadarFrame ()
 
   radar:SetSize(size * scale, size * scale);
 
-  radar:SetFrameStrata('HIGH');
+  radar:SetFrameStrata('MEDIUM');
   radar:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
   radar:Hide();
   addon:setTrueScale(radar, 1);
