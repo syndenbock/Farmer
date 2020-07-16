@@ -1,24 +1,31 @@
 local addonName, addon = ...;
 
+local proxy = {};
+
 setmetatable(addon, {
   __metatable = false,
   __index = function (_, key)
-    print(addonName .. ': addon key does not exist: ' .. key);
+    local value = proxy[key];
+
+    assert(value ~= nil,
+        addonName .. ': addon key does not exist: ' .. key);
+
+    return value;
   end,
   __newindex = function (_, key, value)
-    assert(addon[key] == nil,
+    assert(proxy[key] == nil,
         addonName .. ': addon key already in use: ' .. key);
 
-    rawset(addon, key, value);
+    proxy[key] = value;
   end,
 });
 
 function addon:share (name)
-  local shared = rawget(addon, name);
+  local shared = proxy[name];
 
   if (shared == nil) then
     shared = {};
-    rawset(addon, name, shared);
+    proxy[name] = shared;
   end
 
   return shared;
