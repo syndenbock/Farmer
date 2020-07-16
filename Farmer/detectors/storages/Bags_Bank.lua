@@ -43,7 +43,7 @@ local function updateBagCache (bagIndex)
   -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
   local slotCount = bagIndex == BANKBAG_CONTAINER and NUM_BANKBAGSLOTS or
       GetContainerNumSlots(bagIndex);
-  local bagContent = Storage:create();
+  local bagContent = Storage:new();
 
   for slotIndex = 1, slotCount, 1 do
     readBagSlot(bagContent, bagIndex, slotIndex);

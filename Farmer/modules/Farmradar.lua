@@ -52,7 +52,7 @@ local directionTexture;
 local currentMode = MODE_ENUM.OFF;
 local updateStamp = 0;
 local minimapDefaults;
-local hookedFrames = Set:create();
+local hookedFrames = Set:new();
 local trackedFrames;
 local minimapHooked = false;
 

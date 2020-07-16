@@ -10,7 +10,7 @@ Factory.CallbackHandler = CallbackHandler;
 
 CallbackHandler.__index = CallbackHandler;
 
-function CallbackHandler:create ()
+function CallbackHandler:new ()
   local this = {};
 
   setmetatable(this, CallbackHandler);

@@ -7,7 +7,7 @@ local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:New(L['Items'], addon.mainPanel);
+local panel = addon.OptionFactory.Panel:new(L['Items'], addon.mainPanel);
 local rarityBox = panel:addCheckBox(L['show items based on rarity']);
 local raritySlider = panel:addSlider(0, 8, L['minimum rarity'], '', '', 1);
 local reagentsBox = panel:addCheckBox(L['always show reagents']);

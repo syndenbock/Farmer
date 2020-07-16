@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:New(L['Misc'], addon.mainPanel);
+local panel = addon.OptionFactory.Panel:new(L['Misc'], addon.mainPanel);
 local fastLootBox = panel:addCheckBox(L['enable fast autoloot']);
 local healthBarBox = panel:addCheckBox(L['hide health bars while fishing']);
 

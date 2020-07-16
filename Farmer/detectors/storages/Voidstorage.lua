@@ -38,7 +38,7 @@ local function readVoidStorageTab (voidStorage, tabIndex)
 end
 
 local function readVoidStorage ()
-  local voidStorage = Storage:create();
+  local voidStorage = Storage:new();
 
   for tabIndex = 1, NUM_VOIDSTORAGE_TABS, 1 do
     readVoidStorageTab(voidStorage, tabIndex);

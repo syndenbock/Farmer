@@ -4,7 +4,7 @@ if (not addon.isClassic()) then return end
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:New(L['Skills'], addon.mainPanel);
+local panel = addon.OptionFactory.Panel:new(L['Skills'], addon.mainPanel);
 local professionBox = panel:addCheckBox(L['show skill levelups']);
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {

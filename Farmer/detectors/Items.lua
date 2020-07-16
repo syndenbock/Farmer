@@ -25,7 +25,7 @@ local function addStorageContainerToInventory (inventory, storage)
 end
 
 local function getCachedInventory ()
-  local inventory = Storage:create({
+  local inventory = Storage:new({
     normalized = true,
   });
 

@@ -79,7 +79,7 @@ local function createTextField (name, parent, width, height, anchors)
   return edit;
 end
 
-function EditBox:New (parent, name, anchorFrame, xOffset, yOffset, width,
+function EditBox:new (parent, name, anchorFrame, xOffset, yOffset, width,
                       height, anchor, parentAnchor)
   local this = {};
 

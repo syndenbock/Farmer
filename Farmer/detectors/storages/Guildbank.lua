@@ -33,7 +33,7 @@ local function readGuildBankTab (tabIndex)
        Again, I have no clue why they did not put a global constant in the code
        for this.]]
   local MAX_GUILDBANK_SLOTS_PER_TAB = _G.MAX_GUILDBANK_SLOTS_PER_TAB or 98;
-  local tabContent = Storage:create();
+  local tabContent = Storage:new();
 
   for slotIndex = 1, MAX_GUILDBANK_SLOTS_PER_TAB, 1 do
     readGuildBankSlot(tabContent. tabIndex, slotIndex);

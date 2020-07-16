@@ -10,7 +10,7 @@ Factory.Storage = Storage;
 
 Storage.__index = Storage;
 
-function Storage:create (options)
+function Storage:new (options)
   local this = {};
 
   setmetatable(this, Storage);
@@ -83,7 +83,7 @@ end
 
 function Storage:compare (compareStorage)
   local thisStorage = self.storage;
-  local new = Storage:create();
+  local new = Storage:new();
 
   for itemId, itemInfo in pairs(compareStorage.storage) do
     local thisItemInfo = thisStorage[itemId];

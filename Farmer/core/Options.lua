@@ -25,7 +25,7 @@ else
 end
 
 local Factory = addon.OptionFactory;
-local mainPanel = Factory.Panel:New(addonName);
+local mainPanel = Factory.Panel:new(addonName);
 local farmerFrame = addon.Print.frame;
 
 addon.mainPanel = mainPanel.panel;

@@ -73,7 +73,7 @@ local function createSliderWithEditBox (name, parent, values, text, anchors)
   return slider, edit;
 end
 
-function Slider:New (parent, name, anchorFrame, xOffset, yOffset, text, min,
+function Slider:new (parent, name, anchorFrame, xOffset, yOffset, text, min,
                      max, lowText, highText, anchor, parentAnchor, stepSize)
   local this = {};
 

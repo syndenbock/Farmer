@@ -8,7 +8,7 @@ Factory.Set = Set;
 
 Set.__index = Set;
 
-function Set:create (items)
+function Set:new (items)
   local this = {};
 
   setmetatable(this, Set);

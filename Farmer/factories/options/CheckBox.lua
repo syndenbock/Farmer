@@ -29,7 +29,7 @@ local function createCheckBox (name, parent, text, anchors)
   return checkBox;
 end
 
-function CheckBox:New (parent, name, anchorFrame, xOffset, yOffset, text,
+function CheckBox:new (parent, name, anchorFrame, xOffset, yOffset, text,
                        anchor, parentAnchor)
   local this = {};
 

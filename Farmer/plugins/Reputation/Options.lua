@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:New(L['Reputation'], addon.mainPanel);
+local panel = addon.OptionFactory.Panel:new(L['Reputation'], addon.mainPanel);
 local reputationBox = panel:addCheckBox(L['show reputation']);
 local thresholdSlider = panel:addSlider(1, 100, L['minimum'], '1', '100', 1);
 

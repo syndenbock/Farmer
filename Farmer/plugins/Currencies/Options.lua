@@ -4,7 +4,7 @@ if (addon.isClassic()) then return end
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:New(L['Currencies'], addon.mainPanel);
+local panel = addon.OptionFactory.Panel:new(L['Currencies'], addon.mainPanel);
 local enabledBox = panel:addCheckBox(L['show currencies']);
 local ignoreHonorBox = panel:addCheckBox(L['ignore Honor']);
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {

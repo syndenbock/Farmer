@@ -5,7 +5,7 @@ local GetMoney = _G.GetMoney;
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:New(L['Money'], addon.mainPanel);
+local panel = addon.OptionFactory.Panel:new(L['Money'], addon.mainPanel);
 local moneyBox = panel:addCheckBox(L['show money']);
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {

@@ -21,7 +21,7 @@ local function generatePanelName ()
   return panelName;
 end
 
-function Panel:New (name, parent)
+function Panel:new (name, parent)
   parent = parent or UIParent;
 
   local this = {};
@@ -73,7 +73,7 @@ function Panel:OnLoad (callback)
 end
 
 function Panel:addButton (text, onClick)
-  local button = Factory.Button:New(self.panel, self:getChildName(), self.panel,
+  local button = Factory.Button:new(self.panel, self:getChildName(), self.panel,
       self.anchor.x + 3, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
 
   self.anchor.y = self.anchor.y - 7 - button.button:GetHeight();
@@ -82,7 +82,7 @@ function Panel:addButton (text, onClick)
 end
 
 function Panel:addCheckBox (text, onClick)
-  local checkBox = Factory.CheckBox:New(self.panel, self:getChildName(),
+  local checkBox = Factory.CheckBox:new(self.panel, self:getChildName(),
       self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT',
       onClick);
 
@@ -92,7 +92,7 @@ function Panel:addCheckBox (text, onClick)
 end
 
 function Panel:addSlider (min, max, text, lowText, highText, stepSize)
-  local slider = Factory.Slider:New(self.panel, self:getChildName(), self.panel,
+  local slider = Factory.Slider:new(self.panel, self:getChildName(), self.panel,
       self.anchor.x + 12, self.anchor.y - 15, text, min, max, lowText, highText,
       'TOPLEFT', 'TOPLEFT', stepSize);
 
@@ -102,7 +102,7 @@ function Panel:addSlider (min, max, text, lowText, highText, stepSize)
 end
 
 function Panel:addLabel (text)
-  local label = Factory.Label:New(self.panel, self.panel, self.anchor.x + 3,
+  local label = Factory.Label:new(self.panel, self.panel, self.anchor.x + 3,
       self.anchor.y, text, 'TOPLEFT', 'TOPLEFT')
 
   self.anchor.y = self.anchor.y - 7 - label.label:GetHeight();
@@ -111,7 +111,7 @@ function Panel:addLabel (text)
 end
 
 function Panel:addDropdown (text, options)
-  local dropdown = Factory.Dropdown:New(self.panel, self:getChildName(),
+  local dropdown = Factory.Dropdown:new(self.panel, self:getChildName(),
       self.panel, self.anchor.x + 10, self.anchor.y, text, options, 'TOPLEFT',
       'TOPLEFT');
 
@@ -121,7 +121,7 @@ function Panel:addDropdown (text, options)
 end
 
 function Panel:addEditBox (width, height)
-  local editBox = Factory.EditBox:New(self.panel, self:getChildName(),
+  local editBox = Factory.EditBox:new(self.panel, self:getChildName(),
       self.panel, self.anchor.x + 2, self.anchor.y, width, height, 'TOPLEFT',
       'TOPLEFT');
 

@@ -21,7 +21,7 @@ local function createButton (name, parent, text, anchors)
   return button;
 end
 
-function Button:New (parent, name, anchorFrame, xOffset, yOffset, text, anchor,
+function Button:new (parent, name, anchorFrame, xOffset, yOffset, text, anchor,
                      parentAnchor, onClick)
   local this = {};
 

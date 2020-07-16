@@ -3,7 +3,7 @@ local addonName, addon = ...;
 local tinsert = _G.tinsert;
 local C_Timer = _G.C_Timer;
 
-local callbackHandler = addon.Factory.CallbackHandler:create();
+local callbackHandler = addon.Factory.CallbackHandler:new();
 
 local eventFrame = _G.CreateFrame('frame');
 

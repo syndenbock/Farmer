@@ -7,5 +7,5 @@ local mainPanel = addon.mainPanel;
 addon.API.options = options;
 
 function options.createPanel (name)
-  return Panel:New(name, mainPanel);
+  return Panel:new(name, mainPanel);
 end

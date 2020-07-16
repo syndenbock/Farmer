@@ -23,7 +23,7 @@ local function createLabel (parent, text, anchors)
   return label;
 end
 
-function Label:New (parent, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
+function Label:new (parent, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
   local this = {};
 
   setmetatable(this, Label);

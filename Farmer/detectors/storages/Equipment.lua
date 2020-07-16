@@ -15,7 +15,7 @@ local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local UNITID_PLAYER = 'player';
 
 local currentEquipment = {};
-local storage = Storage:create();
+local storage = Storage:new();
 
 local function getEquipmentSlot (slot)
   local id = GetInventoryItemID(UNITID_PLAYER, slot);
@@ -38,7 +38,7 @@ local function getEquipment ()
 end
 
 local function updateStorage ()
-  storage = Storage:create();
+  storage = Storage:new();
 
   for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
     local slotInfo = currentEquipment[x];

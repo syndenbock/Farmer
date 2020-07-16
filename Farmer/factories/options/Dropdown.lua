@@ -57,7 +57,7 @@ local function createDropdown (name, parent, text, options, anchors)
   return dropdown;
 end
 
-function Dropdown:New (parent, name, anchorFrame, xOffset, yOffset, text,
+function Dropdown:new (parent, name, anchorFrame, xOffset, yOffset, text,
                        options, anchor, parentAnchor)
   local this = {};
 
