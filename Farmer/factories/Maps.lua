@@ -26,3 +26,12 @@ function Factory.WeakMap (baseMap)
   --[[ Mode 'kv' makes keys and values weak ]]
   return createMetaTable(baseMap, 'kv');
 end
+
+function Factory.ImmutableMap (baseMap)
+  return setmetatable(baseMap, {
+    __newindex = function ()
+      error('tried to modify immutable table');
+    end,
+    __metatable = false,
+  });
+end

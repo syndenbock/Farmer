@@ -8,6 +8,7 @@ local GetItemInfo = _G.GetItemInfo;
 local Item = _G.Item;
 
 local Storage = addon.Factory.Storage;
+local ImmutableMap = addon.Factory.ImmutableMap;
 
 local Items = {};
 local storageList = {};
@@ -73,7 +74,8 @@ local function packItemInfo (itemId, itemLink)
 end
 
 local function yellItem (itemId, itemLink, itemCount)
-  addon:yell('NEW_ITEM', packItemInfo(itemId, itemLink), itemCount);
+  addon:yell('NEW_ITEM', ImmutableMap(packItemInfo(itemId, itemLink)),
+      itemCount);
 end
 
 local function fetchItem (id, link, count)

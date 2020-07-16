@@ -1,6 +1,8 @@
 local addonName, addon = ...;
 
-local proxy = {};
+local proxy = {
+  __metatable = false,
+};
 
 function proxy:__newindex (key, value)
   assert(proxy[key] == nil, addonName .. ': addon key already in use: ' .. key);

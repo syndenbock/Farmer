@@ -12,6 +12,8 @@ local GetFactionInfo = _G.GetFactionInfo;
 local ExpandFactionHeader = _G.ExpandFactionHeader;
 local CollapseFactionHeader = _G.CollapseFactionHeader;
 
+local ImmutableMap = addon.Factory.ImmutableMap;
+
 local reputationCache;
 
 local function readParagonInfo (data, faction)
@@ -77,7 +79,7 @@ local function getReputationInfo ()
 end
 
 local function yellReputation (reputationInfo)
-  addon:yell('REPUTATION_CHANGED', reputationInfo);
+  addon:yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
 end
 
 local function checkReputationChange (faction, factionInfo)
