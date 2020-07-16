@@ -24,6 +24,12 @@ function Storage:create (options)
   return this;
 end
 
+function Storage.normalizeItemLink (itemLink)
+  local itemString = strmatch(itemLink, "item[%-?%d:]+");
+
+  return itemString and '|cffffffff' .. itemString .. '|hh|r' or itemLink;
+end
+
 function Storage:createItem (itemId, itemLink, itemCount)
   self.storage[itemId] = {
     count = itemCount,
@@ -100,10 +106,4 @@ function Storage:compare (compareStorage)
   end
 
   return new;
-end
-
-function Storage.normalizeItemLink (itemLink)
-  local itemString = strmatch(itemLink, "item[%-?%d:]+");
-
-  return itemString and '|cffffffff' .. itemString .. '|hh|r' or itemLink;
 end
