@@ -52,7 +52,7 @@ addon.on('GUILDBANKFRAME_OPENED', function ()
   isOpen = true;
 
   readCurrentTab();
-  Items:updateCurrentInventory();
+  Items.updateCurrentInventory();
 end);
 
 addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
@@ -65,7 +65,7 @@ addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
   --[[ Guild bank content was not updated, but tab was switched. ]]
   if (tabIndex ~= currentTab) then
     currentTab = tabIndex;
-    Items:updateCurrentInventory();
+    Items.updateCurrentInventory();
   end
 end);
 
@@ -75,6 +75,6 @@ addon.on('GUILDBANKFRAME_CLOSED', function ()
   currentTab = nil;
 end);
 
-Items:addStorage(function ()
+Items.addStorage(function ()
   return {storage};
 end);

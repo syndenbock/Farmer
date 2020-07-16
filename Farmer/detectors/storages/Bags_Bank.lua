@@ -68,7 +68,7 @@ local function initInventory ()
     updateBagCache(x);
   end
 
-  Items:updateCurrentInventory();
+  Items.updateCurrentInventory();
 end
 
 local function addEventListeners ()
@@ -80,7 +80,7 @@ local function addEventListeners ()
       updateBagCache(x);
     end
 
-    Items:updateCurrentInventory();
+    Items.updateCurrentInventory();
   end);
 
   addon.on('BANKFRAME_CLOSED', function ()
@@ -120,6 +120,6 @@ addon.on('PLAYER_LOGIN', function ()
   addEventListeners();
 end);
 
-Items:addStorage(function ()
+Items.addStorage(function ()
   return bagCache;
 end);

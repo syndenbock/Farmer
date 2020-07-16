@@ -56,14 +56,14 @@ local function checkSlotForArtifact (slot)
     local id = GetInventoryItemID(UNITID_PLAYER, slot);
     local link = GetInventoryItemLink(UNITID_PLAYER, slot);
 
-    Items:addItemToCurrentInventory(id, link, 1);
+    Items.addItemToCurrentInventory(id, link, 1);
   end
 end
 
 addon.on('PLAYER_LOGIN', function ()
   currentEquipment = getEquipment();
   updateStorage();
-  Items:updateCurrentInventory();
+  Items.updateCurrentInventory();
 end);
 
 addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
@@ -78,6 +78,6 @@ addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
   updateStorage();
 end);
 
-Items:addStorage(function ()
+Items.addStorage(function ()
   return {storage};
 end);

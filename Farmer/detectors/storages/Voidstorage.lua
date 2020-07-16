@@ -60,7 +60,7 @@ addon.on({'VOID_STORAGE_UPDATE', 'VOID_STORAGE_CONTENTS_UPDATE',
   readVoidStorage();
 
   if (isInit) then
-    Items:updateCurrentInventory();
+    Items.updateCurrentInventory();
   end
 end);
 
@@ -69,6 +69,6 @@ addon.on('VOID_STORAGE_CLOSE', function ()
   storage = nil;
 end);
 
-Items:addStorage(function ()
+Items.addStorage(function ()
   return {storage};
 end);

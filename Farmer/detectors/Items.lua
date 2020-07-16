@@ -36,15 +36,15 @@ local function getCachedInventory ()
   return inventory;
 end
 
-function Items:addStorage (storage)
+function Items.addStorage (storage)
   tinsert(storageList, storage);
 end
 
-function Items:updateCurrentInventory ()
+function Items.updateCurrentInventory ()
   currentInventory = getCachedInventory();
 end
 
-function Items:addItemToCurrentInventory (id, link, count)
+function Items.addItemToCurrentInventory (id, link, count)
   currentInventory:addItem(id, link, count);
 end
 
