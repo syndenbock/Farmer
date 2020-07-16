@@ -1,19 +1,14 @@
 local addonName, addon = ...;
 
 local API = {};
-local proxy = {};
 
-addon.API = API;
-
-function proxy:__index (key)
-  return proxy[key];
-end
-
-function proxy:__newindex (key, value)
-  assert(proxy[key] == nil, addonName .. ': addon key already in use: ' .. key);
-  proxy[key] = value;
-end
-
-setmetatable(API, proxy);
+addon.API = setmetatable({}, {
+  __metatable = false,
+  __index = API,
+  __newindex = function (_, key, value)
+    assert(API[key] == nil, addonName .. ': addon key already in use: ' .. key);
+    API[key] = value;
+  end
+});
 
 _G.FARMER_API = API;
