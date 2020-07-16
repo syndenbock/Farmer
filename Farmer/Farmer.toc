@@ -15,6 +15,7 @@ localizations/Chinese_simplified.lua
 
 core/Core.lua
 
+factories/CallbackHandler.lua
 factories/Maps.lua
 factories/Storage.lua
 factories/Set.lua

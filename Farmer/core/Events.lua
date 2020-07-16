@@ -3,17 +3,17 @@ local addonName, addon = ...;
 local tinsert = _G.tinsert;
 local C_Timer = _G.C_Timer;
 
-local events = {};
+local callbackHandler = addon.Factory.CallbackHandler:create();
+
 local eventFrame = _G.CreateFrame('frame');
 
-local function hookEvent (eventName, callback)
-  local list = events[eventName];
+eventFrame:SetScript('OnEvent', function (_, event, ...)
+  callbackHandler:call(event, ...);
+end);
 
-  if (not list) then
-    events[eventName] = {callback};
+local function hookEvent (eventName, callback)
+  if (callbackHandler:addCallback(eventName, callback)) then
     eventFrame:RegisterEvent(eventName);
-  else
-    tinsert(list, callback);
   end
 end
 
@@ -21,6 +21,10 @@ local function hookMultipleEvents (eventList, callback)
   for x = 1, #eventList, 1 do
     hookEvent(eventList[x], callback);
   end
+end
+
+local function unhookEvent (eventName, callback)
+  callbackHandler:removeCallback(eventName, callback);
 end
 
 function addon:on (eventList, callback)
@@ -33,25 +37,6 @@ function addon:on (eventList, callback)
     hookEvent(eventList, callback);
   end
 
-end
-
-local function unhookEvent (eventName, callback)
-  local list = events[eventName];
-
-  assert(list ~= nil,
-      addonName .. ': no hook was registered for event ' .. eventName);
-
-  local success = false;
-
-  for x = 1, #list, 1 do
-    if (callback == list[x]) then
-      success = true;
-      list[x] = false;
-    end
-  end
-
-  assert(success == true,
-      addonName .. ': no hook was registered for event ' .. eventName);
 end
 
 local function unhookMultipleEvents (eventList, callback)
@@ -68,18 +53,6 @@ function addon:off (eventList, callback)
     unhookMultipleEvents(eventList, callback);
   else
     unhookEvent(eventList, callback);
-  end
-end
-
-local function eventHandler (_, event, ...)
-  local callbackList = events[event];
-
-  for x = 1, #callbackList, 1 do
-    local callback = callbackList[x];
-
-    if (callback) then
-      callback(...);
-    end
   end
 end
 
@@ -164,4 +137,3 @@ function addon:funnel (eventList, ...)
   return registerFunnel(eventList, timeSpan, callback);
 end
 
-eventFrame:SetScript('OnEvent', eventHandler);
