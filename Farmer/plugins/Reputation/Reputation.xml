@@ -1,0 +1,4 @@
+<UI>
+  <script file="Options.lua"/>
+  <script file="Reputation.lua"/>
+</UI>

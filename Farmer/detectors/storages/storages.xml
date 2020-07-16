@@ -1,0 +1,6 @@
+<UI>
+  <script file="Bags_Bank.lua"/>
+  <script file="Equipment.lua"/>
+  <script file="Guildbank.lua"/>
+  <script file="Voidstorage.lua"/>
+</UI>

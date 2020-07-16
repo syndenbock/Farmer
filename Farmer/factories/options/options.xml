@@ -1,0 +1,9 @@
+<UI>
+  <script file="Button.lua"/>
+  <script file="CheckBox.lua"/>
+  <script file="Dropdown.lua"/>
+  <script file="Label.lua"/>
+  <script file="Panel.lua"/>
+  <script file="Slider.lua"/>
+  <script file="EditBox.lua"/>
+</UI>

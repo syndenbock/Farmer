@@ -1,7 +1,6 @@
 local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
-
 local Factory = addon:share('OptionFactory');
 local Button = {};
 

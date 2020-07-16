@@ -1,0 +1,7 @@
+<UI>
+  <script file="Localization.lua"/>
+  <script file="German.lua"/>
+  <script file="Russian.lua"/>
+  <script file="Korean.lua"/>
+  <script file="Chinese_simplified.lua"/>
+</UI>
