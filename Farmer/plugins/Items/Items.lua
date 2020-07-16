@@ -146,8 +146,8 @@ local function displayQuestItem (item, count)
 end
 
 local function isQuestItem (item)
-  return (item.classID == LE_ITEM_CLASS_QUESTITEM or
-          item.classID == LE_ITEM_CLASS_KEY);
+  return (item.classId == LE_ITEM_CLASS_QUESTITEM or
+          item.classId == LE_ITEM_CLASS_KEY);
 end
 
 local function handleQuestItem (item, count)
@@ -167,8 +167,8 @@ local function displayArtifactRelic (item, count)
 end
 
 local function isArtifactRelic (item)
-  return (item.classID == LE_ITEM_CLASS_GEM and
-          item.subClassID == LE_ITEM_GEM_ARTIFACTRELIC);
+  return (item.classId == LE_ITEM_CLASS_GEM and
+          item.subClassId == LE_ITEM_GEM_ARTIFACTRELIC);
 end
 
 local function handleArtifactRelic (item, count)
@@ -201,7 +201,7 @@ local function displayWeapon (item, count)
 end
 
 local function isWeapon (item)
-  return (item.classID == LE_ITEM_CLASS_WEAPON);
+  return (item.classId == LE_ITEM_CLASS_WEAPON);
 end
 
 local function handleWeapon (item, count)
@@ -219,7 +219,7 @@ end
 
 local function displayArmor (item, count)
   local equipLocation = item.equipLocation;
-  local subClassID = item.subClassID;
+  local subClassId = item.subClassId;
   local itemLevel = GetDetailedItemLevelInfo(item.link);
   local slotText = getItemSlotText(equipLocation);
   local textList;
@@ -229,9 +229,9 @@ local function displayArmor (item, count)
     textList = {slotText};
   elseif (equipLocation == INVTYPE_CLOAK) then
     textList = {itemLevel, slotText};
-  elseif (subClassID == LE_ITEM_ARMOR_GENERIC) then
+  elseif (subClassId == LE_ITEM_ARMOR_GENERIC) then
     textList = {itemLevel, slotText}; -- fingers/trinkets
-  elseif (subClassID > LE_ITEM_ARMOR_SHIELD) then -- we all know shields are offhand
+  elseif (subClassId > LE_ITEM_ARMOR_SHIELD) then -- we all know shields are offhand
     textList = {itemLevel, slotText};
   else
     textList = {itemLevel, item.subType, slotText};
@@ -243,7 +243,7 @@ local function displayArmor (item, count)
 end
 
 local function isArmor (item)
-  return (item.classID == LE_ITEM_CLASS_ARMOR)
+  return (item.classId == LE_ITEM_CLASS_ARMOR)
 end
 
 local function handleArmor (item, count)
