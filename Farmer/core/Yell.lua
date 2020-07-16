@@ -1,24 +1,15 @@
 local _, addon = ...;
 
-local tinsert = _G.tinsert;
-local callbacks = {};
+local callbackHandler = addon.Factory.CallbackHandler:create();
 
 function addon:listen (message, callback)
-  callbacks[message] = callbacks[message] or {};
-
-  tinsert(callbacks[message], callback);
+  callbackHandler:addCallback(message, callback);
 end
 
-local function executeCallbackList (callbackList, ...)
-  for x = 1, #callbackList, 1 do
-    callbackList[x](...);
-  end
+function addon:unlisten (message, callback)
+  callbackHandler:removeCallback(message, callback);
 end
 
 function addon:yell (message, ...)
-  local callbackList = callbacks[message];
-
-  if (not callbackList) then return end
-
-  executeCallbackList(callbackList, ...);
+  callbackHandler:call(message, ...);
 end
