@@ -191,7 +191,7 @@ local function createRadarFrame ()
   radar:SetFrameStrata('MEDIUM');
   radar:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
   radar:Hide();
-  addon:setTrueScale(radar, 1);
+  addon.setTrueScale(radar, 1);
 
   return radar;
 end
@@ -286,7 +286,7 @@ end
 
 local function updateMinimapChildren ()
   --[[ Execute on the next frame so other addons can update their icons ]]
-  addon:executeOnNextFrame(function ()
+  addon.executeOnNextFrame(function ()
     SetIgnoreParentAlpha({Minimap:GetChildren()}, true);
     SetIgnoreParentAlpha({Minimap:GetRegions()}, true);
   end);
@@ -363,7 +363,7 @@ local function enableFarmMode ()
 
   setMinimapRotation(1);
 
-  addon:on('ZONE_CHANGED', updateMinimapChildren);
+  addon.on('ZONE_CHANGED', updateMinimapChildren);
 
   currentMode = MODE_ENUM.ON;
 end
@@ -388,7 +388,7 @@ local function disableFarmMode ()
 
   setMinimapRotation(minimapDefaults.rotation);
 
-  addon:off('ZONE_CHANGED', updateMinimapChildren);
+  addon.off('ZONE_CHANGED', updateMinimapChildren);
 
   currentMode = MODE_ENUM.OFF;
 end
@@ -411,8 +411,8 @@ local function restoreMinimapRotation ()
   setMinimapRotation(minimapDefaults.rotation);
 end
 
-addon:on('PLAYER_LOGIN', init);
-addon:on('PLAYER_LOGOUT', restoreMinimapRotation);
+addon.on('PLAYER_LOGIN', init);
+addon.on('PLAYER_LOGOUT', restoreMinimapRotation);
 
-addon:slash('radar', toggleFarmMode);
-addon:exposeBinding('TOGGLERADAR', L['Toggle radar'], toggleFarmMode);
+addon.slash('radar', toggleFarmMode);
+addon.exposeBinding('TOGGLERADAR', L['Toggle radar'], toggleFarmMode);

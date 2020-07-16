@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-if (addon:isClassic()) then return end
+if (addon.isClassic()) then return end
 
 local L = addon.L;
 

@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon:isClassic()) then return end
+if (addon.isClassic()) then return end
 
 local floor = _G.floor;
 local tinsert = _G.tinsert;
@@ -79,7 +79,7 @@ local function getReputationInfo ()
 end
 
 local function yellReputation (reputationInfo)
-  addon:yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
+  addon.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
 end
 
 local function checkReputationChange (faction, factionInfo)
@@ -117,11 +117,11 @@ local function checkReputations ()
   reputationCache = repInfo;
 end
 
-addon:on('PLAYER_LOGIN', function ()
+addon.on('PLAYER_LOGIN', function ()
   reputationCache = getReputationInfo();
 end);
 
-addon:funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
+addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
 
 --##############################################################################
 -- testing

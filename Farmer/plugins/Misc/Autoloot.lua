@@ -27,7 +27,7 @@ local function performAutoLoot ()
   end
 end
 
-addon:on('LOOT_READY', function (autoLoot)
+addon.on('LOOT_READY', function (autoLoot)
   --[[ the LOOT_READY sometimes fires multiple times when looting, so we only
     handle it once until loot is closed ]]
   if (lootIsOpen == true) then return end
@@ -41,16 +41,16 @@ addon:on('LOOT_READY', function (autoLoot)
   end
 end);
 
-addon:on('LOOT_OPENED', function ()
+addon.on('LOOT_OPENED', function ()
   LootFrame:SetAlpha(1);
 end);
 
-addon:on('LOOT_CLOSED', function ()
+addon.on('LOOT_CLOSED', function ()
   lootIsOpen = false;
 
   LootFrame:SetAlpha(0);
 end);
 
-addon:on('PLAYER_ENTERING_WORLD', function ()
+addon.on('PLAYER_ENTERING_WORLD', function ()
   lootIsOpen = false;
 end);

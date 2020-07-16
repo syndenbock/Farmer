@@ -97,4 +97,4 @@ local function scanPets ()
   processPetQueue(petQueue, freeSlots);
 end
 
-addon:slash('cagepets', scanPets);
+addon.slash('cagepets', scanPets);

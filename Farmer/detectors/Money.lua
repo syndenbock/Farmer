@@ -4,11 +4,11 @@ local GetMoney = _G.GetMoney;
 
 local moneyStamp;
 
-addon:on('PLAYER_LOGIN', function ()
+addon.on('PLAYER_LOGIN', function ()
   moneyStamp = GetMoney();
 end);
 
-addon:on('PLAYER_MONEY', function ()
+addon.on('PLAYER_MONEY', function ()
   if (not moneyStamp) then return end
 
   local money = GetMoney();
@@ -16,5 +16,5 @@ addon:on('PLAYER_MONEY', function ()
 
   moneyStamp = money;
 
-  addon:yell('MONEY_CHANGED', difference);
+  addon.yell('MONEY_CHANGED', difference);
 end);

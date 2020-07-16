@@ -161,7 +161,7 @@ end
 
 local function displayArtifactRelic (item, count)
   local itemLevel = GetDetailedItemLevelInfo(item.link);
-  local text = addon:stringJoin({itemLevel, item.subType}, ' ');
+  local text = addon.stringJoin({itemLevel, item.subType}, ' ');
 
   displayEquipment(item, text, count, getRarityColor(item.rarity));
 end
@@ -195,7 +195,7 @@ end
 
 local function displayWeapon (item, count)
   local itemLevel = GetDetailedItemLevelInfo(item.link);
-  local text = addon:stringJoin({itemLevel, item.subType}, ' ');
+  local text = addon.stringJoin({itemLevel, item.subType}, ' ');
 
   displayEquipment(item, text, count, getRarityColor(item.rarity));
 end
@@ -237,7 +237,7 @@ local function displayArmor (item, count)
     textList = {itemLevel, item.subType, slotText};
   end
 
-  text = addon:stringJoin(textList, ' ');
+  text = addon.stringJoin(textList, ' ');
 
   displayEquipment(item, text, count, getRarityColor(item.rarity));
 end
@@ -288,4 +288,4 @@ local function checkItem (itemInfo, count)
   end
 end
 
-addon:listen('NEW_ITEM', checkItem);
+addon.listen('NEW_ITEM', checkItem);

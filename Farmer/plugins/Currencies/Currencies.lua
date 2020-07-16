@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-if (addon:isClassic()) then return end
+if (addon.isClassic()) then return end
 
 local GetCurrencyInfo = _G.GetCurrencyInfo;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
@@ -41,7 +41,7 @@ local function displayCurrency (id, amount, total)
   addon.Print.printItem(texture, name, amount, text, {1, 0.9, 0, 1});
 end
 
-addon:listen('CURRENCY_CHANGED', function (id, amount, total)
+addon.listen('CURRENCY_CHANGED', function (id, amount, total)
   if (not shouldCurrencyBeDisplayed(id, amount)) then return end
 
   displayCurrency(id, amount, total);

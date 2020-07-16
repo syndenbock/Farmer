@@ -30,7 +30,7 @@ panel:OnSave(function ()
   saved.farmerOptions.money = moneyBox:GetValue();
 end);
 
-addon:slash('gold', function (param)
+addon.slash('gold', function (param)
   local money = GetMoney();
 
   if (param == 'reset') then
@@ -40,7 +40,7 @@ addon:slash('gold', function (param)
   end
 
   local difference = money - saved.earningStamp;
-  local text = addon:formatMoney(abs(difference));
+  local text = addon.formatMoney(abs(difference));
 
   if (difference >= 0) then
     print(L['Money earned this session: '] .. text);

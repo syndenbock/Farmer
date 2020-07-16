@@ -7,7 +7,7 @@ local unpack = _G.unpack;
 local L = addon.L;
 local slashCommands = {};
 
-function addon:slash (command, callback)
+function addon.slash (command, callback)
   assert(slashCommands[command] == nil,
       addonName .. ': slash handler already exists for ' .. command);
 

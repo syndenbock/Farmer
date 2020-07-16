@@ -74,7 +74,7 @@ local function packItemInfo (itemId, itemLink)
 end
 
 local function yellItem (itemId, itemLink, itemCount)
-  addon:yell('NEW_ITEM', ImmutableMap(packItemInfo(itemId, itemLink)),
+  addon.yell('NEW_ITEM', ImmutableMap(packItemInfo(itemId, itemLink)),
       itemCount);
 end
 
@@ -128,7 +128,7 @@ end
 --[[ Funneling the check so it executes on the next frame after
      BAG_UPDATE_DELAYED. This allows storages to update first to avoid race
      conditions ]]
-addon:funnel('BAG_UPDATE_DELAYED', checkInventory);
+addon.funnel('BAG_UPDATE_DELAYED', checkInventory);
 
 --##############################################################################
 -- testing

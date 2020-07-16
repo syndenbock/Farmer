@@ -36,14 +36,14 @@ local function displayReputation (info)
   if (info.standingChanged) then
     local iconPath = 'interface/icons/spell_holy_prayerofmendingtga.blp';
 
-    text = addon:stringJoin({text, addon:getIcon(iconPath),
+    text = addon.stringJoin({text, addon.getIcon(iconPath),
                              getStandingLabel(info.standing)}, ' ');
   end
 
   if (info.paragonLevelGained) then
     local iconPath = 'interface/icons/inv_treasurechest_felfirecitadel.blp';
 
-    text = addon:stringJoin({text, addon:getIcon(iconPath)}, ' ');
+    text = addon.stringJoin({text, addon.getIcon(iconPath)}, ' ');
   end
 
   --[[ could have stored faction name when generating faction info, but we
@@ -53,7 +53,7 @@ local function displayReputation (info)
   addon.Print.printMessage(text, MESSAGE_COLORS);
 end
 
-addon:listen('REPUTATION_CHANGED', function (reputationInfo)
+addon.listen('REPUTATION_CHANGED', function (reputationInfo)
   if (not checkReputationOptions() or
       not shouldReputationBeDisplayed(reputationInfo)) then
     return;

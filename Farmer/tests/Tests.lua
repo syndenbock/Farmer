@@ -12,7 +12,7 @@ function tests.testNextFrame ()
     print('C_Timer', GetTime());
   end);
 
-  addon:executeOnNextFrame(function ()
+  addon.executeOnNextFrame(function ()
     print('OnUpdate', GetTime());
   end);
 end
@@ -23,7 +23,7 @@ function tests.memory (addonName)
   print(_G.BreakUpLargeNumbers(_G.GetAddOnMemoryUsage(addonName)));
 end
 
-addon:slash('test', function (name, ...)
+addon.slash('test', function (name, ...)
   local test = tests[name];
 
   if (test) then

@@ -11,10 +11,10 @@ local function shouldMoneyBeDisplayed (amount)
 end
 
 local function displayMoney (amount)
-  addon.Print.printMessage(addon:formatMoney(amount), {1, 1, 1});
+  addon.Print.printMessage(addon.formatMoney(amount), {1, 1, 1});
 end
 
-addon:listen('MONEY_CHANGED', function (amount)
+addon.listen('MONEY_CHANGED', function (amount)
   if (shouldMoneyBeDisplayed(amount)) then
     displayMoney(amount);
   end

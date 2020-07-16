@@ -40,15 +40,15 @@ farmerFrame:Show();
 
 --[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
 not fire, so we clear the flag after entering the world --]]
-addon:on('PLAYER_ENTERING_WORLD', function ()
+addon.on('PLAYER_ENTERING_WORLD', function ()
   mailIsOpen = false;
 end);
 
-addon:on('MAIL_SHOW', function ()
+addon.on('MAIL_SHOW', function ()
   mailIsOpen = true;
 end);
 
-addon:on('MAIL_CLOSED', function ()
+addon.on('MAIL_CLOSED', function ()
   mailIsOpen = false;
 end);
 
@@ -58,14 +58,14 @@ end
 
 local function printStackableItemTotal (id, texture, name, count, colors)
   local totalCount = getFormattedItemCount(id, true);
-  local text = addon:stringJoin({'(', totalCount, ')'}, '');
+  local text = addon.stringJoin({'(', totalCount, ')'}, '');
 
   Print.printItem(texture, name, count, text, colors);
 end
 
 local function printStackableItemBags (id, texture, name, count, colors)
   local bagCount = getFormattedItemCount(id, false);
-  local text = addon:stringJoin({'(', bagCount, ')'}, '');
+  local text = addon.stringJoin({'(', bagCount, ')'}, '');
 
   Print.printItem(texture, name, count, text, colors);
 end
@@ -73,7 +73,7 @@ end
 local function printStackableItemTotalAndBags (id, texture, name, count, colors)
   local bagCount = getFormattedItemCount(id, false);
   local totalCount = getFormattedItemCount(id, true);
-  local text = addon:stringJoin({'(', bagCount, '/', totalCount, ')'}, '');
+  local text = addon.stringJoin({'(', bagCount, '/', totalCount, ')'}, '');
 
   Print.printItem(texture, name, count, text, colors);
 end
@@ -126,7 +126,7 @@ function Print.printItem (texture, name, count, text, colors, options)
   count = count or 1;
   options = options or {};
 
-  local icon = addon:getIcon(texture);
+  local icon = addon.getIcon(texture);
   local itemName;
   local itemCount;
   local message;
@@ -140,7 +140,7 @@ function Print.printItem (texture, name, count, text, colors, options)
     itemName = name;
   end
 
-  message = addon:stringJoin({itemName, itemCount, text}, ' ');
+  message = addon.stringJoin({itemName, itemCount, text}, ' ');
 
   if (message == '') then
     message = name;

@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon:isClassic()) then return end;
+if (addon.isClassic()) then return end;
 
 local tinsert = _G.tinsert;
 local TradeSkillUI = _G.C_TradeSkillUI;
@@ -101,16 +101,16 @@ local function checkProfessionChange (id, info)
   local change = info.rank - (oldInfo.rank or 0);
 
   if (change ~= 0) then
-    addon:yell('PROFESSION_CHANGED', id, change, info.name, info.icon, info.rank, info.maxRank);
+    addon.yell('PROFESSION_CHANGED', id, change, info.name, info.icon, info.rank, info.maxRank);
   end
 end
 
-addon:on('PLAYER_LOGIN', function ()
+addon.on('PLAYER_LOGIN', function ()
   PROFESSION_CATEGORIES = getProfessionCategories();
   professionCache = getLearnedProfessionInfo();
 end);
 
-addon:on('CHAT_MSG_SKILL', function ()
+addon.on('CHAT_MSG_SKILL', function ()
   if (not professionCache) then return end
 
   local data = getLearnedProfessionInfo();

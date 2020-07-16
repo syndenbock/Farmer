@@ -72,7 +72,7 @@ local function initInventory ()
 end
 
 local function addEventListeners ()
-  addon:on('BANKFRAME_OPENED', function ()
+  addon.on('BANKFRAME_OPENED', function ()
     updateBagCache(BANKBAG_CONTAINER);
     updateBagCache(BANK_CONTAINER);
 
@@ -83,7 +83,7 @@ local function addEventListeners ()
     Items:updateCurrentInventory();
   end);
 
-  addon:on('BANKFRAME_CLOSED', function ()
+  addon.on('BANKFRAME_CLOSED', function ()
     bagCache[BANKBAG_CONTAINER] = nil;
     bagCache[BANK_CONTAINER] = nil;
 
@@ -92,9 +92,9 @@ local function addEventListeners ()
     end
   end);
 
-  addon:on('BAG_UPDATE', flagBag);
+  addon.on('BAG_UPDATE', flagBag);
 
-  addon:on('PLAYERBANKSLOTS_CHANGED', function (slot)
+  addon.on('PLAYERBANKSLOTS_CHANGED', function (slot)
     local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
 
     if (slot <= maxSlot) then
@@ -104,18 +104,18 @@ local function addEventListeners ()
     end
   end);
 
-  addon:on('BAG_UPDATE_DELAYED', function ()
+  addon.on('BAG_UPDATE_DELAYED', function ()
     updateFlaggedBags();
   end);
 
-  if (addon:isClassic() == false) then
-    addon:on('PLAYERREAGENTBANKSLOTS_CHANGED', function ()
+  if (addon.isClassic() == false) then
+    addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function ()
       flagBag(REAGENTBANK_CONTAINER);
     end);
   end
 end
 
-addon:on('PLAYER_LOGIN', function ()
+addon.on('PLAYER_LOGIN', function ()
   initInventory();
   addEventListeners();
 end);

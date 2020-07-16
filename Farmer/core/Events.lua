@@ -27,7 +27,7 @@ local function unhookEvent (eventName, callback)
   callbackHandler:removeCallback(eventName, callback);
 end
 
-function addon:on (eventList, callback)
+function addon.on (eventList, callback)
   assert(type(callback) == 'function',
     addonName .. ': callback is not a function');
 
@@ -45,7 +45,7 @@ local function unhookMultipleEvents (eventList, callback)
   end
 end
 
-function addon:off (eventList, callback)
+function addon.off (eventList, callback)
   assert(type(callback) == 'function',
     addonName .. ': callback is not a function');
 
@@ -73,7 +73,7 @@ do
     end
   end
 
-  function addon:executeOnNextFrame (callback)
+  function addon.executeOnNextFrame (callback)
     if (not updateList) then
       updateList = {callback};
       updateFrame:SetScript('OnUpdate', executeUpdateCallbacks);
@@ -104,7 +104,7 @@ local function generateFunnel (timeSpan, callback)
     flag = true;
 
     if (timeSpan < minTime) then
-      addon:executeOnNextFrame(handler);
+      addon.executeOnNextFrame(handler);
     else
       C_Timer.After(timeSpan, handler);
     end
@@ -116,12 +116,12 @@ end
 local function registerFunnel (eventList, timeSpan, callback)
   local funnel = generateFunnel(timeSpan, callback);
 
-  addon:on(eventList, funnel);
+  addon.on(eventList, funnel);
 
   return funnel;
 end
 
-function addon:funnel (eventList, ...)
+function addon.funnel (eventList, ...)
   local arguments = {...};
   local callback;
   local timeSpan;

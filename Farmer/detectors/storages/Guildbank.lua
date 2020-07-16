@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon:isClassic()) then return end
+if (addon.isClassic()) then return end
 
 local Storage = addon.Factory.Storage;
 local Items = addon.Items;
@@ -48,14 +48,14 @@ local function readCurrentTab ()
   storage = readGuildBankTab(tabIndex);
 end
 
-addon:on('GUILDBANKFRAME_OPENED', function ()
+addon.on('GUILDBANKFRAME_OPENED', function ()
   isOpen = true;
 
   readCurrentTab();
   Items:updateCurrentInventory();
 end);
 
-addon:on('GUILDBANKBAGSLOTS_CHANGED', function ()
+addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
   if (isOpen == false) then return end
 
   local tabIndex = GetCurrentGuildBankTab();
@@ -69,7 +69,7 @@ addon:on('GUILDBANKBAGSLOTS_CHANGED', function ()
   end
 end);
 
-addon:on('GUILDBANKFRAME_CLOSED', function ()
+addon.on('GUILDBANKFRAME_CLOSED', function ()
   isOpen = false;
   storage = nil;
   currentTab = nil;

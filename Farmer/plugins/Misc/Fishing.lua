@@ -56,7 +56,7 @@ local function shouldPlatesBeRestored (unit)
           (hideState == HIDE_STATES.hidden or hideState == HIDE_STATES.hide));
 end
 
-addon:on('UNIT_SPELLCAST_CHANNEL_START', function (unit, _, spellid)
+addon.on('UNIT_SPELLCAST_CHANNEL_START', function (unit, _, spellid)
   if (not shouldPlatesBeHidden(unit) or
       not isSpellFishing(spellid)) then
     return;
@@ -73,7 +73,7 @@ addon:on('UNIT_SPELLCAST_CHANNEL_START', function (unit, _, spellid)
   end
 end);
 
-addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function (unit)
+addon.on('UNIT_SPELLCAST_CHANNEL_STOP', function (unit)
   if (not shouldPlatesBeRestored(unit)) then return end
 
   if (InCombatLockdown() == true) then
@@ -83,7 +83,7 @@ addon:on('UNIT_SPELLCAST_CHANNEL_STOP', function (unit)
   end
 end);
 
-addon:on('PLAYER_REGEN_ENABLED', function ()
+addon.on('PLAYER_REGEN_ENABLED', function ()
   if (hideState == HIDE_STATES.hide) then
     hidePlates();
   elseif (hideState == HIDE_STATES.restore) then
@@ -91,4 +91,4 @@ addon:on('PLAYER_REGEN_ENABLED', function ()
   end
 end);
 
-addon:on('PLAYER_ENTERING_WORLD', restorePlates);
+addon.on('PLAYER_ENTERING_WORLD', restorePlates);

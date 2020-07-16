@@ -92,12 +92,12 @@ local function globalizeSavedVariables ()
   end
 end
 
-addon:on('ADDON_LOADED', function (addonName)
+addon.on('ADDON_LOADED', function (addonName)
   readAddonVariables(addonName);
   executeLoadCallbacks(addonName);
 end);
 
-addon:on('PLAYER_LOGOUT', globalizeSavedVariables);
+addon.on('PLAYER_LOGOUT', globalizeSavedVariables);
 
 local function SavedVariablesHandler (addonName, variables, defaults)
   local variableSet = awaiting[addonName] or Set:create(variables);

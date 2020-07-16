@@ -51,7 +51,7 @@ local saved = addon.SavedVariablesHandler(addonName, {'earningStamp', 'farmerOpt
 addon.savedVariables = saved.vars;
 
 local function storePosition ()
-  local icon = addon:getIcon(GetItemIcon(ADDON_ICON_ID));
+  local icon = addon.getIcon(GetItemIcon(ADDON_ICON_ID));
 
   saved.vars.farmerOptions.anchor = {farmerFrame:GetPoint()};
   farmerFrame:EnableMouse(false);
@@ -65,7 +65,7 @@ local function storePosition ()
 end
 
 local function moveFrame ()
-  local icon = addon:getIcon(GetItemIcon(ADDON_ICON_ID));
+  local icon = addon.getIcon(GetItemIcon(ADDON_ICON_ID));
 
   farmerFrame:RegisterForDrag('LeftButton');
   farmerFrame:SetFading(false);
@@ -111,14 +111,14 @@ local function setFontSize (size, scale, outline)
   font:SetShadowColor(0, 0, 0);
   font:SetShadowOffset(shadowOffset, -shadowOffset);
 
-  addonVars.iconOffset = addon:stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
+  addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
 end
 
 local function applyOptions ()
   local options = saved.vars.farmerOptions;
 
   if (options.hideLootToasts == true) then
-    if (not addon:isClassic()) then
+    if (not addon.isClassic()) then
       AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST')
       AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST_UPGRADE')
       AlertFrame:UnregisterEvent('BONUS_ROLL_RESULT')
@@ -126,7 +126,7 @@ local function applyOptions ()
 
     AlertFrame:UnregisterEvent('LOOT_ITEM_ROLL_WON')
   else
-    if (not addon:isClassic()) then
+    if (not addon.isClassic()) then
       AlertFrame:RegisterEvent('SHOW_LOOT_TOAST')
       AlertFrame:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
       AlertFrame:RegisterEvent('BONUS_ROLL_RESULT')
@@ -149,7 +149,7 @@ local function initPanel ()
   local arenaBox;
   local expeditionBox;
 
-  if (not addon:isClassic()) then
+  if (not addon.isClassic()) then
     arenaBox = mainPanel:addCheckBox(L['don\'t display in arena']);
     expeditionBox = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
   end
@@ -191,7 +191,7 @@ local function initPanel ()
     toastBox:SetValue(options.hideLootToasts);
     mailBox:SetValue(options.hideAtMailbox);
 
-    if (not addon:isClassic()) then
+    if (not addon.isClassic()) then
       arenaBox:SetValue(options.hideInArena);
       expeditionBox:SetValue(options.hideOnExpeditions);
     end
@@ -211,7 +211,7 @@ local function initPanel ()
     options.hideLootToasts = toastBox:GetValue();
     options.hideAtMailbox = mailBox:GetValue();
 
-    if (not addon:isClassic()) then
+    if (not addon.isClassic()) then
       options.hideInArena = arenaBox:GetValue();
       options.hideOnExpeditions = expeditionBox:GetValue();
     end
@@ -253,14 +253,14 @@ end);
 ///#############################################################################
 --]]
 
-addon:slash('move', moveFrame);
-addon:slash('reset', setDefaultPosition);
+addon.slash('move', moveFrame);
+addon.slash('reset', setDefaultPosition);
 
-addon:slash('version', function ()
+addon.slash('version', function ()
   print(addonName .. ' version ' .. VERSION_TOC);
 end);
 
-addon:slash('default', function ()
+addon.slash('default', function ()
   InterfaceOptionsFrame_Show();
   InterfaceOptionsFrame_OpenToCategory(mainPanel.panel);
 end);

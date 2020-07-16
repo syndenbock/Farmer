@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon:isClassic()) then return end
+if (addon.isClassic()) then return end
 
 local tinsert = _G.tinsert;
 local GetCurrencyInfo = _G.GetCurrencyInfo;
@@ -79,7 +79,7 @@ local function fillCurrencyTable ()
 end
 
 local function yellCurrency (id, amount, total)
-  addon:yell('CURRENCY_CHANGED', id, amount, total);
+  addon.yell('CURRENCY_CHANGED', id, amount, total);
 end
 
 local function handleCurrency (id, total)
@@ -89,10 +89,10 @@ local function handleCurrency (id, total)
   yellCurrency(id, amount, total);
 end
 
-addon:on('PLAYER_LOGIN', fillCurrencyTable);
+addon.on('PLAYER_LOGIN', fillCurrencyTable);
 
 -- amount passed by the event is always positive so we cannot use it
-addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total)
+addon.on('CURRENCY_DISPLAY_UPDATE', function (id, total)
   if (not currencyTable or not id) then return end
 
   handleCurrency(id, total);

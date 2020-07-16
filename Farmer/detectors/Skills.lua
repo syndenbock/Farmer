@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (not addon:isClassic()) then return end
+if (not addon.isClassic()) then return end
 
 local tinsert = _G.tinsert;
 local GetNumSkillLines = _G.GetNumSkillLines;
@@ -58,7 +58,7 @@ local function checkSkillChange (skillName, skillInfo)
 
   if (change == 0) then return end
 
-  addon:yell('SKILL_CHANGED', skillName, change, skillInfo.rank,
+  addon.yell('SKILL_CHANGED', skillName, change, skillInfo.rank,
       skillInfo.maxRank);
 end
 
@@ -72,12 +72,12 @@ local function checkSkills ()
   skillCache = data;
 end
 
-addon:on('CHAT_MSG_SKILL', function ()
+addon.on('CHAT_MSG_SKILL', function ()
   if (not skillCache) then return end
 
   checkSkills();
 end);
 
-addon:on('PLAYER_LOGIN', function ()
+addon.on('PLAYER_LOGIN', function ()
   skillCache = getSkillInfo();
 end);

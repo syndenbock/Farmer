@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon:isClassic()) then return end
+if (addon.isClassic()) then return end
 
 local Storage = addon.Factory.Storage;
 local Items = addon.Items;
@@ -47,11 +47,11 @@ local function readVoidStorage ()
   storage = voidStorage;
 end
 
-addon:on('VOID_STORAGE_OPEN', function ()
+addon.on('VOID_STORAGE_OPEN', function ()
   isOpen = true;
 end);
 
-addon:on({'VOID_STORAGE_UPDATE', 'VOID_STORAGE_CONTENTS_UPDATE',
+addon.on({'VOID_STORAGE_UPDATE', 'VOID_STORAGE_CONTENTS_UPDATE',
     'VOID_TRANSFER_DONE'}, function ()
   if (isOpen == false) then return end
 
@@ -64,7 +64,7 @@ addon:on({'VOID_STORAGE_UPDATE', 'VOID_STORAGE_CONTENTS_UPDATE',
   end
 end);
 
-addon:on('VOID_STORAGE_CLOSE', function ()
+addon.on('VOID_STORAGE_CLOSE', function ()
   isOpen = false;
   storage = nil;
 end);

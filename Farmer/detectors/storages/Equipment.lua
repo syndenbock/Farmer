@@ -60,13 +60,13 @@ local function checkSlotForArtifact (slot)
   end
 end
 
-addon:on('PLAYER_LOGIN', function ()
+addon.on('PLAYER_LOGIN', function ()
   currentEquipment = getEquipment();
   updateStorage();
   Items:updateCurrentInventory();
 end);
 
-addon:on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
+addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
   --[[ we need to do this because when equipping artifact weapons, a second item
          appears in the offhand slot --]]
   if (slot == INVSLOT_OFFHAND) then

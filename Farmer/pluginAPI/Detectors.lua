@@ -18,7 +18,7 @@ local ALLOWED_HOOKS = {
 function detectors:on(hook, callback)
   assert(ALLOWED_HOOKS[hook] ~= nil, addonName .. ': unknown detector: ' .. hook);
 
-  addon:listen(hook, function (...)
+  addon.listen(hook, function (...)
     pcall(callback, ...);
   end);
 end

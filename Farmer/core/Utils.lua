@@ -10,11 +10,11 @@ local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
 
 local addonVars = addon:share('vars');
 
-function addon:isClassic ()
+function addon.isClassic ()
   return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
 end
 
-function addon:stringJoin (stringList, joiner)
+function addon.stringJoin (stringList, joiner)
   joiner = joiner or '';
   local result;
 
@@ -27,7 +27,7 @@ function addon:stringJoin (stringList, joiner)
   return result or '';
 end
 
-function addon:formatMoney (money)
+function addon.formatMoney (money)
   local ICON_GOLD = '|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:0:0|t';
   local ICON_SILVER = '|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:0:0|t';
   local ICON_COPPER = '|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:0:0|t';
@@ -49,19 +49,19 @@ function addon:formatMoney (money)
     table.insert(text, BreakUpLargeNumbers(copper) .. ICON_COPPER);
   end
 
-  return addon:stringJoin(text, ' ');
+  return addon.stringJoin(text, ' ');
 end
 
-function addon:getIcon (texture)
-  return addon:stringJoin({'|T', texture, addonVars.iconOffset, '|t'}, '');
+function addon.getIcon (texture)
+  return addon.stringJoin({'|T', texture, addonVars.iconOffset, '|t'}, '');
 end
 
-function addon:setTrueScale (frame, scale)
+function addon.setTrueScale (frame, scale)
   frame:SetScale(1);
   frame:SetScale(scale / frame:GetEffectiveScale());
 end
 
-function addon:printTable (table)
+function addon.printTable (table)
   if (type(table) ~= 'table') then
     print(table);
     return;
