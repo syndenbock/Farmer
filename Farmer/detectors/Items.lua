@@ -134,7 +134,7 @@ addon.funnel('BAG_UPDATE_DELAYED', checkInventory);
 -- testing
 --##############################################################################
 
-local tests = addon:share('tests');
+local tests = addon.share('tests');
 
 local function testItem (id, count)
   local _, link = GetItemInfo(id);

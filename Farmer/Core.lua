@@ -20,7 +20,7 @@ setmetatable(addon, {
   end,
 });
 
-function addon:share (name)
+function addon.share (name)
   local shared = proxy[name];
 
   if (shared == nil) then

@@ -127,7 +127,7 @@ addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
 -- testing
 --##############################################################################
 
-local tests = addon:share('tests');
+local tests = addon.share('tests');
 
 function tests.reputation ()
   yellReputation({

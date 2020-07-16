@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
-local Factory = addon:share('OptionFactory');
+local Factory = addon.share('OptionFactory');
 
 local Label = {};
 

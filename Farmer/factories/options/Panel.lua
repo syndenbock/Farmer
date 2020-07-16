@@ -4,7 +4,7 @@ local CreateFrame = _G.CreateFrame;
 local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
 local UIParent = _G.UIParent;
 
-local Factory = addon:share('OptionFactory');
+local Factory = addon.share('OptionFactory');
 
 local Panel = {};
 local panelCount = 0;

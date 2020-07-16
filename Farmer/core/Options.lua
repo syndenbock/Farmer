@@ -11,7 +11,7 @@ local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 local AlertFrame = _G.AlertFrame;
 
 local L = addon.L;
-local addonVars = addon:share('vars');
+local addonVars = addon.share('vars');
 
 local VERSION_CURRENT = 0300000;
 local ADDON_ICON_ID = 3334;

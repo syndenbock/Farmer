@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local tests = addon:share('tests');
+local tests = addon.share('tests');
 
 function tests.testNextFrame ()
   local GetTime = _G.GetTime;

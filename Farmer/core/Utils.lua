@@ -8,7 +8,7 @@ local COPPER_PER_GOLD = _G.COPPER_PER_GOLD;
 local COPPER_PER_SILVER = _G.COPPER_PER_SILVER;
 local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
 
-local addonVars = addon:share('vars');
+local addonVars = addon.share('vars');
 
 function addon.isClassic ()
   return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;

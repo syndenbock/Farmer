@@ -102,7 +102,7 @@ end);
 -- testing
 --##############################################################################
 
-local tests = addon:share('tests');
+local tests = addon.share('tests');
 
 function tests.currency ()
   yellCurrency(1755, 1500, 15357);

@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local strmatch = _G.strmatch;
 
-local Factory = addon:share('Factory');
+local Factory = addon.share('Factory');
 
 local Storage = {};
 
