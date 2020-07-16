@@ -1,35 +1,40 @@
 local addonName, addon = ...;
 
+local GetNumLootItems = _G.GetNumLootItems;
+local GetLootSlotInfo = _G.GetLootSlotInfo;
+local LootSlot = _G.LootSlot;
+local LootFrame = _G.LootFrame;
+
 local lootIsOpen = false;
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
 
 LootFrame:SetAlpha(0);
 
-local function performAutoLoot ()
-  local numloot = GetNumLootItems();
+local function autoLootSlot (slot)
+  local info = {GetLootSlotInfo(slot)};
+  local locked = info[6];
 
-  for i = 1, numloot, 1 do
-  -- for i = GetNumLootItems(), 1, -1 do
-  -- for i = 1, GetNumLootItems(), 1 do
-    local info = {GetLootSlotInfo(i)};
-    local locked = info[6];
-
-    if (not locked) then
-      LootSlot(i);
-    end
+  if (not locked) then
+    LootSlot(slot);
   end
 end
 
-addon:on('LOOT_READY', function (lootSwitch)
+local function performAutoLoot ()
+  for x = 1, GetNumLootItems(), 1 do
+  -- for i = GetNumLootItems(), 1, -1 do
+    autoLootSlot(x);
+  end
+end
+
+addon:on('LOOT_READY', function (autoLoot)
   --[[ the LOOT_READY sometimes fires multiple times when looting, so we only
     handle it once until loot is closed ]]
   if (lootIsOpen == true) then return end
 
-  lootIsOpen = true
+  lootIsOpen = true;
 
-  if (lootSwitch == true and
-      saved.farmerOptions.fastLoot == true) then
+  if (autoLoot and saved.farmerOptions.fastLoot == true) then
     performAutoLoot();
   else
     LootFrame:SetAlpha(1);
