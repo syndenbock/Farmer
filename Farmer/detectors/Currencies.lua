@@ -78,12 +78,15 @@ local function fillCurrencyTable ()
   currencyTable = data;
 end
 
+local function yellCurrency (id, amount, total)
+  addon:yell('CURRENCY_CHANGED', id, amount, total);
+end
+
 local function handleCurrency (id, total)
   local amount = total - (currencyTable[id] or 0);
 
   currencyTable[id] = total;
-
-  addon:yell('CURRENCY_CHANGED', id, amount, total);
+  yellCurrency(id, amount, total);
 end
 
 addon:on('PLAYER_LOGIN', fillCurrencyTable);
@@ -94,3 +97,13 @@ addon:on('CURRENCY_DISPLAY_UPDATE', function (id, total)
 
   handleCurrency(id, total);
 end);
+
+--##############################################################################
+-- testing
+--##############################################################################
+
+local tests = addon:share('tests');
+
+function tests.currency ()
+  yellCurrency(1755, 1500, 15357);
+end

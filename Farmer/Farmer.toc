@@ -76,4 +76,4 @@ pluginAPI/Events.lua
 pluginAPI/Options.lua
 pluginAPI/Factory.lua
 
-tests/Items.lua
+tests/Tests.lua

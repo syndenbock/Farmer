@@ -76,6 +76,10 @@ local function getReputationInfo ()
   return info;
 end
 
+local function yellReputation (reputationInfo)
+  addon:yell('REPUTATION_CHANGED', reputationInfo);
+end
+
 local function checkReputationChange (faction, factionInfo)
   local cachedFactionInfo = reputationCache[faction] or {};
 
@@ -90,7 +94,7 @@ local function checkReputationChange (faction, factionInfo)
 
   local paragonLevelGained = (getCacheDifference('paragonLevel') > 0);
 
-  addon:yell('REPUTATION_CHANGED', {
+  yellReputation({
     faction = faction,
     reputationChange = reputationChange,
     standing = factionInfo.standing,
@@ -116,3 +120,19 @@ addon:on('PLAYER_LOGIN', function ()
 end);
 
 addon:funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
+
+--##############################################################################
+-- testing
+--##############################################################################
+
+local tests = addon:share('tests');
+
+function tests.reputation ()
+  yellReputation({
+    faction = 2170,
+    reputationChange = 550,
+    standing = 5,
+    paragonLevelGained = true,
+    standingChanged = false,
+  });
+end

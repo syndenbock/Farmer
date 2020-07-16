@@ -128,11 +128,9 @@ end
      conditions ]]
 addon:funnel('BAG_UPDATE_DELAYED', checkInventory);
 
---[[
-################################################################################
-# testing
-################################################################################
-]]
+--##############################################################################
+-- testing
+--##############################################################################
 
 local tests = addon:share('tests');
 
@@ -162,7 +160,7 @@ local function testPredefinedItems ()
   end
 end
 
-function tests.testItems (id, count)
+function tests.items (id, count)
   if (id) then
     testItem(tonumber(id), count or 1);
   else
