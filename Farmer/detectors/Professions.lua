@@ -83,10 +83,7 @@ end
 local function readProfessionCategoryInfo (data, professionId, icon)
   local skillList = PROFESSION_CATEGORIES[professionId];
 
-  if (not skillList) then
-    readSkillLineInfo(data, professionId, icon);
-    return;
-  end
+  if (not skillList) then return end
 
   for x = 1, #skillList, 1 do
     readSkillLineInfo(data, skillList[x], icon);
