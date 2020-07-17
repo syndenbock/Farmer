@@ -10,17 +10,16 @@ local function checkProfessionOptions ()
   return (saved.farmerOptions.skills == true);
 end
 
-local function displayProfession (name, icon, rank, maxRank)
-  local text = addon.stringJoin({'(', rank, '/', maxRank, ')'}, '');
+local function displayProfession (info)
+  local text = addon.stringJoin({'(', info.rank, '/', info.maxRank, ')'}, '');
+  local icon = addon.getIcon(info.icon);
 
-  icon = addon.getIcon(icon);
-
-  addon.Print.printMessage(addon.stringJoin({icon, name, text}, ' '),
+  addon.Print.printMessage(addon.stringJoin({icon, info.name, text}, ' '),
       MESSAGE_COLORS);
 end
 
-addon.listen('PROFESSION_CHANGED', function (_, _, name, icon, rank, maxRank)
+addon.listen('PROFESSION_CHANGED', function (info)
   if (not checkProfessionOptions()) then return end
 
-  displayProfession(name, icon, rank, maxRank);
+  displayProfession(info);
 end);

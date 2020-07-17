@@ -9,6 +9,8 @@ local GetTradeSkillLineInfoByID = TradeSkillUI.GetTradeSkillLineInfoByID;
 local GetProfessions = _G.GetProfessions;
 local GetProfessionInfo = _G.GetProfessionInfo;
 
+local ImmutableMap = addon.Factory.ImmutableMap;
+
 local PROFESSION_CATEGORIES;
 local professionCache;
 
@@ -50,8 +52,8 @@ local function readLearnedProfession (data, professionId)
 end
 
 local function getLearnedProfessions ()
-  local data = {};
   local professions = {GetProfessions()};
+  local data = {};
 
   --[[ array may contain nil values, so we have to iterate as an object --]]
   for _, professionId in pairs(professions) do
@@ -61,15 +63,21 @@ local function getLearnedProfessions ()
   return data;
 end
 
-local function readSkillLineInfo (data, skillId, icon)
+local function getSkillLineInfo (skillId, icon)
   local info = {GetTradeSkillLineInfoByID(skillId)};
 
-  data[skillId] = {
+  return {
+    id = skillId,
     name = info[1],
     rank = info[2],
     maxRank = info[3],
+    parentSkillId = info[5],
     icon = icon,
   };
+end
+
+local function readSkillLineInfo (data, skillId, icon)
+  data[skillId] = getSkillLineInfo(skillId, icon);
 end
 
 local function readProfessionCategoryInfo (data, professionId, icon)
@@ -77,7 +85,7 @@ local function readProfessionCategoryInfo (data, professionId, icon)
 
   if (not skillList) then
     readSkillLineInfo(data, professionId, icon);
-    return
+    return;
   end
 
   for x = 1, #skillList, 1 do
@@ -96,12 +104,16 @@ local function getLearnedProfessionInfo ()
   return data;
 end
 
+local function yellProfession (info, change)
+  addon.yell('PROFESSION_CHANGED', ImmutableMap(info), change);
+end
+
 local function checkProfessionChange (id, info)
   local oldInfo = professionCache[id] or {};
   local change = info.rank - (oldInfo.rank or 0);
 
   if (change ~= 0) then
-    addon.yell('PROFESSION_CHANGED', id, change, info.name, info.icon, info.rank, info.maxRank);
+    yellProfession(info, change);
   end
 end
 
@@ -122,3 +134,14 @@ addon.on('CHAT_MSG_SKILL', function ()
   professionCache = data;
 end);
 
+--##############################################################################
+-- testing
+--##############################################################################
+
+local tests = addon.share('tests');
+
+function tests.profession (id)
+  id = (id and tonumber(id)) or 171;
+
+  yellProfession(getSkillLineInfo(id), 1);
+end
