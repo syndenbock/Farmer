@@ -138,9 +138,7 @@ end);
 -- testing
 --##############################################################################
 
-local tests = addon.share('tests');
-
-function tests.profession (id)
+addon.share('tests').profession = function (id)
   id = (id and tonumber(id)) or 171;
 
   yellProfession(getSkillLineInfo(id), 1);
