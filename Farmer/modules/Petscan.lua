@@ -1,5 +1,7 @@
 local _, addon = ...
 
+if (addon.isClassic()) then return end
+
 local tinsert = _G.tinsert;
 local tremove = _G.tremove;
 local C_Timer = _G.C_Timer;
@@ -8,13 +10,8 @@ local CagePetByID = PetJournal.CagePetByID;
 local GetPetInfoByIndex = PetJournal.GetPetInfoByIndex;
 local ClearSearchFilter = PetJournal.ClearSearchFilter;
 local GetNumPets = PetJournal.GetNumPets;
-local ContainerIDToInventoryID = _G.ContainerIDToInventoryID;
-local GetInventoryItemLink = _G.GetInventoryItemLink;
-local GetItemInfoInstant = _G.GetItemInfoInstant;
 local GetContainerNumFreeSlots = _G.GetContainerNumFreeSlots;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
-
-local UNITID_PLAYER = 'player';
 
 local function getBagFreeSlots (bagIndex)
   local generalBagType = 0;
