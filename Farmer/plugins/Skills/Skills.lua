@@ -10,14 +10,15 @@ local function checkSkillOptions ()
   return (saved.farmerOptions.skills == true);
 end
 
-local function displaySkill (name, rank, maxRank)
-  local text = addon.stringJoin({'(', rank, '/', maxRank, ')'}, '');
+local function displaySkill (info)
+  local text = addon.stringJoin({'(', info.rank, '/', info.maxRank, ')'}, '');
 
-  addon.Print.printMessage(addon.stringJoin({name, text}, ' '), MESSAGE_COLORS);
+  addon.Print.printMessage(addon.stringJoin({info.name, text}, ' '),
+      MESSAGE_COLORS);
 end
 
-addon.listen('SKILL_CHANGED', function (name, _, rank, maxRank)
+addon.listen('SKILL_CHANGED', function (info)
   if (checkSkillOptions()) then
-    displaySkill(name, rank, maxRank);
+    displaySkill(info);
   end
 end);

@@ -52,21 +52,24 @@ local function getSkillInfo ()
   return data;
 end
 
-local function checkSkillChange (skillName, skillInfo)
-  local oldInfo = skillCache[skillName] or {};
+local function yellSkill (skillInfo, change)
+  addon.yell('SKILL_CHANGED', skillInfo, change);
+end
+
+local function checkSkillChange (skillInfo)
+  local oldInfo = skillCache[skillInfo.name] or {};
   local change = skillInfo.rank - (oldInfo.rank or 0);
 
   if (change == 0) then return end
 
-  addon.yell('SKILL_CHANGED', skillName, change, skillInfo.rank,
-      skillInfo.maxRank);
+  yellSkill(skillInfo, change);
 end
 
 local function checkSkills ()
   local data = getSkillInfo();
 
-  for name, info in pairs(data) do
-    checkSkillChange(name, info);
+  for _, info in pairs(data) do
+    checkSkillChange(info);
   end
 
   skillCache = data;

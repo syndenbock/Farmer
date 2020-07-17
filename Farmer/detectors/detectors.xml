@@ -5,4 +5,5 @@
   <script file="Reputation.lua"/>
   <script file="Money.lua"/>
   <script file="Professions.lua"/>
+  <script file="Skills.lua"/>
 </UI>
