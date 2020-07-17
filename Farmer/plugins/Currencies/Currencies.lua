@@ -22,27 +22,23 @@ local function checkDisplayOptions (id)
   return true;
 end
 
-local function shouldCurrencyBeDisplayed (id, amount)
+local function shouldCurrencyBeDisplayed (info, amount)
   return (amount >= 0 and
-      checkDisplayOptions(id) and
-      checkHideOptions());
+          checkDisplayOptions(info.id) and
+          checkHideOptions());
 end
 
-local function displayCurrency (id, amount, total)
-  local info = {GetCurrencyInfo(id)};
-  local name = info[1];
-  local texture = info[3];
-
+local function displayCurrency (info, amount)
   -- warfronts show hidden currencies without icons
-  if (not name or not texture) then return end
+  if (not info.name or not info.icon) then return end
 
-  local text = '(' .. BreakUpLargeNumbers(total) .. ')';
+  local text = '(' .. BreakUpLargeNumbers(info.total) .. ')';
 
-  addon.Print.printItem(texture, name, amount, text, {1, 0.9, 0, 1});
+  addon.Print.printItem(info.icon, info.name, amount, text, {1, 0.9, 0, 1});
 end
 
-addon.listen('CURRENCY_CHANGED', function (id, amount, total)
-  if (not shouldCurrencyBeDisplayed(id, amount)) then return end
+addon.listen('CURRENCY_CHANGED', function (info, amount)
+  if (not shouldCurrencyBeDisplayed(info, amount)) then return end
 
-  displayCurrency(id, amount, total);
+  displayCurrency(info, amount);
 end);

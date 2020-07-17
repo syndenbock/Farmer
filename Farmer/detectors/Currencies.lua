@@ -10,6 +10,8 @@ local GetCurrencyListLink = _G.GetCurrencyListLink;
 local ExpandCurrencyList = _G.ExpandCurrencyList;
 local GetCurrencyIDFromLink = _G.C_CurrencyInfo.GetCurrencyIDFromLink;
 
+local ImmutableMap = addon.Factory.ImmutableMap;
+
 local HONOR_ID = 1585;
 local CONQUEST_ID = 1602;
 
@@ -78,8 +80,24 @@ local function fillCurrencyTable ()
   currencyTable = data;
 end
 
-local function yellCurrency (id, amount, total)
-  addon.yell('CURRENCY_CHANGED', id, amount, total);
+local function packCurrencyInfo (id)
+  local info = {GetCurrencyInfo(id)};
+
+  return {
+    id = id,
+    name = info[1],
+    total = info[2],
+    icon = info[3],
+    earnedThisWeek = info[4],
+    weeklyMax = info[5],
+    totalMax = info[6],
+    isDiscovered = info[7],
+    rarity = info[8],
+  };
+end
+
+local function yellCurrency (id, change)
+  addon.yell('CURRENCY_CHANGED', ImmutableMap(packCurrencyInfo(id)), change);
 end
 
 local function handleCurrency (id, total)
@@ -103,5 +121,5 @@ end);
 --##############################################################################
 
 addon.share('tests').currency = function ()
-  yellCurrency(1755, 1500, 15357);
+  yellCurrency(1755, 15357);
 end
