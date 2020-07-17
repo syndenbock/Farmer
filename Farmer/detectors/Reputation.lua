@@ -35,6 +35,19 @@ local function collapseExpandedReputations (expandedIndices)
   end
 end
 
+local function packFactionInfo (index)
+  local factionInfo = {GetFactionInfo(index)};
+
+  return {
+    faction = factionInfo[14],
+    standing = factionInfo[3],
+    reputation = factionInfo[6],
+    isHeader = factionInfo[9],
+    isCollapsed = factionInfo[10],
+    hasRep = factionInfo[11],
+  };
+end
+
 local function getReputationInfo ()
   local info = {};
   local numFactions = GetNumFactions();
@@ -44,30 +57,22 @@ local function getReputationInfo ()
   --[[ we have to use a while loop, because a for loop would end when reaching
        the last loop, even when numFactions increases in that loop --]]
   while (i <= numFactions) do
-    local factionInfo = {GetFactionInfo(i)};
+    local factionInfo = packFactionInfo(i);
 
-    local faction = factionInfo[14];
-    local standing = factionInfo[3];
-    local reputation = factionInfo[6];
-    local isHeader = factionInfo[9];
-    local isCollapsed = factionInfo[10];
-    local hasRep = factionInfo[11];
-
-    if (isHeader and isCollapsed) then
+    if (factionInfo.isHeader and factionInfo.isCollapsed) then
       tinsert(expandedIndices, i);
       ExpandFactionHeader(i);
       numFactions = GetNumFactions();
     end
 
-    if (hasRep or not isHeader) then
+    if (factionInfo.hasRep or not factionInfo.isHeader) then
       local data = {
-        reputation = reputation,
-        standing = standing,
+        reputation = factionInfo.reputation,
+        standing = factionInfo.standing,
       };
 
-      readParagonInfo(data, faction);
-
-      info[faction] = data;
+      readParagonInfo(data, factionInfo.faction);
+      info[factionInfo.faction] = data;
     end
 
     i = i + 1;
