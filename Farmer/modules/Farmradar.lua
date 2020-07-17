@@ -170,40 +170,6 @@ local function hookFrameToggle (frame)
   hookFrameHide(frame);
 end
 
-local function createRadarTexture (frame, texturePath)
-  local color = {0, 1, 0, 0.5};
-  local texture = frame:CreateTexture(nil, 'OVERLAY');
-
-  texture:SetTexture(texturePath);
-  texture:SetVertexColor(unpack(color));
-  texture:SetAllPoints(frame);
-
-  return texture;
-end
-
-local function createRadarFrame ()
-  local scale = 0.432;
-  local size = min(WorldFrame:GetHeight(), WorldFrame:GetWidth());
-  local radar = CreateFrame('Frame', 'FarmerRadarFrame', UIParent);
-
-  radar:SetSize(size * scale, size * scale);
-
-  radar:SetFrameStrata('MEDIUM');
-  radar:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
-  radar:Hide();
-  addon.setTrueScale(radar, 1);
-
-  return radar;
-end
-
-local function init ()
-  fixMinimapTaint();
-
-  radarFrame = createRadarFrame();
-  createRadarTexture(radarFrame, RADAR_CIRCLE_TEXTURE);
-  directionTexture = createRadarTexture(radarFrame, RADAR_DIRECTION_TEXTURE);
-end
-
 local function hideFrame (frame, hook)
   frame = findFrame(frame);
 
@@ -337,7 +303,43 @@ local function getMinimapValues ()
   };
 end
 
+local function createRadarTexture (frame, texturePath)
+  local color = {0, 1, 0, 0.5};
+  local texture = frame:CreateTexture(nil, 'OVERLAY');
+
+  texture:SetTexture(texturePath);
+  texture:SetVertexColor(unpack(color));
+  texture:SetAllPoints(frame);
+
+  return texture;
+end
+
+local function createRadarFrame ()
+  local scale = 0.432;
+  local size = min(WorldFrame:GetHeight(), WorldFrame:GetWidth());
+  local radar = CreateFrame('Frame', 'FarmerRadarFrame', UIParent);
+
+  radar:SetSize(size * scale, size * scale);
+
+  radar:SetFrameStrata('MEDIUM');
+  radar:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
+  radar:Hide();
+  addon.setTrueScale(radar, 1);
+
+  return radar;
+end
+
+local function initRadar ()
+  if (radarFrame) then return end
+
+  radarFrame = createRadarFrame();
+  createRadarTexture(radarFrame, RADAR_CIRCLE_TEXTURE);
+  directionTexture = createRadarTexture(radarFrame, RADAR_DIRECTION_TEXTURE);
+end
+
 local function enableFarmMode ()
+  initRadar();
+
   currentMode = MODE_ENUM.TOGGLING;
 
   minimapDefaults = getMinimapValues();
@@ -411,7 +413,7 @@ local function restoreMinimapRotation ()
   setMinimapRotation(minimapDefaults.rotation);
 end
 
-addon.on('PLAYER_LOGIN', init);
+addon.on('PLAYER_LOGIN', fixMinimapTaint);
 addon.on('PLAYER_LOGOUT', restoreMinimapRotation);
 
 addon.slash('radar', toggleFarmMode);
