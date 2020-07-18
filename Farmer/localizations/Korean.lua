@@ -4,8 +4,6 @@ if (GetLocale() ~= 'koKR') then return end
 
 local L = addon.L;
 
-L.hasTranslation = true;
-
 L["always show focused items"] = "항상 주시하는 아이템 표시"
 L["always show quest items"] = "항상 퀘스트 아이템 표시"
 L["always show reagents"] = "항상 재료 표시"

@@ -41,7 +41,6 @@ local function createEditbox (name, parent, width, height)
 
   --edit:SetFontObject('ChatFontNormal');
   --edit:SetFontObject(GameFontNormal);
-  --edit:SetFont(addon.vars.font, 16, 'THINOUTLINE');
   edit:SetFont(GameFontNormal:GetFont(), 16, 'THINOUTLINE');
 
   edit:SetSize(width, height);

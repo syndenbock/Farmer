@@ -18,12 +18,6 @@ local ADDON_ICON_ID = 3334;
 local VERSION_TOC = GetAddOnMetadata(addonName, 'version');
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
-if (L.hasTranslation == true) then
-  addonVars.font = STANDARD_TEXT_FONT;
-else
-  addonVars.font = 'Fonts\\FRIZQT__.ttf';
-end
-
 local Factory = addon.OptionFactory;
 local mainPanel = Factory.Panel:new(addonName);
 local farmerFrame = addon.Print.frame;

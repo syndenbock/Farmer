@@ -13,7 +13,6 @@ Label.__index = Label;
 local function createLabel (parent, text, anchors)
   local label = parent:CreateFontString('FontString');
 
-  --label:SetFont(addon.vars.font, 16, 'outline');
   --label:SetFont('ChatFontNormal', 16, 'outline');
   label:SetFont(STANDARD_TEXT_FONT, 14, 'outline');
   label:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
