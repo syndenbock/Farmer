@@ -46,7 +46,7 @@ L["show total count for stackable items"] = "show total count for stackable item
 L["Thick"] = "Thick"
 L["Thick Monochrome"] = "Thick Monochrome"
 L["Thin"] = "Thin"
-L["Toggle radar"] = "Toggle radar"
+L["Toggle radar"] = "Toggle farming radar"
 L["unknown command"] = "unknown command"
 L[ [=[You seem to have used an old Version of Farmer
 Check out all the new features in the options!]=] ] = [=[You seem to have used an old Version of Farmer
