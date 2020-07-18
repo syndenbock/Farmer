@@ -74,6 +74,8 @@ local function executeLoadCallbacks (addonName)
 end
 
 local function addLoadListener (addonName, callback)
+  assert(type(callback) == 'function', 'callback is not a function');
+
   local callbackList = loadCallbacks[addonName] or {};
 
   tinsert(callbackList, callback)

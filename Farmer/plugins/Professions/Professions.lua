@@ -7,7 +7,7 @@ local MESSAGE_COLORS = {0.9, 0.3, 0};
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
 
 local function checkProfessionOptions ()
-  return (saved.farmerOptions.skills == true);
+  return (saved.farmerOptions.professions == true);
 end
 
 local function displayProfession (info)
