@@ -8,6 +8,8 @@ local GetSkillLineInfo = _G.GetSkillLineInfo;
 local ExpandSkillHeader = _G.ExpandSkillHeader;
 local CollapseSkillHeader = _G.CollapseSkillHeader;
 
+local ImmutableMap = addon.Factory.ImmutableMap;
+
 local skillCache;
 
 local function collapseExpandedHeaders (expandedHeaders)
@@ -53,7 +55,7 @@ local function getSkillInfo ()
 end
 
 local function yellSkill (skillInfo, change)
-  addon.yell('SKILL_CHANGED', skillInfo, change);
+  addon.yell('SKILL_CHANGED', ImmutableMap(skillInfo), change);
 end
 
 local function checkSkillChange (skillInfo)
