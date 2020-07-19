@@ -36,7 +36,7 @@ local function readGuildBankTab (tabIndex)
   local tabContent = Storage:new();
 
   for slotIndex = 1, MAX_GUILDBANK_SLOTS_PER_TAB, 1 do
-    readGuildBankSlot(tabContent. tabIndex, slotIndex);
+    readGuildBankSlot(tabContent, tabIndex, slotIndex);
   end
 
   return tabContent;
@@ -46,21 +46,20 @@ local function readCurrentTab ()
   local tabIndex = GetCurrentGuildBankTab();
 
   storage = readGuildBankTab(tabIndex);
+
+  return tabIndex;
 end
 
 addon.on('GUILDBANKFRAME_OPENED', function ()
   isOpen = true;
-
-  readCurrentTab();
+  currentTab = readCurrentTab();
   Items.updateCurrentInventory();
 end);
 
 addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
   if (isOpen == false) then return end
 
-  local tabIndex = GetCurrentGuildBankTab();
-
-  storage = readGuildBankSlot(tabIndex);
+  local tabIndex = readCurrentTab();
 
   --[[ Guild bank content was not updated, but tab was switched. ]]
   if (tabIndex ~= currentTab) then
