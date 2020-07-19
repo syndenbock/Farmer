@@ -1,4 +1,4 @@
-local _, addon = ...;
+local addonName, addon = ...;
 
 local GetContainerNumSlots = _G.GetContainerNumSlots;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
@@ -6,6 +6,8 @@ local GetItemInfo = _G.GetItemInfo;
 local UseContainerItem = _G.UseContainerItem;
 
 local L = addon.L;
+
+local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
 
 local FIRST_BAG = _G.BACKPACK_CONTAINER;
 local LAST_BAG = FIRST_BAG + _G.NUM_BAG_SLOTS;
@@ -71,4 +73,14 @@ local function sellGrayItems ()
   end
 end
 
-addon.on('MERCHANT_SHOW', sellGrayItems);
+local function shouldAutoSell ()
+  return (saved.farmerOptions.autoSell == true);
+end
+
+local function onMerchantOpened ()
+  if (shouldAutoSell()) then
+    sellGrayItems();
+  end
+end
+
+addon.on('MERCHANT_SHOW', onMerchantOpened);
