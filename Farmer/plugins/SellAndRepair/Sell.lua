@@ -32,15 +32,24 @@ local function getItemSellPrice (itemLink)
   return info[11] or 0;
 end
 
+local function shouldSellReadableItem (readable)
+  return (not readable or saved.farmerOptions.autoSellSkipReadable == false);
+end
+
 local function sellItemIfGray (bag, slot)
   local info = {GetContainerItemInfo(bag, slot)};
   local locked = info[3];
   local quality = info[4];
   local readable = info[5];
 
+  -- empty info means empty bag slot
   if (info[1] == nil) then return 0 end;
 
-  if (locked or readable or not isItemGray(quality)) then return 0 end
+  if (locked or not
+      shouldSellReadableItem(readable) or not
+      isItemGray(quality)) then
+    return 0;
+  end
 
   local itemLink = info[7];
   local price = getItemSellPrice(itemLink);
