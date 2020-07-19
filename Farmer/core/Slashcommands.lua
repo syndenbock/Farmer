@@ -25,6 +25,8 @@ local function executeSlashCommand (command, ...)
 end
 
 local function slashHandler (input)
+  input = input or '';
+
   local paramList = {strsplit(' ', input)}
   local command = tremove(paramList, 1)
 
