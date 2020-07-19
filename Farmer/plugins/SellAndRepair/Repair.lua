@@ -1,4 +1,4 @@
-local _, addon = ...;
+local addonName, addon = ...;
 
 local CanMerchantRepair = _G.CanMerchantRepair;
 local GetRepairAllCost = _G.GetRepairAllCost;
@@ -10,6 +10,8 @@ local RepairAllItems = _G.RepairAllItems;
 local GetMoney = _G.GetMoney;
 
 local L = addon.L;
+
+local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
 
 local function repairEquipmentFromGuildFunds (cost)
   RepairAllItems(true);
@@ -64,8 +66,12 @@ local function repairEquipment ()
   end
 end
 
+local function shouldAutoRepair ()
+  return (CanMerchantRepair() and saved.farmerOptions.autoRepair == true);
+end
+
 local function onMerchantOpened ()
-  if (CanMerchantRepair()) then
+  if (shouldAutoRepair()) then
     repairEquipment();
   end
 end
