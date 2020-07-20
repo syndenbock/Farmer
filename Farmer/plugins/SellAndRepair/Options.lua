@@ -5,7 +5,7 @@ local L = addon.L;
 local panel = addon.OptionFactory.Panel:new(L['Sell and Repair'], addon.mainPanel);
 local repairBox = panel:addCheckBox(L['autorepair when visiting merchants']);
 local guildRepairBox = panel:addCheckBox(L['allow using guild funds for autorepair']);
-local sellBox = panel:addCheckBox(L['auto sell gray items when visiting merchants']);
+local sellBox = panel:addCheckBox(L['autosell gray items when visiting merchants']);
 local readableBox = panel:addCheckBox(L['skip readable items when autoselling']);
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {

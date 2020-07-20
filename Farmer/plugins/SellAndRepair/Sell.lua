@@ -77,8 +77,7 @@ local function sellGrayItems ()
   end
 
   if (totalPrice > 0) then
-    print(L['Selling gray items for'] .. ' ' ..
-        addon.formatMoney(totalPrice));
+    print(L['Selling gray items for %s'].format(addon.formatMoney(totalPrice)));
   end
 end
 

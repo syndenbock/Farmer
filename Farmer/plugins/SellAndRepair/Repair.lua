@@ -15,8 +15,8 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
 
 local function repairEquipmentFromGuildFunds (cost)
   RepairAllItems(true);
-  print(L['Equipment has been repaired by your Guild for'] .. ' ' ..
-      addon.formatMoney(cost));
+  print(L['Equipment has been repaired by your Guild for %s']
+      :format(addon.formatMoney(cost)));
 end
 
 local function canGuildRepair (cost)
@@ -43,7 +43,8 @@ end
 
 local function repairEquipmentFromOwnFunds (cost)
   RepairAllItems(false);
-  print(L['Equipment has been repaired for'] .. ' ' .. addon.formatMoney(cost));
+  print(L['Equipment has been repaired for %s']
+      :format(addon.formatMoney(cost)));
 end
 
 local function canSelfRepair (cost)
@@ -81,3 +82,7 @@ local function onMerchantOpened ()
 end
 
 addon.on('MERCHANT_SHOW', onMerchantOpened);
+
+addon.slash('foo', function ()
+  repairEquipmentFromOwnFunds(123);
+end);
