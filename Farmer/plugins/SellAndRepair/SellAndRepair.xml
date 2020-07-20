@@ -1,0 +1,5 @@
+<UI>
+  <script file="Options.lua"/>
+  <script file="Repair.lua"/>
+  <script file="Sell.lua"/>
+</UI>
