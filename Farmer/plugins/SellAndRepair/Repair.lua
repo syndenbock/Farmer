@@ -82,7 +82,3 @@ local function onMerchantOpened ()
 end
 
 addon.on('MERCHANT_SHOW', onMerchantOpened);
-
-addon.slash('foo', function ()
-  repairEquipmentFromOwnFunds(123);
-end);
