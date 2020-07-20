@@ -20,7 +20,11 @@ local function repairEquipmentFromGuildFunds (cost)
 end
 
 local function canGuildRepair (cost)
-  if (not IsInGuild() or not CanGuildBankRepair()) then return false end
+  if (not IsInGuild() or
+      not CanGuildBankRepair() or
+      saved.farmerOptions.autoRepairAllowGuild ~= true) then
+    return false;
+  end
 
   local maxWithdrawableMoney = GetGuildBankWithdrawMoney();
   local guildMoney = GetGuildBankMoney();
