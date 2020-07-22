@@ -15,7 +15,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
 
 local function repairEquipmentFromGuildFunds (cost)
   RepairAllItems(true);
-  print(L['Equipment has been repaired by your Guild for %s']
+  print(L['Equipment has been repaired by your guild for %s']
       :format(addon.formatMoney(cost)));
 end
 
