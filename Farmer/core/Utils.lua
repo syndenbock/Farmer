@@ -1,6 +1,7 @@
 local _, addon = ...;
 
 local floor = _G.floor;
+local pow = math.pow;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
 local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
@@ -25,6 +26,16 @@ function addon.stringJoin (stringList, joiner)
   end
 
   return result or '';
+end
+
+function addon.truncate (number, digits)
+  local factor = pow(10, digits);
+
+  number = number * factor;
+  number = floor(number);
+  number = number / factor;
+
+  return number;
 end
 
 function addon.formatMoney (money)

@@ -7,4 +7,5 @@
   <include file="Reputation\Reputation.xml"/>
   <include file="SellAndRepair\SellAndRepair.xml"/>
   <include file="Skills\Skills.xml"/>
+  <include file="Vignettes\Vignettes.xml"/>
 </UI>

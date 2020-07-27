@@ -1,29 +1,23 @@
 local _, addon = ...;
 
-local pow = math.pow;
-local floor = _G.floor;
 local GetBestMapForUnit = _G.C_Map.GetBestMapForUnit;
 local GetVignettes = _G.C_VignetteInfo.GetVignettes;
 local GetVignetteInfo = _G.C_VignetteInfo.GetVignetteInfo;
 local GetVignettePosition = _G.C_VignetteInfo.GetVignettePosition;
+
+local ImmutableMap = addon.Factory.ImmutableMap;
 
 local UNIT_PLAYER = 'player';
 
 local vignetteCache = {};
 local currentMapId;
 
-local function truncate (number, digits)
-  local factor = pow(10, digits);
-
-  number = number * factor;
-  number = floor(number);
-  number = number / factor;
-
-  return number;
+local function getCurrentMap ()
+  return GetBestMapForUnit(UNIT_PLAYER);
 end
 
-local function getCurrentmap ()
-  return GetBestMapForUnit(UNIT_PLAYER);
+local function yellVignette (info, coords)
+  addon.yell('NEW_VIGNETTE',ImmutableMap(info), ImmutableMap(coords));
 end
 
 local function readVignette (guid)
@@ -41,12 +35,12 @@ local function readVignette (guid)
 
   if (coords == nil) then return end
 
-  local x = truncate(coords.x * 100, 1);
-  local y = truncate(coords.y * 100, 1);
-
   vignetteCache[vignetteId] = guid;
 
-  print(info.name, x, '/', y);
+  yellVignette(info, {
+    x = coords.x * 100,
+    y = coords.y * 100,
+  });
 end
 
 local function scanVignettes ()
@@ -61,9 +55,9 @@ local function clearVignetteCache ()
   vignetteCache = {};
 end
 
-addon.on({'ZONE_CHANGED_NEW_AREA', 'PLAYER_LOGIN'}, function ()
+addon.on({'PLAYER_LOGIN', 'ZONE_CHANGED_NEW_AREA'}, function ()
   clearVignetteCache();
-  currentMapId = getCurrentmap();
+  currentMapId = getCurrentMap();
   scanVignettes();
 end);
 
