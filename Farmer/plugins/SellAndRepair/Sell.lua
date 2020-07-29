@@ -14,7 +14,7 @@ local LAST_BAG = FIRST_BAG + _G.NUM_BAG_SLOTS;
 local QUALITY_COMMON = _G.Enum.ItemQuality.Poor;
 
 local function isItemGray (quality)
-  return (quality <= QUALITY_COMMON);
+  return (quality ~= nil and quality == QUALITY_COMMON);
 end
 
 local function sellitem (bag, slot)
@@ -45,9 +45,9 @@ local function sellItemIfGray (bag, slot)
   -- empty info means empty bag slot
   if (info[1] == nil) then return 0 end;
 
-  if (locked or not
-      shouldSellReadableItem(readable) or not
-      isItemGray(quality)) then
+  if (locked or
+      not shouldSellReadableItem(readable) or
+      not isItemGray(quality)) then
     return 0;
   end
 
