@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local min = _G.min;
 local unpack = _G.unpack;
-local tinsert = _G.insert;
+local tinsert = _G.tinsert;
 local strfind = _G.strfind;
 local hooksecurefunc = _G.hooksecurefunc;
 local CreateFrame = _G.CreateFrame;
@@ -55,12 +55,6 @@ local minimapDefaults;
 local hookedFrames = Set:new();
 local trackedFrames;
 local minimapHooked = false;
-
-local function addElementsToTable (fillTable, elements)
-  for x = 1, #elements, 1 do
-    tinsert(fillTable, elements[x]);
-  end
-end
 
 local function findFrame (frame)
   if (type(frame) == 'string') then
@@ -174,7 +168,7 @@ local function hideFrame (frame, hook)
   frame = findFrame(frame);
 
   if (not frame or not frame.IsShown or trackedFrames[frame] ~= nil) then
-    return
+    return;
   end
 
   trackedFrames[frame] = frame:IsShown();
@@ -191,32 +185,43 @@ local function hideFrames (frames, hook)
   end
 end
 
-local function isMinimapButton (frame)
+local function isGatherMatePin (name)
+  return (strfind(name, 'GatherMatePin') == 1);
+end
+
+local function isHandyNotesPin (name)
+  return (strfind(name, 'HandyNotesPin') == 1);
+end
+
+local function isMinimapPin (frame)
   local name = frame and frame.GetName and frame:GetName();
 
   if (not name) then return false end
 
-  return (strfind(name, 'LibDBIcon') == 1);
+  return (isHandyNotesPin(name) or isGatherMatePin(name));
 end
 
-local function addFrameToListIfMinimapButton (list, frame)
-  if (isMinimapButton(frame)) then
-    table.insert(list, frame);
+local function shouldMinimapChildBeHidden (child)
+  if (isMinimapPin(child)) then
+    return false;
   end
+
+  return true;
 end
 
-local function getMinimapButtons (parent)
-  local children = {parent:GetChildren()};
-  local iconList = {};
+local function getMinimapChildrenToHide ()
+  local children = {Minimap:GetChildren()};
+  local list = {};
 
   for x = 1, #children, 1 do
     local child = children[x];
 
-    addFrameToListIfMinimapButton(iconList, child);
-    addElementsToTable(iconList, getMinimapButtons(child));
+    if (shouldMinimapChildBeHidden(child)) then
+      tinsert(list, child);
+    end
   end
 
-  return iconList;
+  return list;
 end
 
 local function setFrameIgnoreParentAlpha (frame, ignore)
@@ -240,7 +245,7 @@ local function hideMinimapChildren ()
        SetAlpha ]]
   MinimapCluster:SetAlpha(0);
   hideFrames(DEFAULT_CHILD_LIST, true);
-  hideFrames(getMinimapButtons(Minimap), true);
+  hideFrames(getMinimapChildrenToHide(), true);
   hideFrames({Minimap.backdrop}, false);
   hideFrames({Minimap:GetRegions()}, false);
 
@@ -344,7 +349,7 @@ local function enableFarmMode ()
 
   Minimap:ClearAllPoints();
   Minimap:SetPoint('CENTER', radarFrame, 'CENTER', 0, 0);
-  Minimap:SetParent(radarFrame);
+  -- Minimap:SetParent(radarFrame);
   --[[ if an option is to be added to make the minimap area bigger than the
        radar, this is the place to set the size ]]
   Minimap:SetSize(radarFrame:GetWidth(), radarFrame:GetHeight());
@@ -373,7 +378,7 @@ local function disableFarmMode ()
 
   Minimap:ClearAllPoints();
   Minimap:SetPoint(unpack(minimapDefaults.anchor));
-  Minimap:SetParent(minimapDefaults.parent);
+  -- Minimap:SetParent(minimapDefaults.parent);
   Minimap:SetSize(minimapDefaults.width, minimapDefaults.height);
   Minimap:SetScale(minimapDefaults.scale);
   Minimap:EnableMouse(minimapDefaults.mouse);
