@@ -232,7 +232,7 @@ local function setFrameIgnoreParentAlpha (frame, ignore)
   frame:SetIgnoreParentAlpha(ignore);
 end
 
-local function SetIgnoreParentAlpha (frames, ignore)
+local function setIgnoreParentAlpha (frames, ignore)
   for x = 1, #frames, 1 do
     setFrameIgnoreParentAlpha(frames[x], ignore);
   end
@@ -249,15 +249,15 @@ local function hideMinimapChildren ()
   hideFrames({Minimap.backdrop}, false);
   hideFrames({Minimap:GetRegions()}, false);
 
-  SetIgnoreParentAlpha({Minimap:GetChildren()}, true)
-  SetIgnoreParentAlpha({Minimap:GetRegions()}, true)
+  setIgnoreParentAlpha({Minimap:GetChildren()}, true)
+  setIgnoreParentAlpha({Minimap:GetRegions()}, true)
 end
 
 local function updateMinimapChildren ()
   --[[ Execute on the next frame so other addons can update their icons ]]
   addon.executeOnNextFrame(function ()
-    SetIgnoreParentAlpha({Minimap:GetChildren()}, true);
-    SetIgnoreParentAlpha({Minimap:GetRegions()}, true);
+    setIgnoreParentAlpha({Minimap:GetChildren()}, true);
+    setIgnoreParentAlpha({Minimap:GetRegions()}, true);
   end);
 end
 
@@ -268,8 +268,8 @@ local function showHiddenFrames ()
     setFrameShown(frame, visibility);
   end
 
-  SetIgnoreParentAlpha({Minimap:GetChildren()}, false)
-  SetIgnoreParentAlpha({Minimap:GetRegions()}, false)
+  setIgnoreParentAlpha({Minimap:GetChildren()}, false)
+  setIgnoreParentAlpha({Minimap:GetRegions()}, false)
 
   trackedFrames = nil;
 end
