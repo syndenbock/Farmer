@@ -179,7 +179,6 @@ local function hideFrame (frame, hook)
 
   trackedFrames[frame] = frame:IsShown();
   setFrameShown(frame, false);
-  setFrameMouseEnabled(frame, false);
 
   if (hook == true) then
     hookFrameToggle(frame);
@@ -225,7 +224,6 @@ local function setFrameIgnoreParentAlpha (frame, ignore)
 
   if (not frame) then return end
 
-  setFrameMouseEnabled(frame, not ignore);
   frame:SetIgnoreParentAlpha(ignore);
 end
 
