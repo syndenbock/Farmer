@@ -45,18 +45,18 @@ local function sellItemIfGray (bag, slot)
   -- empty info means empty bag slot
   if (info[1] == nil) then return 0 end;
 
-  if (locked or
-      not shouldSellReadableItem(readable) or
-      not isItemGray(quality)) then
+  if (not locked and
+      shouldSellReadableItem(readable) and
+      isItemGray(quality)) then
+    local itemLink = info[7];
+    local price = getItemSellPrice(itemLink);
+
+    sellitem(bag, slot);
+
+    return price;
+  else
     return 0;
   end
-
-  local itemLink = info[7];
-  local price = getItemSellPrice(itemLink);
-
-  sellitem(bag, slot);
-
-  return price;
 end
 
 local function sellGrayItemsInBag (bag)
