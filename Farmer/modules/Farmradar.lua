@@ -48,6 +48,7 @@ local MODE_ENUM = {
 };
 
 local radarFrame;
+local radarSize;
 local directionTexture;
 local currentMode = MODE_ENUM.OFF;
 local updateStamp = 0;
@@ -301,6 +302,7 @@ local function getMinimapValues ()
     width = Minimap:GetWidth(),
     mouse = Minimap:IsMouseEnabled(),
     mouseWheel = Minimap:IsMouseWheelEnabled(),
+    mouseMotion = Minimap:IsMouseMotionEnabled(),
     zoom = Minimap:GetZoom(),
     scale = Minimap:GetScale(),
   };
@@ -319,10 +321,10 @@ end
 
 local function createRadarFrame ()
   local scale = 0.432;
-  local size = min(WorldFrame:GetHeight(), WorldFrame:GetWidth());
   local radar = CreateFrame('Frame', 'FarmerRadarFrame', UIParent);
 
-  radar:SetSize(size * scale, size * scale);
+  radarSize = min(WorldFrame:GetHeight(), WorldFrame:GetWidth());
+  radar:SetSize(radarSize * scale, radarSize * scale);
 
   radar:SetFrameStrata('MEDIUM');
   radar:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
@@ -352,10 +354,11 @@ local function enableFarmMode ()
   -- Minimap:SetParent(radarFrame);
   --[[ if an option is to be added to make the minimap area bigger than the
        radar, this is the place to set the size ]]
-  Minimap:SetSize(radarFrame:GetWidth(), radarFrame:GetHeight());
-  Minimap:SetScale(1);
+  Minimap:SetSize(radarSize, radarSize);
+  addon.setTrueScale(Minimap, 1);
   Minimap:EnableMouse(false);
   Minimap:EnableMouseWheel(false);
+  Minimap:SetMouseMotionEnabled(true);
   Minimap:SetZoom(0);
   Minimap:SetAlpha(0);
   hookMinimapAlpha();
@@ -383,6 +386,7 @@ local function disableFarmMode ()
   Minimap:SetScale(minimapDefaults.scale);
   Minimap:EnableMouse(minimapDefaults.mouse);
   Minimap:EnableMouseWheel(minimapDefaults.mouseWheel);
+  Minimap:SetMouseMotionEnabled(minimapDefaults.mouseMotion);
   Minimap:SetAlpha(1);
   Minimap:SetZoom(minimapDefaults.zoom);
 
