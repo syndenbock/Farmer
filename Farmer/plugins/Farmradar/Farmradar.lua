@@ -47,6 +47,8 @@ local MODE_ENUM = {
   TOGGLING = 3,
 };
 
+local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+
 local radarFrame;
 local radarSize;
 local directionTexture;
@@ -138,7 +140,7 @@ end
 
 local function hookFrameShow (frame)
   hooksecurefunc(frame, 'Show', function (self)
-    if (currentMode ~= MODE_ENUM.ON) then return end
+    if (currentMode ~= MODE_ENUM.ON or trackedFrames[self] == nil) then return end
 
     setFrameShown(self, false);
     trackedFrames[self] = true;
@@ -147,7 +149,7 @@ end
 
 local function hookFrameHide (frame)
   hooksecurefunc(frame, 'Hide', function (self)
-    if (currentMode ~= MODE_ENUM.ON) then return end
+    if (currentMode ~= MODE_ENUM.ON or trackedFrames[self] == nil) then return end
 
     trackedFrames[self] = false;
   end);
@@ -194,20 +196,26 @@ local function isHandyNotesPin (name)
   return (strfind(name, 'HandyNotesPin') == 1);
 end
 
-local function isMinimapPin (frame)
-  local name = frame and frame.GetName and frame:GetName();
+local function checkPinOptions (name)
+  local options = saved.farmerOptions;
 
-  if (not name) then return false end
+  if (options.showHandyNotesPins == true and isHandyNotesPin(name)) then
+    return false;
+  end
 
-  return (isHandyNotesPin(name) or isGatherMatePin(name));
-end
-
-local function shouldMinimapChildBeHidden (child)
-  if (isMinimapPin(child)) then
+  if (options.showGatherMateNodes == true and isGatherMatePin(name)) then
     return false;
   end
 
   return true;
+end
+
+local function shouldMinimapChildBeHidden (frame)
+  local name = frame and frame.GetName and frame:GetName();
+
+  if (not name) then return true end
+
+  return (checkPinOptions(name));
 end
 
 local function getMinimapChildrenToHide ()

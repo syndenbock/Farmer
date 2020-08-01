@@ -1,0 +1,4 @@
+<UI>
+  <script file="Farmradar/Options.lua"></script>
+  <script file="Farmradar/Farmradar.lua"></script>
+</UI>
