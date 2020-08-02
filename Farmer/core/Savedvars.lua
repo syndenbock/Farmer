@@ -23,22 +23,40 @@ local function isArray (table)
   return true;
 end
 
-local function readGlobalsIntoObject (object, globalNames)
-  for globalName in pairs(globalNames) do
-    object[globalName] = _G[globalName];
+local function assignObject (target, source)
+  for key, value in pairs(source) do
+    if (type(value) == 'table') then
+      if (type(target[key]) ~= 'table') then
+        target[key] = {};
+      end
+
+      assignObject(target[key], value);
+    else
+      target[key] = source[key];
+    end
   end
 end
 
-local function fillDefaults (settings, defaults)
-  for key, value in pairs(defaults) do
-    local currentValue = settings[key];
+local function fillObject (target, source)
+  for key, value in pairs(source) do
+    local currentValue = target[key];
 
     if (currentValue == nil) then
-      settings[key] = value;
+      target[key] = value;
     elseif (type(currentValue) == 'table' and not isArray(currentValue)) then
-      fillDefaults(currentValue, value);
+      fillObject(currentValue, value);
     end
   end
+end
+
+local function readGlobalsIntoObject (object, globalNames)
+  local loaded = {};
+
+  for globalName in pairs(globalNames) do
+    loaded[globalName] = _G[globalName];
+  end
+
+  assignObject(object, loaded);
 end
 
 local function readAddonVariables(addonName)
@@ -52,7 +70,6 @@ local function readAddonVariables(addonName)
   local loaded = variableStorage[addonName];
 
   readGlobalsIntoObject(loaded, variableSet:getItems());
-  fillDefaults(loaded, defaults);
 
   defaultValues[addonName] = nil;
   awaiting[addonName] = nil;
@@ -106,8 +123,8 @@ local function SavedVariablesHandler (addonName, variables, defaults)
   local vars = variableStorage[addonName] or {};
 
   defaultValues[addonName] = defaultValues[addonName] or {};
-  fillDefaults(vars, defaults or {});
-  fillDefaults(defaultValues[addonName], defaults or {});
+  fillObject(vars, defaults or {});
+  fillObject(defaultValues[addonName], defaults or {});
 
   awaiting[addonName] = variableSet;
   variableStorage[addonName] = vars;
