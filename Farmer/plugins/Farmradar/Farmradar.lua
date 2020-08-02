@@ -358,6 +358,17 @@ local function setMinimapSize ()
   end
 end
 
+local function checkDefaultTooltips ()
+  if (saved.farmerOptions.FarmRadar.enableDefaultNodeTooltips == true) then
+    Minimap:SetMouseMotionEnabled(true);
+  end
+end
+
+local function applyMinimapOptions ()
+  setMinimapSize();
+  checkDefaultTooltips();
+end
+
 local function enableFarmMode ()
   initRadar();
 
@@ -371,14 +382,13 @@ local function enableFarmMode ()
   --[[ if an option is to be added to make the minimap area bigger than the
        radar, this is the place to set the size ]]
 
-  setMinimapSize();
-
   addon.setTrueScale(Minimap, 1);
   Minimap:EnableMouse(false);
   Minimap:EnableMouseWheel(false);
-  Minimap:SetMouseMotionEnabled(true);
   Minimap:SetZoom(0);
   Minimap:SetAlpha(0);
+
+  applyMinimapOptions();
   hookMinimapAlpha();
 
   radarFrame:Show();
@@ -386,7 +396,6 @@ local function enableFarmMode ()
   updateStamp = UPDATE_FREQUENCY_S;
 
   hideMinimapChildren();
-
   setMinimapRotation(1);
 
   addon.on('ZONE_CHANGED', updateMinimapChildren);

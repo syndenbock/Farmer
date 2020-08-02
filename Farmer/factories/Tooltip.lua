@@ -16,14 +16,26 @@ local function createTooltipName ()
   return 'FarmerTooltip' .. tooltipCount;
 end
 
+local function addTooltipLines (tooltip, lines)
+  for x = 1, #lines, 1 do
+    tooltip:AddLine(lines[x]);
+  end
+end
+
 local function createTooltip (parent, text)
   local tooltip = CreateFrame('GameTooltip', createTooltipName(), nil, 
       'GameTooltipTemplate');
 
+  if (type(text) ~= 'table') then
+    text = {text};
+  end
+
   parent:HookScript('OnEnter', function ()
     tooltip:SetOwner(parent, 'ANCHOR_NONE');
     tooltip:SetPoint('BOTTOMLEFT', parent, 'TOPLEFT', 0, 0);
-    tooltip:AddLine(text);
+    
+    addTooltipLines(tooltip, text);
+
     tooltip:Show();
   end);
 
