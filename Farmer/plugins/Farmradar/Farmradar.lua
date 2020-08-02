@@ -350,6 +350,14 @@ local function initRadar ()
   directionTexture = createRadarTexture(radarFrame, RADAR_DIRECTION_TEXTURE);
 end
 
+local function setMinimapSize ()
+  if (saved.farmerOptions.FarmRadar.shrinkMinimap == true) then
+    Minimap:SetSize(radarFrame:GetWidth(), radarFrame:GetHeight());
+  else
+    Minimap:SetSize(radarSize, radarSize);
+  end
+end
+
 local function enableFarmMode ()
   initRadar();
 
@@ -362,7 +370,9 @@ local function enableFarmMode ()
   -- Minimap:SetParent(radarFrame);
   --[[ if an option is to be added to make the minimap area bigger than the
        radar, this is the place to set the size ]]
-  Minimap:SetSize(radarSize, radarSize);
+
+  setMinimapSize();
+
   addon.setTrueScale(Minimap, 1);
   Minimap:EnableMouse(false);
   Minimap:EnableMouseWheel(false);
