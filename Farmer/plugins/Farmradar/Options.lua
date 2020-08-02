@@ -14,7 +14,7 @@ addon.Factory.Tooltip:new(defaultNodeBox.checkBox, {
   L['It\'s recommended to enable shrinking the minimap when enabling this'],
 });
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     FarmRadar = {
       showGatherMateNodes = true,
@@ -23,11 +23,9 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
       shrinkMinimap = false,
     },
   },
-}).vars;
+}).vars.farmerOptions.FarmRadar;
 
 panel:OnLoad(function ()
-  local options = saved.farmerOptions.FarmRadar;
-
   gatherMateBox:SetValue(options.showGatherMateNodes);
   handyNotesBox:SetValue(options.showHandyNotesPins);
   defaultNodeBox:SetValue(options.enableDefaultNodeTooltips);
@@ -35,8 +33,6 @@ panel:OnLoad(function ()
 end);
 
 panel:OnSave(function ()
-  local options = saved.farmerOptions.FarmRadar;
-
   options.showGatherMateNodes = gatherMateBox:GetValue();
   options.showHandyNotesPins = handyNotesBox:GetValue();
   options.enableDefaultNodeTooltips = defaultNodeBox:GetValue();

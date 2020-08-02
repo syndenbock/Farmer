@@ -47,7 +47,8 @@ local MODE_ENUM = {
   TOGGLING = 3,
 };
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions.FarmRadar;
 
 local radarFrame;
 local radarSize;
@@ -75,18 +76,6 @@ local function setFrameShown (frame, shown)
   end
 
   frame:SetShown(shown);
-end
-
-local function setFrameMouseEnabled (frame, enabled)
-  if (frame.IsProtected and frame:IsProtected() and InCombatLockdown()) then
-    return;
-  end
-
-  if (not frame.EnableMouse) then
-    return;
-  end
-
-  frame:EnableMouse(enabled);
 end
 
 local function setMinimapRotation (value)
@@ -197,8 +186,6 @@ local function isHandyNotesPin (name)
 end
 
 local function checkPinOptions (name)
-  local options = saved.farmerOptions.FarmRadar;
-
   if (options.showHandyNotesPins == true and isHandyNotesPin(name)) then
     return false;
   end
@@ -351,7 +338,7 @@ local function initRadar ()
 end
 
 local function setMinimapSize ()
-  if (saved.farmerOptions.FarmRadar.shrinkMinimap == true) then
+  if (options.shrinkMinimap == true) then
     Minimap:SetSize(radarFrame:GetWidth(), radarFrame:GetHeight());
   else
     Minimap:SetSize(radarSize, radarSize);
@@ -359,7 +346,7 @@ local function setMinimapSize ()
 end
 
 local function checkDefaultTooltips ()
-  if (saved.farmerOptions.FarmRadar.enableDefaultNodeTooltips == true) then
+  if (options.enableDefaultNodeTooltips == true) then
     Minimap:SetMouseMotionEnabled(true);
   end
 end
