@@ -1,3 +1,9 @@
+  version 3.1
+- Added new module for automatically selling grays and repairing gear
+- Added new options for the farm radar for toggling node types and tooltips
+- Improved farm radar compatibility with minimap addons
+- Reworked internal code for better performance
+
   version 3.0.3
 - Removed error message when non existent API methods are accessed
 

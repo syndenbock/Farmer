@@ -13,7 +13,7 @@ local AlertFrame = _G.AlertFrame;
 local L = addon.L;
 local addonVars = addon.share('vars');
 
-local VERSION_CURRENT = 0300000;
+local VERSION_CURRENT = 0301000;
 local ADDON_ICON_ID = 3334;
 local VERSION_TOC = GetAddOnMetadata(addonName, 'version');
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
@@ -230,8 +230,9 @@ saved:OnLoad(function (vars)
     local text
 
     text = 'New in ' .. addonName .. ' version ' .. VERSION_TOC .. ':\n' ..
-           '- Options have been cleaned up and are now separated into categories! \n' ..
-           '- Farmer now has an API for plugins, a wiki will be created soon';
+           '- Farmer can now automatically sell gray items and repair your gear when you visit a vendor\n' ..
+           '- The farm radar now has some options for toggling nodes and tooltips\n' ..
+           'Make sure to check out those new features in the options!';
     print(text)
   end
 
