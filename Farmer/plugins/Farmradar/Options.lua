@@ -8,17 +8,20 @@ local handyNotesBox = panel:addCheckBox(L['show HandyNotes pins']);
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    showGatherMateNodes = true,
-    showHandyNotesPins = true,
+    FarmRadar = {
+      showGatherMateNodes = true,
+      showHandyNotesPins = true,
+      showQuestAreas = true,
+    }
   },
 }).vars;
 
 panel:OnLoad(function ()
-  gatherMateBox:SetValue(saved.farmerOptions.showGatherMateNodes);
-  handyNotesBox:SetValue(saved.farmerOptions.showHandyNotesPins);
+  gatherMateBox:SetValue(saved.farmerOptions.FarmRadar.showGatherMateNodes);
+  handyNotesBox:SetValue(saved.farmerOptions.FarmRadar.showHandyNotesPins);
 end);
 
 panel:OnSave(function ()
-  saved.farmerOptions.showGatherMateNodes = gatherMateBox:GetValue();
-  saved.farmerOptions.showHandyNotesPins = handyNotesBox:GetValue();
+  saved.farmerOptions.FarmRadar.showGatherMateNodes = gatherMateBox:GetValue();
+  saved.farmerOptions.FarmRadar.showHandyNotesPins = handyNotesBox:GetValue();
 end);

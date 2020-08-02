@@ -197,7 +197,7 @@ local function isHandyNotesPin (name)
 end
 
 local function checkPinOptions (name)
-  local options = saved.farmerOptions;
+  local options = saved.farmerOptions.FarmRadar;
 
   if (options.showHandyNotesPins == true and isHandyNotesPin(name)) then
     return false;
