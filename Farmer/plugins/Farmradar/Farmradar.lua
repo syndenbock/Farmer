@@ -78,6 +78,16 @@ local function setFrameShown (frame, shown)
   frame:SetShown(shown);
 end
 
+local function setFrameMouseEnabled (frame, enabled)
+  if (frame.IsProtected and frame:IsProtected() and InCombatLockdown()) then
+    return;
+  end
+
+  if (frame.EnableMouse) then
+    frame:EnableMouse(enabled);
+  end
+end
+
 local function setMinimapRotation (value)
   SetCVar('rotateMinimap', value, 'ROTATE_MINIMAP');
   Minimap_UpdateRotationSetting();
@@ -262,6 +272,7 @@ local function showHiddenFrames ()
 
   for frame, visibility in pairs(trackedFrames) do
     setFrameShown(frame, visibility);
+    setFrameMouseEnabled(frame, true);
   end
 
   setIgnoreParentAlpha({Minimap:GetChildren()}, false)
@@ -351,9 +362,20 @@ local function checkDefaultTooltips ()
   end
 end
 
+local function checkAddonTooltips ()
+  if (options.enableAddonNodeTooltips ~= false) then return end
+
+  local children = {Minimap:GetChildren()};
+
+  for x = 1, #children, 1 do
+    setFrameMouseEnabled(children[x], false);
+  end
+end
+
 local function applyMinimapOptions ()
   setMinimapSize();
   checkDefaultTooltips();
+  checkAddonTooltips();
 end
 
 local function enableFarmMode ()
@@ -390,6 +412,14 @@ local function enableFarmMode ()
   currentMode = MODE_ENUM.ON;
 end
 
+local function restoreTooltips ()
+  local children = {Minimap:GetChildren()};
+
+  for x = 1, #children, 1 do
+    setFrameMouseEnabled(children[x], true);
+  end
+end
+
 local function disableFarmMode ()
   currentMode = MODE_ENUM.TOGGLING;
 
@@ -407,6 +437,7 @@ local function disableFarmMode ()
   radarFrame:Hide();
   radarFrame:SetScript('OnUpdate', nil);
 
+  restoreTooltips();
   showHiddenFrames();
 
   setMinimapRotation(minimapDefaults.rotation);

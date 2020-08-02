@@ -6,7 +6,9 @@ local panel = addon.OptionFactory.Panel:new(L['Farm radar'], addon.mainPanel);
 
 local gatherMateBox = panel:addCheckBox(L['show GatherMate nodes']);
 local handyNotesBox = panel:addCheckBox(L['show HandyNotes pins']);
-local defaultNodeBox = panel:addCheckBox(L['enable tooltips for default nodes']);
+local addonNodeBox = panel:addCheckBox(L['show addon node tooltips']);
+local defaultNodeBox = panel:addCheckBox(
+  L['enable tooltips for default nodes']);
 local shrinkBox = panel:addCheckBox(L['shrink minimap to radar size']);
 
 addon.Factory.Tooltip:new(defaultNodeBox.checkBox, {
@@ -19,6 +21,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
     FarmRadar = {
       showGatherMateNodes = true,
       showHandyNotesPins = true,
+      enableAddonNodeTooltips = false,
       enableDefaultNodeTooltips = false,
       shrinkMinimap = false,
     },
@@ -28,6 +31,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 panel:OnLoad(function ()
   gatherMateBox:SetValue(options.showGatherMateNodes);
   handyNotesBox:SetValue(options.showHandyNotesPins);
+  addonNodeBox:SetValue(options.enableAddonNodeTooltips);
   defaultNodeBox:SetValue(options.enableDefaultNodeTooltips);
   shrinkBox:SetValue(options.shrinkMinimap);
 end);
@@ -35,6 +39,7 @@ end);
 panel:OnSave(function ()
   options.showGatherMateNodes = gatherMateBox:GetValue();
   options.showHandyNotesPins = handyNotesBox:GetValue();
+  options.enableAddonNodeTooltips = addonNodeBox:GetValue();
   options.enableDefaultNodeTooltips = defaultNodeBox:GetValue();
   options.shrinkMinimap = shrinkBox:GetValue();
 end);
