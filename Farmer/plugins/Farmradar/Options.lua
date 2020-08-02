@@ -8,7 +8,7 @@ local gatherMateBox = panel:addCheckBox(L['show GatherMate nodes']);
 local handyNotesBox = panel:addCheckBox(L['show HandyNotes pins']);
 local addonNodeBox = panel:addCheckBox(L['show addon node tooltips']);
 local defaultNodeBox = panel:addCheckBox(
-  L['enable tooltips for default nodes']);
+    L['enable tooltips for default nodes']);
 local shrinkBox = panel:addCheckBox(L['shrink minimap to radar size']);
 
 addon.Factory.Tooltip:new(defaultNodeBox.checkBox, {

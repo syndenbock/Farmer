@@ -1,6 +1,15 @@
 local _, addon = ...;
 
 local L = addon.L;
+-- Farm radar
+L['Farm radar'] = 'Farm radar'
+L['show GatherMate nodes'] = 'show GatherMate nodes'
+L['show HandyNotes pins'] = 'show HandyNotes pins'
+L['show addon node tooltips'] = 'show addon node tooltips'
+L['enable tooltips for default nodes'] = 'enable tooltips for default nodes'
+L['shrink minimap to radar size'] = 'shrink minimap to radar size'
+L['This will block all mouseovers under the minimap in farm mode!'] = 'This will block all mouseovers under the minimap while in farm mode!'
+L['It\'s recommended to enable shrinking the minimap when enabling this'] = 'It\'s recommended to enable shrinking the minimap when enabling this'
 
 L["allow using guild funds for autorepair"] = "allow using guild funds for autorepair"
 L["always show focused items"] = "always show focused items"
@@ -55,9 +64,8 @@ L["skip readable items when autoselling"] = "skip readable items when autosellin
 L["Thick"] = "Thick"
 L["Thick Monochrome"] = "Thick Monochrome"
 L["Thin"] = "Thin"
-L["Toggle radar"] = "Toggle farming radar"
+L["Toggle farming radar"] = "Toggle farm radar"
 L["unknown command"] = "unknown command"
 L[ [=[You seem to have used an old Version of Farmer
 Check out all the new features in the options!]=] ] = [=[You seem to have used an old Version of Farmer
 Check out all the new features in the options!]=]
-
