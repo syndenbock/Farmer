@@ -6,7 +6,7 @@ local panel = addon.OptionFactory.Panel:new(L['Farm radar'], addon.mainPanel);
 
 local gatherMateBox = panel:addCheckBox(L['show GatherMate nodes']);
 local handyNotesBox = panel:addCheckBox(L['show HandyNotes pins']);
-local shrinkBox = panel:addCheckBox(L['shrink minimap to radar']);
+local shrinkBox = panel:addCheckBox(L['shrink minimap to radar size']);
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
