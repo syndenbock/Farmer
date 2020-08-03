@@ -71,7 +71,7 @@ local function createRaritySlider ()
 end
 
 local function initPanel ()
-  panel:mapOptions({
+  panel:mapOptions(options, {
     rarity = panel:addCheckBox(L['show items based on rarity']),
     minimumRarity = createRaritySlider(),
     reagents = panel:addCheckBox(L['always show reagents']),
