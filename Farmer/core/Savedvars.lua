@@ -7,10 +7,13 @@ local Set = addon.Factory.Set;
 local variableStorage = {};
 local awaiting = {};
 local loadCallbacks = {};
-local defaultValues = {};
 
 local function isArray (table)
   local x = 1;
+
+  if (next(table) == nil) then
+    return false;
+  end
 
   for _ in pairs(table) do
     if (table[x] == nil) then
@@ -66,12 +69,10 @@ local function readAddonVariables(addonName)
     return;
   end
 
-  local defaults = defaultValues[addonName];
   local loaded = variableStorage[addonName];
 
   readGlobalsIntoObject(loaded, variableSet:getItems());
 
-  defaultValues[addonName] = nil;
   awaiting[addonName] = nil;
 end
 
@@ -122,9 +123,7 @@ local function SavedVariablesHandler (addonName, variables, defaults)
   local variableSet = awaiting[addonName] or Set:new(variables);
   local vars = variableStorage[addonName] or {};
 
-  defaultValues[addonName] = defaultValues[addonName] or {};
   fillObject(vars, defaults or {});
-  fillObject(defaultValues[addonName], defaults or {});
 
   awaiting[addonName] = variableSet;
   variableStorage[addonName] = vars;
