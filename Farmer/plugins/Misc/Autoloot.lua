@@ -7,7 +7,8 @@ local LootFrame = _G.LootFrame;
 
 local lootIsOpen = false;
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions;
 
 LootFrame:SetAlpha(0);
 
@@ -34,7 +35,7 @@ addon.on('LOOT_READY', function (autoLoot)
 
   lootIsOpen = true;
 
-  if (autoLoot and saved.farmerOptions.fastLoot == true) then
+  if (autoLoot and options.fastLoot == true) then
     performAutoLoot();
   else
     LootFrame:SetAlpha(1);

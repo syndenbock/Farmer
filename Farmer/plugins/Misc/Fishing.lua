@@ -5,7 +5,8 @@ local SetCVar = _G.SetCVar;
 local GetSpellInfo = _G.GetSpellInfo;
 local InCombatLockdown = _G.InCombatLockdown;
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions;
 
 local UNITID_PLAYER = 'player';
 local FISHING_NAME = GetSpellInfo(7620);
@@ -14,7 +15,7 @@ local HIDE_STATES = {
   hide = 1,
   hidden = 2,
   restore = 3,
-}
+};
 
 local hideState = HIDE_STATES.off;
 local platesShown;
@@ -24,7 +25,7 @@ local function isUnitPlayer (unit)
 end
 
 local function shouldPlatesBeHidden (unit)
-  return (saved.farmerOptions.hidePlatesWhenFishing == true and
+  return (options.hidePlatesWhenFishing == true and
           isUnitPlayer(unit) and
           (hideState == HIDE_STATES.off or hideState == HIDE_STATES.restore));
 end
