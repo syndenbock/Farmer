@@ -18,38 +18,39 @@ local INVTYPE_CLOAK = 'INVTYPE_CLOAK';
 
 local Print = addon.Print;
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions;
 
 local function checkRecipeOptions (itemInfo)
-  return (saved.farmerOptions.recipes == true and
+  return (options.recipes == true and
           itemInfo.classId == LE_ITEM_CLASS_RECIPE);
 end
 
 local function checkQuestItemOptions (itemInfo)
-  return (saved.farmerOptions.questItems == true and
+  return (options.questItems == true and
           (itemInfo.classId == LE_ITEM_CLASS_QUESTITEM or
            itemInfo.classId == LE_ITEM_CLASS_KEY));
 end
 
 local function checkReagentOptions (itemInfo)
-  return (saved.farmerOptions.reagents == true and
+  return (options.reagents == true and
           (itemInfo.isCraftingReagent == true or
            itemInfo.classId == LE_ITEM_CLASS_TRADEGOODS));
 end
 
 local function checkRarityOptions (itemInfo)
-  return (saved.farmerOptions.rarity == true and
-          itemInfo.rarity >= saved.farmerOptions.minimumRarity);
+  return (options.rarity == true and
+          itemInfo.rarity >= options.minimumRarity);
 end
 
 local function checkFocusOptions (itemInfo)
-  local isFocused = (saved.farmerOptions.focusItems[itemInfo.id] == true);
+  local isFocused = (options.focusItems[itemInfo.id] == true);
 
-  if (isFocused and saved.farmerOptions.special == true) then
+  if (isFocused and options.special == true) then
     return true;
   end
 
-  if (not isFocused and saved.farmerOptions.focus == true) then
+  if (not isFocused and options.focus == true) then
     return false;
   end
 
