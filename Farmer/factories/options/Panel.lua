@@ -5,6 +5,7 @@ local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
 local UIParent = _G.UIParent;
 
 local Factory = addon.share('OptionFactory');
+local CallbackHandler = addon.Factory.CallbackHandler;
 
 local Panel = {};
 local panelCount = 0;
@@ -52,7 +53,7 @@ function Panel:new (name, parent)
   return this;
 end
 
-function Panel:getChildName ()
+function Panel:__createChildName ()
   local name = self.name .. 'child' .. self.childCount;
 
   self.childCount = self.childCount + 1;
@@ -60,20 +61,52 @@ function Panel:getChildName ()
   return name;
 end
 
+function Panel:__getCallbackHandler ()
+  if (self.callbackHandler == nil) then
+    self.callbackHandler = CallbackHandler:new();
+  end
+
+  return self.callbackHandler;
+end
+
+function Panel:__addCallback (identifier, callback)
+  local callbackHandler = self:__getCallbackHandler();
+
+  if (callbackHandler:addCallback(identifier, callback)) then
+    self.panel[identifier] = function ()
+      callbackHandler:call(identifier);
+    end
+  end
+end
+
 function Panel:OnSave (callback)
-  self.panel.okay = callback;
+  self:__addCallback('okay', callback);
 end
 
 function Panel:OnCancel (callback)
-  self.panel.cancel = callback;
+  self:__addCallback('cancel', callback);
 end
 
 function Panel:OnLoad (callback)
-  self.panel.refresh = callback;
+  self:__addCallback('refresh', callback);
+end
+
+function Panel:mapOptions (options, optionMap)
+  self:OnSave(function ()
+    for option, element in pairs(optionMap) do
+      options[option] = element:GetValue();
+    end
+  end);
+
+  self:OnLoad(function ()
+    for option, element in pairs(optionMap) do
+      element:SetValue(options[option]);
+    end
+  end);
 end
 
 function Panel:addButton (text, onClick)
-  local button = Factory.Button:new(self.panel, self:getChildName(), self.panel,
+  local button = Factory.Button:new(self.panel, self:__createChildName(), self.panel,
       self.anchor.x + 3, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
 
   self.anchor.y = self.anchor.y - 7 - button.button:GetHeight();
@@ -82,7 +115,7 @@ function Panel:addButton (text, onClick)
 end
 
 function Panel:addCheckBox (text, onClick)
-  local checkBox = Factory.CheckBox:new(self.panel, self:getChildName(),
+  local checkBox = Factory.CheckBox:new(self.panel, self:__createChildName(),
       self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT',
       onClick);
 
@@ -92,7 +125,7 @@ function Panel:addCheckBox (text, onClick)
 end
 
 function Panel:addSlider (min, max, text, lowText, highText, stepSize)
-  local slider = Factory.Slider:new(self.panel, self:getChildName(), self.panel,
+  local slider = Factory.Slider:new(self.panel, self:__createChildName(), self.panel,
       self.anchor.x + 12, self.anchor.y - 15, text, min, max, lowText, highText,
       'TOPLEFT', 'TOPLEFT', stepSize);
 
@@ -111,7 +144,7 @@ function Panel:addLabel (text)
 end
 
 function Panel:addDropdown (text, options)
-  local dropdown = Factory.Dropdown:new(self.panel, self:getChildName(),
+  local dropdown = Factory.Dropdown:new(self.panel, self:__createChildName(),
       self.panel, self.anchor.x + 10, self.anchor.y, text, options, 'TOPLEFT',
       'TOPLEFT');
 
@@ -121,7 +154,7 @@ function Panel:addDropdown (text, options)
 end
 
 function Panel:addEditBox (width, height)
-  local editBox = Factory.EditBox:new(self.panel, self:getChildName(),
+  local editBox = Factory.EditBox:new(self.panel, self:__createChildName(),
       self.panel, self.anchor.x + 2, self.anchor.y, width, height, 'TOPLEFT',
       'TOPLEFT');
 
