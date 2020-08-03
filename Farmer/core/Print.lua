@@ -1,19 +1,23 @@
-local _, addon = ...;
+local addonName, addon = ...;
 
 local unpack = _G.unpack;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local IsActiveBattlefieldArena = _G.IsActiveBattlefieldArena;
 local GetItemCount = _G.GetItemCount;
 
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+  farmerOptions = {},
+}).vars.farmerOptions;
+
 local mailIsOpen = false;
+
+local farmerFrame = _G.CreateFrame('ScrollingMessageFrame', 'farmerFrame', _G.UIParent);
+local font = _G.CreateFont('farmerFont');
 
 local function setTrueScale (frame, scale)
   frame:SetScale(1);
   frame:SetScale(scale / frame:GetEffectiveScale());
 end
-
-local farmerFrame = _G.CreateFrame('ScrollingMessageFrame', 'farmerFrame', _G.UIParent);
-local font = _G.CreateFont('farmerFont');
 
 local Print = {
   font = font,
@@ -79,7 +83,7 @@ local function printStackableItemTotalAndBags (id, texture, name, count, colors)
 end
 
 local function printItemIncludingTotal (id, texture, name, count, colors)
-  if (addon.savedVariables.farmerOptions.showBags == true) then
+  if (options.showBags == true) then
     printStackableItemTotalAndBags(id, texture, name, count, colors);
   else
     printStackableItemTotal(id, texture, name, count, colors);
@@ -87,7 +91,7 @@ local function printItemIncludingTotal (id, texture, name, count, colors)
 end
 
 local function printItemExcludingTotal (id, texture, name, count, colors)
-  if (addon.savedVariables.farmerOptions.showBags == true) then
+  if (options.showBags == true) then
     printStackableItemBags(id, texture, name, count, colors);
   else
     Print.printItem(texture, name, count, nil, colors)
@@ -95,19 +99,19 @@ local function printItemExcludingTotal (id, texture, name, count, colors)
 end
 
 function Print.checkHideOptions ()
-  if (addon.savedVariables.farmerOptions.hideAtMailbox == true and
+  if (options.hideAtMailbox == true and
       mailIsOpen) then
     return false;
   end
 
-  if (addon.savedVariables.farmerOptions.hideOnExpeditions == true and
+  if (options.hideOnExpeditions == true and
       -- cannot be deferred earlier, as this frame gets initialized dynamically
       _G.IslandsPartyPoseFrame and
       _G.IslandsPartyPoseFrame:IsShown()) then
     return false;
   end
 
-  if (addon.savedVariables.farmerOptions.hideInArena == true and
+  if (options.hideInArena == true and
       IsActiveBattlefieldArena and
       IsActiveBattlefieldArena()) then
     return false;
@@ -122,21 +126,21 @@ function Print.printMessage (message, colors)
   farmerFrame:AddMessage(message, unpack(colors, 1, 3));
 end
 
-function Print.printItem (texture, name, count, text, colors, options)
+function Print.printItem (texture, name, count, text, colors, funcOptions)
   count = count or 1;
-  options = options or {};
+  funcOptions = funcOptions or {};
 
   local icon = addon.getIcon(texture);
   local itemName;
   local itemCount;
   local message;
 
-  if (not options.minimumCount or count > options.minimumCount) then
+  if (not funcOptions.minimumCount or count > funcOptions.minimumCount) then
     itemCount = 'x' .. BreakUpLargeNumbers(count);
   end
 
-  if (addon.savedVariables.farmerOptions.itemNames == true or
-      options.forceName == true) then
+  if (options.itemNames == true or
+      funcOptions.forceName == true) then
     itemName = name;
   end
 
@@ -150,7 +154,7 @@ function Print.printItem (texture, name, count, text, colors, options)
 end
 
 function Print.printStackableItem (id, texture, name, count, colors)
-  if (addon.savedVariables.farmerOptions.showTotal == true) then
+  if (options.showTotal == true) then
     printItemIncludingTotal(id, texture, name, count, colors);
   else
     printItemExcludingTotal(id, texture, name, count, colors);
@@ -164,4 +168,3 @@ function Print.printEquip (texture, name, text, count, colors)
 
   Print.printItem(texture, name, count, text, colors, {minimumCount = 1});
 end
-
