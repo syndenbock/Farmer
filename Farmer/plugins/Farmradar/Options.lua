@@ -22,6 +22,8 @@ local function createDefaultNodeOptionBox ()
     L['This will block all mouseovers under the minimap in farm mode!'],
     L['It\'s recommended to enable shrinking the minimap when enabling this'],
   });
+
+  return box;
 end
 
 panel:mapOptions(options, {
