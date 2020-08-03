@@ -28,14 +28,14 @@ end
 
 local function assignObject (target, source)
   for key, value in pairs(source) do
-    if (type(value) == 'table') then
+    if (type(value) == 'table' and not isArray(value)) then
       if (type(target[key]) ~= 'table') then
         target[key] = {};
       end
 
       assignObject(target[key], value);
     else
-      target[key] = source[key];
+      target[key] = value;
     end
   end
 end
