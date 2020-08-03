@@ -7,7 +7,8 @@ local UseContainerItem = _G.UseContainerItem;
 
 local L = addon.L;
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions
 
 local FIRST_BAG = _G.BACKPACK_CONTAINER;
 local LAST_BAG = FIRST_BAG + _G.NUM_BAG_SLOTS;
@@ -33,7 +34,7 @@ local function getItemSellPrice (itemLink)
 end
 
 local function shouldSellReadableItem (readable)
-  return (not readable or saved.farmerOptions.autoSellSkipReadable == false);
+  return (not readable or options.autoSellSkipReadable == false);
 end
 
 local function sellItemIfGray (bag, slot)
@@ -82,7 +83,7 @@ local function sellGrayItems ()
 end
 
 local function shouldAutoSell ()
-  return (saved.farmerOptions.autoSell == true);
+  return (options.autoSell == true);
 end
 
 local function onMerchantOpened ()
