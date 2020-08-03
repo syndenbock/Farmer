@@ -4,10 +4,11 @@ if (not addon.isClassic()) then return end
 
 local MESSAGE_COLORS = {0.9, 0.3, 0};
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions;
 
 local function checkSkillOptions ()
-  return (saved.farmerOptions.skills == true);
+  return (options.skills == true);
 end
 
 local function displaySkill (info)
