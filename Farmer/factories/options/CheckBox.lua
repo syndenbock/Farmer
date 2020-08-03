@@ -23,8 +23,9 @@ local function createCheckBox (name, parent, text, anchors)
   checkBox:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
       anchors.xOffset, anchors.yOffset);
 
-  -- Blizzard broke something in the BfA beta, so we have to fix it
-  checkBox.SetValue = doNothing;
+  -- for some reason not setting this causes an error when clicking the box in
+  -- classic
+  checkBox:SetScript('OnClick', nil);
 
   return checkBox;
 end
