@@ -3,19 +3,6 @@ local addonName, addon = ...;
 local L = addon.L;
 
 local panel = addon.OptionFactory.Panel:new(L['Farm radar'], addon.mainPanel);
-
-local gatherMateBox = panel:addCheckBox(L['show GatherMate nodes']);
-local handyNotesBox = panel:addCheckBox(L['show HandyNotes pins']);
-local addonNodeBox = panel:addCheckBox(L['show addon node tooltips']);
-local defaultNodeBox = panel:addCheckBox(
-    L['enable tooltips for default nodes']);
-local shrinkBox = panel:addCheckBox(L['shrink minimap to radar size']);
-
-addon.Factory.Tooltip:new(defaultNodeBox.checkBox, {
-  L['This will block all mouseovers under the minimap in farm mode!'],
-  L['It\'s recommended to enable shrinking the minimap when enabling this'],
-});
-
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     FarmRadar = {
@@ -28,18 +15,19 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   },
 }).vars.farmerOptions.FarmRadar;
 
-panel:OnLoad(function ()
-  gatherMateBox:SetValue(options.showGatherMateNodes);
-  handyNotesBox:SetValue(options.showHandyNotesPins);
-  addonNodeBox:SetValue(options.enableAddonNodeTooltips);
-  defaultNodeBox:SetValue(options.enableDefaultNodeTooltips);
-  shrinkBox:SetValue(options.shrinkMinimap);
-end);
+local function createDefaultNodeOptionBox ()
+  local box = panel:addCheckBox( L['enable tooltips for default nodes']);
 
-panel:OnSave(function ()
-  options.showGatherMateNodes = gatherMateBox:GetValue();
-  options.showHandyNotesPins = handyNotesBox:GetValue();
-  options.enableAddonNodeTooltips = addonNodeBox:GetValue();
-  options.enableDefaultNodeTooltips = defaultNodeBox:GetValue();
-  options.shrinkMinimap = shrinkBox:GetValue();
-end);
+  addon.Factory.Tooltip:new(box.checkBox, {
+    L['This will block all mouseovers under the minimap in farm mode!'],
+    L['It\'s recommended to enable shrinking the minimap when enabling this'],
+  });
+end
+
+panel:mapOptions(options, {
+  showGatherMateNodes = panel:addCheckBox(L['show GatherMate nodes']),
+  showHandyNotesPins = panel:addCheckBox(L['show HandyNotes pins']),
+  enableAddonNodeTooltips = panel:addCheckBox(L['show addon node tooltips']),
+  enableDefaultNodeTooltips = createDefaultNodeOptionBox(),
+  shrinkMinimap = panel:addCheckBox(L['shrink minimap to radar size']),
+});
