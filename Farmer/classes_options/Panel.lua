@@ -4,8 +4,8 @@ local CreateFrame = _G.CreateFrame;
 local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
 local UIParent = _G.UIParent;
 
-local Factory = addon.share('OptionFactory');
-local CallbackHandler = addon.Factory.CallbackHandler;
+local Factory = addon.share('OptionClass');
+local CallbackHandler = addon.Class.CallbackHandler;
 
 local Panel = {};
 local panelCount = 0;

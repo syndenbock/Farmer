@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
 
-local Factory = addon.share('OptionFactory');
+local Factory = addon.share('OptionClass');
 
 local Slider = {};
 

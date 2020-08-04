@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+local CreateFrame = _G.CreateFrame;
+
 local Factory = addon.share('Factory');
 
 local Tooltip = {};
@@ -23,7 +25,7 @@ local function addTooltipLines (tooltip, lines)
 end
 
 local function createTooltip (parent, text)
-  local tooltip = CreateFrame('GameTooltip', createTooltipName(), nil, 
+  local tooltip = CreateFrame('GameTooltip', createTooltipName(), nil,
       'GameTooltipTemplate');
 
   if (type(text) ~= 'table') then
@@ -33,13 +35,13 @@ local function createTooltip (parent, text)
   parent:HookScript('OnEnter', function ()
     tooltip:SetOwner(parent, 'ANCHOR_NONE');
     tooltip:SetPoint('BOTTOMLEFT', parent, 'TOPLEFT', 0, 0);
-    
+
     addTooltipLines(tooltip, text);
 
     tooltip:Show();
   end);
 
-  parent:HookScript('OnLeave', function () 
+  parent:HookScript('OnLeave', function ()
     tooltip:Hide();
   end);
 
@@ -50,6 +52,6 @@ function Tooltip:new (parent, text)
   local this = {};
 
   setmetatable(this, Tooltip);
-  
+
   this.tooltip = createTooltip(parent, text);
 end

@@ -5,7 +5,7 @@ local GetMoney = _G.GetMoney;
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:new(L['Money'], addon.mainPanel);
+local panel = addon.OptionClass.Panel:new(L['Money'], addon.mainPanel);
 
 local saved = addon.SavedVariablesHandler(addonName, {'farmerOptions', 'earningStamp'}, {
   farmerOptions = {

@@ -2,11 +2,9 @@ local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
 
-local Factory = addon.share('Factory');
-
 local CallbackHandler = {};
 
-Factory.CallbackHandler = CallbackHandler;
+addon.share('Class').CallbackHandler = CallbackHandler;
 
 CallbackHandler.__index = CallbackHandler;
 

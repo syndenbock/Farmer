@@ -18,7 +18,7 @@ local ADDON_ICON_ID = 3334;
 local VERSION_TOC = GetAddOnMetadata(addonName, 'version');
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
-local Factory = addon.OptionFactory;
+local Factory = addon.OptionClass;
 local mainPanel = Factory.Panel:new(addonName);
 local farmerFrame = addon.Print.frame;
 

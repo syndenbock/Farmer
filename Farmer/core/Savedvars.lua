@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local tinsert = _G.tinsert;
 
-local Set = addon.Factory.Set;
+local Set = addon.Class.Set;
 
 local variableStorage = {};
 local awaiting = {};

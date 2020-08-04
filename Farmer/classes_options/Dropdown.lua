@@ -7,7 +7,7 @@ local UIDropDownMenu_Initialize = _G.UIDropDownMenu_Initialize;
 local UIDropDownMenu_CreateInfo = _G.UIDropDownMenu_CreateInfo;
 local UIDropDownMenu_AddButton = _G.UIDropDownMenu_AddButton;
 
-local Factory = addon.share('OptionFactory');
+local Factory = addon.share('OptionClass');
 
 local Dropdown = {};
 

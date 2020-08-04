@@ -1,10 +1,8 @@
 local _, addon = ...;
 
-local Factory = addon.share('Factory');
-
 local Set = {};
 
-Factory.Set = Set;
+addon.share('Class').Set = Set;
 
 Set.__index = Set;
 

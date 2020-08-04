@@ -7,7 +7,7 @@ local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:new(L['Items'], addon.mainPanel);
+local panel = addon.OptionClass.Panel:new(L['Items'], addon.mainPanel);
 local focusIdBox;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {

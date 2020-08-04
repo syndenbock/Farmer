@@ -1,8 +1,5 @@
 <UI>
-  <script file="CallbackHandler.lua"/>
   <script file="Maps.lua"/>
   <script file="Storage.lua"/>
-  <script file="Set.lua"/>
   <script file="Tooltip.lua"/>
-  <include file="options\options.xml"/>
 </UI>

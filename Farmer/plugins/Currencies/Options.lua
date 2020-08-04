@@ -4,7 +4,7 @@ if (addon.isClassic()) then return end
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:new(L['Currencies'], addon.mainPanel);
+local panel = addon.OptionClass.Panel:new(L['Currencies'], addon.mainPanel);
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {

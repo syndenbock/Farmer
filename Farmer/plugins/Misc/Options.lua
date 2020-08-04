@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:new(L['Misc'], addon.mainPanel);
+local panel = addon.OptionClass.Panel:new(L['Misc'], addon.mainPanel);
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {

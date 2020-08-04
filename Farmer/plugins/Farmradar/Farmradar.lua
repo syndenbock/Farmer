@@ -17,8 +17,7 @@ local WorldFrame = _G.WorldFrame;
 local UIParent = _G.UIParent;
 
 local L = addon.L;
-local Factory = addon.Factory;
-local Set = Factory.Set;
+local Set = addon.Class.Set;
 
 local RADAR_CIRCLE_TEXTURE = 'Interface\\Addons\\' .. addonName ..
     '\\media\\radar_circle.tga';
