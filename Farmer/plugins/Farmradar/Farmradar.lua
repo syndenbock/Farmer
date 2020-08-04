@@ -25,21 +25,6 @@ local RADAR_DIRECTION_TEXTURE = 'Interface\\Addons\\' .. addonName ..
     '\\media\\radar_directions.tga';
 local UPDATE_FREQUENCY_S = 0.01;
 
-local DEFAULT_CHILD_LIST = {
-  'GameTimeFrame',
-  'MiniMapMailFrame',
-  'MinimapBackdrop',
-  'TimeManagerClockButton',
-  'MiniMapTrackingFrame',
-  'GarrisonLandingPageMinimapButton',
-  'MiniMapInstanceDifficulty',
-  'GuildInstanceDifficulty',
-  'MiniMapChallengeMode',
-  'QueueStatusMinimapButton',
-  'MinimapZoneTextButton',
-  'MinimapBorderTop',
-};
-
 local MODE_ENUM = {
   OFF = 1,
   ON = 2,
@@ -249,9 +234,7 @@ local function hideMinimapChildren ()
   --[[ MinimapCluster can get protected, so it can only be hidden with
        SetAlpha ]]
   MinimapCluster:SetAlpha(0);
-  hideFrames(DEFAULT_CHILD_LIST, true);
   hideFrames(getMinimapChildrenToHide(), true);
-  hideFrames({Minimap.backdrop}, false);
   hideFrames({Minimap:GetRegions()}, false);
 
   setIgnoreParentAlpha({Minimap:GetChildren()}, true)
@@ -274,8 +257,8 @@ local function showHiddenFrames ()
     setFrameMouseEnabled(frame, true);
   end
 
-  setIgnoreParentAlpha({Minimap:GetChildren()}, false)
-  setIgnoreParentAlpha({Minimap:GetRegions()}, false)
+  setIgnoreParentAlpha({Minimap:GetChildren()}, false);
+  setIgnoreParentAlpha({Minimap:GetRegions()}, false);
 
   trackedFrames = nil;
 end
