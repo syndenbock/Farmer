@@ -5,4 +5,5 @@
   <script file="Professions.lua"></script>
   <script file="Reputation.lua"></script>
   <script file="SellAndRepair.lua"></script>
+  <script file="Skills.lua"></script>
 </Ui>

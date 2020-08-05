@@ -8,10 +8,12 @@ local panel = addon.OptionClass.Panel:new(L['Skills'], addon.mainPanel);
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    skills = true,
+    Skills = {
+      displaySkills = true,
+    },
   },
-}).vars.farmerOptions;
+}).vars.farmerOptions.Skills;
 
 panel:mapOptions(options, {
-  skills = panel:addCheckBox(L['show skill levelups']),
+  displaySkills = panel:addCheckBox(L['show skill levelups']),
 });
