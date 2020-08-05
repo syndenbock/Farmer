@@ -4,11 +4,11 @@ local checkHideOptions = addon.Print.checkHideOptions;
 local printMessage = addon.Print.printMessage;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions;
+    .farmerOptions.Money;
 
 local function shouldMoneyBeDisplayed (amount)
   return (amount > 0 and
-          options.money == true and
+          options.displayMoney == true and
           checkHideOptions());
 end
 

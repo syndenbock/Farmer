@@ -9,11 +9,13 @@ local panel = addon.OptionClass.Panel:new(L['Money'], addon.mainPanel);
 
 local saved = addon.SavedVariablesHandler(addonName, {'farmerOptions', 'earningStamp'}, {
   farmerOptions = {
-    money = false,
+    Money = {
+      displayMoney = false,
+    },
   },
 });
 
-local options = saved.vars.farmerOptions;
+local options = saved.vars.farmerOptions.Money;
 
 saved:OnLoad(function (vars)
   --[[ GetMoney is not ready immediately, so we have to call it when variables
@@ -22,7 +24,7 @@ saved:OnLoad(function (vars)
 end);
 
 panel:mapOptions(options, {
-  money = panel:addCheckBox(L['show money']),
+  displayMoney = panel:addCheckBox(L['show money']),
 });
 
 addon.slash('gold', function (param)
