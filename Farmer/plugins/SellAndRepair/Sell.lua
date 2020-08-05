@@ -8,7 +8,7 @@ local UseContainerItem = _G.UseContainerItem;
 local L = addon.L;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions
+    .farmerOptions.SellAndRepair;
 
 local FIRST_BAG = _G.BACKPACK_CONTAINER;
 local LAST_BAG = FIRST_BAG + _G.NUM_BAG_SLOTS;

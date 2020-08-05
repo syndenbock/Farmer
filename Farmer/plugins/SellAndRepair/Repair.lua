@@ -12,7 +12,7 @@ local GetMoney = _G.GetMoney;
 local L = addon.L;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions
+    .farmerOptions.SellAndRepair;
 
 local function repairEquipmentFromGuildFunds (cost)
   RepairAllItems(true);

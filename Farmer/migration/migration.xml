@@ -4,4 +4,5 @@
   <script file="Money.lua"></script>
   <script file="Professions.lua"></script>
   <script file="Reputation.lua"></script>
+  <script file="SellAndRepair.lua"></script>
 </Ui>

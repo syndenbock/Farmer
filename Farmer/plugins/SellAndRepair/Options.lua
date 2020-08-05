@@ -7,12 +7,14 @@ local panel = addon.OptionClass.Panel:new(L['Sell and Repair'],
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    autoRepair = true,
-    autoRepairAllowGuild = false,
-    autoSell = true,
-    autoSellSkipReadable = true,
+    SellAndRepair = {
+      autoRepair = true,
+      autoRepairAllowGuild = false,
+      autoSell = true,
+      autoSellSkipReadable = true,
+    },
   },
-}).vars.farmerOptions;
+}).vars.farmerOptions.SellAndRepair;
 
 panel:mapOptions(options, {
   autoRepair = panel:addCheckBox(L['autorepair when visiting merchants']),
