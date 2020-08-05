@@ -1,5 +1,6 @@
 <UI>
   <script file="Utils.lua"/>
+  <script file="Migration.lua"/>
   <script file="Events.lua"/>
   <script file="Savedvars.lua"/>
   <script file="Slashcommands.lua"/>
