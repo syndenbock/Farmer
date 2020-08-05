@@ -1,3 +1,4 @@
 <Ui>
   <script file="Migration.lua"></script>
+  <script file="Currencies.lua"></script>
 </Ui>

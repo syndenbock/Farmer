@@ -8,10 +8,10 @@ local checkHideOptions = addon.Print.checkHideOptions;
 
 local HONOR_ID = 1585;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions;
+    .farmerOptions.Currency;
 
 local function checkDisplayOptions (id)
-  if (options.currency == false) then
+  if (options.displayCurrencies == false) then
     return false;
   end
 

@@ -8,12 +8,14 @@ local panel = addon.OptionClass.Panel:new(L['Currencies'], addon.mainPanel);
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    currency = true,
-    ignoreHonor = true,
+    Currency = {
+      displayCurrencies = true,
+      ignoreHonor = true,
+    },
   },
-}).vars.farmerOptions;
+}).vars.farmerOptions.Currency;
 
 panel:mapOptions(options, {
-  currency = panel:addCheckBox(L['show currencies']),
+  displayCurrencies = panel:addCheckBox(L['show currencies']),
   ignoreHonor = panel:addCheckBox(L['ignore Honor']),
 });
