@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+local tsort = table.sort;
+
 local Set = {};
 
 addon.share('Class').Set = Set;
@@ -50,6 +52,12 @@ function Set:removeItems (items)
   for x = 1, #items, 1 do
     self:removeItem(items[x]);
   end
+end
+
+function Set:sortItems ()
+  tsort(self.items);
+
+  return self.items;
 end
 
 function Set:clear ()

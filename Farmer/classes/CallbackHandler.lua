@@ -1,6 +1,7 @@
 local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
+local tsort = table.sort;
 
 local CallbackHandler = {};
 
@@ -49,8 +50,20 @@ function CallbackHandler:removeCallback (identifier, callback)
       addonName .. ': callback was not registered for ' .. identifier);
 end
 
+function CallbackHandler:clearCallbacks (identifier)
+  self.callMap[identifier] = nil;
+end
+
+function CallbackHandler:sortIdentifiers ()
+  tsort(self.callMap);
+end
+
 function CallbackHandler:call (identifier, ...)
   local callbacks = self.callMap[identifier];
+
+  if (not callbacks) then
+    return false;
+  end
 
   for x = 1, #callbacks, 1 do
     local callback = callbacks[x];
@@ -59,4 +72,17 @@ function CallbackHandler:call (identifier, ...)
       callback(...);
     end
   end
+
+  return true;
+end
+
+function CallbackHandler:callAll (...)
+  for identifier in pairs(self.callMap) do
+    self:call(identifier, ...);
+  end
+end
+
+
+function CallbackHandler:clear ()
+  self.callMap = {};
 end

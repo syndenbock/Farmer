@@ -1,4 +1,4 @@
-local _, addon = ...;
+local thisAddonName, addon = ...;
 
 local tinsert = _G.tinsert;
 
@@ -69,11 +69,15 @@ local function readAddonVariables(addonName)
     return;
   end
 
-  local loaded = variableStorage[addonName];
-
-  readGlobalsIntoObject(loaded, variableSet:getItems());
+  readGlobalsIntoObject(variableStorage[addonName], variableSet:getItems());
 
   awaiting[addonName] = nil;
+end
+
+local function migrateAddonVariables (addonName)
+  if (addonName ~= thisAddonName) then return end
+
+  addon.Migration.migrate(variableStorage[addonName] or {});
 end
 
 local function executeCallbackList (callbackList, ...)
@@ -114,6 +118,7 @@ end
 
 addon.on('ADDON_LOADED', function (addonName)
   readAddonVariables(addonName);
+  migrateAddonVariables(addonName);
   executeLoadCallbacks(addonName);
 end);
 
