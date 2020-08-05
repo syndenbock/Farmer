@@ -3,4 +3,5 @@
   <script file="Misc.lua"></script>
   <script file="Money.lua"></script>
   <script file="Professions.lua"></script>
+  <script file="Reputation.lua"></script>
 </Ui>
