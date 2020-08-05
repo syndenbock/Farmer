@@ -8,20 +8,21 @@ local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 local L = addon.L;
 
 local panel = addon.OptionClass.Panel:new(L['Items'], addon.mainPanel);
-local focusIdBox;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    rarity = true,
-    minimumRarity = 2,
-    reagents = true,
-    questItems = true,
-    recipes = false,
-    special = true,
-    focus = false,
-    focusItems = {},
+    Items = {
+      filterByRarity = true,
+      minimumRarity = 2,
+      alwaysShowReagents = true,
+      alwaysShowQuestItems = true,
+      alwaysShowRecipes = false,
+      alwaysShowFocusItems = true,
+      onlyShowFocusItems = false,
+      focusItems = {},
+    },
   },
-}).vars.farmerOptions;
+}).vars.farmerOptions.Items;
 
 local function stringifyItemIds (map)
   local text = {};
@@ -70,27 +71,27 @@ local function createRaritySlider ()
   return slider;
 end
 
-local function initPanel ()
+do
+  local focusIdBox;
+
   panel:mapOptions(options, {
-    rarity = panel:addCheckBox(L['show items based on rarity']),
+    filterByRarity = panel:addCheckBox(L['show items based on rarity']),
     minimumRarity = createRaritySlider(),
-    reagents = panel:addCheckBox(L['always show reagents']),
-    questItems = panel:addCheckBox(L['always show quest items']),
-    recipes = panel:addCheckBox(L['always show recipes']),
-    special = panel:addCheckBox(L['always show focused items']),
-    focus = panel:addCheckBox(L['only show focused items']),
+    alwaysShowReagents = panel:addCheckBox(L['always show reagents']),
+    alwaysShowQuestItems = panel:addCheckBox(L['always show quest items']),
+    alwaysShowRecipes = panel:addCheckBox(L['always show recipes']),
+    alwaysShowFocusItems = panel:addCheckBox(L['always show focused items']),
+    onlyShowFocusItems = panel:addCheckBox(L['only show focused items']),
   });
 
   panel:addLabel(L['focused item ids:']);
   focusIdBox = panel:addEditBox(150, 240);
+
+  panel:OnLoad(function ()
+    focusIdBox:SetText(stringifyItemIds(options.focusItems));
+  end);
+
+  panel:OnSave(function ()
+    options.focusItems = parseItemIds(focusIdBox:GetText());
+  end);
 end
-
-initPanel();
-
-panel:OnLoad(function ()
-  focusIdBox:SetText(stringifyItemIds(options.focusItems));
-end);
-
-panel:OnSave(function ()
-  options.focusItems = parseItemIds(focusIdBox:GetText());
-end);
