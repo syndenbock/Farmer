@@ -79,3 +79,20 @@ function Migration.migrate (variables)
 
   storeCurrentVersion(variables);
 end
+
+function Migration.migrateOptionsToSubobject(options, subKey, mapping)
+  if (options == nil) then return end
+
+  local subObject = options[subKey] or {};
+
+  options[subKey] = subObject;
+
+  for oldKey, newKey in pairs(mapping) do
+    local oldValue = options[oldKey];
+
+    if (oldValue ~= nil) then
+      options[oldKey] = nil;
+      subObject[newKey] = oldValue;
+    end
+  end
+end
