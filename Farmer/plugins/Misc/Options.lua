@@ -6,10 +6,12 @@ local panel = addon.OptionClass.Panel:new(L['Misc'], addon.mainPanel);
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    fastLoot = true,
-    hidePlatesWhenFishing = true,
+    Misc = {
+      fastLoot = true,
+      hidePlatesWhenFishing = true,
+    },
   },
-}).vars.farmerOptions;
+}).vars.farmerOptions.Misc;
 
 panel:mapOptions(options, {
   fastLoot = panel:addCheckBox(L['enable fast autoloot']),

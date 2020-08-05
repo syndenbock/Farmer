@@ -8,7 +8,7 @@ local LootFrame = _G.LootFrame;
 local lootIsOpen = false;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions;
+    .farmerOptions.Misc;
 
 LootFrame:SetAlpha(0);
 

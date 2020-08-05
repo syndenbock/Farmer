@@ -6,7 +6,7 @@ local GetSpellInfo = _G.GetSpellInfo;
 local InCombatLockdown = _G.InCombatLockdown;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions;
+    .farmerOptions.Misc;
 
 local UNITID_PLAYER = 'player';
 local FISHING_NAME = GetSpellInfo(7620);

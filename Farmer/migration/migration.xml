@@ -2,4 +2,5 @@
   <script file="Migration.lua"></script>
   <script file="Currencies.lua"></script>
   <script file="Money.lua"></script>
+  <script file="Misc.lua"></script>
 </Ui>
