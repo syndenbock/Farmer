@@ -14,8 +14,7 @@ local function checkLegacyVersion (options)
 end
 
 Migration.addMigration ('3.1', function (variables, lastVersion)
-  if (lastVersion == 0 and
-      not checkLegacyVersion(variables.farmerOptions)) then
+  if (not checkLegacyVersion(variables.farmerOptions) and lastVersion == 0) then
     return;
   end
 
