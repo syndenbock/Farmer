@@ -8,7 +8,6 @@ local GetItemIcon = _G.GetItemIcon;
 local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
 local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
-local AlertFrame = _G.AlertFrame;
 
 local L = addon.L;
 local addonVars = addon.share('vars');
@@ -31,7 +30,6 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
     fontSize = 18,
     hideAtMailbox = true,
     hideInArena = true,
-    hideLootToasts = false,
     hideOnExpeditions = true,
     iconScale = 0.8,
     itemNames = true,
@@ -107,34 +105,15 @@ local function setFontSize (size, scale, outline)
 end
 
 local function applyOptions ()
-  if (options.hideLootToasts == true) then
-    if (not addon.isClassic()) then
-      AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST')
-      AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST_UPGRADE')
-      AlertFrame:UnregisterEvent('BONUS_ROLL_RESULT')
-    end
-
-    AlertFrame:UnregisterEvent('LOOT_ITEM_ROLL_WON')
-  else
-    if (not addon.isClassic()) then
-      AlertFrame:RegisterEvent('SHOW_LOOT_TOAST')
-      AlertFrame:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
-      AlertFrame:RegisterEvent('BONUS_ROLL_RESULT')
-    end
-
-    AlertFrame:RegisterEvent('LOOT_ITEM_ROLL_WON')
-  end
-
   setFontSize(options.fontSize, options.iconScale, options.outline);
   farmerFrame:SetTimeVisible(options.displayTime -
       farmerFrame:GetFadeDuration());
 end
 
-local function initPanel ()
+do
   local optionMap = {};
 
   optionMap.itemNames = mainPanel:addCheckBox(L['show names of all items']);
-  optionMap.hideLootToasts = mainPanel:addCheckBox(L['hide loot and item roll toasts']);
   optionMap.hideAtMailbox = mainPanel:addCheckBox(L['don\'t display at mailboxes']);
 
   if (not addon.isClassic()) then
@@ -172,10 +151,8 @@ local function initPanel ()
   mainPanel:addButton(L['move display'], moveFrame);
 
   mainPanel:mapOptions(options, optionMap);
-  mainPanel:OnLoad(applyOptions);
+  mainPanel:OnSave(applyOptions);
   mainPanel:OnCancel(applyOptions);
-
-  applyOptions();
 end
 
 saved:OnLoad(function ()
@@ -192,7 +169,7 @@ saved:OnLoad(function ()
   options.version = VERSION_CURRENT;
 
   setFramePosition(options.anchor);
-  initPanel();
+  applyOptions();
 end);
 
 --[[
