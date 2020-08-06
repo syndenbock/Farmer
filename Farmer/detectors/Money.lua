@@ -8,7 +8,7 @@ addon.on('PLAYER_LOGIN', function ()
   moneyStamp = GetMoney();
 end);
 
-addon.on('PLAYER_MONEY', function ()
+addon.funnel('PLAYER_MONEY', function ()
   if (not moneyStamp) then return end
 
   local money = GetMoney();
