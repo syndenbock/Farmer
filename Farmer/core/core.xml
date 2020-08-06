@@ -6,6 +6,7 @@
   <script file="Slashcommands.lua"/>
   <script file="Yell.lua"/>
   <script file="Keybindings.lua"/>
-  <script file="Print.lua"/>
+  <script file="MainFrame.lua"/>
   <script file="Options.lua"/>
+  <script file="Print.lua"/>
 </UI>

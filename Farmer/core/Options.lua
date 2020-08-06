@@ -16,7 +16,7 @@ local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
 local Factory = addon.OptionClass;
 local mainPanel = Factory.Panel:new(addonName);
-local farmerFrame = addon.Print.frame;
+local farmerFrame = addon.frame;
 
 addon.mainPanel = mainPanel.panel;
 
@@ -90,7 +90,7 @@ local function setFontSize (size, scale, outline)
   local spacing = 0;
   local iconOffset = -spacing * 1.5;
   local shadowOffset = size / 10;
-  local font = addon.Print.font;
+  local font = addon.font;
 
   --[[ we have to use the standard font because on screen messages are always
        localized --]]

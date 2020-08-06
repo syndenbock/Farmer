@@ -4,42 +4,15 @@ local unpack = _G.unpack;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local IsActiveBattlefieldArena = _G.IsActiveBattlefieldArena;
 
+local farmerFrame = addon.frame;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {},
 }).vars.farmerOptions.Core;
 
+local Print = {};
 local mailIsOpen = false;
 
-local farmerFrame = _G.CreateFrame('ScrollingMessageFrame', 'farmerFrame', _G.UIParent);
-local font = _G.CreateFont('farmerFont');
-
-local function setTrueScale (frame, scale)
-  frame:SetScale(1);
-  frame:SetScale(scale / frame:GetEffectiveScale());
-end
-
-local Print = {
-  font = font,
-  frame = farmerFrame,
-};
-
 addon.Print = Print;
-
-farmerFrame:SetWidth(_G.GetScreenWidth() / 2);
-farmerFrame:SetHeight(_G.GetScreenHeight() / 2);
-
--- farmerFrame:SetFrameStrata('DIALOG');
--- farmerFrame:SetFrameStrata('FULLSCREEN_DIALOG');
-farmerFrame:SetFrameStrata('TOOLTIP');
-farmerFrame:SetFrameLevel(2);
-farmerFrame:SetFading(true);
--- farmerFrame:SetTimeVisible(2);
-farmerFrame:SetFadeDuration(0.5);
-farmerFrame:SetMaxLines(20);
-farmerFrame:SetInsertMode('TOP');
-farmerFrame:SetFontObject(font);
-setTrueScale(farmerFrame, 1);
-farmerFrame:Show();
 
 --[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
 not fire, so we clear the flag after entering the world --]]
