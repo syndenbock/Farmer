@@ -4,10 +4,8 @@ local strsplit = _G.strsplit;
 
 local CURRENT_VERSION = _G.GetAddOnMetadata(addonName, 'version');
 
-local callbackHandler = addon.Class.CallbackHandler:new();
-local lastVersion;
-
 local Migration = {};
+local callbackHandler = addon.Class.CallbackHandler:new();
 
 addon.Migration = Migration;
 
@@ -37,47 +35,43 @@ local function versionToNumber (version)
   return result;
 end
 
-local function readLastVersion (variables)
-  if (lastVersion ~= nil) then return end
-
+local function getLastVersion (variables)
   local store = variables.farmerOptions;
 
   store = store and store.Migrate;
   store = store and store.lastVersion;
-  lastVersion = versionToNumber(store);
-end
 
-local function createVersionCheckCallback (version, callback)
-  return function (lastVersion, variables)
-    if (lastVersion > version) then return end
-
-    callback(variables, lastVersion);
-  end
+  return versionToNumber(store);
 end
 
 local function storeCurrentVersion (variables)
   variables.farmerOptions = variables.farmerOptions or {};
   variables.farmerOptions.Migrate = variables.farmerOptions.Migrate or {};
-  variables.farmerOptions.Migrate.lastVersion =
-    versionToNumber(CURRENT_VERSION);
+  variables.farmerOptions.Migrate.lastVersion = versionToNumber(CURRENT_VERSION);
+end
 
-    readLastVersion();
+local function executeMigrationHandlers (variables)
+  local lastVersion = getLastVersion(variables);
+  local versionList = callbackHandler:getSortedIdentifiers();
+
+  for x = 1, #versionList, 1 do
+    local version = versionList[x];
+
+    if (version >= lastVersion) then
+      callbackHandler:call(version, variables, lastVersion);
+    end
+  end
 end
 
 function Migration.addMigration (version, handler)
-  version = versionToNumber(version);
-  callbackHandler:addCallback(version,
-      createVersionCheckCallback(version, handler));
+  callbackHandler:addCallback(versionToNumber(version), handler);
 end
 
 function Migration.migrate (variables)
-  callbackHandler:sortIdentifiers();
-  readLastVersion(variables);
-  callbackHandler:callAll(lastVersion, variables);
+  executeMigrationHandlers(variables);
+  storeCurrentVersion(variables);
   callbackHandler:clear();
   callbackHandler = nil;
-
-  storeCurrentVersion(variables);
 end
 
 function Migration.migrateOptionsToSubobject(options, subKey, mapping)
@@ -87,12 +81,15 @@ function Migration.migrateOptionsToSubobject(options, subKey, mapping)
 
   options[subKey] = subObject;
 
+  -- print('migrating', subKey);
+
   for oldKey, newKey in pairs(mapping) do
     local oldValue = options[oldKey];
 
     if (oldValue ~= nil) then
       options[oldKey] = nil;
       subObject[newKey] = oldValue;
+      -- print('migrated', oldKey, 'to', subKey .. '/' .. newKey);
     end
   end
 end

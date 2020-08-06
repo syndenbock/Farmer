@@ -54,12 +54,6 @@ function Set:removeItems (items)
   end
 end
 
-function Set:sortItems ()
-  tsort(self.items);
-
-  return self.items;
-end
-
 function Set:clear ()
   self.items = {};
 end

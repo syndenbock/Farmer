@@ -54,8 +54,22 @@ function CallbackHandler:clearCallbacks (identifier)
   self.callMap[identifier] = nil;
 end
 
-function CallbackHandler:sortIdentifiers ()
-  tsort(self.callMap);
+function CallbackHandler:getIdentifiers ()
+  local list = {};
+
+  for identifier in pairs(self.callMap) do
+    tinsert(list, identifier);
+  end
+
+  return list;
+end
+
+function CallbackHandler:getSortedIdentifiers ()
+  local identifiers = self:getIdentifiers();
+
+  tsort(identifiers);
+
+  return identifiers;
 end
 
 function CallbackHandler:call (identifier, ...)
@@ -81,7 +95,6 @@ function CallbackHandler:callAll (...)
     self:call(identifier, ...);
   end
 end
-
 
 function CallbackHandler:clear ()
   self.callMap = {};
