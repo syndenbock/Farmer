@@ -51,7 +51,7 @@ local function createVersionCheckCallback (version, callback)
   return function (lastVersion, variables)
     if (lastVersion > version) then return end
 
-    callback(variables);
+    callback(variables, lastVersion);
   end
 end
 

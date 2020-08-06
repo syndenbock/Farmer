@@ -3,7 +3,6 @@ local addonName, addon = ...;
 local unpack = _G.unpack;
 local max = _G.max;
 local min = _G.min;
-local GetAddOnMetadata = _G.GetAddOnMetadata;
 local GetItemIcon = _G.GetItemIcon;
 local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
 local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
@@ -12,9 +11,7 @@ local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 local L = addon.L;
 local addonVars = addon.share('vars');
 
-local VERSION_CURRENT = 0301000;
 local ADDON_ICON_ID = 3334;
-local VERSION_TOC = GetAddOnMetadata(addonName, 'version');
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
 local Factory = addon.OptionClass;
@@ -34,7 +31,6 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
     iconScale = 0.8,
     itemNames = true,
     outline = 'OUTLINE',
-    version = VERSION_CURRENT,
   },
 });
 
@@ -156,18 +152,6 @@ do
 end
 
 saved:OnLoad(function ()
-  if (options.version < VERSION_CURRENT) then
-    local text
-
-    text = 'New in ' .. addonName .. ' version ' .. VERSION_TOC .. ':\n' ..
-           '- Farmer can now automatically sell gray items and repair your gear when you visit a vendor\n' ..
-           '- The farm radar now has some options for toggling nodes and tooltips\n' ..
-           'Make sure to check out those new features in the options!';
-    print(text)
-  end
-
-  options.version = VERSION_CURRENT;
-
   setFramePosition(options.anchor);
   applyOptions();
 end);
@@ -180,10 +164,6 @@ end);
 
 addon.slash('move', moveFrame);
 addon.slash('reset', setDefaultPosition);
-
-addon.slash('version', function ()
-  print(addonName .. ' version ' .. VERSION_TOC);
-end);
 
 addon.slash('default', function ()
   InterfaceOptionsFrame_Show();

@@ -7,4 +7,5 @@
   <script file="Reputation.lua"></script>
   <script file="SellAndRepair.lua"></script>
   <script file="Skills.lua"></script>
+  <script file="Changes.lua"></script>
 </Ui>
