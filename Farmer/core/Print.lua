@@ -6,7 +6,7 @@ local IsActiveBattlefieldArena = _G.IsActiveBattlefieldArena;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {},
-}).vars.farmerOptions;
+}).vars.farmerOptions.Core;
 
 local mailIsOpen = false;
 

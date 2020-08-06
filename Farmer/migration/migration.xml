@@ -1,4 +1,5 @@
 <Ui>
+  <script file="Core.lua"></script>
   <script file="Currencies.lua"></script>
   <script file="Items.lua"></script>
   <script file="Misc.lua"></script>

@@ -22,19 +22,21 @@ addon.mainPanel = mainPanel.panel;
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    anchor = ANCHOR_DEFAULT,
-    displayTime = 4,
-    fontSize = 18,
-    hideAtMailbox = true,
-    hideInArena = true,
-    hideOnExpeditions = true,
-    iconScale = 0.8,
-    itemNames = true,
-    outline = 'OUTLINE',
+    Core = {
+      anchor = ANCHOR_DEFAULT,
+      displayTime = 4,
+      fontSize = 18,
+      iconScale = 0.8,
+      outline = 'OUTLINE',
+      hideAtMailbox = true,
+      hideInArena = true,
+      hideOnExpeditions = true,
+      itemNames = true,
+    },
   },
 });
 
-local options = saved.vars.farmerOptions;
+local options = saved.vars.farmerOptions.Core;
 
 local function storePosition ()
   local icon = addon.getIcon(GetItemIcon(ADDON_ICON_ID));
