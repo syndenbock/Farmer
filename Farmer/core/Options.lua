@@ -36,8 +36,6 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
     iconScale = 0.8,
     itemNames = true,
     outline = 'OUTLINE',
-    showBags = false,
-    showTotal = true,
     version = VERSION_CURRENT,
   },
 });
@@ -135,8 +133,6 @@ end
 local function initPanel ()
   local optionMap = {};
 
-  optionMap.showTotal = mainPanel:addCheckBox(L['show total count for stackable items']);
-  optionMap.showBags = mainPanel:addCheckBox(L['show bag count for stackable items']);
   optionMap.itemNames = mainPanel:addCheckBox(L['show names of all items']);
   optionMap.hideLootToasts = mainPanel:addCheckBox(L['hide loot and item roll toasts']);
   optionMap.hideAtMailbox = mainPanel:addCheckBox(L['don\'t display at mailboxes']);

@@ -12,6 +12,8 @@ local panel = addon.OptionClass.Panel:new(L['Items'], addon.mainPanel);
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Items = {
+      showBagCount = false,
+      showTotalCount = true,
       filterByRarity = true,
       minimumRarity = 2,
       alwaysShowReagents = true,
@@ -75,6 +77,8 @@ do
   local focusIdBox;
 
   panel:mapOptions(options, {
+    showTotalCount = panel:addCheckBox(L['show total count for stackable items']);
+    showBagCount = panel:addCheckBox(L['show bag count for stackable items']);
     filterByRarity = panel:addCheckBox(L['show items based on rarity']),
     minimumRarity = createRaritySlider(),
     alwaysShowReagents = panel:addCheckBox(L['always show reagents']),
@@ -85,7 +89,7 @@ do
   });
 
   panel:addLabel(L['focused item ids:']);
-  focusIdBox = panel:addEditBox(150, 240);
+  focusIdBox = panel:addEditBox(150, 200);
 
   panel:OnLoad(function ()
     focusIdBox:SetText(stringifyItemIds(options.focusItems));
