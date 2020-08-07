@@ -45,7 +45,7 @@ local function createSlider (name, parent, values, text, anchors)
   _G[name .. 'SliderHigh']:SetText(text.high);
 
   slider:SetScript('OnValueChanged', function (self, value)
-    value = math.floor((value * 10) + 0.5) / 10;
+    value = addon.toStepPrecision(value, values.stepSize);
 
     if (self.edit) then
       self.edit:SetText(value);
@@ -95,11 +95,13 @@ function Slider:new (parent, name, anchorFrame, xOffset, yOffset, text, min,
     yOffset = yOffset,
   });
 
+  this.stepSize = stepSize;
+
   return this;
 end
 
 function Slider:GetValue ()
-  return self.slider:GetValue();
+  return addon.toStepPrecision(self.slider:GetValue(), self.stepSize);
 end
 
 function Slider:SetValue (value)

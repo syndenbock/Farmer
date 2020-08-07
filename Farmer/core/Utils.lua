@@ -27,6 +27,33 @@ function addon.stringJoin (stringList, joiner)
   return result or '';
 end
 
+function addon.round (number)
+  return floor(number + 0.5);
+end
+
+function addon.toStepPrecision (value, stepSize)
+  if (stepSize == 1) then
+    return addon.round(value);
+  else
+    return addon.round(value / stepSize) * stepSize;
+  end
+end
+
+function addon.truncate (number, digits)
+  if (digits == 0) then
+    return floor(number);
+  end
+
+  local factor = 10 ^ digits;
+
+  number = number * factor;
+  number = floor(number);
+  number = number / factor;
+
+  return number;
+end
+
+
 function addon.formatMoney (money)
   local ICON_GOLD = '|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:0:0|t';
   local ICON_SILVER = '|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:0:0|t';
