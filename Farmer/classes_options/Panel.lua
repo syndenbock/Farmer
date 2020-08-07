@@ -135,10 +135,10 @@ function Panel:addCheckBox (text, onClick)
   return checkBox;
 end
 
-function Panel:addSlider (min, max, text, lowText, highText, stepSize)
-  local slider = Factory.Slider:new(self.panel, self:__createChildName(), self.panel,
-      self.anchor.x + 12, self.anchor.y - 15, text, min, max, lowText, highText,
-      'TOPLEFT', 'TOPLEFT', stepSize);
+function Panel:addSlider (min, max, text, lowText, highText, precision)
+  local slider = Factory.Slider:new(self.panel, self:__createChildName(),
+      self.panel, self.anchor.x + 12, self.anchor.y - 15, text, min, max,
+      lowText, highText, 'TOPLEFT', 'TOPLEFT', precision);
 
   self.anchor.y = self.anchor.y - 25 - slider:GetHeight();
 

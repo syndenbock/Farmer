@@ -64,7 +64,7 @@ local function displayRarity (edit, rarity)
 end
 
 local function createRaritySlider ()
-  local slider = panel:addSlider(0, 8, L['minimum rarity'], '', '', 1);
+  local slider = panel:addSlider(0, 8, L['minimum rarity'], '', '', 0);
 
   slider:OnChange(function (self, value)
     displayRarity(self.edit, value);

@@ -1,6 +1,7 @@
 local _, addon = ...;
 
 local floor = _G.floor;
+local log10 = _G.log10;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
 local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
@@ -34,25 +35,34 @@ end
 function addon.toStepPrecision (value, stepSize)
   if (stepSize == 1) then
     return addon.round(value);
-  else
-    return addon.round(value / stepSize) * stepSize;
   end
+
+  return addon.round(value / stepSize) * stepSize;
+end
+
+function addon.stepSizeToPrecision (stepSize)
+  if (stepSize == 1) then
+    return 0;
+  end
+
+  -- step sizes received from sliders are slightly off the actual value, so
+  -- round has to be used
+  return addon.round(log10(1 / stepSize));
 end
 
 function addon.truncate (number, digits)
   if (digits == 0) then
-    return floor(number);
+    return addon.round(number);
   end
 
   local factor = 10 ^ digits;
 
   number = number * factor;
-  number = floor(number);
+  number = addon.round(number);
   number = number / factor;
 
   return number;
 end
-
 
 function addon.formatMoney (money)
   local ICON_GOLD = '|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:0:0|t';

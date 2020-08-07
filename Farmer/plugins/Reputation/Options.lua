@@ -15,5 +15,5 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 
 panel:mapOptions(options, {
   displayReputation = panel:addCheckBox(L['show reputation']),
-  reputationThreshold = panel:addSlider(1, 100, L['minimum'], '1', '100', 1),
+  reputationThreshold = panel:addSlider(1, 100, L['minimum'], '1', '100', 0),
 });
