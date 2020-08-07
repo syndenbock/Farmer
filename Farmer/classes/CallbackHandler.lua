@@ -19,6 +19,8 @@ function CallbackHandler:new ()
 end
 
 function CallbackHandler:addCallback (identifier, callback)
+  assert(type(callback) == 'function', 'callback is not a function');
+
   local callMap = self.callMap;
   local callbacks = callMap[identifier];
 

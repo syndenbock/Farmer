@@ -71,8 +71,19 @@ end
 
 function Panel:__addCallback (identifier, callback)
   local callbackHandler = self:__getCallbackHandler();
+  -- it's necessary to use a safe call with pcall to detect errors as the
+  -- options panel catches errors in option panel handlers
 
-  if (callbackHandler:addCallback(identifier, callback)) then
+  local safeCall = function ()
+    local success, errorMessage = pcall(callback);
+
+    if (not success) then
+      print(addonName, 'error in', identifier, 'handler:');
+      print(errorMessage);
+    end
+  end
+
+  if (callbackHandler:addCallback(identifier, safeCall)) then
     self.panel[identifier] = function ()
       callbackHandler:call(identifier);
     end
