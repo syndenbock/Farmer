@@ -4,8 +4,6 @@ local unpack = _G.unpack;
 local max = _G.max;
 local min = _G.min;
 local GetItemIcon = _G.GetItemIcon;
-local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
-local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
 local L = addon.L;
@@ -14,8 +12,8 @@ local addonVars = addon.share('vars');
 local ADDON_ICON_ID = 3334;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
-local Factory = addon.OptionClass;
-local mainPanel = Factory.Panel:new(addonName);
+local Panel = addon.OptionClass.Panel;
+local mainPanel = Panel:new(addonName);
 local farmerFrame = addon.frame;
 
 addon.mainPanel = mainPanel.panel;
@@ -168,6 +166,5 @@ addon.slash('move', moveFrame);
 addon.slash('reset', setDefaultPosition);
 
 addon.slash('default', function ()
-  InterfaceOptionsFrame_Show();
-  InterfaceOptionsFrame_OpenToCategory(mainPanel.panel);
+  return (Panel.openLastPanel() or mainPanel:open());
 end);

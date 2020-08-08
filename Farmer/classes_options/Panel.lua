@@ -2,6 +2,8 @@ local addonName, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
 local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
+local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
+local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
 local UIParent = _G.UIParent;
 
 local Factory = addon.share('OptionClass');
@@ -9,6 +11,7 @@ local CallbackHandler = addon.Class.CallbackHandler;
 
 local Panel = {};
 local panelCount = 0;
+local lastOpenedPanel;
 
 Factory.Panel = Panel;
 
@@ -50,7 +53,21 @@ function Panel:new (name, parent)
 
   this.childCount = 0;
 
+  panel:HookScript('OnShow', function ()
+    lastOpenedPanel = this;
+  end);
+
   return this;
+end
+
+function Panel.openLastPanel ()
+  if (lastOpenedPanel) then
+    lastOpenedPanel:open();
+
+    return true;
+  end
+
+  return false;
 end
 
 function Panel:__createChildName ()
@@ -88,6 +105,11 @@ function Panel:__addCallback (identifier, callback)
       callbackHandler:call(identifier);
     end
   end
+end
+
+function Panel:open ()
+  InterfaceOptionsFrame_Show();
+  InterfaceOptionsFrame_OpenToCategory(self.panel);
 end
 
 function Panel:OnSave (callback)
