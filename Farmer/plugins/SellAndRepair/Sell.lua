@@ -49,8 +49,9 @@ local function sellItemIfGray (bag, slot)
   if (not locked and
       shouldSellReadableItem(readable) and
       isItemGray(quality)) then
+    local itemCount = info[2];
     local itemLink = info[7];
-    local price = getItemSellPrice(itemLink);
+    local price = getItemSellPrice(itemLink) * itemCount;
 
     sellitem(bag, slot);
 
