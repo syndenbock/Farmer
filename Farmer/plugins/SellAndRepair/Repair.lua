@@ -22,7 +22,7 @@ end
 
 local function canGuildRepair (cost)
   if (not IsInGuild() or
-      not CanGuildBankRepair() or
+      not CanGuildBankRepair or not CanGuildBankRepair() or
       options.autoRepairAllowGuild ~= true) then
     return false;
   end
