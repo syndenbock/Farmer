@@ -201,19 +201,21 @@ end
 local function storeFrame (frame)
   trackedFrames[frame] = {
     show = frame:IsShown(),
-    mouseEnabled = frame:IsMouseEnabled(),
-    ignoreAlpha = frame:IsIgnoringParentAlpha(),
+    mouseEnabled = frame.IsMouseEnabled and frame:IsMouseEnabled(),
+    ignoreAlpha = frame.IsIgnoringParentAlpha and frame:IsIgnoringParentAlpha(),
   };
 end
 
-local function storeMinimapChildren ()
-  local children = {Minimap:GetChildren()};
-
-  trackedFrames = {};
-
-  for x = 1, #children, 1 do
-    storeFrame(children[x]);
+local function storeFrames (frames)
+  for x = 1, #frames, 1 do
+    storeFrame(frames[x]);
   end
+end
+
+local function storeMinimapChildren ()
+  trackedFrames = {};
+  storeFrames({Minimap:GetChildren()});
+  storeFrames({Minimap:GetRegions()});
 end
 
 local function restoreFrame (frame)
