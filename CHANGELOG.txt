@@ -1,3 +1,6 @@
+  version 3.2.2
+- Fixed farm radar error when other addons added regions to the minimap
+
   version 3.2.1
 - Removed option for guild repair in classic as it's not available and caused an error
 - Fixed sell price message for gray items when sellings stacks with more than one item
