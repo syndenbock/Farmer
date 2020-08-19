@@ -1,4 +1,4 @@
-local _, addon = ...;
+local addonName, addon = ...;
 
 local floor = _G.floor;
 local log10 = _G.log10;
@@ -111,5 +111,13 @@ function addon.printTable (table)
 
   for i,v in pairs(table) do
     print(i, ' - ', v);
+  end
+end
+
+function addon.secureCall (callback, ...)
+  local success, message = pcall(callback, ...);
+
+  if (not success) then
+    print('error in', addonName, 'plugin:', message);
   end
 end
