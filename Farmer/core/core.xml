@@ -9,4 +9,5 @@
   <script file="MainFrame.lua"/>
   <script file="Options.lua"/>
   <script file="Print.lua"/>
+  <script file="Serialize.lua"/>
 </UI>
