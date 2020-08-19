@@ -1,5 +1,6 @@
 <UI>
   <script file="API.lua"/>
+  <script file="Core.lua"/>
   <script file="Detectors.lua"/>
   <script file="Events.lua"/>
   <script file="Options.lua"/>
