@@ -125,9 +125,10 @@ end);
 addon.on('PLAYER_LOGOUT', globalizeSavedVariables);
 
 local function SavedVariablesHandler (addonName, variables, defaults)
-  local variableSet = awaiting[addonName] or Set:new(variables);
+  local variableSet = awaiting[addonName] or Set:new();
   local vars = variableStorage[addonName] or {};
 
+  variableSet:add(variables);
   fillObject(vars, defaults or {});
 
   awaiting[addonName] = variableSet;
