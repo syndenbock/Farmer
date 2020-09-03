@@ -45,7 +45,14 @@ local function fillObject (target, source)
     local currentValue = target[key];
 
     if (currentValue == nil) then
-      target[key] = value;
+      if (type(value) == 'table') then
+        local fill = {};
+
+        fillObject(fill, value);
+        target[key] = fill;
+      else
+        target[key] = value;
+      end
     elseif (type(currentValue) == 'table' and not isArray(currentValue)) then
       fillObject(currentValue, value);
     end
@@ -125,13 +132,22 @@ end);
 addon.on('PLAYER_LOGOUT', globalizeSavedVariables);
 
 local function SavedVariablesHandler (addonName, variables, defaults)
-  local variableSet = awaiting[addonName] or Set:new(variables);
-  local vars = variableStorage[addonName] or {};
+  local variableSet = awaiting[addonName];
+  local vars = variableStorage[addonName];
+
+  if (not variableSet) then
+    variableSet = Set:new(variables);
+    awaiting[addonName] = variableSet;
+  else
+    variableSet:add(variables);
+  end
+
+  if (not vars) then
+    vars = {};
+    variableStorage[addonName] = vars;
+  end
 
   fillObject(vars, defaults or {});
-
-  awaiting[addonName] = variableSet;
-  variableStorage[addonName] = vars;
 
   return {
     vars = vars,
