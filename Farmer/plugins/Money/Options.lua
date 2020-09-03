@@ -7,36 +7,38 @@ local L = addon.L;
 
 local panel = addon.OptionClass.Panel:new(L['Money'], addon.mainPanel);
 
-local saved = addon.SavedVariablesHandler(addonName, {'farmerOptions', 'earningStamp'}, {
+local vars = addon.SavedVariablesHandler(addonName, {'farmerOptions', 'earningStamp'}, {
   farmerOptions = {
     Money = {
       displayMoney = false,
     },
   },
-});
+}).vars;
 
-local options = saved.vars.farmerOptions.Money;
-
-saved:OnLoad(function (vars)
-  --[[ GetMoney is not ready immediately, so we have to call it when variables
-       are loaded ]]
-  vars.earningStamp = vars.earningStamp or GetMoney();
-end);
+local options = vars.farmerOptions.Money;
 
 panel:mapOptions(options, {
   displayMoney = panel:addCheckBox(L['show money']),
 });
 
+addon.on('PLAYER_LOGIN', function ()
+    --[[ GetMoney returns 0 when called before PLAYER_LOGIN
+         The check for 0 is to fix broken stamps due to this]]
+  if (vars.earningStamp == nil or vars.earningStamp == 0) then
+    vars.earningStamp = GetMoney();
+  end
+end);
+
 addon.slash('gold', function (param)
   local money = GetMoney();
 
   if (param == 'reset') then
-    saved.vars.earningStamp = money;
+    vars.earningStamp = money;
     print(L['Money counter was reset']);
     return;
   end
 
-  local difference = money - saved.vars.earningStamp;
+  local difference = money - vars.earningStamp;
   local text = addon.formatMoney(abs(difference));
 
   if (difference >= 0) then
