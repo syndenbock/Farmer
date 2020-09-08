@@ -1,3 +1,4 @@
 <UI>
+  <script file="Options.lua"/>
   <script file="Vignettes.lua"/>
 </UI>

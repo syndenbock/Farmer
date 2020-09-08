@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+if (addon.isClassic()) then return end
+
 local GetBestMapForUnit = _G.C_Map.GetBestMapForUnit;
 local GetVignettes = _G.C_VignetteInfo.GetVignettes;
 local GetVignetteInfo = _G.C_VignetteInfo.GetVignetteInfo;
@@ -17,7 +19,7 @@ local function getCurrentMap ()
 end
 
 local function yellVignette (info, coords)
-  addon.yell('NEW_VIGNETTE',ImmutableMap(info), ImmutableMap(coords));
+  addon.yell('NEW_VIGNETTE', ImmutableMap(info), ImmutableMap(coords));
 end
 
 local function readVignette (guid)
