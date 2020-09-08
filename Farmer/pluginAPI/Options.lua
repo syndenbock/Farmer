@@ -1,7 +1,7 @@
 local _, addon = ...;
 
 local options = {};
-local Panel = addon.OptionFactory.Panel;
+local Panel = addon.OptionClass.Panel;
 local mainPanel = addon.mainPanel;
 
 addon.API.options = options;

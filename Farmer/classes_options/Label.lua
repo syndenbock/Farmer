@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
-local Factory = addon.share('OptionFactory');
+local Factory = addon.share('OptionClass');
 
 local Label = {};
 
@@ -37,4 +37,3 @@ function Label:new (parent, anchorFrame, xOffset, yOffset, text, anchor, parentA
 
   return this;
 end
-

@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local callbackHandler = addon.Factory.CallbackHandler:new();
+local callbackHandler = addon.Class.CallbackHandler:new();
 
 function addon.listen (message, callback)
   callbackHandler:addCallback(message, callback);

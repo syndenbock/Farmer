@@ -1,16 +1,19 @@
-local _, addon = ...;
+local thisAddonName, addon = ...;
 
 local tinsert = _G.tinsert;
 
-local Set = addon.Factory.Set;
+local Set = addon.Class.Set;
 
 local variableStorage = {};
 local awaiting = {};
 local loadCallbacks = {};
-local defaultValues = {};
 
 local function isArray (table)
   local x = 1;
+
+  if (next(table) == nil) then
+    return false;
+  end
 
   for _ in pairs(table) do
     if (table[x] == nil) then
@@ -23,22 +26,47 @@ local function isArray (table)
   return true;
 end
 
-local function readGlobalsIntoObject (object, globalNames)
-  for globalName in pairs(globalNames) do
-    object[globalName] = _G[globalName];
+local function assignObject (target, source)
+  for key, value in pairs(source) do
+    if (type(value) == 'table' and not isArray(value)) then
+      if (type(target[key]) ~= 'table') then
+        target[key] = {};
+      end
+
+      assignObject(target[key], value);
+    else
+      target[key] = value;
+    end
   end
 end
 
-local function fillDefaults (settings, defaults)
-  for key, value in pairs(defaults) do
-    local currentValue = settings[key];
+local function fillObject (target, source)
+  for key, value in pairs(source) do
+    local currentValue = target[key];
 
     if (currentValue == nil) then
-      settings[key] = value;
+      if (type(value) == 'table') then
+        local fill = {};
+
+        fillObject(fill, value);
+        target[key] = fill;
+      else
+        target[key] = value;
+      end
     elseif (type(currentValue) == 'table' and not isArray(currentValue)) then
-      fillDefaults(currentValue, value);
+      fillObject(currentValue, value);
     end
   end
+end
+
+local function readGlobalsIntoObject (object, globalNames)
+  local loaded = {};
+
+  for globalName in pairs(globalNames) do
+    loaded[globalName] = _G[globalName];
+  end
+
+  assignObject(object, loaded);
 end
 
 local function readAddonVariables(addonName)
@@ -48,14 +76,15 @@ local function readAddonVariables(addonName)
     return;
   end
 
-  local defaults = defaultValues[addonName];
-  local loaded = variableStorage[addonName];
+  readGlobalsIntoObject(variableStorage[addonName], variableSet:getItems());
 
-  readGlobalsIntoObject(loaded, variableSet:getItems());
-  fillDefaults(loaded, defaults);
-
-  defaultValues[addonName] = nil;
   awaiting[addonName] = nil;
+end
+
+local function migrateAddonVariables (addonName)
+  if (addonName ~= thisAddonName) then return end
+
+  addon.Migration.migrate(variableStorage[addonName] or {});
 end
 
 local function executeCallbackList (callbackList, ...)
@@ -96,21 +125,29 @@ end
 
 addon.on('ADDON_LOADED', function (addonName)
   readAddonVariables(addonName);
+  migrateAddonVariables(addonName);
   executeLoadCallbacks(addonName);
 end);
 
 addon.on('PLAYER_LOGOUT', globalizeSavedVariables);
 
 local function SavedVariablesHandler (addonName, variables, defaults)
-  local variableSet = awaiting[addonName] or Set:new(variables);
-  local vars = variableStorage[addonName] or {};
+  local variableSet = awaiting[addonName];
+  local vars = variableStorage[addonName];
 
-  defaultValues[addonName] = defaultValues[addonName] or {};
-  fillDefaults(vars, defaults or {});
-  fillDefaults(defaultValues[addonName], defaults or {});
+  if (not variableSet) then
+    variableSet = Set:new(variables);
+    awaiting[addonName] = variableSet;
+  else
+    variableSet:add(variables);
+  end
 
-  awaiting[addonName] = variableSet;
-  variableStorage[addonName] = vars;
+  if (not vars) then
+    vars = {};
+    variableStorage[addonName] = vars;
+  end
+
+  fillObject(vars, defaults or {});
 
   return {
     vars = vars,

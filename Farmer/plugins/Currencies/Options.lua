@@ -4,22 +4,18 @@ if (addon.isClassic()) then return end
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:new(L['Currencies'], addon.mainPanel);
-local enabledBox = panel:addCheckBox(L['show currencies']);
-local ignoreHonorBox = panel:addCheckBox(L['ignore Honor']);
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+local panel = addon.OptionClass.Panel:new(L['Currencies'], addon.mainPanel);
+
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    currency = true,
-    ignoreHonor = true,
+    Currency = {
+      displayCurrencies = true,
+      ignoreHonor = true,
+    },
   },
-}).vars;
+}).vars.farmerOptions.Currency;
 
-panel:OnLoad(function ()
-  enabledBox:SetValue(saved.farmerOptions.currency);
-  ignoreHonorBox:SetValue(saved.farmerOptions.ignoreHonor);
-end);
-
-panel:OnSave(function ()
-  saved.farmerOptions.currency = enabledBox:GetValue();
-  saved.farmerOptions.ignoreHonor = ignoreHonorBox:GetValue();
-end);
+panel:mapOptions(options, {
+  displayCurrencies = panel:addCheckBox(L['show currencies']),
+  ignoreHonor = panel:addCheckBox(L['ignore Honor']),
+});

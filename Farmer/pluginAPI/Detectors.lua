@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+local secureCall = addon.secureCall;
+
 local detectors = {};
 
 addon.API.detectors = detectors;
@@ -17,6 +19,6 @@ function detectors.on(hook, callback)
   assert(ALLOWED_HOOKS[hook] ~= nil, addonName .. ': unknown detector: ' .. hook);
 
   addon.listen(hook, function (...)
-    pcall(callback, ...);
+    secureCall(callback, ...);
   end);
 end

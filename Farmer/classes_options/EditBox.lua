@@ -3,7 +3,7 @@ local _, addon = ...;
 local CreateFrame = _G.CreateFrame;
 local GameFontNormal = _G.GameFontNormal;
 
-local Factory = addon.share('OptionFactory');
+local Factory = addon.share('OptionClass');
 
 local EditBox = {};
 

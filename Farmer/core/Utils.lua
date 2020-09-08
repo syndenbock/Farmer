@@ -1,7 +1,7 @@
-local _, addon = ...;
+local addonName, addon = ...;
 
 local floor = _G.floor;
-local pow = math.pow;
+local log10 = _G.log10;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
 local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
@@ -28,11 +28,37 @@ function addon.stringJoin (stringList, joiner)
   return result or '';
 end
 
+function addon.round (number)
+  return floor(number + 0.5);
+end
+
+function addon.toStepPrecision (value, stepSize)
+  if (stepSize == 1) then
+    return addon.round(value);
+  end
+
+  return addon.round(value / stepSize) * stepSize;
+end
+
+function addon.stepSizeToPrecision (stepSize)
+  if (stepSize == 1) then
+    return 0;
+  end
+
+  -- step sizes received from sliders are slightly off the actual value, so
+  -- round has to be used
+  return addon.round(log10(1 / stepSize));
+end
+
 function addon.truncate (number, digits)
-  local factor = pow(10, digits);
+  if (digits == 0) then
+    return addon.round(number);
+  end
+
+  local factor = 10 ^ digits;
 
   number = number * factor;
-  number = floor(number);
+  number = addon.round(number);
   number = number / factor;
 
   return number;
@@ -85,5 +111,13 @@ function addon.printTable (table)
 
   for i,v in pairs(table) do
     print(i, ' - ', v);
+  end
+end
+
+function addon.secureCall (callback, ...)
+  local success, message = pcall(callback, ...);
+
+  if (not success) then
+    print('error in', addonName, 'plugin:', message);
   end
 end

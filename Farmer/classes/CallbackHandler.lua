@@ -1,12 +1,11 @@
 local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
-
-local Factory = addon.share('Factory');
+local tsort = table.sort;
 
 local CallbackHandler = {};
 
-Factory.CallbackHandler = CallbackHandler;
+addon.share('Class').CallbackHandler = CallbackHandler;
 
 CallbackHandler.__index = CallbackHandler;
 
@@ -20,6 +19,8 @@ function CallbackHandler:new ()
 end
 
 function CallbackHandler:addCallback (identifier, callback)
+  assert(type(callback) == 'function', 'callback is not a function');
+
   local callMap = self.callMap;
   local callbacks = callMap[identifier];
 
@@ -51,8 +52,34 @@ function CallbackHandler:removeCallback (identifier, callback)
       addonName .. ': callback was not registered for ' .. identifier);
 end
 
+function CallbackHandler:clearCallbacks (identifier)
+  self.callMap[identifier] = nil;
+end
+
+function CallbackHandler:getIdentifiers ()
+  local list = {};
+
+  for identifier in pairs(self.callMap) do
+    tinsert(list, identifier);
+  end
+
+  return list;
+end
+
+function CallbackHandler:getSortedIdentifiers ()
+  local identifiers = self:getIdentifiers();
+
+  tsort(identifiers);
+
+  return identifiers;
+end
+
 function CallbackHandler:call (identifier, ...)
   local callbacks = self.callMap[identifier];
+
+  if (not callbacks) then
+    return false;
+  end
 
   for x = 1, #callbacks, 1 do
     local callback = callbacks[x];
@@ -61,4 +88,16 @@ function CallbackHandler:call (identifier, ...)
       callback(...);
     end
   end
+
+  return true;
+end
+
+function CallbackHandler:callAll (...)
+  for identifier in pairs(self.callMap) do
+    self:call(identifier, ...);
+  end
+end
+
+function CallbackHandler:clear ()
+  self.callMap = {};
 end

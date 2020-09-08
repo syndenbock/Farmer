@@ -2,20 +2,20 @@ local addonName, addon = ...;
 
 if (addon.isClassic()) then return end
 
-local GetCurrencyInfo = _G.GetCurrencyInfo;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
 local checkHideOptions = addon.Print.checkHideOptions;
 
 local HONOR_ID = 1585;
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions.Currency;
 
 local function checkDisplayOptions (id)
-  if (saved.farmerOptions.currency == false) then
+  if (options.displayCurrencies == false) then
     return false;
   end
 
-  if (saved.farmerOptions.ignoreHonor == true and id == HONOR_ID) then
+  if (options.ignoreHonor == true and id == HONOR_ID) then
     return false;
   end
 

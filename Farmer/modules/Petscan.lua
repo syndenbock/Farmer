@@ -33,12 +33,13 @@ end
 local function processPetQueue (petQueue, freeSlots)
   CagePetByID(petQueue[1]);
   tremove(petQueue, 1);
+  freeSlots = freeSlots - 1;
 
   --[[ we want to process queue once with no slots left, so the game displays
        an "inventory is full" message once --]]
-  if (freeSlots > 0 and #petQueue > 0) then
+  if (freeSlots >= 0 and #petQueue > 0) then
     C_Timer.After(0.4, function ()
-      processPetQueue(petQueue, freeSlots - 1);
+      processPetQueue(petQueue, freeSlots);
     end);
   end
 end
@@ -91,7 +92,11 @@ local function scanPets ()
     readPetByIndex(petMap, petQueue, x);
   end
 
-  processPetQueue(petQueue, freeSlots);
+  if (#petQueue > 0) then
+    processPetQueue(petQueue, freeSlots);
+  else
+    print('no pets to be caged!')
+  end
 end
 
 addon.slash('cagepets', scanPets);

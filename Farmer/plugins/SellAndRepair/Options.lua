@@ -2,35 +2,34 @@ local addonName, addon = ...;
 
 local L = addon.L;
 
-local panel = addon.OptionFactory.Panel:new(L['Sell and Repair'], addon.mainPanel);
-local repairBox = panel:addCheckBox(L['autorepair when visiting merchants']);
-local guildRepairBox = panel:addCheckBox(L['allow using guild funds for autorepair']);
-local sellBox = panel:addCheckBox(L['autosell gray items when visiting merchants']);
-local readableBox = panel:addCheckBox(L['skip readable items when autoselling']);
+local panel = addon.OptionClass.Panel:new(L['Sell and Repair'],
+    addon.mainPanel);
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    autoRepair = true,
-    autoRepairAllowGuild = false,
-    autoSell = true,
-    autoSellSkipReadable = true,
+    SellAndRepair = {
+      autoRepair = true,
+      autoRepairAllowGuild = false,
+      autoSell = true,
+      autoSellSkipReadable = true,
+    },
   },
-}).vars;
+}).vars.farmerOptions.SellAndRepair;
 
-panel:OnLoad(function ()
-  local options = saved.farmerOptions;
+do
+  local optionMap = {};
 
-  repairBox:SetValue(options.autoRepair);
-  guildRepairBox:SetValue(options.autoRepairAllowGuild);
-  sellBox:SetValue(options.autoSell);
-  readableBox:SetValue(options.autoSellSkipReadable);
-end);
+  optionMap.autoRepair = panel:addCheckBox(L['autorepair when visiting merchants']);
 
-panel:OnSave(function ()
-  local options = saved.farmerOptions;
+  if (not addon.isClassic()) then
+    optionMap.autoRepairAllowGuild =
+        panel:addCheckBox(L['allow using guild funds for autorepair']);
+  end
 
-  options.autoRepair = repairBox:GetValue();
-  options.autoRepairAllowGuild = guildRepairBox:GetValue();
-  options.autoSell = sellBox:GetValue();
-  options.autoSellSkipReadable = readableBox:GetValue();
-end);
+  optionMap.autoSell =
+      panel:addCheckBox(L['autosell gray items when visiting merchants']);
+  optionMap.autoSellSkipReadable =
+      panel:addCheckBox(L['skip readable items when autoselling']);
+
+  panel:mapOptions(options, optionMap);
+end

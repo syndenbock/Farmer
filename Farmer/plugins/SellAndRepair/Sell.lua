@@ -7,14 +7,15 @@ local UseContainerItem = _G.UseContainerItem;
 
 local L = addon.L;
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions.SellAndRepair;
 
 local FIRST_BAG = _G.BACKPACK_CONTAINER;
 local LAST_BAG = FIRST_BAG + _G.NUM_BAG_SLOTS;
 local QUALITY_COMMON = _G.Enum.ItemQuality.Poor;
 
 local function isItemGray (quality)
-  return (quality <= QUALITY_COMMON);
+  return (quality ~= nil and quality == QUALITY_COMMON);
 end
 
 local function sellitem (bag, slot)
@@ -33,7 +34,7 @@ local function getItemSellPrice (itemLink)
 end
 
 local function shouldSellReadableItem (readable)
-  return (not readable or saved.farmerOptions.autoSellSkipReadable == false);
+  return (not readable or options.autoSellSkipReadable == false);
 end
 
 local function sellItemIfGray (bag, slot)
@@ -45,18 +46,19 @@ local function sellItemIfGray (bag, slot)
   -- empty info means empty bag slot
   if (info[1] == nil) then return 0 end;
 
-  if (locked or not
-      shouldSellReadableItem(readable) or not
+  if (not locked and
+      shouldSellReadableItem(readable) and
       isItemGray(quality)) then
+    local itemCount = info[2];
+    local itemLink = info[7];
+    local price = getItemSellPrice(itemLink) * itemCount;
+
+    sellitem(bag, slot);
+
+    return price;
+  else
     return 0;
   end
-
-  local itemLink = info[7];
-  local price = getItemSellPrice(itemLink);
-
-  sellitem(bag, slot);
-
-  return price;
 end
 
 local function sellGrayItemsInBag (bag)
@@ -82,7 +84,7 @@ local function sellGrayItems ()
 end
 
 local function shouldAutoSell ()
-  return (saved.farmerOptions.autoSell == true);
+  return (options.autoSell == true);
 end
 
 local function onMerchantOpened ()

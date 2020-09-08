@@ -1,0 +1,12 @@
+<Ui>
+  <script file="Core.lua"></script>
+  <script file="Currencies.lua"></script>
+  <script file="Items.lua"></script>
+  <script file="Misc.lua"></script>
+  <script file="Money.lua"></script>
+  <script file="Professions.lua"></script>
+  <script file="Reputation.lua"></script>
+  <script file="SellAndRepair.lua"></script>
+  <script file="Skills.lua"></script>
+  <script file="Changes.lua"></script>
+</Ui>

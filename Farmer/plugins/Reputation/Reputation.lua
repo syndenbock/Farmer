@@ -4,7 +4,8 @@ local abs = _G.abs;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetFactionInfoByID = _G.GetFactionInfoByID;
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars;
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions.Reputation;
 
 local MESSAGE_COLORS = {0, 0.35, 1};
 
@@ -15,14 +16,14 @@ local function getStandingLabel (standing)
 end
 
 local function checkReputationOptions ()
-  return (saved.farmerOptions.reputation == true and
+  return (options.displayReputation == true and
           addon.Print.checkHideOptions());
 end
 
 local function shouldReputationBeDisplayed (info)
   return (info.standingChanged or
           info.paragonLevelGained or
-          abs(info.reputationChange) > saved.farmerOptions.reputationThreshold);
+          abs(info.reputationChange) > options.reputationThreshold);
 end
 
 local function displayReputation (info)

@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
 
-local Factory = addon.share('OptionFactory');
+local Factory = addon.share('OptionClass');
 
 local Slider = {};
 
@@ -37,7 +37,7 @@ local function createSlider (name, parent, values, text, anchors)
       anchors.xOffset, anchors.yOffset);
   slider:SetOrientation('HORIZONTAL');
   slider:SetMinMaxValues(values.min, values.max);
-  slider:SetValueStep(values.stepSize);
+  slider:SetValueStep(1 / (10 ^ values.precision));
   slider:SetObeyStepOnDrag(true);
 
   _G[name .. 'SliderText']:SetText(text.label);
@@ -45,7 +45,7 @@ local function createSlider (name, parent, values, text, anchors)
   _G[name .. 'SliderHigh']:SetText(text.high);
 
   slider:SetScript('OnValueChanged', function (self, value)
-    value = math.floor((value * 10) + 0.5) / 10;
+    value = addon.truncate(value, addon.stepSizeToPrecision(self:GetValueStep()));
 
     if (self.edit) then
       self.edit:SetText(value);
@@ -74,13 +74,13 @@ local function createSliderWithEditBox (name, parent, values, text, anchors)
 end
 
 function Slider:new (parent, name, anchorFrame, xOffset, yOffset, text, min,
-                     max, lowText, highText, anchor, parentAnchor, stepSize)
+                     max, lowText, highText, anchor, parentAnchor, precision)
   local this = {};
 
   setmetatable(this, Slider);
 
   this.slider, this.edit = createSliderWithEditBox(name, parent, {
-    stepSize = stepSize or 1,
+    precision = precision or 0,
     min = min,
     max = max,
   }, {
@@ -95,11 +95,14 @@ function Slider:new (parent, name, anchorFrame, xOffset, yOffset, text, min,
     yOffset = yOffset,
   });
 
+  this.precision = precision;
+
   return this;
 end
 
 function Slider:GetValue ()
-  return self.slider:GetValue();
+  return addon.truncate(self.slider:GetValue(),
+      addon.stepSizeToPrecision(self.slider:GetValueStep()));
 end
 
 function Slider:SetValue (value)

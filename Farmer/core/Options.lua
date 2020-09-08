@@ -3,51 +3,43 @@ local addonName, addon = ...;
 local unpack = _G.unpack;
 local max = _G.max;
 local min = _G.min;
-local GetAddOnMetadata = _G.GetAddOnMetadata;
 local GetItemIcon = _G.GetItemIcon;
-local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
-local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
-local AlertFrame = _G.AlertFrame;
 
 local L = addon.L;
 local addonVars = addon.share('vars');
 
-local VERSION_CURRENT = 0300000;
 local ADDON_ICON_ID = 3334;
-local VERSION_TOC = GetAddOnMetadata(addonName, 'version');
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
-local Factory = addon.OptionFactory;
-local mainPanel = Factory.Panel:new(addonName);
-local farmerFrame = addon.Print.frame;
+local Panel = addon.OptionClass.Panel;
+local mainPanel = Panel:new(addonName);
+local farmerFrame = addon.frame;
 
 addon.mainPanel = mainPanel.panel;
 
-local saved = addon.SavedVariablesHandler(addonName, {'earningStamp', 'farmerOptions'}, {
+local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
-    anchor = ANCHOR_DEFAULT,
-    displayTime = 4,
-    fontSize = 18,
-    hideAtMailbox = true,
-    hideInArena = true,
-    hideLootToasts = false,
-    hideOnExpeditions = true,
-    iconScale = 0.8,
-    itemNames = true,
-    outline = 'OUTLINE',
-    showBags = false,
-    showTotal = true,
-    version = VERSION_CURRENT,
+    Core = {
+      anchor = ANCHOR_DEFAULT,
+      displayTime = 4,
+      fontSize = 18,
+      iconScale = 0.8,
+      outline = 'OUTLINE',
+      hideAtMailbox = true,
+      hideInArena = true,
+      hideOnExpeditions = true,
+      itemNames = true,
+    },
   },
 });
 
-addon.savedVariables = saved.vars;
+local options = saved.vars.farmerOptions.Core;
 
 local function storePosition ()
   local icon = addon.getIcon(GetItemIcon(ADDON_ICON_ID));
 
-  saved.vars.farmerOptions.anchor = {farmerFrame:GetPoint()};
+  options.anchor = {farmerFrame:GetPoint()};
   farmerFrame:EnableMouse(false);
   farmerFrame:SetMovable(false);
   farmerFrame:SetFading(true);
@@ -96,7 +88,7 @@ local function setFontSize (size, scale, outline)
   local spacing = 0;
   local iconOffset = -spacing * 1.5;
   local shadowOffset = size / 10;
-  local font = addon.Print.font;
+  local font = addon.font;
 
   --[[ we have to use the standard font because on screen messages are always
        localized --]]
@@ -109,53 +101,30 @@ local function setFontSize (size, scale, outline)
 end
 
 local function applyOptions ()
-  local options = saved.vars.farmerOptions;
-
-  if (options.hideLootToasts == true) then
-    if (not addon.isClassic()) then
-      AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST')
-      AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST_UPGRADE')
-      AlertFrame:UnregisterEvent('BONUS_ROLL_RESULT')
-    end
-
-    AlertFrame:UnregisterEvent('LOOT_ITEM_ROLL_WON')
-  else
-    if (not addon.isClassic()) then
-      AlertFrame:RegisterEvent('SHOW_LOOT_TOAST')
-      AlertFrame:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
-      AlertFrame:RegisterEvent('BONUS_ROLL_RESULT')
-    end
-
-    AlertFrame:RegisterEvent('LOOT_ITEM_ROLL_WON')
-  end
-
   setFontSize(options.fontSize, options.iconScale, options.outline);
   farmerFrame:SetTimeVisible(options.displayTime -
       farmerFrame:GetFadeDuration());
 end
 
-local function initPanel ()
-  local totalBox = mainPanel:addCheckBox(L['show total count for stackable items']);
-  local bagBox = mainPanel:addCheckBox(L['show bag count for stackable items']);
-  local nameBox = mainPanel:addCheckBox(L['show names of all items']);
-  local toastBox = mainPanel:addCheckBox(L['hide loot and item roll toasts']);
-  local mailBox = mainPanel:addCheckBox(L['don\'t display at mailboxes']);
-  local arenaBox;
-  local expeditionBox;
+do
+  local optionMap = {};
+
+  optionMap.itemNames = mainPanel:addCheckBox(L['show names of all items']);
+  optionMap.hideAtMailbox = mainPanel:addCheckBox(L['don\'t display at mailboxes']);
 
   if (not addon.isClassic()) then
-    arenaBox = mainPanel:addCheckBox(L['don\'t display in arena']);
-    expeditionBox = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
+    optionMap.hideInArena = mainPanel:addCheckBox(L['don\'t display in arena']);
+    optionMap.hideOnExpeditions = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
   end
 
-  local scaleSlider = mainPanel:addSlider(0.1, 3, L['icon scale'], '0.1', '3', 0.1);
-  local sizeSlider = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 1, function (_, value)
-    setFontSize(value, saved.vars.farmerOptions.iconScale, saved.vars.farmerOptions.outline);
+  optionMap.iconScale = mainPanel:addSlider(0.1, 3, L['icon scale'], '0.1', '3', 1);
+  optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0, function (_, value)
+    setFontSize(value, options.iconScale, options.outline);
   end);
-  local timeSlider = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 1, function (_, value)
+  optionMap.displayTime = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 0, function (_, value)
     farmerFrame:SetTimeVisible(value - farmerFrame:GetFadeDuration());
   end);
-  local outLineDrop = mainPanel:addDropdown(L['outline mode'], {
+  optionMap.outline = mainPanel:addDropdown(L['outline mode'], {
     {
       text = L['None'],
       value = '',
@@ -173,72 +142,18 @@ local function initPanel ()
       value = 'MONOCHROME, THICKOUTLINE',
     }
   });
-  local _ = mainPanel:addButton(L['reset position'], setDefaultPosition);
-  local _ = mainPanel:addButton(L['move display'], moveFrame);
 
-  mainPanel:OnLoad(function ()
-    local options = saved.vars.farmerOptions;
+  mainPanel:addButton(L['reset position'], setDefaultPosition);
+  mainPanel:addButton(L['move display'], moveFrame);
 
-    totalBox:SetValue(options.showTotal);
-    bagBox:SetValue(options.showBags);
-    nameBox:SetValue(options.itemNames);
-    toastBox:SetValue(options.hideLootToasts);
-    mailBox:SetValue(options.hideAtMailbox);
-
-    if (not addon.isClassic()) then
-      arenaBox:SetValue(options.hideInArena);
-      expeditionBox:SetValue(options.hideOnExpeditions);
-    end
-
-    scaleSlider:SetValue(options.iconScale);
-    sizeSlider:SetValue(options.fontSize);
-    timeSlider:SetValue(options.displayTime);
-    outLineDrop:SetValue(options.outline);
-  end);
-
-  mainPanel:OnSave(function ()
-    local options = saved.vars.farmerOptions;
-
-    options.showTotal = totalBox:GetValue();
-    options.showBags = bagBox:GetValue();
-    options.itemNames = nameBox:GetValue();
-    options.hideLootToasts = toastBox:GetValue();
-    options.hideAtMailbox = mailBox:GetValue();
-
-    if (not addon.isClassic()) then
-      options.hideInArena = arenaBox:GetValue();
-      options.hideOnExpeditions = expeditionBox:GetValue();
-    end
-
-    options.iconScale = scaleSlider:GetValue();
-    options.fontSize = sizeSlider:GetValue();
-    options.displayTime = timeSlider:GetValue();
-    options.outline = outLineDrop:GetValue();
-
-    applyOptions();
-  end);
-
+  mainPanel:mapOptions(options, optionMap);
+  mainPanel:OnSave(applyOptions);
   mainPanel:OnCancel(applyOptions);
-
-  applyOptions();
 end
 
-saved:OnLoad(function (vars)
-  local options = vars.farmerOptions;
-
-  if (options.version < VERSION_CURRENT) then
-    local text
-
-    text = 'New in ' .. addonName .. ' version ' .. VERSION_TOC .. ':\n' ..
-           '- Options have been cleaned up and are now separated into categories! \n' ..
-           '- Farmer now has an API for plugins, a wiki will be created soon';
-    print(text)
-  end
-
-  options.version = VERSION_CURRENT;
-
+saved:OnLoad(function ()
   setFramePosition(options.anchor);
-  initPanel();
+  applyOptions();
 end);
 
 --[[
@@ -250,11 +165,6 @@ end);
 addon.slash('move', moveFrame);
 addon.slash('reset', setDefaultPosition);
 
-addon.slash('version', function ()
-  print(addonName .. ' version ' .. VERSION_TOC);
-end);
-
 addon.slash('default', function ()
-  InterfaceOptionsFrame_Show();
-  InterfaceOptionsFrame_OpenToCategory(mainPanel.panel);
+  return (Panel.openLastPanel() or mainPanel:open());
 end);
