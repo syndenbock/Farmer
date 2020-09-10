@@ -1,3 +1,8 @@
+  version 3.2.3
+- Updated russian translations
+- Fixed issue with loading saved gold timestamp
+- Added some new methods to plugin API
+
   version 3.2.2
 - Fixed farm radar error when other addons added regions to the minimap
 
