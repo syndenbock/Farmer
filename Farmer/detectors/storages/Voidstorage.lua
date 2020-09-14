@@ -64,7 +64,7 @@ addon.on({'VOID_STORAGE_UPDATE', 'VOID_STORAGE_CONTENTS_UPDATE',
   end
 end);
 
-addon.on('VOID_STORAGE_CLOSE', function ()
+addon.on({'VOID_STORAGE_CLOSE', 'PLAYER_ENTERING_WORLD'}, function ()
   isOpen = false;
   storage = nil;
 end);

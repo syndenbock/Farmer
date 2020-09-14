@@ -14,17 +14,13 @@ local mailIsOpen = false;
 
 addon.Print = Print;
 
---[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
-not fire, so we clear the flag after entering the world --]]
-addon.on('PLAYER_ENTERING_WORLD', function ()
-  mailIsOpen = false;
-end);
-
 addon.on('MAIL_SHOW', function ()
   mailIsOpen = true;
 end);
 
-addon.on('MAIL_CLOSED', function ()
+--[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
+not fire, so we clear the flag after entering the world --]]
+addon.on({'MAIL_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
   mailIsOpen = false;
 end);
 

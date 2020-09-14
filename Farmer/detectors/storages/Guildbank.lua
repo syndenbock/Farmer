@@ -68,7 +68,7 @@ addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
   end
 end);
 
-addon.on('GUILDBANKFRAME_CLOSED', function ()
+addon.on({'GUILDBANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
   isOpen = false;
   storage = nil;
   currentTab = nil;

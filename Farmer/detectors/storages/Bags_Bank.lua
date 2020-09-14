@@ -83,7 +83,7 @@ local function addEventListeners ()
     Items.updateCurrentInventory();
   end);
 
-  addon.on('BANKFRAME_CLOSED', function ()
+  addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
     bagCache[BANKBAG_CONTAINER] = nil;
     bagCache[BANK_CONTAINER] = nil;
 

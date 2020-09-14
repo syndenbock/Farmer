@@ -38,6 +38,6 @@ addon.on('LOOT_READY', function (autoLoot)
   end
 end);
 
-addon.on('LOOT_CLOSED', function ()
+addon.on({'LOOT_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
   lootIsOpen = false;
 end);
