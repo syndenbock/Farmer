@@ -301,18 +301,18 @@ end
 local function updateRadar (_, elapsed)
   updateStamp = updateStamp + elapsed;
 
-  if ((updateStamp) < UPDATE_FREQUENCY_S) then return end
+  if (updateStamp < UPDATE_FREQUENCY_S) then return end
 
   local rotation = GetPlayerFacing();
 
   --[[ After using a transport or in instances GetPlayerFacing returns nil ]]
-  if (not rotation) then
+  if (rotation) then
+    directionTexture:Show();
+    directionTexture:SetRotation(-rotation);
+  else
     directionTexture:Hide();
-    return;
   end
 
-  directionTexture:Show();
-  directionTexture:SetRotation(-rotation);
   updateStamp = 0;
 end
 
@@ -420,9 +420,10 @@ local function enableFarmMode ()
   hideMinimapChildren();
   setMinimapRotation(1);
 
+  updateStamp = 0;
+  updateRadar(nil, UPDATE_FREQUENCY_S);
   radarFrame:SetScript('OnUpdate', updateRadar);
   radarFrame:Show();
-  updateStamp = UPDATE_FREQUENCY_S;
 
   addon.on('ZONE_CHANGED', updateMinimapChildren);
 
