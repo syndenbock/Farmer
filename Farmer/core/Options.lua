@@ -3,6 +3,7 @@ local addonName, addon = ...;
 local unpack = _G.unpack;
 local max = _G.max;
 local min = _G.min;
+local strupper = _G.strupper;
 local GetItemIcon = _G.GetItemIcon;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
@@ -37,9 +38,12 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 local options = saved.vars.farmerOptions.Core;
 
 local function storePosition ()
+  options.anchor = {farmerFrame:GetPoint()};
+end
+
+local function stopMovingFrame ()
   local icon = addon.getIcon(GetItemIcon(ADDON_ICON_ID));
 
-  options.anchor = {farmerFrame:GetPoint()};
   farmerFrame:EnableMouse(false);
   farmerFrame:SetMovable(false);
   farmerFrame:SetFading(true);
@@ -48,6 +52,7 @@ local function storePosition ()
   farmerFrame:StopMovingOrSizing();
   farmerFrame:SetScript('OnDragStart', nil);
   farmerFrame:SetScript('OnReceiveDrag', nil);
+  storePosition();
 end
 
 local function moveFrame ()
@@ -65,7 +70,7 @@ local function moveFrame ()
     end
   end);
 
-  farmerFrame:SetScript('OnReceiveDrag', storePosition);
+  farmerFrame:SetScript('OnReceiveDrag', stopMovingFrame);
 end
 
 local function setFramePosition (position)
@@ -75,7 +80,7 @@ end
 
 local function setDefaultPosition ()
   setFramePosition(ANCHOR_DEFAULT);
-  storePosition();
+  stopMovingFrame();
 end
 
 local function setFontSize (size, scale, outline)
@@ -151,6 +156,27 @@ do
   mainPanel:OnCancel(applyOptions);
 end
 
+local function setGrowDirection (direction)
+  local currentDirection = strupper(farmerFrame:GetInsertMode());
+
+  direction = strupper(direction);
+
+  if (direction ~= currentDirection) then
+    local anchor = {farmerFrame:GetPoint()};
+
+    if (direction == 'TOP') then
+      anchor[5] = anchor[5] - farmerFrame:GetHeight();
+    else
+      anchor[5] = anchor[5] + farmerFrame:GetHeight();
+    end
+
+    farmerFrame:SetPoint(unpack(anchor));
+  end
+
+  farmerFrame:SetInsertMode(direction);
+end
+
+
 saved:OnLoad(function ()
   setFramePosition(options.anchor);
   applyOptions();
@@ -168,3 +194,5 @@ addon.slash('reset', setDefaultPosition);
 addon.slash('default', function ()
   return (Panel.openLastPanel() or mainPanel:open());
 end);
+
+addon.slash('grow', setGrowDirection);
