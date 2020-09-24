@@ -12,6 +12,7 @@ local addonVars = addon.share('vars');
 
 local ADDON_ICON_ID = 3334;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
+local INSERTMODE_DEFAULT = 'BOTTOM';
 
 local Panel = addon.OptionClass.Panel;
 local mainPanel = Panel:new(addonName);
@@ -23,6 +24,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Core = {
       anchor = ANCHOR_DEFAULT,
+      insertMode = INSERTMODE_DEFAULT,
       displayTime = 4,
       fontSize = 18,
       iconScale = 0.8,
@@ -73,6 +75,25 @@ local function moveFrame ()
   farmerFrame:SetScript('OnReceiveDrag', stopMovingFrame);
 end
 
+local function setInsertMode (mode)
+  local currentMode = strupper(farmerFrame:GetInsertMode());
+
+  if (mode ~= currentMode) then
+    local anchor = {farmerFrame:GetPoint()};
+
+    if (mode == 'TOP') then
+      anchor[5] = anchor[5] - farmerFrame:GetHeight();
+    else
+      anchor[5] = anchor[5] + farmerFrame:GetHeight();
+    end
+
+    farmerFrame:SetPoint(unpack(anchor));
+  end
+
+  storePosition();
+  farmerFrame:SetInsertMode(mode);
+end
+
 local function setFramePosition (position)
   farmerFrame:ClearAllPoints();
   farmerFrame:SetPoint(unpack(position));
@@ -80,6 +101,10 @@ end
 
 local function setDefaultPosition ()
   setFramePosition(ANCHOR_DEFAULT);
+  -- setting to the default insert mode first and then applying the actual
+  -- insert mode will move the frame to the correct mode position
+  farmerFrame:SetInsertMode(INSERTMODE_DEFAULT);
+  setInsertMode(options.insertMode);
   stopMovingFrame();
 end
 
@@ -105,10 +130,14 @@ local function setFontSize (size, scale, outline)
   addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
 end
 
+local function setVisibleTime (displayTime)
+  farmerFrame:SetTimeVisible(displayTime - farmerFrame:GetFadeDuration());
+end
+
 local function applyOptions ()
+  setInsertMode(options.insertMode);
   setFontSize(options.fontSize, options.iconScale, options.outline);
-  farmerFrame:SetTimeVisible(options.displayTime -
-      farmerFrame:GetFadeDuration());
+  setVisibleTime(options.displayTime);
 end
 
 do
@@ -127,8 +156,19 @@ do
     setFontSize(value, options.iconScale, options.outline);
   end);
   optionMap.displayTime = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 0, function (_, value)
-    farmerFrame:SetTimeVisible(value - farmerFrame:GetFadeDuration());
+    setVisibleTime(value);
   end);
+
+  optionMap.insertMode = mainPanel:addDropdown(L['grow direction'], {
+    {
+      text = L['up'],
+      value = 'BOTTOM',
+    }, {
+      text = L['down'],
+      value = 'TOP',
+    },
+  });
+
   optionMap.outline = mainPanel:addDropdown(L['outline mode'], {
     {
       text = L['None'],
@@ -156,30 +196,11 @@ do
   mainPanel:OnCancel(applyOptions);
 end
 
-local function setGrowDirection (direction)
-  local currentDirection = strupper(farmerFrame:GetInsertMode());
-
-  direction = strupper(direction);
-
-  if (direction ~= currentDirection) then
-    local anchor = {farmerFrame:GetPoint()};
-
-    if (direction == 'TOP') then
-      anchor[5] = anchor[5] - farmerFrame:GetHeight();
-    else
-      anchor[5] = anchor[5] + farmerFrame:GetHeight();
-    end
-
-    farmerFrame:SetPoint(unpack(anchor));
-  end
-
-  farmerFrame:SetInsertMode(direction);
-end
-
-
 saved:OnLoad(function ()
   setFramePosition(options.anchor);
-  applyOptions();
+  farmerFrame:SetInsertMode(options.insertMode);
+  setFontSize(options.fontSize, options.iconScale, options.outline);
+  setVisibleTime(options.displayTime);
 end);
 
 --[[
@@ -194,5 +215,3 @@ addon.slash('reset', setDefaultPosition);
 addon.slash('default', function ()
   return (Panel.openLastPanel() or mainPanel:open());
 end);
-
-addon.slash('grow', setGrowDirection);
