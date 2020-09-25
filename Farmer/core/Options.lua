@@ -83,18 +83,33 @@ local function moveFrame ()
   farmerFrame:SetScript('OnReceiveDrag', stopMovingFrame);
 end
 
+local function getProperInsertmode (mode)
+  if (type(mode) ~= 'string') then
+    return mode;
+  end
+
+  local aliasMap = {
+    BOTTOM = SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM,
+    TOP = SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP,
+  };
+
+  mode = strupper(mode);
+
+  return aliasMap[mode] or mode;
+end
+
 local function setInsertMode (mode)
-  local currentMode = strupper(farmerFrame:GetInsertMode());
+  local currentMode = getProperInsertmode(farmerFrame:GetInsertMode());
+
+  mode = getProperInsertmode(mode);
 
   if (mode == currentMode) then return end
 
   local anchor = {farmerFrame:GetPoint()};
 
-  if (mode == SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP or
-      mode == 'TOP') then
+  if (mode == SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP) then
     anchor[5] = anchor[5] - farmerFrame:GetHeight();
-  elseif (mode == SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM or
-          mode == 'BOTTOM') then
+  elseif (mode == SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM) then
     anchor[5] = anchor[5] + farmerFrame:GetHeight();
   end
 
@@ -240,7 +255,7 @@ end
 
 saved:OnLoad(function ()
   setFramePosition(options.anchor);
-  farmerFrame:SetInsertMode(options.insertMode);
+  farmerFrame:SetInsertMode(getProperInsertmode(options.insertMode));
   setFontSize(options.fontSize, options.iconScale, options.outline);
   setVisibleTime(options.displayTime);
   farmerFrame:SetJustifyH(options.horizontalAlign);
