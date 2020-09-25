@@ -17,5 +17,7 @@ farmerFrame:SetFading(true);
 farmerFrame:SetFadeDuration(0.5);
 farmerFrame:SetInsertMode('TOP');
 farmerFrame:SetFontObject(font);
+farmerFrame:SetJustifyV('MIDDLE');
+farmerFrame:SetJustifyH('CENTER');
 addon.setTrueScale(farmerFrame, 1);
 farmerFrame:Show();

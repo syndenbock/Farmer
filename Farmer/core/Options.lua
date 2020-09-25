@@ -13,6 +13,7 @@ local addonVars = addon.share('vars');
 local ADDON_ICON_ID = 3334;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 local INSERTMODE_DEFAULT = 'BOTTOM';
+local HORIZONTAL_ALIGN_DEFAULT = 'CENTER';
 
 local Panel = addon.OptionClass.Panel;
 local mainPanel = Panel:new(addonName);
@@ -33,6 +34,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
       hideInArena = true,
       hideOnExpeditions = true,
       itemNames = true,
+      horizontalAlign = HORIZONTAL_ALIGN_DEFAULT,
     },
   },
 });
@@ -43,14 +45,19 @@ local function storePosition ()
   options.anchor = {farmerFrame:GetPoint()};
 end
 
-local function stopMovingFrame ()
+local function displayMovingIcon ()
   local icon = addon.getIcon(GetItemIcon(ADDON_ICON_ID));
+
+  farmerFrame:Clear();
+  farmerFrame:AddMessage(icon);
+end
+
+local function stopMovingFrame ()
+  displayMovingIcon();
 
   farmerFrame:EnableMouse(false);
   farmerFrame:SetMovable(false);
   farmerFrame:SetFading(true);
-  farmerFrame:Clear();
-  farmerFrame:AddMessage(icon);
   farmerFrame:StopMovingOrSizing();
   farmerFrame:SetScript('OnDragStart', nil);
   farmerFrame:SetScript('OnReceiveDrag', nil);
@@ -58,12 +65,10 @@ local function stopMovingFrame ()
 end
 
 local function moveFrame ()
-  local icon = addon.getIcon(GetItemIcon(ADDON_ICON_ID));
+  displayMovingIcon();
 
   farmerFrame:RegisterForDrag('LeftButton');
   farmerFrame:SetFading(false);
-  farmerFrame:Clear();
-  farmerFrame:AddMessage(icon);
   farmerFrame:EnableMouse(true);
   farmerFrame:SetMovable(true);
   farmerFrame:SetScript('OnDragStart', function (self)
@@ -78,20 +83,41 @@ end
 local function setInsertMode (mode)
   local currentMode = strupper(farmerFrame:GetInsertMode());
 
-  if (mode ~= currentMode) then
-    local anchor = {farmerFrame:GetPoint()};
+  if (mode == currentMode) then return end
 
-    if (mode == 'TOP') then
-      anchor[5] = anchor[5] - farmerFrame:GetHeight();
-    else
-      anchor[5] = anchor[5] + farmerFrame:GetHeight();
-    end
+  local anchor = {farmerFrame:GetPoint()};
 
-    farmerFrame:SetPoint(unpack(anchor));
+  if (mode == 'TOP') then
+    anchor[5] = anchor[5] - farmerFrame:GetHeight();
+  else
+    anchor[5] = anchor[5] + farmerFrame:GetHeight();
   end
 
+  farmerFrame:SetPoint(unpack(anchor));
   storePosition();
   farmerFrame:SetInsertMode(mode);
+end
+
+local function setHorizontalAlignment (alignment)
+  local currentAlignment = strupper(farmerFrame:GetJustifyH());
+
+  alignment = strupper(alignment);
+
+  if (currentAlignment == alignment) then return end
+
+  local alignFactors = {
+    LEFT = -1,
+    CENTER = 0,
+    RIGHT = 1,
+  };
+  local offset = farmerFrame:GetWidth() / 2;
+  local anchor = {farmerFrame:GetPoint()};
+
+  offset = (alignFactors[currentAlignment] - alignFactors[alignment]) * offset;
+  anchor[4] = anchor[4] + offset;
+  farmerFrame:SetPoint(unpack(anchor));
+  storePosition();
+  farmerFrame:SetJustifyH(alignment);
 end
 
 local function setFramePosition (position)
@@ -101,17 +127,21 @@ end
 
 local function setDefaultPosition ()
   setFramePosition(ANCHOR_DEFAULT);
+
   -- setting to the default insert mode first and then applying the actual
   -- insert mode will move the frame to the correct mode position
   farmerFrame:SetInsertMode(INSERTMODE_DEFAULT);
   setInsertMode(options.insertMode);
-  stopMovingFrame();
+
+  -- setting the default horizontal alignment first and then applying the
+  -- actual aligment to move the frame to the correct position
+  farmerFrame:SetJustifyH(HORIZONTAL_ALIGN_DEFAULT);
+  setHorizontalAlignment(options.horizontalAlign);
+
+  displayMovingIcon();
 end
 
 local function setFontSize (size, scale, outline)
-  -- adding line spacing makes textures completely off so they need y-offset
-  -- for some reason that offset has to be 1.5 times the spacing
-  -- i have no idea why, i just figured it out by testing
   local maximumIconSize = 128;
   local minimumIconSize = 8;
   local iconSize = max(min(size * scale, maximumIconSize), minimumIconSize);
@@ -138,6 +168,7 @@ local function applyOptions ()
   setInsertMode(options.insertMode);
   setFontSize(options.fontSize, options.iconScale, options.outline);
   setVisibleTime(options.displayTime);
+  setHorizontalAlignment(options.horizontalAlign);
 end
 
 do
@@ -166,6 +197,19 @@ do
     }, {
       text = L['down'],
       value = 'TOP',
+    },
+  });
+
+  optionMap.horizontalAlign = mainPanel:addDropdown(L['text alignment'], {
+    {
+      text = L['left'],
+      value = 'LEFT',
+    }, {
+      text = L['center'],
+      value = 'CENTER',
+    }, {
+      text = L['right'],
+      value = 'RIGHT',
     },
   });
 
@@ -201,6 +245,7 @@ saved:OnLoad(function ()
   farmerFrame:SetInsertMode(options.insertMode);
   setFontSize(options.fontSize, options.iconScale, options.outline);
   setVisibleTime(options.displayTime);
+  farmerFrame:SetJustifyH(options.horizontalAlign);
 end);
 
 --[[
