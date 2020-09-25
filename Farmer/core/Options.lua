@@ -1,18 +1,21 @@
 local addonName, addon = ...;
 
 local unpack = _G.unpack;
-local max = _G.max;
-local min = _G.min;
 local strupper = _G.strupper;
 local GetItemIcon = _G.GetItemIcon;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
+-- for some reason they are not strings but numbers unlike MessageFrame modes
+local SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP =
+    _G.SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP or 1;
+local SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM =
+    _G.SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM or 2;
 
 local L = addon.L;
 local addonVars = addon.share('vars');
 
 local ADDON_ICON_ID = 3334;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
-local INSERTMODE_DEFAULT = 'BOTTOM';
+local INSERTMODE_DEFAULT = SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM;
 local HORIZONTAL_ALIGN_DEFAULT = 'CENTER';
 
 local Panel = addon.OptionClass.Panel;
@@ -87,9 +90,11 @@ local function setInsertMode (mode)
 
   local anchor = {farmerFrame:GetPoint()};
 
-  if (mode == 'TOP') then
+  if (mode == SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP or
+      mode == 'TOP') then
     anchor[5] = anchor[5] - farmerFrame:GetHeight();
-  else
+  elseif (mode == SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM or
+          mode == 'BOTTOM') then
     anchor[5] = anchor[5] + farmerFrame:GetHeight();
   end
 
@@ -142,22 +147,15 @@ local function setDefaultPosition ()
 end
 
 local function setFontSize (size, scale, outline)
-  local maximumIconSize = 128;
-  local minimumIconSize = 8;
-  local iconSize = max(min(size * scale, maximumIconSize), minimumIconSize);
-  local spacing = 0;
-  local iconOffset = -spacing * 1.5;
-  local shadowOffset = size / 10;
-  local font = addon.font;
+  local shadowOffset = addon.round(size / 10);
+  local iconSize = addon.round(size * scale);
 
   --[[ we have to use the standard font because on screen messages are always
        localized --]]
-  font:SetFont(STANDARD_TEXT_FONT, size, outline);
-  font:SetSpacing(spacing);
-  font:SetShadowColor(0, 0, 0);
-  font:SetShadowOffset(shadowOffset, -shadowOffset);
-
-  addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize, '0', iconOffset}, ':');
+  farmerFrame:SetFont(STANDARD_TEXT_FONT, size, outline);
+  farmerFrame:SetShadowColor(0, 0, 0);
+  farmerFrame:SetShadowOffset(shadowOffset, -shadowOffset);
+  addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize}, ':');
 end
 
 local function setVisibleTime (displayTime)
@@ -182,10 +180,10 @@ do
     optionMap.hideOnExpeditions = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
   end
 
-  optionMap.iconScale = mainPanel:addSlider(0.1, 3, L['icon scale'], '0.1', '3', 1);
   optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0, function (_, value)
     setFontSize(value, options.iconScale, options.outline);
   end);
+  optionMap.iconScale = mainPanel:addSlider(0.1, 3, L['icon scale'], '0.1', '3', 1);
   optionMap.displayTime = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 0, function (_, value)
     setVisibleTime(value);
   end);
@@ -193,10 +191,10 @@ do
   optionMap.insertMode = mainPanel:addDropdown(L['grow direction'], {
     {
       text = L['up'],
-      value = 'BOTTOM',
+      value = SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM,
     }, {
       text = L['down'],
-      value = 'TOP',
+      value = SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP,
     },
   });
 
