@@ -2,6 +2,9 @@ local addonName, addon = ...;
 
 local floor = _G.floor;
 local log10 = _G.log10;
+local strmatch = _G.strmatch;
+local strfind = _G.strfind;
+local strsub = _G.strsub;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
 local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
@@ -26,6 +29,16 @@ function addon.stringJoin (stringList, joiner)
   end
 
   return result or '';
+end
+
+function addon.replaceString (string, match, replacement)
+  local startPos, endPos = strfind(string, match, 1, true);
+
+  if (startPos) then
+    return strsub(string, 1, startPos - 1) .. replacement .. strsub(string, endPos + 1);
+  else
+    return string;
+  end
 end
 
 function addon.round (number)
@@ -91,6 +104,16 @@ end
 
 function addon.getIcon (texture)
   return addon.stringJoin({'|T', texture, addonVars.iconOffset, '|t'}, '');
+end
+
+function addon.findItemLink (string)
+  return strmatch(string, '|c.+|h|r');
+end
+
+function addon.normalizeItemLink (itemLink)
+  local itemString = strmatch(itemLink, "item[%-?%d:]+");
+
+  return itemString and '|cffffffff' .. itemString .. '|h|r' or itemLink;
 end
 
 function addon.setTrueScale (frame, scale)

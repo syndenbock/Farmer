@@ -24,12 +24,6 @@ function Storage:new (options)
   return this;
 end
 
-function Storage.normalizeItemLink (itemLink)
-  local itemString = strmatch(itemLink, "item[%-?%d:]+");
-
-  return itemString and '|cffffffff' .. itemString .. '|hh|r' or itemLink;
-end
-
 function Storage:createItem (itemId, itemLink, itemCount)
   self.storage[itemId] = {
     count = itemCount,
@@ -53,7 +47,7 @@ function Storage:addItem (itemId, itemLink, itemCount)
   local itemInfo = self.storage[itemId];
 
   if (self.normalized) then
-    itemLink = Storage.normalizeItemLink(itemLink);
+    itemLink = addon.normalizeItemLink(itemLink);
   end
 
   if (not itemInfo) then
