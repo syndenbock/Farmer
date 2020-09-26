@@ -47,7 +47,7 @@ function Storage:addItem (itemId, itemLink, itemCount)
   local itemInfo = self.storage[itemId];
 
   if (self.normalized) then
-    itemLink = addon.normalizeItemLink(itemLink);
+    itemLink = addon.extractItemString(itemLink);
   end
 
   if (not itemInfo) then

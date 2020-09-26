@@ -110,10 +110,8 @@ function addon.findItemLink (string)
   return strmatch(string, '|c.+|h|r');
 end
 
-function addon.normalizeItemLink (itemLink)
-  local itemString = strmatch(itemLink, "item[%-?%d:]+");
-
-  return itemString and '|cffffffff' .. itemString .. '|h|r' or itemLink;
+function addon.extractItemString (itemLink)
+  return strmatch(itemLink, 'item[%-?%d:]+') or itemLink;
 end
 
 function addon.setTrueScale (frame, scale)
