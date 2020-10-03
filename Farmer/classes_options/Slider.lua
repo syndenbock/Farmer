@@ -79,8 +79,10 @@ function Slider:new (parent, name, anchorFrame, xOffset, yOffset, text, min,
 
   setmetatable(this, Slider);
 
+  precision = precision or 0;
+
   this.slider, this.edit = createSliderWithEditBox(name, parent, {
-    precision = precision or 0,
+    precision = precision,
     min = min,
     max = max,
   }, {

@@ -204,18 +204,9 @@ do
     optionMap.hideOnExpeditions = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
   end
 
-  optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0, function (_, value)
-    setFontOptions({
-      fontSize = value,
-      iconScale = options.iconScale,
-      spacing = options.spacing,
-      outline = options.outline,
-    });
-  end);
+  optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0);
   optionMap.iconScale = mainPanel:addSlider(0.1, 3, L['icon scale'], '0.1', '3', 1);
-  optionMap.displayTime = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 0, function (_, value)
-    setVisibleTime(value);
-  end);
+  optionMap.displayTime = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 0);
   optionMap.spacing = mainPanel:addSlider(0, 20, L['line spacing'], '0', '20', 0);
 
   optionMap.insertMode = mainPanel:addDropdown(L['grow direction'], {
