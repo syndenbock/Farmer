@@ -32,6 +32,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
       displayTime = 4,
       fontSize = 18,
       iconScale = 0.8,
+      spacing = 0,
       outline = 'OUTLINE',
       hideAtMailbox = true,
       hideInArena = true,
@@ -161,17 +162,25 @@ local function setDefaultPosition ()
   displayMovingIcon();
 end
 
-local function setFontSize (size, scale, outline)
-  local shadowOffset = addon.round(size / 10);
-  local iconSize = addon.round(size * scale);
+local function setFontOptions (options)
+  local shadowOffset = addon.round(options.fontSize / 10);
+  local iconSize = addon.round(options.fontSize * options.iconScale);
+  -- for some reason icon offset does not incorporate frame scale by itself
+  local iconOffset = -options.spacing * farmerFrame:GetScale();
 
   --[[ we have to use the standard font because on screen messages are always
        localized --]]
-  farmerFrame:SetFont(STANDARD_TEXT_FONT, size, outline);
+  farmerFrame:SetFont(STANDARD_TEXT_FONT, options.fontSize, options.outline);
   farmerFrame:SetShadowColor(0, 0, 0);
   farmerFrame:SetShadowOffset(shadowOffset, -shadowOffset);
-  addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize}, ':');
+  farmerFrame:SetSpacing(options.spacing);
+  addonVars.iconOffset = addon.stringJoin(
+      {'', iconSize, iconSize, 0, iconOffset}, ':');
 end
+
+_G.hooksecurefunc(farmerFrame, 'SetScale', function ()
+  setFontOptions(options);
+end);
 
 local function setVisibleTime (displayTime)
   farmerFrame:SetTimeVisible(displayTime - farmerFrame:GetFadeDuration());
@@ -179,7 +188,7 @@ end
 
 local function applyOptions ()
   setInsertMode(options.insertMode);
-  setFontSize(options.fontSize, options.iconScale, options.outline);
+  setFontOptions(options);
   setVisibleTime(options.displayTime);
   setHorizontalAlignment(options.horizontalAlign);
 end
@@ -196,12 +205,18 @@ do
   end
 
   optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0, function (_, value)
-    setFontSize(value, options.iconScale, options.outline);
+    setFontOptions({
+      fontSize = value,
+      iconScale = options.iconScale,
+      spacing = options.spacing,
+      outline = options.outline,
+    });
   end);
   optionMap.iconScale = mainPanel:addSlider(0.1, 3, L['icon scale'], '0.1', '3', 1);
   optionMap.displayTime = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 0, function (_, value)
     setVisibleTime(value);
   end);
+  optionMap.spacing = mainPanel:addSlider(0, 20, L['line spacing'], '0', '20', 0);
 
   optionMap.insertMode = mainPanel:addDropdown(L['grow direction'], {
     {
@@ -256,7 +271,7 @@ end
 saved:OnLoad(function ()
   setFramePosition(options.anchor);
   farmerFrame:SetInsertMode(getProperInsertmode(options.insertMode));
-  setFontSize(options.fontSize, options.iconScale, options.outline);
+  setFontOptions(options);
   setVisibleTime(options.displayTime);
   farmerFrame:SetJustifyH(options.horizontalAlign);
 end);
