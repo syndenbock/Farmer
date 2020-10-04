@@ -477,4 +477,4 @@ addon.on('PLAYER_LOGIN', fixMinimapTaint);
 addon.on('PLAYER_LOGOUT', restoreMinimapRotation);
 
 addon.slash('radar', toggleFarmMode);
-addon.exposeBinding('TOGGLERADAR', L['Toggle radar'], toggleFarmMode);
+addon.exposeBinding('TOGGLERADAR', L['Toggle farming radar'], toggleFarmMode);

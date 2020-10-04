@@ -1,6 +1,6 @@
-local addonName, addon = ...
+local _, addon = ...
 
-if (GetLocale() ~= 'deDE') then return end
+if (_G.GetLocale() ~= 'deDE') then return end
 
 local L = addon.L;
 

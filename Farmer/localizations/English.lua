@@ -27,6 +27,14 @@ L["show names of all items"] = "always show names"
 L["Thick"] = "Thick"
 L["Thick Monochrome"] = "Thick Monochrome"
 L["Thin"] = "Thin"
+L["line spacing"] = "line spacing"
+L["grow direction"] = "grow direction"
+L["up"] = "up"
+L["down"] = "down"
+L["text alignment"] = "text alignment"
+L["left"] = "left"
+L["center"] = "center"
+L["right"] = "right"
 
 -- Farm radar
 L["enable tooltips for default nodes"] = "enable tooltips for default nodes"
@@ -53,6 +61,10 @@ L["only show focused items"] = "only show focused items"
 L["show bag count for stackable items"] = "show bag count for stackable items"
 L["show items based on rarity"] = "show items based on rarity"
 L["show total count for stackable items"] = "show total count for stackable items"
+
+-- Minimap
+L["Minimap"] = "Minimap"
+L["display vignettes that appear on the minimap"] = "display vignettes that appear on the minimap"
 
 -- Misc
 L["enable fast autoloot"] = "enable fast autoloot"

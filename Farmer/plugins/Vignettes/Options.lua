@@ -15,5 +15,5 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 }).vars.farmerOptions.Minimap;
 
 panel:mapOptions(options, {
-  displayVignettes = panel:addCheckBox(L['show vignette coordinates']),
+  displayVignettes = panel:addCheckBox(L['display vignettes that appear on the minimap']),
 });
