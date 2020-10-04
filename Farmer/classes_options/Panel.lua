@@ -181,7 +181,7 @@ function Panel:addDropdown (text, options)
       self.panel, self.anchor.x + 10, self.anchor.y, text, options, 'TOPLEFT',
       'TOPLEFT');
 
-  self.anchor.y = self.anchor.y - 7 - dropdown.dropdown:GetHeight();
+  self.anchor.y = self.anchor.y - 3 - dropdown.dropdown:GetHeight();
 
   return dropdown;
 end
