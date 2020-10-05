@@ -13,7 +13,7 @@ local function shouldMoneyBeDisplayed (amount)
 end
 
 local function displayMoney (amount)
-  printMessage(addon.formatMoney(amount), {1, 1, 1});
+  printMessage(addon.formatMoneyWithOffset(amount), {1, 1, 1});
 end
 
 addon.listen('MONEY_CHANGED', function (amount)

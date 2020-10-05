@@ -77,29 +77,41 @@ function addon.truncate (number, digits)
   return number;
 end
 
-function addon.formatMoney (money)
-  local ICON_GOLD = '|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:0:0|t';
-  local ICON_SILVER = '|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:0:0|t';
-  local ICON_COPPER = '|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:0:0|t';
-
-  local gold = floor(money / COPPER_PER_GOLD);
-  local silver = floor(money / COPPER_PER_SILVER) % SILVER_PER_GOLD;
-  local copper = money % COPPER_PER_SILVER;
+local function formatMoney (amount, icons)
+  local gold = floor(amount / COPPER_PER_GOLD);
+  local silver = floor(amount / COPPER_PER_SILVER) % SILVER_PER_GOLD;
+  local copper = amount % COPPER_PER_SILVER;
   local text = {};
 
   if (gold > 0) then
-    table.insert(text, BreakUpLargeNumbers(gold) .. ICON_GOLD);
+    table.insert(text, BreakUpLargeNumbers(gold) .. icons.gold);
   end
 
   if (silver > 0) then
-    table.insert(text, BreakUpLargeNumbers(silver) .. ICON_SILVER);
+    table.insert(text, BreakUpLargeNumbers(silver) .. icons.silver);
   end
 
   if (copper > 0 or #text == 0) then
-    table.insert(text, BreakUpLargeNumbers(copper) .. ICON_COPPER);
+    table.insert(text, BreakUpLargeNumbers(copper) .. icons.copper);
   end
 
   return addon.stringJoin(text, ' ');
+end
+
+function addon.formatMoneyWithOffset (amount)
+  return formatMoney (amount, {
+    gold = addon.getIcon('Interface\\MoneyFrame\\UI-GoldIcon'),
+    silver = addon.getIcon('Interface\\MoneyFrame\\UI-SilverIcon'),
+    copper = addon.getIcon('Interface\\MoneyFrame\\UI-CopperIcon'),
+  });
+end
+
+function addon.formatMoney (amount)
+  return formatMoney (amount, {
+    gold = '|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:0:0|t',
+    silver = '|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:0:0|t',
+    copper = '|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:0:0|t',
+  });
 end
 
 function addon.getIcon (texture)
