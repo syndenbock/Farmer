@@ -14,7 +14,7 @@ local function createButton (name, parent, text, anchors)
 
   button:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
       anchors.xOffset, anchors.yOffset);
-  button:SetSize(150, 25);
+  button:SetSize(165, 25);
   button:SetText(text);
 
   return button;
