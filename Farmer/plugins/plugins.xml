@@ -2,11 +2,11 @@
   <include file="Currencies\Currencies.xml"/>
   <include file="Items\Items.xml"/>
   <include file="Farmradar/Farmradar.xml"/>
+  <include file="Minimap\Minimap.xml"/>
   <include file="Misc\Misc.xml"/>
   <include file="Money\Money.xml"/>
   <include file="Professions\Professions.xml"/>
   <include file="Reputation\Reputation.xml"/>
   <include file="SellAndRepair\SellAndRepair.xml"/>
   <include file="Skills\Skills.xml"/>
-  <include file="Vignettes\Vignettes.xml"/>
 </UI>

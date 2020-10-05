@@ -1,4 +1,4 @@
 <UI>
   <script file="Options.lua"/>
-  <script file="Vignettes.lua"/>
+  <script file="Minimap.lua"/>
 </UI>
