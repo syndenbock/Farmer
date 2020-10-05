@@ -21,7 +21,7 @@ local function generateDropdownInitializer (dropdown, options, width)
   local function initializer (_, level)
     local info = UIDropDownMenu_CreateInfo();
 
-    info.minWidth = width + 5;
+    info.minWidth = width;
     info.justifyH = 'CENTER';
 
     for i = 1, #options do
@@ -39,13 +39,27 @@ local function generateDropdownInitializer (dropdown, options, width)
   return initializer;
 end
 
+local function toggleDropdown (dropdownButton)
+  local parent = dropdownButton:GetParent();
+
+  ToggleDropDownMenu(1, nil, parent, parent, 13, 11);
+end
+
 local function createDropdown (name, parent, text, options, anchors)
   local dropdown = CreateFrame('Frame', name .. 'Dropdown', parent,
       'UIDropDownMenuTemplate');
+  local button = dropdown.Button;
 
-  dropdown.Button:SetScript('OnClick', function ()
-    ToggleDropDownMenu(1, nil, dropdown, dropdown, 10, 10);
-  end);
+  --[[ Classic uses "OnClick" for  dropdowns, while retail uses "OnMouseDown",
+    so we detect which one is the case and set the other handler to nil for
+    reliability ]]
+  if (button:GetScript('OnClick')) then
+    button:SetScript('OnClick', toggleDropdown);
+    button:SetScript('OnMouseDown', nil);
+  else
+    button:SetScript('OnClick', nil);
+    button:SetScript('OnMouseDown', toggleDropdown);
+  end
 
   dropdown:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
       anchors.xOffset - 23, anchors.yOffset);
