@@ -14,20 +14,28 @@ L["ignore Honor"] = "Ignoriere Ehre"
 L["show currencies"] = "Zeige Währungen"
 
 -- Display
+L["center"] = "mittig"
 L["display time"] = "Anzeigedauer"
 L["don't display at mailboxes"] = "Keine Anzeige an Briefkästen"
 L["don't display in arena"] = "Keine Anzeige in der Arena"
 L["don't display on island expeditions"] = "Keine Anzeige während Inselexpeditionen"
+L["down"] = "Nach unten"
 L["font size"] = "Textgröße"
+L["grow direction"] = "Textbox-Wachstumsrichtung"
+L["left"] = "links"
+L["line spacing"] = "Zeilenabstand"
 L["Monochrome"] = "Monochrom"
 L["move display"] = "Verschiebe Anzeige"
 L["None"] = "Keine"
 L["outline mode"] = "Textumrandung"
 L["reset position"] = "Position zurücksetzen"
+L["right"] = "rechts"
 L["show names of all items"] = "Zeige Namen immer an"
+L["text alignment"] = "Textausrichtung"
 L["Thick"] = "Breit"
 L["Thick Monochrome"] = "Breit Monochrom"
 L["Thin"] = "Dünn"
+L["up"] = "Nach oben"
 
 -- Farm radar
 L["enable tooltips for default nodes"] = "Erlaube tooltips für spielinterne Icons"
@@ -54,6 +62,10 @@ L["only show focused items"] = "Zeige nur Items im Fokus an"
 L["show bag count for stackable items"] = "Zeige Anzahl stapelbarer Items in der Tasche"
 L["show items based on rarity"] = "Zeige Items nach Seltenheit an"
 L["show total count for stackable items"] = "Zeige Gesamtanzahl stapelbarer Items"
+
+-- Minimap
+L["display vignettes that appear on the minimap"] = "Zeige Vignetten, die auf der Minimap erscheinen"
+L["Minimap"] = "Minimap"
 
 -- Misc
 L["enable fast autoloot"] = "Aktiviere schnelles Autolooten"
