@@ -20,6 +20,7 @@ Dropdown.__index = Dropdown;
 local function generateDropdownInitializer (dropdown, options, width)
   local function initializer (_, level)
     local info = UIDropDownMenu_CreateInfo();
+    local currentValue = dropdown:GetValue();
 
     info.minWidth = width;
     info.justifyH = 'CENTER';
@@ -31,7 +32,7 @@ local function generateDropdownInitializer (dropdown, options, width)
       info.text = option.text;
       info.arg1 = option.value;
       info.value = option.value;
-      info.checked = (dropdown.value == option.value);
+      info.checked = (currentValue == option.value);
       UIDropDownMenu_AddButton(info, level);
     end
   end
@@ -49,6 +50,7 @@ local function createDropdown (name, parent, text, options, anchors)
   local dropdown = CreateFrame('Frame', name .. 'Dropdown', parent,
       'UIDropDownMenuTemplate');
   local button = dropdown.Button;
+  local currentValue;
 
   --[[ Classic uses "OnClick" for  dropdowns, while retail uses "OnMouseDown",
     so we detect which one is the case and set the other handler to nil for
@@ -65,11 +67,11 @@ local function createDropdown (name, parent, text, options, anchors)
       anchors.xOffset - 23, anchors.yOffset);
 
   function dropdown:SetValue (value)
-    dropdown.value = value;
+    currentValue = value;
   end
 
   function dropdown:GetValue ()
-    return dropdown.value;
+    return currentValue;
   end
 
   UIDropDownMenu_SetWidth(dropdown, anchors.width);

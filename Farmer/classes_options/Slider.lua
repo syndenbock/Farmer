@@ -29,6 +29,23 @@ local function createEditBox (name, parent)
   return edit;
 end
 
+local function setSliderOnChange (slider, callback)
+  slider.onChange = callback;
+end
+
+local function sliderOnValueChanged (slider, value)
+  value = addon.truncate(value, addon.stepSizeToPrecision(slider:GetValueStep()));
+
+  if (slider.edit) then
+    slider.edit:SetText(value);
+    slider.edit:SetCursorPosition(0);
+  end
+
+  if (slider.onChange) then
+    slider:onChange(value);
+  end
+end
+
 local function createSlider (name, parent, values, text, anchors)
   local slider = CreateFrame('Slider', name .. 'Slider', parent,
       'OptionsSliderTemplate');
@@ -44,22 +61,8 @@ local function createSlider (name, parent, values, text, anchors)
   _G[name .. 'SliderLow']:SetText(text.low);
   _G[name .. 'SliderHigh']:SetText(text.high);
 
-  slider:SetScript('OnValueChanged', function (self, value)
-    value = addon.truncate(value, addon.stepSizeToPrecision(self:GetValueStep()));
-
-    if (self.edit) then
-      self.edit:SetText(value);
-      self.edit:SetCursorPosition(0);
-    end
-
-    if (self.onChange) then
-      self:onChange(value);
-    end
-  end);
-
-  function slider:OnChange (callback)
-    self.onChange = callback;
-  end
+  slider:SetScript('OnValueChanged', sliderOnValueChanged);
+  slider.OnChange = setSliderOnChange;
 
   return slider;
 end

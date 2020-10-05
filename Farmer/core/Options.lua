@@ -68,6 +68,12 @@ local function stopMovingFrame ()
   storePosition();
 end
 
+local function frameOnDragStart (frame)
+  if (frame:IsMovable() == true) then
+    frame:StartMoving();
+  end
+end
+
 local function moveFrame ()
   displayMovingIcon();
 
@@ -75,11 +81,7 @@ local function moveFrame ()
   farmerFrame:SetFading(false);
   farmerFrame:EnableMouse(true);
   farmerFrame:SetMovable(true);
-  farmerFrame:SetScript('OnDragStart', function (self)
-    if (self:IsMovable() == true) then
-      self:StartMoving();
-    end
-  end);
+  farmerFrame:SetScript('OnDragStart', frameOnDragStart);
 
   farmerFrame:SetScript('OnReceiveDrag', stopMovingFrame);
 end

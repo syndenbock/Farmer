@@ -36,7 +36,6 @@ function addon.on (eventList, callback)
   else
     hookEvent(eventList, callback);
   end
-
 end
 
 local function unhookMultipleEvents (eventList, callback)
