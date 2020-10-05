@@ -9,7 +9,7 @@ local panel = addon.OptionClass.Panel:new(L['Minimap'], addon.mainPanel);
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Minimap = {
-      displayVignettes = true,
+      displayVignettes = false,
     },
   },
 }).vars.farmerOptions.Minimap;
