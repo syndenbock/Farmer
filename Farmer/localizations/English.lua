@@ -100,3 +100,4 @@ L["skip readable items when autoselling"] = "skip readable items when autosellin
 
 -- Skills
 L["show skill levelups"] = "show skill levelups"
+L["Skills"] = "Skills"

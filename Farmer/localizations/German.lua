@@ -21,7 +21,7 @@ L["don't display in arena"] = "Keine Anzeige in der Arena"
 L["don't display on island expeditions"] = "Keine Anzeige während Inselexpeditionen"
 L["down"] = "Nach unten"
 L["font size"] = "Textgröße"
-L["grow direction"] = "Textbox-Wachstumsrichtung"
+L["grow direction"] = "Wachstumsrichtung"
 L["left"] = "links"
 L["line spacing"] = "Zeilenabstand"
 L["Monochrome"] = "Monochrom"
@@ -101,3 +101,4 @@ L["skip readable items when autoselling"] = "Überspringe lesbare items beim aut
 
 -- Skills
 L["show skill levelups"] = "Zeige Fertigkeitsaufstiege"
+L["Skills"] = "Fertigkeiten"
