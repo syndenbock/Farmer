@@ -5,6 +5,7 @@ local log10 = _G.log10;
 local strmatch = _G.strmatch;
 local strfind = _G.strfind;
 local strsub = _G.strsub;
+local tinsert = _G.tinsert;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
 local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
@@ -84,15 +85,15 @@ local function formatMoney (amount, icons)
   local text = {};
 
   if (gold > 0) then
-    table.insert(text, BreakUpLargeNumbers(gold) .. icons.gold);
+    tinsert(text, BreakUpLargeNumbers(gold) .. icons.gold);
   end
 
   if (silver > 0) then
-    table.insert(text, BreakUpLargeNumbers(silver) .. icons.silver);
+    tinsert(text, BreakUpLargeNumbers(silver) .. icons.silver);
   end
 
   if (copper > 0 or #text == 0) then
-    table.insert(text, BreakUpLargeNumbers(copper) .. icons.copper);
+    tinsert(text, BreakUpLargeNumbers(copper) .. icons.copper);
   end
 
   return addon.stringJoin(text, ' ');
