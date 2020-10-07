@@ -165,10 +165,10 @@ local function setDefaultPosition ()
 end
 
 local function setFontOptions (options)
-  local shadowOffset = addon.round(options.fontSize / 10);
-  local iconSize = addon.round(options.fontSize * options.iconScale);
-  -- for some reason icon offset does not incorporate frame scale by itself
-  local iconOffset = -options.spacing * farmerFrame:GetScale();
+  local scale = farmerFrame:GetEffectiveScale();
+  local shadowOffset = options.fontSize / 10;
+  local iconSize = options.fontSize * options.iconScale * scale;
+  local iconOffset = -options.spacing * 1.5 * scale;
 
   --[[ we have to use the standard font because on screen messages are always
        localized --]]
