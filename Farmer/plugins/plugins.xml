@@ -1,7 +1,7 @@
 <UI>
   <include file="Currencies\Currencies.xml"/>
   <include file="Items\Items.xml"/>
-  <include file="Farmradar/Farmradar.xml"/>
+  <include file="Farmradar\Farmradar.xml"/>
   <include file="Minimap\Minimap.xml"/>
   <include file="Misc\Misc.xml"/>
   <include file="Money\Money.xml"/>

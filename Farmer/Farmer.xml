@@ -4,6 +4,7 @@
   <include file="classes\classes.xml"/>
   <include file="classes_options\options.xml"/>
   <include file="factories\factories.xml"/>
+  <include file="widgets\widgets.xml"/>
   <include file="core\core.xml"/>
   <include file="migration\migration.xml"/>
   <include file="detectors\detectors.xml"/>
