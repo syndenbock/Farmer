@@ -71,7 +71,7 @@ function MessageFrame:RemoveAlphaHandler (fontString)
   end
 end
 
-function MessageFrame:AddMessage (text)
+function MessageFrame:AddMessage (text, r, g, b, a)
   local message = self.pool:Acquire();
   local tail = self.tail;
   local visibleTime = self.visibleTime or 0;
@@ -85,6 +85,7 @@ function MessageFrame:AddMessage (text)
 
   -- message:SetSize(200, 200);
   message:SetFont(STANDARD_TEXT_FONT, 18);
+  message:SetTextColor(r or 1, g or 1, b or 1, a or 1);
   message:SetText(text);
   message:Show();
 
