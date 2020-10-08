@@ -14,6 +14,7 @@ function Set:new (items)
   setmetatable(this, Set);
 
   this.items = {};
+  this.itemCount = 0;
 
   if (items) then
     this:add(items);
@@ -22,12 +23,19 @@ function Set:new (items)
   return this;
 end
 
+function Set:getItemCount ()
+  return self.itemCount;
+end
+
 function Set:has (item)
   return (self.items[item] == true);
 end
 
 function Set:addItem (item)
-  self.items[item] = true;
+  if (not self:has(item)) then
+    self.items[item] = true;
+    self.itemCount = self.itemCount + 1;
+  end
 end
 
 function Set:addItems (items)
@@ -45,7 +53,10 @@ function Set:add (items)
 end
 
 function Set:removeItem (item)
-  self.items[item] = nil;
+  if (self:has(item)) then
+    self.items[item] = nil;
+    self.itemCount = self.itemCount - 1;
+  end
 end
 
 function Set:removeItems (items)
@@ -56,10 +67,11 @@ end
 
 function Set:clear ()
   self.items = {};
+  self.itemCount = 0;
 end
 
 function Set:forEach (callback)
-  for item in self.items do
+  for item in pairs(self.items) do
     callback(item);
   end
 end
