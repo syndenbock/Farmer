@@ -23,7 +23,13 @@ local function generateFrameName ()
 end
 
 local function createAnchor ()
-  return CreateFrame('Frame', generateFrameName());
+  local anchor = CreateFrame('Frame', generateFrameName());
+
+  anchor:SetSize(1, 1);
+  anchor:SetPoint('CENTER', UIPARENT, 'CENTER', 0, 0);
+  anchor:Show();
+
+  return anchor;
 end
 
 function MessageFrame:New ()
@@ -32,14 +38,12 @@ function MessageFrame:New ()
 
   setmetatable(this, MessageFrame);
 
-  anchor:SetSize(1, 1);
-  anchor:SetPoint('CENTER', UIPARENT, 'CENTER', 0, 0);
-  anchor:Show();
   this.updates = Set:new();
-
   this.anchor = anchor;
   this.pool = CreateFontStringPool(this.anchor, 'TOOLTIP', anchor);
   this.spacing = 0;
+  this.fadeDuration = 2;
+  this.visibleTime = 3;
 
   return this;
 end
@@ -51,7 +55,6 @@ function MessageFrame:AddAlphaHandler (fontString)
     self.anchor:SetScript('OnUpdate', function (_, elapsed)
       this:HandleUpdate(elapsed);
     end);
-    print('started updating');
   end
 
   self.updates:addItem(fontString);
@@ -67,21 +70,12 @@ function MessageFrame:RemoveAlphaHandler (fontString)
   self.updates:removeItem(fontString);
   if (self.updates:getItemCount() == 0) then
     self.anchor:SetScript('OnUpdate', nil);
-    print('stopped updating');
   end
 end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
   local message = self.pool:Acquire();
-  local tail = self.tail;
   local visibleTime = self.visibleTime or 0;
-
-  if (tail) then
-    tail.tail = message;
-    message.head = tail;
-  end
-
-  self.tail = message;
 
   -- message:SetSize(200, 200);
   message:SetFont(STANDARD_TEXT_FONT, 18);
@@ -89,7 +83,7 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   message:SetText(text);
   message:Show();
 
-  self:SetMessagePoints(message);
+  self:InsertMessage(message);
 
   if (visibleTime > 0) then
     C_Timer.After(visibleTime, function ()
@@ -99,8 +93,34 @@ function MessageFrame:AddMessage (text, r, g, b, a)
     self:FadeMessage(message);
   end
 
-
   return message;
+end
+
+function MessageFrame:InsertMessage (fontString)
+  --[[ TODO build support for insert modes ]]
+  self:PrependMessage(fontString);
+end
+
+function MessageFrame:PrependMessage (fontString)
+  local head = self.head;
+
+  self:AttachFontString(fontString, head);
+
+  self.head = fontString;
+  self.tail = self.tail or fontString;
+
+  self:SetMessagePoints(fontString);
+  self:SetMessagePoints(head);
+end
+
+function MessageFrame:AttachFontString (head, tail)
+  if (head) then
+    head.tail = tail;
+  end
+
+  if (tail) then
+    tail.head = head;
+  end
 end
 
 function MessageFrame:RemoveMessage (fontString)
@@ -109,28 +129,31 @@ function MessageFrame:RemoveMessage (fontString)
   local head = fontString.head;
   local tail = fontString.tail;
 
-  if (head) then
-    head.tail = tail;
+  self:AttachFontString(head, tail);
+
+  if (self.head == fontString) then
+    self.head = tail;
   end
 
-  if (tail) then
-    tail.head = head;
-    self:SetMessagePoints(tail);
-  else
+  if (self.tail == fontString) then
     self.tail = head;
   end
 
+  self:SetMessagePoints(tail);
   fontString:ClearAllPoints();
   fontString:Hide();
+  fontString.head = nil;
+  fontString.tail = nil;
+
   self.pool:Release(fontString);
 end
 
 function MessageFrame:SetMessagePoints (fontString)
+  if (not fontString) then return end
+
   local head = fontString.head;
   local anchorPoint;
   local headAnchorPoint;
-
-  fontString:ClearAllPoints();
 
   if (self.alignment == 'LEFT') then
     anchorPoint = 'LEFT';
@@ -148,6 +171,8 @@ function MessageFrame:SetMessagePoints (fontString)
     anchorPoint = 'TOP' .. anchorPoint;
   end
 
+  fontString:ClearAllPoints();
+
   if (head) then
     fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, self.spacing);
   else
@@ -162,6 +187,10 @@ end
 
 function MessageFrame:SetFadeDuration (duration)
   self.fadeDuration = duration;
+end
+
+function MessageFrame:GetFadeDuration ()
+  return self.fadeDuration;
 end
 
 function MessageFrame:SetVisibleTime (duration)
