@@ -62,7 +62,9 @@ end
 local function readGlobalsIntoObject (object, globalNames)
   local loaded = {};
 
-  for globalName in pairs(globalNames) do
+  for x = 1, #globalNames, 1 do
+    local globalName = globalNames[x];
+
     loaded[globalName] = _G[globalName];
   end
 

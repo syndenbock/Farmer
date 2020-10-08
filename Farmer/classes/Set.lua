@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local tsort = table.sort;
+local tinsert = table.insert;
 
 local Set = {};
 
@@ -71,11 +71,19 @@ function Set:clear ()
 end
 
 function Set:forEach (callback)
-  for item in pairs(self.items) do
-    callback(item);
+  local items = self:getItems()
+
+  for x = 1, #items, 1 do
+    callback(items[x]);
   end
 end
 
 function Set:getItems ()
-  return self.items;
+  local items = {};
+
+  for item in pairs(self.items) do
+    tinsert(items, item);
+  end
+
+  return items;
 end
