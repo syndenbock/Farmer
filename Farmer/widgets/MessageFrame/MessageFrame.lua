@@ -74,6 +74,7 @@ end
 function MessageFrame:AddMessage (text)
   local message = self.pool:Acquire();
   local tail = self.tail;
+  local visibleTime = self.visibleTime or 0;
 
   if (tail) then
     tail.tail = message;
@@ -88,6 +89,15 @@ function MessageFrame:AddMessage (text)
   message:Show();
 
   self:SetMessagePoints(message);
+
+  if (visibleTime > 0) then
+    C_Timer.After(visibleTime, function ()
+      self:FadeMessage(message);
+    end);
+  else
+    self:FadeMessage(message);
+  end
+
 
   return message;
 end
@@ -147,6 +157,14 @@ end
 function MessageFrame:SetSpacing (spacing)
   self.spacing = spacing;
   self:ForEachMessage(self.SetMessagePoints);
+end
+
+function MessageFrame:SetFadeDuration (duration)
+  self.fadeDuration = duration;
+end
+
+function MessageFrame:SetVisibleTime (duration)
+  self.visibleTime = duration;
 end
 
 function MessageFrame:ForEachMessage (callback)
@@ -234,12 +252,23 @@ do
 
   function tests.fade (message, time)
     message = message or 'foo';
-    f.fadeDuration = tonumber(time or 1);
+    f:SetFadeDuration(tonumber(time or 1));
 
-    if (not m[message]) then
-      tests.msg(message);
+    if (m[message]) then
+      f:RemoveMessage(message);
     end
 
-    f:FadeMessage(m[message]);
+    tests.msg(message);
+  end
+
+  function tests.visible (message, time)
+    message = message or 'foo';
+    f:SetVisibleTime(tonumber(time or 1));
+
+    if (m[message]) then
+      f:RemoveMessage(message);
+    end
+
+    tests.msg(message);
   end
 end
