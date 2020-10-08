@@ -41,7 +41,6 @@ function MessageFrame:New ()
   return this;
 end
 
-
 function MessageFrame:AddMessage (text)
   local message = self.pool:Acquire();
   local tail = self.tail;
@@ -80,33 +79,54 @@ function MessageFrame:RemoveMessage (fontString)
     self.tail = head;
   end
 
-
   fontString:ClearAllPoints();
   fontString:Hide();
   self.pool:Release(fontString);
 end
 
 function MessageFrame:SetMessagePoints (fontString)
+  local head = fontString.head;
+
   fontString:ClearAllPoints();
-  fontString:SetPoint('BOTTOM', fontString.head or self.anchor, 'TOP', 0 ,
-      self.spacing);
+
+  if (head) then
+    fontString:SetPoint('BOTTOM', head or self.anchor, 'TOP', 0, self.spacing);
+  else
+    fontString:SetPoint('BOTTOM', self.anchor, 'TOP', 0, 0);
+  end
+end
+
+function MessageFrame:SetSpacing (spacing)
+  self.spacing = spacing;
+  self:ForEachMessage(self.SetMessagePoints);
+end
+
+function MessageFrame:ForEachMessage (callback)
+  local tail = self.tail;
+
+  while (tail) do
+    callback(self, tail);
+    tail = tail.head;
+  end
 end
 
 do
+  local tests = addon.share('tests');
+
   local f = MessageFrame:New();
   local m = {};
 
-  addon.share('tests').msg = function (message)
+  function tests.msg (message)
     message = message or 'foo';
     m[message] = f:AddMessage(message);
   end
 
-  addon.share('tests').rm = function (message)
+  function tests.rm (message)
     message = message or 'foo';
     f:RemoveMessage(m[message]);
   end
 
-  addon.share('tests').foo = function ()
-    print(f.tail:GetText());
+  function tests.spacing (spacing)
+    f:SetSpacing(tonumber(spacing));
   end
 end
