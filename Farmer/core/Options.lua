@@ -5,17 +5,13 @@ local strupper = _G.strupper;
 local GetItemIcon = _G.GetItemIcon;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 -- for some reason they are not strings but numbers unlike MessageFrame modes
-local SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP =
-    _G.SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP or 1;
-local SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM =
-    _G.SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM or 2;
 
 local L = addon.L;
 local addonVars = addon.share('vars');
 
 local ADDON_ICON_ID = 3334;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
-local INSERTMODE_DEFAULT = SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM;
+local GROW_DIRECTION_DEFAULT = 'DOWN';
 local HORIZONTAL_ALIGN_DEFAULT = 'CENTER';
 
 local Panel = addon.OptionClass.Panel;
@@ -28,7 +24,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Core = {
       anchor = ANCHOR_DEFAULT,
-      insertMode = INSERTMODE_DEFAULT,
+      insertMode = GROW_DIRECTION_DEFAULT,
       displayTime = 4,
       fontSize = 18,
       iconScale = 0.8,
@@ -86,60 +82,11 @@ local function moveFrame ()
   farmerFrame:SetScript('OnReceiveDrag', stopMovingFrame);
 end
 
-local function getProperInsertmode (mode)
-  if (type(mode) ~= 'string') then
-    return mode;
-  end
-
-  local aliasMap = {
-    BOTTOM = SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM,
-    TOP = SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP,
-  };
-
-  mode = strupper(mode);
-
-  return aliasMap[mode] or mode;
-end
-
 local function setInsertMode (mode)
-  local currentMode = getProperInsertmode(farmerFrame:GetInsertMode());
-
-  mode = getProperInsertmode(mode);
-
-  if (mode == currentMode) then return end
-
-  local anchor = {farmerFrame:GetPoint()};
-
-  if (mode == SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP) then
-    anchor[5] = anchor[5] - farmerFrame:GetHeight();
-  elseif (mode == SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM) then
-    anchor[5] = anchor[5] + farmerFrame:GetHeight();
-  end
-
-  farmerFrame:SetPoint(unpack(anchor));
-  storePosition();
   farmerFrame:SetInsertMode(mode);
 end
 
 local function setHorizontalAlignment (alignment)
-  local currentAlignment = strupper(farmerFrame:GetJustifyH());
-
-  alignment = strupper(alignment);
-
-  if (currentAlignment == alignment) then return end
-
-  local alignFactors = {
-    LEFT = -1,
-    CENTER = 0,
-    RIGHT = 1,
-  };
-  local offset = farmerFrame:GetWidth() / 2;
-  local anchor = {farmerFrame:GetPoint()};
-
-  offset = (alignFactors[currentAlignment] - alignFactors[alignment]) * offset;
-  anchor[4] = anchor[4] + offset;
-  farmerFrame:SetPoint(unpack(anchor));
-  storePosition();
   farmerFrame:SetJustifyH(alignment);
 end
 
@@ -153,7 +100,7 @@ local function setDefaultPosition ()
 
   -- setting to the default insert mode first and then applying the actual
   -- insert mode will move the frame to the correct mode position
-  farmerFrame:SetInsertMode(INSERTMODE_DEFAULT);
+  farmerFrame:SetInsertMode(GROW_DIRECTION_DEFAULT);
   setInsertMode(options.insertMode);
 
   -- setting the default horizontal alignment first and then applying the
@@ -168,7 +115,6 @@ local function setFontOptions (options)
   local scale = farmerFrame:GetEffectiveScale();
   local shadowOffset = options.fontSize / 10;
   local iconSize = options.fontSize * options.iconScale * scale;
-  local iconOffset = -options.spacing * 1.5 * scale;
 
   --[[ we have to use the standard font because on screen messages are always
        localized --]]
@@ -177,12 +123,8 @@ local function setFontOptions (options)
   farmerFrame:SetShadowOffset(shadowOffset, -shadowOffset);
   farmerFrame:SetSpacing(options.spacing);
   addonVars.iconOffset = addon.stringJoin(
-      {'', iconSize, iconSize, 0, iconOffset}, ':');
+      {'', iconSize, iconSize}, ':');
 end
-
-_G.hooksecurefunc(farmerFrame, 'SetScale', function ()
-  setFontOptions(options);
-end);
 
 local function setVisibleTime (displayTime)
   farmerFrame:SetTimeVisible(displayTime - farmerFrame:GetFadeDuration());
@@ -214,10 +156,10 @@ do
   optionMap.insertMode = mainPanel:addDropdown(L['grow direction'], {
     {
       text = L['up'],
-      value = SCROLLING_MESSAGE_FRAME_INSERT_MODE_BOTTOM,
+      value = 'UP',
     }, {
       text = L['down'],
-      value = SCROLLING_MESSAGE_FRAME_INSERT_MODE_TOP,
+      value = 'DOWN',
     },
   });
 
@@ -263,7 +205,7 @@ end
 
 saved:OnLoad(function ()
   setFramePosition(options.anchor);
-  farmerFrame:SetInsertMode(getProperInsertmode(options.insertMode));
+  farmerFrame:SetInsertMode(options.insertMode);
   setFontOptions(options);
   setVisibleTime(options.displayTime);
   farmerFrame:SetJustifyH(options.horizontalAlign);

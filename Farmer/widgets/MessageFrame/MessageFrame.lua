@@ -249,6 +249,26 @@ function MessageFrame:HandleMessageFade (fontString, elapsed)
   end
 end
 
+function MessageFrame:ClearAllPoints ()
+  -- self.anchor:ClearAllPoints();
+end
+
+function MessageFrame:SetPoint (...)
+  -- self.anchor:SetPoint(...);
+end
+
+function MessageFrame:GetEffectiveScale ()
+  return self.anchor:GetEffectiveScale();
+end
+
+function MessageFrame:SetFont () end
+function MessageFrame:SetShadowColor () end
+function MessageFrame:SetShadowOffset () end
+
+MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
+MessageFrame.SetInsertMode = MessageFrame.SetGrowDirection;
+MessageFrame.SetTimeVisible = MessageFrame.SetVisibleTime;
+
 do
   local tests = addon.share('tests');
 
