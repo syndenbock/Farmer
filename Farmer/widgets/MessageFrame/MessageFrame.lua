@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 local CreateFontStringPool = _G.CreateFontStringPool;
 local CreateFrame = _G.CreateFrame;
+local C_Timer = _G.C_Timer;
 local UIPARENT = _G.UIParent;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
@@ -44,6 +45,9 @@ function MessageFrame:New ()
   this.spacing = 0;
   this.fadeDuration = 2;
   this.visibleTime = 3;
+  this.font = STANDARD_TEXT_FONT;
+  this.fontSize = 18;
+  this.fontFlags = 'OUTLINE';
 
   return this;
 end
@@ -77,8 +81,7 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   local message = self.pool:Acquire();
   local visibleTime = self.visibleTime or 0;
 
-  -- message:SetSize(200, 200);
-  message:SetFont(STANDARD_TEXT_FONT, 18);
+  self:SetFontStringFont(message);
   message:SetTextColor(r or 1, g or 1, b or 1, a or 1);
   message:SetText(text);
   message:Show();
@@ -185,6 +188,18 @@ function MessageFrame:SetSpacing (spacing)
   self:ForEachMessage(self.SetMessagePoints);
 end
 
+function MessageFrame:SetFont (font, fontSize, fontFlags)
+  self.font = font;
+  self.fontSize = fontSize;
+  self.fontFlags = fontFlags;
+
+  self:ForEachMessage(self.SetFontStringFont);
+end
+
+function MessageFrame:SetFontStringFont (fontString)
+  fontString:SetFont(self.font, self.fontSize, self.fontFlags);
+end
+
 function MessageFrame:SetFadeDuration (duration)
   self.fadeDuration = duration;
 end
@@ -261,7 +276,6 @@ function MessageFrame:GetEffectiveScale ()
   return self.anchor:GetEffectiveScale();
 end
 
-function MessageFrame:SetFont () end
 function MessageFrame:SetShadowColor () end
 function MessageFrame:SetShadowOffset () end
 
