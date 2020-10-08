@@ -86,13 +86,26 @@ end
 
 function MessageFrame:SetMessagePoints (fontString)
   local head = fontString.head;
+  local anchorPoint;
+  local headAnchorPoint;
 
   fontString:ClearAllPoints();
 
-  if (head) then
-    fontString:SetPoint('BOTTOM', head or self.anchor, 'TOP', 0, self.spacing);
+  if (self.alignment == 'LEFT') then
+    anchorPoint = 'LEFT';
+  elseif (self.alignment == 'RIGHT') then
+    anchorPoint = 'RIGHT';
   else
-    fontString:SetPoint('BOTTOM', self.anchor, 'TOP', 0, 0);
+    anchorPoint = '';
+  end
+
+  headAnchorPoint = 'TOP' .. anchorPoint;
+  anchorPoint = 'BOTTOM' .. anchorPoint;
+
+  if (head) then
+    fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, self.spacing);
+  else
+    fontString:SetPoint(anchorPoint, self.anchor, 'CENTER', 0, 0);
   end
 end
 
@@ -108,6 +121,11 @@ function MessageFrame:ForEachMessage (callback)
     callback(self, tail);
     tail = tail.head;
   end
+end
+
+function MessageFrame:SetTextAlign (alignment)
+  self.alignment = alignment;
+  self:ForEachMessage(self.SetMessagePoints);
 end
 
 do
@@ -128,5 +146,9 @@ do
 
   function tests.spacing (spacing)
     f:SetSpacing(tonumber(spacing));
+  end
+
+  function tests.align (alignment)
+    f:SetTextAlign(alignment);
   end
 end
