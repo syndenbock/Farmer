@@ -99,8 +99,13 @@ function MessageFrame:SetMessagePoints (fontString)
     anchorPoint = '';
   end
 
-  headAnchorPoint = 'TOP' .. anchorPoint;
-  anchorPoint = 'BOTTOM' .. anchorPoint;
+  if (self.direction == 'UP') then
+    headAnchorPoint = 'TOP' .. anchorPoint;
+    anchorPoint = 'BOTTOM' .. anchorPoint;
+  else
+    headAnchorPoint = 'BOTTOM' .. anchorPoint;
+    anchorPoint = 'TOP' .. anchorPoint;
+  end
 
   if (head) then
     fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, self.spacing);
@@ -128,6 +133,11 @@ function MessageFrame:SetTextAlign (alignment)
   self:ForEachMessage(self.SetMessagePoints);
 end
 
+function MessageFrame:SetGrowDirection (direction)
+  self.direction = direction;
+  self:ForEachMessage(self.SetMessagePoints);
+end
+
 do
   local tests = addon.share('tests');
 
@@ -150,5 +160,9 @@ do
 
   function tests.align (alignment)
     f:SetTextAlign(alignment);
+  end
+
+  function tests.grow (direction)
+    f:SetGrowDirection(direction);
   end
 end
