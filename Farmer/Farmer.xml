@@ -1,6 +1,7 @@
 <UI>
   <script file="Core.lua"/>
   <include file="localizations\localizations.xml"/>
+  <include file="utils\utils.xml"/>
   <include file="classes\classes.xml"/>
   <include file="classes_options\options.xml"/>
   <include file="factories\factories.xml"/>
