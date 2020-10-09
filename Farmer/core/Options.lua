@@ -1,7 +1,6 @@
 local addonName, addon = ...;
 
 local unpack = _G.unpack;
-local strupper = _G.strupper;
 local GetItemIcon = _G.GetItemIcon;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 -- for some reason they are not strings but numbers unlike MessageFrame modes
@@ -11,8 +10,6 @@ local addonVars = addon.share('vars');
 
 local ADDON_ICON_ID = 3334;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
-local GROW_DIRECTION_DEFAULT = 'DOWN';
-local HORIZONTAL_ALIGN_DEFAULT = 'CENTER';
 
 local Panel = addon.OptionClass.Panel;
 local mainPanel = Panel:new(addonName);
@@ -24,17 +21,17 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Core = {
       anchor = ANCHOR_DEFAULT,
-      insertMode = GROW_DIRECTION_DEFAULT,
+      insertMode = 'UP',
       displayTime = 4,
-      fontSize = 18,
-      iconScale = 0.8,
-      spacing = 0,
+      fontSize = 24,
+      iconScale = 1,
+      spacing = 2,
       outline = 'OUTLINE',
       hideAtMailbox = true,
       hideInArena = true,
       hideOnExpeditions = true,
       itemNames = true,
-      horizontalAlign = HORIZONTAL_ALIGN_DEFAULT,
+      horizontalAlign = 'CENTER',
     },
   },
 });
