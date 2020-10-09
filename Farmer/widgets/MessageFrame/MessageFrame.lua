@@ -116,48 +116,66 @@ end
 
 function MessageFrame:Move (message, callback)
   local anchor = self.anchor;
+  local fontString = self:CreateFontString(message);
 
-  self:Clear();
-  message = self:AddMessage(message);
-  self.lockMessages = true;
+  fontString:SetParent(self.anchor);
+  fontString:SetPoint('CENTER', anchor, 'CENTER', 0, 0);
+  transformFrameAnchorsToCenter(anchor);
+  anchor:SetSize(200, 200);
 
-  anchor:SetSize(100, 100);
+  self:StartMoving(fontString, callback);
+end
+
+function MessageFrame:StartMoving (fontString, callback)
+  if (self.isMoving) then return end
+
+  local anchor = self.anchor;
+
+  self.isMoving = true;
+
   anchor:RegisterForDrag('LeftButton');
   anchor:EnableMouse(true);
   anchor:SetMovable(true);
-  anchor:SetScript('OnDragStart', function (self)
-    if (self:IsMovable() == true) then
-      self:StartMoving();
+
+  anchor:SetScript('OnDragStart', function ()
+    if (anchor:IsMovable() == true) then
+      anchor:StartMoving();
     end
   end);
+
   anchor:SetScript('OnReceiveDrag', function ()
-    self.lockMessages = nil;
-    self:StartDisplayTimeout(message);
+    self.isMoving = false;
+    self:StartDisplayTimeout(fontString);
     self:StopMoving();
+
+    transformFrameAnchorsToCenter(anchor);
+    anchor:SetSize(2, 2);
+
     if (callback) then
       callback();
     end
   end);
 end
 
+function MessageFrame:StopMoving ()
+  local anchor = self.anchor;
+
+  anchor:RegisterForDrag();
+  anchor:EnableMouse(false);
+  anchor:SetMovable(false);
+  anchor:StopMovingOrSizing();
+  anchor:SetScript('OnDragStart', nil);
+  anchor:SetScript('OnReceiveDrag', nil);
+end
+
 function MessageFrame:AddMessage (text, r, g, b, a)
-  if (self.lockMessages) then return end
+  local fontString = self:CreateFontString(text, r, g, b, a);
 
-  local fontString = self.pool:Acquire();
-
-  fontString:SetParent(self.anchor);
-  self:SetFontStringFont(fontString);
-  self:SetFontStringShadowColor(fontString);
-  self:SetFontStringShadowOffset(fontString);
-  fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
-  fontString:SetText(text);
   self:InsertMessage(fontString);
 
   if (self.fading) then
     self:StartDisplayTimeout(fontString);
   end
-
-  fontString:Show();
 
   return fontString;
 end
@@ -189,14 +207,14 @@ function MessageFrame:RemoveMessage (fontString)
 end
 
 function MessageFrame:Clear ()
-  self:ForEachMessage(self.RemoveMessage);
+  self:ForEachDisplayedMessage(self.RemoveMessage);
 end
 
 function MessageFrame:SetFading (fading)
   --[[ when toggling from not fading to fading, current permanent messages
   will fade ]]
   if (not self.fading and fading) then
-    self:ForEachMessage(self.StartDisplayTimeout);
+    self:ForEachDisplayedMessage(self.StartDisplayTimeout);
   end
 
   self.fading = fading;
@@ -210,7 +228,7 @@ function MessageFrame:SetSpacing (spacing)
   self.spacing = spacing;
   --[[ Calls of GetPoint are so expensive that recalculating all anchors is
     faster than only updating the y-offset ]]
-  self:ForEachMessage(self.SetMessagePoints);
+  self:ForEachDisplayedMessage(self.SetMessagePoints);
 end
 
 function MessageFrame:SetFrameStrata (frameStrata)
@@ -218,7 +236,7 @@ function MessageFrame:SetFrameStrata (frameStrata)
   self.anchor:SetFrameStrata(frameStrata);
   self.pool.layer = frameStrata;
 
-  self:ForEachMessage(self.SetFontStringFrameStrata);
+  self:ForEachDisplayedMessage(self.SetFontStringFrameStrata);
 end
 
 function MessageFrame:GetFrameStrata ()
@@ -230,7 +248,7 @@ function MessageFrame:SetFrameLevel (frameLevel)
   self.anchor:SetFrameLevel(frameLevel);
   self.pool.subLayer = frameLevel;
 
-  self:ForEachMessage(self.SetFontStringFrameLevel)
+  self:ForEachDisplayedMessage(self.SetFontStringFrameLevel)
 end
 
 function MessageFrame:GetFrameLevel ()
@@ -242,7 +260,7 @@ function MessageFrame:SetFont (font, fontSize, fontFlags)
   self.fontSize = fontSize;
   self.fontFlags = fontFlags;
 
-  self:ForEachMessage(self.SetFontStringFont);
+  self:ForEachDisplayedMessage(self.SetFontStringFont);
 end
 
 function MessageFrame:SetFadeDuration (duration)
@@ -263,7 +281,7 @@ end
 
 function MessageFrame:SetTextAlign (alignment)
   self.alignment = alignment;
-  self:ForEachMessage(self.SetMessagePoints);
+  self:ForEachDisplayedMessage(self.SetMessagePoints);
 end
 
 function MessageFrame:GetTextAlign ()
@@ -272,7 +290,7 @@ end
 
 function MessageFrame:SetGrowDirection (direction)
   self.direction = direction;
-  self:ForEachMessage(self.SetMessagePoints);
+  self:ForEachDisplayedMessage(self.SetMessagePoints);
 end
 
 function MessageFrame:GetGrowDirection ()
@@ -287,7 +305,7 @@ function MessageFrame:SetShadowColor (r, g, b, a)
   colors.b = b or colors.b;
   colors.a = a or colors.a;
 
-  self:ForEachMessage(self.SetFontStringShadowColor);
+  self:ForEachDisplayedMessage(self.SetFontStringShadowColor);
 end
 
 function MessageFrame:GetShadowColor ()
@@ -302,7 +320,7 @@ function MessageFrame:SetShadowOffset (x, y)
   offset.x = x or offset.x;
   offset.y = y or offset.y;
 
-  self:ForEachMessage(self.SetFontStringShadowOffset);
+  self:ForEachDisplayedMessage(self.SetFontStringShadowOffset);
 end
 
 function MessageFrame:GetShadowOffset ()
@@ -329,16 +347,18 @@ MessageFrame.GetTimeVisible = MessageFrame.GetVisibleTime;
 -- private methods
 --##############################################################################
 
-function MessageFrame:StopMoving ()
-  local anchor = self.anchor;
+function MessageFrame:CreateFontString (text, r, g, b, a)
+  local fontString = self.pool:Acquire();
 
-  anchor:EnableMouse(false);
-  anchor:SetMovable(false);
-  anchor:StopMovingOrSizing();
-  anchor:SetScript('OnDragStart', nil);
-  anchor:SetScript('OnReceiveDrag', nil);
-  transformFrameAnchorsToCenter(anchor);
-  anchor:SetSize(2, 2);
+  fontString:SetParent(self.anchor);
+  self:SetFontStringFont(fontString);
+  self:SetFontStringShadowColor(fontString);
+  self:SetFontStringShadowOffset(fontString);
+  fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
+  fontString:SetText(text);
+  fontString:Show();
+
+  return fontString;
 end
 
 function MessageFrame:ResetFontString (fontString)
@@ -431,8 +451,6 @@ end
 --******************************************************************************
 
 function MessageFrame:StartDisplayTimeout (fontString)
-  if (self.lockMessages) then return end
-
   local visibleTime = self.visibleTime or 0;
 
   if (visibleTime > 0) then
@@ -445,8 +463,6 @@ function MessageFrame:StartDisplayTimeout (fontString)
 end
 
 function MessageFrame:FadeMessage (fontString)
-  if (self.lockMessages) then return end
-
   assert(fontString.isFading ~= true, 'message is already fading');
 
   --[[ fontString was removed by something like Clear ]]
@@ -551,5 +567,15 @@ end
 function MessageFrame:ForEachMessage (callback, ...)
   for fontString in self.pool:EnumerateActive() do
     callback(self, fontString, ...);
+  end
+end
+
+function MessageFrame:ForEachDisplayedMessage (callback, ...)
+  local tail = self.tail;
+
+  while (tail) do
+    local next = tail.head;
+    callback(self, tail, ...);
+    tail = next;
   end
 end
