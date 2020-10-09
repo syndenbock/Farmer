@@ -71,6 +71,7 @@ local function createBase (options)
   this.fontSize = 18;
   this.fontFlags = 'OUTLINE';
   this.fading = true;
+  this.updateInterval = 0.01;
   this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
   this.shadowOffset = {x = 0, y = 0};
 
@@ -308,6 +309,14 @@ function MessageFrame:GetShadowOffset ()
   return self.shadowOffset.x, self.shadowOffset.y;
 end
 
+function MessageFrame:SetUpdateInterval (interval)
+  self.updateInterval = interval;
+end
+
+function MessageFrame:GetUpdateInterval ()
+  return self.updateInterval;
+end
+
 --[[ aliases for default frame methods ]]
 MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
 MessageFrame.GetJustifyH = MessageFrame.GetTextAlign;
@@ -459,15 +468,28 @@ function MessageFrame:FadeMessage (fontString)
 end
 
 function MessageFrame:AddAlphaHandler (fontString)
-  local this = self;
-
   if (self.updates:getItemCount() == 0) then
-    self.anchor:SetScript('OnUpdate', function (_, elapsed)
-      this:HandleUpdate(elapsed);
-    end);
+    self:InitUpdateHandler();
   end
 
   self.updates:addItem(fontString);
+end
+
+function MessageFrame:InitUpdateHandler ()
+  local this = self;
+
+  self.elapsed = 0;
+
+  self.anchor:SetScript('OnUpdate', function (_, elapsed)
+    elapsed = this.elapsed + elapsed;
+
+    if (elapsed >= this.updateInterval) then
+      this:HandleUpdate(elapsed);
+      self.elapsed = 0;
+    else
+      self.elapsed = elapsed;
+    end
+  end);
 end
 
 function MessageFrame:HandleUpdate (elapsed)
@@ -491,6 +513,7 @@ end
 
 function MessageFrame:RemoveAlphaHandler (fontString)
   self.updates:removeItem(fontString);
+
   if (self.updates:getItemCount() == 0) then
     self.anchor:SetScript('OnUpdate', nil);
   end
