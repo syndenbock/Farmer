@@ -221,7 +221,7 @@ function MessageFrame:RemoveMessage (fontString)
 end
 
 function MessageFrame:Clear ()
-  self:ReverseForEachMessage(self.RemoveMessage);
+  self:ForEachMessage(self.RemoveMessage);
 end
 
 function MessageFrame:SetFading (fading)
@@ -559,19 +559,7 @@ end
 --******************************************************************************
 
 function MessageFrame:ForEachMessage (callback, ...)
-  local head = self.head;
-
-  while (head) do
-    callback(self, head, ...);
-    head = head.tail;
-  end
-end
-
-function MessageFrame:ReverseForEachMessage (callback, ...)
-  local tail = self.tail;
-
-  while (tail) do
-    callback(self, tail, ...);
-    tail = tail.head;
+  for fontString in self.pool:EnumerateActive() do
+    callback(self, fontString, ...);
   end
 end
