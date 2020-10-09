@@ -1,4 +1,4 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 local CreateFontStringPool = _G.CreateFontStringPool;
 local CreateFrame = _G.CreateFrame;
@@ -9,7 +9,6 @@ local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 local Set = addon.Class.Set;
 
 local MessageFrame = {};
-local frameCount = 0;
 
 addon.share('Widget').MessageFrame = MessageFrame;
 
@@ -46,14 +45,6 @@ local function transformFrameAnchorsToCenter (frame)
   points[1] = 'CENTER';
   frame:ClearAllPoints();
   frame:SetPoint(unpack(points));
-end
-
-local function generateFrameName ()
-  local name = addonName .. 'MessageFrame' .. frameCount;
-
-  frameCount = frameCount + 1;
-
-  return name;
 end
 
 local function updateOptions (defaults, options)
@@ -94,7 +85,7 @@ local function createBase (options)
   options = transformOptions(options);
 
   --[[ options ]]
-  this.name = options.name or generateFrameName();
+  this.name = options.name;
   this.frameStrata = 'TOOLTIP';
   this.frameLevel = 0;
   this.spacing = 0;
