@@ -112,6 +112,10 @@ local function createBase (options)
   return this;
 end
 
+--##############################################################################
+-- public methods
+--##############################################################################
+
 function MessageFrame:New (options)
   local this = createBase(options);
   local anchor = createAnchor(this.name, this.frameStrata, this.frameLevel);
@@ -168,52 +172,6 @@ function MessageFrame:Move (message, callback)
   end);
 end
 
-function MessageFrame:StopMoving ()
-  local anchor = self.anchor;
-
-  anchor:EnableMouse(false);
-  anchor:SetMovable(false);
-  anchor:StopMovingOrSizing();
-  anchor:SetScript('OnDragStart', nil);
-  anchor:SetScript('OnReceiveDrag', nil);
-  transformFrameAnchorsToCenter(anchor);
-  anchor:SetSize(2, 2);
-end
-
-function MessageFrame:ResetFontString (fontString)
-  --[[ no need to reset default attributes, as the pool resetter automatically
-    does this ]]
-  fontString.head = nil;
-  fontString.tail = nil;
-  fontString.isFading = nil;
-  fontString.fadeSpeed = nil;
-end
-
-function MessageFrame:AddAlphaHandler (fontString)
-  local this = self;
-
-  if (self.updates:getItemCount() == 0) then
-    self.anchor:SetScript('OnUpdate', function (_, elapsed)
-      this:HandleUpdate(elapsed);
-    end);
-  end
-
-  self.updates:addItem(fontString);
-end
-
-function MessageFrame:HandleUpdate (elapsed)
-  self.updates:forEach(function (fontString)
-    self:HandleMessageFade(fontString, elapsed);
-  end);
-end
-
-function MessageFrame:RemoveAlphaHandler (fontString)
-  self.updates:removeItem(fontString);
-  if (self.updates:getItemCount() == 0) then
-    self.anchor:SetScript('OnUpdate', nil);
-  end
-end
-
 function MessageFrame:AddMessage (text, r, g, b, a)
   if (self.lockMessages) then return end
 
@@ -234,33 +192,6 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   fontString:Show();
 
   return fontString;
-end
-
-function MessageFrame:InsertMessage (fontString)
-  --[[ TODO build support for insert modes ]]
-  self:PrependMessage(fontString);
-end
-
-function MessageFrame:PrependMessage (fontString)
-  local head = self.head;
-
-  self:AttachFontString(fontString, head);
-
-  self.head = fontString;
-  self.tail = self.tail or fontString;
-
-  self:SetMessagePoints(fontString);
-  self:SetMessagePointsIfExists(head);
-end
-
-function MessageFrame:AttachFontString (head, tail)
-  if (head) then
-    head.tail = tail;
-  end
-
-  if (tail) then
-    tail.head = head;
-  end
 end
 
 function MessageFrame:RemoveMessage (fontString)
@@ -291,51 +222,6 @@ end
 
 function MessageFrame:Clear ()
   self:ReverseForEachMessage(self.RemoveMessage);
-end
-
-function MessageFrame:SetMessagePoints (fontString)
-  local head = fontString.head;
-  local alignmentAnchor;
-  local anchorPoint;
-
-  if (self.alignment == 'LEFT') then
-    alignmentAnchor = 'LEFT';
-  elseif (self.alignment == 'RIGHT') then
-    alignmentAnchor = 'RIGHT';
-  else
-    alignmentAnchor = '';
-  end
-
-  if (self.direction == 'UP') then
-    anchorPoint = 'BOTTOM' .. alignmentAnchor;
-  else
-    anchorPoint = 'TOP' .. alignmentAnchor;
-  end
-
-  fontString:ClearAllPoints();
-
-  if (head) then
-    local headAnchorPoint;
-    local yOffset;
-
-    if (self.direction == 'UP') then
-      yOffset = self.spacing;
-      headAnchorPoint = 'TOP' .. alignmentAnchor;
-    else
-      yOffset = -self.spacing;
-      headAnchorPoint = 'BOTTOM' .. alignmentAnchor;
-    end
-
-    fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, yOffset);
-  else
-    fontString:SetPoint(anchorPoint, self.anchor, 'CENTER', 0, 0);
-  end
-end
-
-function MessageFrame:SetMessagePointsIfExists (fontString)
-  if (not fontString) then return end
-
-  self:SetMessagePoints(fontString);
 end
 
 function MessageFrame:SetFading (fading)
@@ -391,27 +277,6 @@ function MessageFrame:SetFont (font, fontSize, fontFlags)
   self:ForEachMessage(self.SetFontStringFont);
 end
 
-function MessageFrame:SetFontStringFont (fontString)
-  fontString:SetFont(self.font, self.fontSize, self.fontFlags);
-end
-
-function MessageFrame:SetFontStringShadowColor (fontString)
-  local colors = self.shadowColors;
-  fontString:SetShadowColor(colors.r, colors.g, colors.b, colors.a);
-end
-
-function MessageFrame:SetFontStringShadowOffset (fontString)
-  fontString:SetShadowOffset(self.shadowOffset.x, self.shadowOffset.y);
-end
-
-function MessageFrame:SetFontStringFrameStrata (fontString)
-  fontString:SetFrameStrata(self.frameStrata);
-end
-
-function MessageFrame:SetFontStringFrameLevel (fontString)
-  fontString:SetFrameLevel(self.frameLevel);
-end
-
 function MessageFrame:SetFadeDuration (duration)
   self.fadeDuration = duration;
 end
@@ -424,22 +289,8 @@ function MessageFrame:SetVisibleTime (duration)
   self.visibleTime = duration;
 end
 
-function MessageFrame:ForEachMessage (callback)
-  local head = self.head;
-
-  while (head) do
-    callback(self, head);
-    head = head.tail;
-  end
-end
-
-function MessageFrame:ReverseForEachMessage (callback)
-  local tail = self.tail;
-
-  while (tail) do
-    callback(self, tail);
-    tail = tail.head;
-  end
+function MessageFrame:GetVisibleTime ()
+  return self.visibleTime;
 end
 
 function MessageFrame:SetTextAlign (alignment)
@@ -447,10 +298,161 @@ function MessageFrame:SetTextAlign (alignment)
   self:ForEachMessage(self.SetMessagePoints);
 end
 
+function MessageFrame:GetTextAlign ()
+  return self.alignment;
+end
+
 function MessageFrame:SetGrowDirection (direction)
   self.direction = direction;
   self:ForEachMessage(self.SetMessagePoints);
 end
+
+function MessageFrame:GetGrowDirection ()
+  return self.direction;
+end
+
+function MessageFrame:SetShadowColor (r, g, b, a)
+  local colors = self.shadowColors;
+
+  colors.r = r or colors.r;
+  colors.g = g or colors.g;
+  colors.b = b or colors.b;
+  colors.a = a or colors.a;
+
+  self:ForEachMessage(self.SetFontStringShadowColor);
+end
+
+function MessageFrame:GetShadowColor ()
+  local colors = self.shadowColors;
+
+  return colors.r, colors.g, colors.b, colors.a;
+end
+
+function MessageFrame:SetShadowOffset (x, y)
+  local offset = self.shadowOffset;
+
+  offset.x = x or offset.x;
+  offset.y = y or offset.y;
+
+  self:ForEachMessage(self.SetFontStringShadowOffset);
+end
+
+function MessageFrame:GetShadowOffset ()
+  return self.shadowOffset.x, self.shadowOffset.y;
+end
+
+--[[ aliases for default frame methods ]]
+MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
+MessageFrame.GetJustifyH = MessageFrame.GetTextAlign;
+MessageFrame.SetInsertMode = MessageFrame.SetGrowDirection;
+MessageFrame.GetInsertMode = MessageFrame.GetGrowDirection;
+MessageFrame.SetTimeVisible = MessageFrame.SetVisibleTime;
+MessageFrame.GetTimeVisible = MessageFrame.GetVisibleTime;
+
+--##############################################################################
+-- private methods
+--##############################################################################
+
+function MessageFrame:StopMoving ()
+  local anchor = self.anchor;
+
+  anchor:EnableMouse(false);
+  anchor:SetMovable(false);
+  anchor:StopMovingOrSizing();
+  anchor:SetScript('OnDragStart', nil);
+  anchor:SetScript('OnReceiveDrag', nil);
+  transformFrameAnchorsToCenter(anchor);
+  anchor:SetSize(2, 2);
+end
+
+function MessageFrame:ResetFontString (fontString)
+  --[[ no need to reset default attributes, as the pool resetter automatically
+    does this ]]
+  fontString.head = nil;
+  fontString.tail = nil;
+  fontString.isFading = nil;
+  fontString.fadeSpeed = nil;
+end
+
+function MessageFrame:InsertMessage (fontString)
+  --[[ TODO build support for insert modes ]]
+  self:PrependMessage(fontString);
+end
+
+function MessageFrame:PrependMessage (fontString)
+  local head = self.head;
+
+  self:AttachFontString(fontString, head);
+
+  self.head = fontString;
+  self.tail = self.tail or fontString;
+
+  self:SetMessagePoints(fontString);
+  self:SetMessagePointsIfExists(head);
+end
+
+--******************************************************************************
+-- message positioning methods
+--******************************************************************************
+
+function MessageFrame:SetMessagePoints (fontString)
+  local head = fontString.head;
+  local alignmentAnchor;
+  local anchorPoint;
+
+  if (self.alignment == 'LEFT') then
+    alignmentAnchor = 'LEFT';
+  elseif (self.alignment == 'RIGHT') then
+    alignmentAnchor = 'RIGHT';
+  else
+    alignmentAnchor = '';
+  end
+
+  if (self.direction == 'UP') then
+    anchorPoint = 'BOTTOM' .. alignmentAnchor;
+  else
+    anchorPoint = 'TOP' .. alignmentAnchor;
+  end
+
+  fontString:ClearAllPoints();
+
+  if (head) then
+    local headAnchorPoint;
+    local yOffset;
+
+    if (self.direction == 'UP') then
+      yOffset = self.spacing;
+      headAnchorPoint = 'TOP' .. alignmentAnchor;
+    else
+      yOffset = -self.spacing;
+      headAnchorPoint = 'BOTTOM' .. alignmentAnchor;
+    end
+
+    fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, yOffset);
+  else
+    fontString:SetPoint(anchorPoint, self.anchor, 'CENTER', 0, 0);
+  end
+end
+
+function MessageFrame:SetMessagePointsIfExists (fontString)
+  if (not fontString) then return end
+
+  self:SetMessagePoints(fontString);
+end
+
+function MessageFrame:AttachFontString (head, tail)
+  if (head) then
+    head.tail = tail;
+  end
+
+  if (tail) then
+    tail.head = head;
+  end
+end
+
+--******************************************************************************
+-- fontString visibility methods
+--******************************************************************************
 
 function MessageFrame:StartDisplayTimeout (fontString)
   if (self.lockMessages) then return end
@@ -489,6 +491,24 @@ function MessageFrame:FadeMessage (fontString)
   self:AddAlphaHandler(fontString);
 end
 
+function MessageFrame:AddAlphaHandler (fontString)
+  local this = self;
+
+  if (self.updates:getItemCount() == 0) then
+    self.anchor:SetScript('OnUpdate', function (_, elapsed)
+      this:HandleUpdate(elapsed);
+    end);
+  end
+
+  self.updates:addItem(fontString);
+end
+
+function MessageFrame:HandleUpdate (elapsed)
+  self.updates:forEach(function (fontString)
+    self:HandleMessageFade(fontString, elapsed);
+  end);
+end
+
 function MessageFrame:HandleMessageFade (fontString, elapsed)
   assert(fontString.isFading == true, 'message is not fading!');
 
@@ -502,27 +522,56 @@ function MessageFrame:HandleMessageFade (fontString, elapsed)
   end
 end
 
-function MessageFrame:SetShadowColor (r, g, b, a)
+function MessageFrame:RemoveAlphaHandler (fontString)
+  self.updates:removeItem(fontString);
+  if (self.updates:getItemCount() == 0) then
+    self.anchor:SetScript('OnUpdate', nil);
+  end
+end
+
+--******************************************************************************
+-- fontString attribute setters
+--******************************************************************************
+
+function MessageFrame:SetFontStringFont (fontString)
+  fontString:SetFont(self.font, self.fontSize, self.fontFlags);
+end
+
+function MessageFrame:SetFontStringShadowColor (fontString)
   local colors = self.shadowColors;
-
-  colors.r = r or colors.r;
-  colors.g = g or colors.g;
-  colors.b = b or colors.b;
-  colors.a = a or colors.a;
-
-  self:ForEachMessage(self.SetFontStringShadowColor);
+  fontString:SetShadowColor(colors.r, colors.g, colors.b, colors.a);
 end
 
-function MessageFrame:SetShadowOffset (x, y)
-  local offset = self.shadowOffset;
-
-  offset.x = x or offset.x;
-  offset.y = y or offset.y;
-
-  self:ForEachMessage(self.SetFontStringShadowOffset);
+function MessageFrame:SetFontStringShadowOffset (fontString)
+  fontString:SetShadowOffset(self.shadowOffset.x, self.shadowOffset.y);
 end
 
---[[ aliases for default frame methods ]]
-MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
-MessageFrame.SetInsertMode = MessageFrame.SetGrowDirection;
-MessageFrame.SetTimeVisible = MessageFrame.SetVisibleTime;
+function MessageFrame:SetFontStringFrameStrata (fontString)
+  fontString:SetFrameStrata(self.frameStrata);
+end
+
+function MessageFrame:SetFontStringFrameLevel (fontString)
+  fontString:SetFrameLevel(self.frameLevel);
+end
+
+--******************************************************************************
+-- helper methods
+--******************************************************************************
+
+function MessageFrame:ForEachMessage (callback, ...)
+  local head = self.head;
+
+  while (head) do
+    callback(self, head, ...);
+    head = head.tail;
+  end
+end
+
+function MessageFrame:ReverseForEachMessage (callback, ...)
+  local tail = self.tail;
+
+  while (tail) do
+    callback(self, tail, ...);
+    tail = tail.head;
+  end
+end
