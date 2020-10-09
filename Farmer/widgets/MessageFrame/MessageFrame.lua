@@ -88,7 +88,7 @@ function MessageFrame:New (name)
     end
   });
 
-  this.anchor = anchor;
+  --[[ options ]]
   this.frameStrata = 'TOOLTIP';
   this.frameLevel = 2;
   this.spacing = 0;
@@ -97,10 +97,12 @@ function MessageFrame:New (name)
   this.font = STANDARD_TEXT_FONT;
   this.fontSize = 18;
   this.fontFlags = 'OUTLINE';
-  this.updates = Set:new();
+  this.fading = true;
   this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
   this.shadowOffset = {x = 0, y = 0};
 
+  this.anchor = anchor;
+  this.updates = Set:new();
   this.pool = CreateFontStringPool(this.anchor, this.frameStrata,
       this.frameLevel);
 
@@ -188,7 +190,10 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
   fontString:SetText(text);
   self:InsertMessage(fontString);
-  self:StartDisplayTimeout(fontString);
+
+  if (self.fading) then
+    self:StartDisplayTimeout(fontString);
+  end
 
   fontString:Show();
 
@@ -282,6 +287,20 @@ function MessageFrame:SetMessagePoints (fontString)
   else
     fontString:SetPoint(anchorPoint, self.anchor, 'CENTER', 0, 0);
   end
+end
+
+function MessageFrame:SetFading (fading)
+  --[[ when toggling from not fading to fading, current permanent messages
+  will fade ]]
+  if (not self.fading and fading) then
+    self:ForEachMessage(self.StartDisplayTimeout);
+  end
+
+  self.fading = fading;
+end
+
+function MessageFrame:GetFading ()
+  return self.fading;
 end
 
 function MessageFrame:SetSpacing (spacing)
