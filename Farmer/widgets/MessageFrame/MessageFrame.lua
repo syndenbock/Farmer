@@ -11,9 +11,17 @@ local Set = addon.Class.Set;
 local MessageFrame = {};
 local frameCount = 0;
 
-MessageFrame.__index = MessageFrame;
-
 addon.share('Widget').MessageFrame = MessageFrame;
+
+local function proxyMethod (object, proxy, methodName, method)
+  local function callback (_, ...)
+    return method(proxy, ...);
+  end
+
+  object[methodName] = callback;
+
+  return callback;
+end
 
 local function generateFrameName ()
   local name = addonName .. 'MessageFrame' .. frameCount;
@@ -37,7 +45,23 @@ function MessageFrame:New ()
   local this = {};
   local anchor = createAnchor();
 
-  setmetatable(this, MessageFrame);
+  setmetatable(this, {
+    __index = function (_, key)
+      local value = MessageFrame[key];
+
+      if (value ~= nil) then
+        return value;
+      end
+
+      value = anchor[key];
+
+      if (type(value) == 'function') then
+        return proxyMethod(this, anchor, key, value);
+      end
+
+      return value;
+    end
+  });
 
   this.updates = Set:new();
   this.anchor = anchor;
