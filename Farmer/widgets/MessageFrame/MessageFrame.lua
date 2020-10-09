@@ -56,11 +56,13 @@ local function generateFrameName ()
   return name;
 end
 
-local function createAnchor (name)
+local function createAnchor (name, frameStrata, frameLevel)
   local anchor = CreateFrame('Frame', name or generateFrameName());
 
   anchor:SetSize(2, 2);
   anchor:SetPoint('CENTER', UIPARENT, 'CENTER', 0, 0);
+  anchor:SetFrameStrata(frameStrata);
+  anchor:SetFrameLevel(frameLevel);
   anchor:Show();
 
   return anchor;
@@ -68,7 +70,22 @@ end
 
 function MessageFrame:New (name)
   local this = {};
-  local anchor = createAnchor(name);
+  local anchor;
+
+  --[[ options ]]
+  this.frameStrata = 'TOOLTIP';
+  this.frameLevel = 2;
+  this.spacing = 0;
+  this.fadeDuration = 2;
+  this.visibleTime = 3;
+  this.font = STANDARD_TEXT_FONT;
+  this.fontSize = 18;
+  this.fontFlags = 'OUTLINE';
+  this.fading = true;
+  this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
+  this.shadowOffset = {x = 0, y = 0};
+
+  anchor = createAnchor(name, this.frameStrata, this.frameLevel);
 
   setmetatable(this, {
     __index = function (_, key)
@@ -87,19 +104,6 @@ function MessageFrame:New (name)
       return value;
     end
   });
-
-  --[[ options ]]
-  this.frameStrata = 'TOOLTIP';
-  this.frameLevel = 2;
-  this.spacing = 0;
-  this.fadeDuration = 2;
-  this.visibleTime = 3;
-  this.font = STANDARD_TEXT_FONT;
-  this.fontSize = 18;
-  this.fontFlags = 'OUTLINE';
-  this.fading = true;
-  this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
-  this.shadowOffset = {x = 0, y = 0};
 
   this.anchor = anchor;
   this.updates = Set:new();
@@ -308,6 +312,30 @@ function MessageFrame:SetSpacing (spacing)
   self:ForEachMessage(self.SetMessagePoints);
 end
 
+function MessageFrame:SetFrameStrata (frameStrata)
+  self.frameStrata = frameStrata;
+  self.anchor:SetFrameStrata(frameStrata);
+  self.pool.layer = frameStrata;
+
+  self:ForEachMessage(self.SetFontStringFrameStrata);
+end
+
+function MessageFrame:GetFrameStrata ()
+  return self.frameStrata;
+end
+
+function MessageFrame:SetFrameLevel (frameLevel)
+  self.frameLevel = frameLevel;
+  self.anchor:SetFrameLevel(frameLevel);
+  self.pool.subLayer = frameLevel;
+
+  self:ForEachMessage(self.SetFontStringFrameLevel)
+end
+
+function MessageFrame:GetFrameLevel ()
+  return self.frameLevel;
+end
+
 function MessageFrame:SetFont (font, fontSize, fontFlags)
   self.font = font;
   self.fontSize = fontSize;
@@ -327,6 +355,14 @@ end
 
 function MessageFrame:SetFontStringShadowOffset (fontString)
   fontString:SetShadowOffset(self.shadowOffset.x, self.shadowOffset.y);
+end
+
+function MessageFrame:SetFontStringFrameStrata (fontString)
+  fontString:SetFrameStrata(self.frameStrata);
+end
+
+function MessageFrame:SetFontStringFrameLevel (fontString)
+  fontString:SetFrameLevel(self.frameLevel);
 end
 
 function MessageFrame:SetFadeDuration (duration)
