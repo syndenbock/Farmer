@@ -2,7 +2,6 @@
   <script file="Migration.lua"/>
   <script file="Events.lua"/>
   <script file="Savedvars.lua"/>
-  <script file="Slashcommands.lua"/>
   <script file="Yell.lua"/>
   <script file="MainFrame.lua"/>
   <script file="Options.lua"/>
