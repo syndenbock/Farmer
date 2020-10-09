@@ -41,9 +41,9 @@ local function createAnchor (name)
   return anchor;
 end
 
-function MessageFrame:New ()
+function MessageFrame:New (name)
   local this = {};
-  local anchor = createAnchor();
+  local anchor = createAnchor(name);
 
   setmetatable(this, {
     __index = function (_, key)
