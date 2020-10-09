@@ -98,6 +98,9 @@ function MessageFrame:New (name)
   this.fontSize = 18;
   this.fontFlags = 'OUTLINE';
   this.updates = Set:new();
+  this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
+  this.shadowOffset = {x = 0, y = 0};
+
   this.pool = CreateFontStringPool(this.anchor, this.frameStrata,
       this.frameLevel);
 
@@ -180,6 +183,8 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   local fontString = self.pool:Acquire();
 
   self:SetFontStringFont(fontString);
+  self:SetFontStringShadowColor(fontString);
+  self:SetFontStringShadowOffset(fontString);
   fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
   fontString:SetText(text);
   self:InsertMessage(fontString);
@@ -296,6 +301,15 @@ function MessageFrame:SetFontStringFont (fontString)
   fontString:SetFont(self.font, self.fontSize, self.fontFlags);
 end
 
+function MessageFrame:SetFontStringShadowColor (fontString)
+  local colors = self.shadowColors;
+  fontString:SetShadowColor(colors.r, colors.g, colors.b, colors.a);
+end
+
+function MessageFrame:SetFontStringShadowOffset (fontString)
+  fontString:SetShadowOffset(self.shadowOffset.x, self.shadowOffset.y);
+end
+
 function MessageFrame:SetFadeDuration (duration)
   self.fadeDuration = duration;
 end
@@ -386,8 +400,25 @@ function MessageFrame:HandleMessageFade (fontString, elapsed)
   end
 end
 
-function MessageFrame:SetShadowColor () end
-function MessageFrame:SetShadowOffset () end
+function MessageFrame:SetShadowColor (r, g, b, a)
+  local colors = self.shadowColors;
+
+  colors.r = r or colors.r;
+  colors.g = g or colors.g;
+  colors.b = b or colors.b;
+  colors.a = a or colors.a;
+
+  self:ForEachMessage(self.SetFontStringShadowColor);
+end
+
+function MessageFrame:SetShadowOffset (x, y)
+  local offset = self.shadowOffset;
+
+  offset.x = x or offset.x;
+  offset.y = y or offset.y;
+
+  self:ForEachMessage(self.SetFontStringShadowOffset);
+end
 
 MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
 MessageFrame.SetInsertMode = MessageFrame.SetGrowDirection;
