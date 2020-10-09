@@ -116,9 +116,9 @@ end
 function MessageFrame:Move (message, callback)
   local anchor = self.anchor;
 
-  self.lockMessages = true;
   self:Clear();
   message = self:AddMessage(message);
+  self.lockMessages = true;
 
   anchor:SetSize(100, 100);
   anchor:RegisterForDrag('LeftButton');
@@ -186,6 +186,8 @@ function MessageFrame:RemoveAlphaHandler (fontString)
 end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
+  if (self.lockMessages) then return end
+
   local fontString = self.pool:Acquire();
 
   self:SetFontStringFont(fontString);
