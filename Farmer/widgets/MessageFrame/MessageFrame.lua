@@ -31,8 +31,8 @@ local function generateFrameName ()
   return name;
 end
 
-local function createAnchor ()
-  local anchor = CreateFrame('Frame', generateFrameName());
+local function createAnchor (name)
+  local anchor = CreateFrame('Frame', name or generateFrameName());
 
   anchor:SetSize(1, 1);
   anchor:SetPoint('CENTER', UIPARENT, 'CENTER', 0, 0);
