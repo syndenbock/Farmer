@@ -145,7 +145,19 @@ do
   mainPanel:OnCancel(applyOptions);
 end
 
+local function checkOptions ()
+  if (not options.anchor) then
+    local message = addonName .. ' has reset its position because of internal changes, please reposition it';
+
+    options.anchor = ANCHOR_DEFAULT;
+    print(message);
+    addon.frame:AddMessage(message);
+  end
+end
+
 saved:OnLoad(function ()
+  checkOptions();
+
   setFramePosition(options.anchor);
   applyOptions();
 end);
