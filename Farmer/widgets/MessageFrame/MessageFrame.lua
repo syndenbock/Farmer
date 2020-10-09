@@ -63,17 +63,29 @@ function MessageFrame:New ()
     end
   });
 
-  this.updates = Set:new();
   this.anchor = anchor;
-  this.pool = CreateFontStringPool(this.anchor, 'TOOLTIP', anchor);
+  this.frameStrata = 'TOOLTIP';
+  this.frameLevel = 2;
   this.spacing = 0;
   this.fadeDuration = 2;
   this.visibleTime = 3;
   this.font = STANDARD_TEXT_FONT;
   this.fontSize = 18;
   this.fontFlags = 'OUTLINE';
+  this.updates = Set:new();
+  this.pool = CreateFontStringPool(this.anchor, this.frameStrata,
+      this.frameLevel);
 
   return this;
+end
+
+function MessageFrame:ResetFontString (fontString)
+  --[[ no need to reset default attributes, as the pool resetter automatically
+    does this ]]
+  fontString.head = nil;
+  fontString.tail = nil;
+  fontString.isFading = nil;
+  fontString.fadeSpeed = nil;
 end
 
 function MessageFrame:AddAlphaHandler (fontString)
@@ -102,25 +114,25 @@ function MessageFrame:RemoveAlphaHandler (fontString)
 end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
-  local message = self.pool:Acquire();
+  local fontString = self.pool:Acquire();
   local visibleTime = self.visibleTime or 0;
 
-  self:SetFontStringFont(message);
-  message:SetTextColor(r or 1, g or 1, b or 1, a or 1);
-  message:SetText(text);
-  message:Show();
-
-  self:InsertMessage(message);
+  self:SetFontStringFont(fontString);
+  fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
+  fontString:SetText(text);
+  self:InsertMessage(fontString);
 
   if (visibleTime > 0) then
     C_Timer.After(visibleTime, function ()
-      self:FadeMessage(message);
+      self:FadeMessage(fontString);
     end);
   else
-    self:FadeMessage(message);
+    self:FadeMessage(fontString);
   end
 
-  return message;
+  fontString:Show();
+
+  return fontString;
 end
 
 function MessageFrame:InsertMessage (fontString)
@@ -167,12 +179,17 @@ function MessageFrame:RemoveMessage (fontString)
   end
 
   self:SetMessagePoints(tail);
-  fontString:ClearAllPoints();
-  fontString:Hide();
-  fontString.head = nil;
-  fontString.tail = nil;
+
+  if (fontString.isFading) then
+    self:RemoveAlphaHandler(fontString);
+  end
 
   self.pool:Release(fontString);
+  self:ResetFontString(fontString);
+end
+
+function MessageFrame:Clear ()
+  self:ReverseForEachMessage(self.RemoveMessage);
 end
 
 function MessageFrame:SetMessagePoints (fontString)
@@ -237,6 +254,15 @@ function MessageFrame:SetVisibleTime (duration)
 end
 
 function MessageFrame:ForEachMessage (callback)
+  local head = self.head;
+
+  while (head) do
+    callback(self, head);
+    head = head.tail;
+  end
+end
+
+function MessageFrame:ReverseForEachMessage (callback)
   local tail = self.tail;
 
   while (tail) do
@@ -256,8 +282,12 @@ function MessageFrame:SetGrowDirection (direction)
 end
 
 function MessageFrame:FadeMessage (fontString)
-  assert(self.pool:IsActive(fontString), 'message is not currently displayed!');
   assert(fontString.isFading ~= true, 'message is already fading');
+
+  --[[ fontString was removed by something like Clear ]]
+  if (not self.pool:IsActive(fontString)) then
+    return;
+  end
 
   local fadeDuration = self.fadeDuration;
 
@@ -281,23 +311,8 @@ function MessageFrame:HandleMessageFade (fontString, elapsed)
     fontString:SetAlpha(alpha);
   else
     self:RemoveMessage(fontString);
-    fontString.isFading = nil;
-    fontString.fadeSpeed = nil;
-    fontString:SetAlpha(1);
     self:RemoveAlphaHandler(fontString);
   end
-end
-
-function MessageFrame:ClearAllPoints ()
-  -- self.anchor:ClearAllPoints();
-end
-
-function MessageFrame:SetPoint (...)
-  -- self.anchor:SetPoint(...);
-end
-
-function MessageFrame:GetEffectiveScale ()
-  return self.anchor:GetEffectiveScale();
 end
 
 function MessageFrame:SetShadowColor () end
