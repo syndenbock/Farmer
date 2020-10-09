@@ -56,8 +56,28 @@ local function generateFrameName ()
   return name;
 end
 
+local function updateOptions (defaults, options)
+  for key, value in pairs(options) do
+    if (defaults[key] ~= nil) then
+      defaults[key] = value;
+    else
+      -- print('unknown option:', key .. '=' .. value);
+    end
+  end
+end
+
+local function transformOptions (options)
+  if (type(options) == 'string') then
+    return {
+      name = options,
+    };
+  else
+    return options or {};
+  end
+end
+
 local function createAnchor (name, frameStrata, frameLevel)
-  local anchor = CreateFrame('Frame', name or generateFrameName());
+  local anchor = CreateFrame('Frame', name);
 
   anchor:SetSize(2, 2);
   anchor:SetPoint('CENTER', UIPARENT, 'CENTER', 0, 0);
@@ -68,11 +88,13 @@ local function createAnchor (name, frameStrata, frameLevel)
   return anchor;
 end
 
-function MessageFrame:New (name)
+local function createBase (options)
   local this = {};
-  local anchor;
+
+  options = transformOptions(options);
 
   --[[ options ]]
+  this.name = options.name or generateFrameName();
   this.frameStrata = 'TOOLTIP';
   this.frameLevel = 2;
   this.spacing = 0;
@@ -85,7 +107,14 @@ function MessageFrame:New (name)
   this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
   this.shadowOffset = {x = 0, y = 0};
 
-  anchor = createAnchor(name, this.frameStrata, this.frameLevel);
+  updateOptions(this, options);
+
+  return this;
+end
+
+function MessageFrame:New (options)
+  local this = createBase(options);
+  local anchor = createAnchor(this.name, this.frameStrata, this.frameLevel);
 
   setmetatable(this, {
     __index = function (_, key)
