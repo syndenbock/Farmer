@@ -267,29 +267,38 @@ function MessageFrame:SetMessagePoints (fontString)
   if (not fontString) then return end
 
   local head = fontString.head;
+  local alignmentAnchor;
   local anchorPoint;
-  local headAnchorPoint;
 
   if (self.alignment == 'LEFT') then
-    anchorPoint = 'LEFT';
+    alignmentAnchor = 'LEFT';
   elseif (self.alignment == 'RIGHT') then
-    anchorPoint = 'RIGHT';
+    alignmentAnchor = 'RIGHT';
   else
-    anchorPoint = '';
+    alignmentAnchor = '';
   end
 
   if (self.direction == 'UP') then
-    headAnchorPoint = 'TOP' .. anchorPoint;
-    anchorPoint = 'BOTTOM' .. anchorPoint;
+    anchorPoint = 'BOTTOM' .. alignmentAnchor;
   else
-    headAnchorPoint = 'BOTTOM' .. anchorPoint;
-    anchorPoint = 'TOP' .. anchorPoint;
+    anchorPoint = 'TOP' .. alignmentAnchor;
   end
 
   fontString:ClearAllPoints();
 
   if (head) then
-    fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, -self.spacing);
+    local headAnchorPoint;
+    local yOffset;
+
+    if (self.direction == 'UP') then
+      yOffset = self.spacing;
+      headAnchorPoint = 'TOP' .. alignmentAnchor;
+    else
+      yOffset = -self.spacing;
+      headAnchorPoint = 'BOTTOM' .. alignmentAnchor;
+    end
+
+    fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, yOffset);
   else
     fontString:SetPoint(anchorPoint, self.anchor, 'CENTER', 0, 0);
   end
