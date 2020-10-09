@@ -249,7 +249,7 @@ function MessageFrame:PrependMessage (fontString)
   self.tail = self.tail or fontString;
 
   self:SetMessagePoints(fontString);
-  self:SetMessagePoints(head);
+  self:SetMessagePointsIfExists(head);
 end
 
 function MessageFrame:AttachFontString (head, tail)
@@ -278,7 +278,7 @@ function MessageFrame:RemoveMessage (fontString)
     self.tail = head;
   end
 
-  self:SetMessagePoints(tail);
+  self:SetMessagePointsIfExists(tail);
 
   if (fontString.isFading) then
     self:RemoveAlphaHandler(fontString);
@@ -293,8 +293,6 @@ function MessageFrame:Clear ()
 end
 
 function MessageFrame:SetMessagePoints (fontString)
-  if (not fontString) then return end
-
   local head = fontString.head;
   local alignmentAnchor;
   local anchorPoint;
@@ -333,6 +331,12 @@ function MessageFrame:SetMessagePoints (fontString)
   end
 end
 
+function MessageFrame:SetMessagePointsIfExists (fontString)
+  if (not fontString) then return end
+
+  self:SetMessagePoints(fontString);
+end
+
 function MessageFrame:SetFading (fading)
   --[[ when toggling from not fading to fading, current permanent messages
   will fade ]]
@@ -349,6 +353,8 @@ end
 
 function MessageFrame:SetSpacing (spacing)
   self.spacing = spacing;
+  --[[ Calls of GetPoint are so expensive that recalculating all anchors is
+    faster than only updating the y-offset ]]
   self:ForEachMessage(self.SetMessagePoints);
 end
 
