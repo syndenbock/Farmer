@@ -23,6 +23,31 @@ local function proxyMethod (object, proxy, methodName, method)
   return callback;
 end
 
+local function transformFrameAnchorsToCenter (frame)
+  local points = {frame:GetPoint()};
+  local anchor = points[1];
+
+  if (addon.stringEndsWith(anchor, 'LEFT')) then
+    points[4] = points[4] + frame:GetWidth() / 2;
+  end
+
+  if (addon.stringEndsWith(anchor, 'RIGHT')) then
+    points[4] = points[4] - frame:GetWidth() / 2;
+  end
+
+  if (addon.stringStartsWith(anchor, 'TOP')) then
+    points[5] = points[5] - frame:GetHeight() / 2;
+  end
+
+  if (addon.stringStartsWith(anchor, 'BOTTOM')) then
+    points[5] = points[5] + frame:GetHeight() / 2;
+  end
+
+  points[1] = 'CENTER';
+  frame:ClearAllPoints();
+  frame:SetPoint(unpack(points));
+end
+
 local function generateFrameName ()
   local name = addonName .. 'MessageFrame' .. frameCount;
 
@@ -34,7 +59,7 @@ end
 local function createAnchor (name)
   local anchor = CreateFrame('Frame', name or generateFrameName());
 
-  anchor:SetSize(1, 1);
+  anchor:SetSize(2, 2);
   anchor:SetPoint('CENTER', UIPARENT, 'CENTER', 0, 0);
   anchor:Show();
 
@@ -79,6 +104,44 @@ function MessageFrame:New (name)
   return this;
 end
 
+function MessageFrame:Move (message, callback)
+  local anchor = self.anchor;
+
+  self.lockMessages = true;
+  self:Clear();
+  message = self:AddMessage(message);
+
+  anchor:SetSize(100, 100);
+  anchor:RegisterForDrag('LeftButton');
+  anchor:EnableMouse(true);
+  anchor:SetMovable(true);
+  anchor:SetScript('OnDragStart', function (self)
+    if (self:IsMovable() == true) then
+      self:StartMoving();
+    end
+  end);
+  anchor:SetScript('OnReceiveDrag', function ()
+    self.lockMessages = nil;
+    self:StartDisplayTimeout(message);
+    self:StopMoving();
+    if (callback) then
+      callback();
+    end
+  end);
+end
+
+function MessageFrame:StopMoving ()
+  local anchor = self.anchor;
+
+  anchor:EnableMouse(false);
+  anchor:SetMovable(false);
+  anchor:StopMovingOrSizing();
+  anchor:SetScript('OnDragStart', nil);
+  anchor:SetScript('OnReceiveDrag', nil);
+  transformFrameAnchorsToCenter(anchor);
+  anchor:SetSize(2, 2);
+end
+
 function MessageFrame:ResetFontString (fontString)
   --[[ no need to reset default attributes, as the pool resetter automatically
     does this ]]
@@ -115,20 +178,12 @@ end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
   local fontString = self.pool:Acquire();
-  local visibleTime = self.visibleTime or 0;
 
   self:SetFontStringFont(fontString);
   fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
   fontString:SetText(text);
   self:InsertMessage(fontString);
-
-  if (visibleTime > 0) then
-    C_Timer.After(visibleTime, function ()
-      self:FadeMessage(fontString);
-    end);
-  else
-    self:FadeMessage(fontString);
-  end
+  self:StartDisplayTimeout(fontString);
 
   fontString:Show();
 
@@ -281,7 +336,23 @@ function MessageFrame:SetGrowDirection (direction)
   self:ForEachMessage(self.SetMessagePoints);
 end
 
+function MessageFrame:StartDisplayTimeout (fontString)
+  if (self.lockMessages) then return end
+
+  local visibleTime = self.visibleTime or 0;
+
+  if (visibleTime > 0) then
+    C_Timer.After(visibleTime, function ()
+      self:FadeMessage(fontString);
+    end);
+  else
+    self:FadeMessage(fontString);
+  end
+end
+
 function MessageFrame:FadeMessage (fontString)
+  if (self.lockMessages) then return end
+
   assert(fontString.isFading ~= true, 'message is already fading');
 
   --[[ fontString was removed by something like Clear ]]
