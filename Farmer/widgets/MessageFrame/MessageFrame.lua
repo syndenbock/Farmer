@@ -6,6 +6,7 @@ local C_Timer = _G.C_Timer;
 local UIPARENT = _G.UIParent;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
+local transformFrameAnchorsToCenter = addon.transformFrameAnchorsToCenter;
 local Set = addon.Class.Set;
 
 local MessageFrame = {};
@@ -20,31 +21,6 @@ local function proxyMethod (object, proxy, methodName, method)
   object[methodName] = callback;
 
   return callback;
-end
-
-local function transformFrameAnchorsToCenter (frame)
-  local points = {frame:GetPoint()};
-  local anchor = points[1];
-
-  if (addon.stringEndsWith(anchor, 'LEFT')) then
-    points[4] = points[4] + frame:GetWidth() / 2;
-  end
-
-  if (addon.stringEndsWith(anchor, 'RIGHT')) then
-    points[4] = points[4] - frame:GetWidth() / 2;
-  end
-
-  if (addon.stringStartsWith(anchor, 'TOP')) then
-    points[5] = points[5] - frame:GetHeight() / 2;
-  end
-
-  if (addon.stringStartsWith(anchor, 'BOTTOM')) then
-    points[5] = points[5] + frame:GetHeight() / 2;
-  end
-
-  points[1] = 'CENTER';
-  frame:ClearAllPoints();
-  frame:SetPoint(unpack(points));
 end
 
 local function updateOptions (defaults, options)

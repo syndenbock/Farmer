@@ -2,16 +2,9 @@ local addonName, addon = ...;
 
 local floor = _G.floor;
 local log10 = _G.log10;
-local strmatch = _G.strmatch;
-local tinsert = _G.tinsert;
-local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
+
 local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
 local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
-local COPPER_PER_GOLD = _G.COPPER_PER_GOLD;
-local COPPER_PER_SILVER = _G.COPPER_PER_SILVER;
-local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
-
-local addonVars = addon.share('vars');
 
 function addon.isClassic ()
   return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
@@ -53,58 +46,34 @@ function addon.truncate (number, digits)
   return number;
 end
 
-local function formatMoney (amount, icons)
-  local gold = floor(amount / COPPER_PER_GOLD);
-  local silver = floor(amount / COPPER_PER_SILVER) % SILVER_PER_GOLD;
-  local copper = amount % COPPER_PER_SILVER;
-  local text = {};
-
-  if (gold > 0) then
-    tinsert(text, BreakUpLargeNumbers(gold) .. icons.gold);
-  end
-
-  if (silver > 0) then
-    tinsert(text, BreakUpLargeNumbers(silver) .. icons.silver);
-  end
-
-  if (copper > 0 or #text == 0) then
-    tinsert(text, BreakUpLargeNumbers(copper) .. icons.copper);
-  end
-
-  return addon.stringJoin(text, ' ');
-end
-
-function addon.formatMoneyWithOffset (amount)
-  return formatMoney (amount, {
-    gold = addon.getIcon('Interface\\MoneyFrame\\UI-GoldIcon'),
-    silver = addon.getIcon('Interface\\MoneyFrame\\UI-SilverIcon'),
-    copper = addon.getIcon('Interface\\MoneyFrame\\UI-CopperIcon'),
-  });
-end
-
-function addon.formatMoney (amount)
-  return formatMoney (amount, {
-    gold = '|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:0:0|t',
-    silver = '|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:0:0|t',
-    copper = '|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:0:0|t',
-  });
-end
-
-function addon.getIcon (texture)
-  return addon.stringJoin({'|T', texture, addonVars.iconOffset, '|t'}, '');
-end
-
-function addon.findItemLink (string)
-  return strmatch(string, '|c.+|h|r');
-end
-
-function addon.extractItemString (itemLink)
-  return strmatch(itemLink, 'item[%-?%d:]+') or itemLink;
-end
-
 function addon.setTrueScale (frame, scale)
   frame:SetScale(1);
   frame:SetScale(scale / frame:GetEffectiveScale());
+end
+
+function addon.transformFrameAnchorsToCenter (frame)
+  local points = {frame:GetPoint()};
+  local anchor = points[1];
+
+  if (addon.stringEndsWith(anchor, 'LEFT')) then
+    points[4] = points[4] + frame:GetWidth() / 2;
+  end
+
+  if (addon.stringEndsWith(anchor, 'RIGHT')) then
+    points[4] = points[4] - frame:GetWidth() / 2;
+  end
+
+  if (addon.stringStartsWith(anchor, 'TOP')) then
+    points[5] = points[5] - frame:GetHeight() / 2;
+  end
+
+  if (addon.stringStartsWith(anchor, 'BOTTOM')) then
+    points[5] = points[5] + frame:GetHeight() / 2;
+  end
+
+  points[1] = 'CENTER';
+  frame:ClearAllPoints();
+  frame:SetPoint(unpack(points));
 end
 
 function addon.printTable (table)
