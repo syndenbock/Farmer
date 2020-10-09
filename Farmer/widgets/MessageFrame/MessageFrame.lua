@@ -477,60 +477,7 @@ function MessageFrame:SetShadowOffset (x, y)
   self:ForEachMessage(self.SetFontStringShadowOffset);
 end
 
+--[[ aliases for default frame methods ]]
 MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
 MessageFrame.SetInsertMode = MessageFrame.SetGrowDirection;
 MessageFrame.SetTimeVisible = MessageFrame.SetVisibleTime;
-
-do
-  local tests = addon.share('tests');
-
-  local f = MessageFrame:New();
-  local m = {};
-
-  function tests.msg (message)
-    message = message or 'foo';
-    if (m[message]) then
-      f:RemoveMessage(m[message]);
-    end
-    m[message] = f:AddMessage(message);
-  end
-
-  function tests.rm (message)
-    message = message or 'foo';
-    f:RemoveMessage(m[message]);
-  end
-
-  function tests.spacing (spacing)
-    f:SetSpacing(tonumber(spacing));
-  end
-
-  function tests.align (alignment)
-    f:SetTextAlign(alignment);
-  end
-
-  function tests.grow (direction)
-    f:SetGrowDirection(direction);
-  end
-
-  function tests.fade (message, time)
-    message = message or 'foo';
-    f:SetFadeDuration(tonumber(time or 1));
-
-    if (m[message]) then
-      f:RemoveMessage(message);
-    end
-
-    tests.msg(message);
-  end
-
-  function tests.visible (message, time)
-    message = message or 'foo';
-    f:SetVisibleTime(tonumber(time or 1));
-
-    if (m[message]) then
-      f:RemoveMessage(message);
-    end
-
-    tests.msg(message);
-  end
-end
