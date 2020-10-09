@@ -218,7 +218,7 @@ function MessageFrame:SetMessagePoints (fontString)
   fontString:ClearAllPoints();
 
   if (head) then
-    fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, self.spacing);
+    fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, -self.spacing);
   else
     fontString:SetPoint(anchorPoint, self.anchor, 'CENTER', 0, 0);
   end
