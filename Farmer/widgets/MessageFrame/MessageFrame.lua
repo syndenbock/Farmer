@@ -77,7 +77,7 @@ local function transformOptions (options)
 end
 
 local function createAnchor (name, frameStrata, frameLevel)
-  local anchor = CreateFrame('Frame', name);
+  local anchor = CreateFrame('Frame', name, UIPARENT);
 
   anchor:SetSize(2, 2);
   anchor:SetPoint('CENTER', UIPARENT, 'CENTER', 0, 0);
@@ -96,7 +96,7 @@ local function createBase (options)
   --[[ options ]]
   this.name = options.name or generateFrameName();
   this.frameStrata = 'TOOLTIP';
-  this.frameLevel = 2;
+  this.frameLevel = 0;
   this.spacing = 0;
   this.fadeDuration = 2;
   this.visibleTime = 3;
@@ -136,7 +136,7 @@ function MessageFrame:New (options)
 
   this.anchor = anchor;
   this.updates = Set:new();
-  this.pool = CreateFontStringPool(this.anchor, this.frameStrata,
+  this.pool = CreateFontStringPool(anchor, this.frameStrata,
       this.frameLevel);
 
   return this;
@@ -219,6 +219,7 @@ function MessageFrame:AddMessage (text, r, g, b, a)
 
   local fontString = self.pool:Acquire();
 
+  fontString:SetParent(self.anchor);
   self:SetFontStringFont(fontString);
   self:SetFontStringShadowColor(fontString);
   self:SetFontStringShadowOffset(fontString);
