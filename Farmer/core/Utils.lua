@@ -3,8 +3,6 @@ local addonName, addon = ...;
 local floor = _G.floor;
 local log10 = _G.log10;
 local strmatch = _G.strmatch;
-local strfind = _G.strfind;
-local strsub = _G.strsub;
 local tinsert = _G.tinsert;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
@@ -17,29 +15,6 @@ local addonVars = addon.share('vars');
 
 function addon.isClassic ()
   return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
-end
-
-function addon.stringJoin (stringList, joiner)
-  joiner = joiner or '';
-  local result;
-
-  for _, fragment in pairs(stringList) do
-    if (fragment) then
-      result = result and result .. joiner .. fragment or fragment;
-    end
-  end
-
-  return result or '';
-end
-
-function addon.replaceString (string, match, replacement)
-  local startPos, endPos = strfind(string, match, 1, true);
-
-  if (startPos) then
-    return strsub(string, 1, startPos - 1) .. replacement .. strsub(string, endPos + 1);
-  else
-    return string;
-  end
 end
 
 function addon.round (number)
