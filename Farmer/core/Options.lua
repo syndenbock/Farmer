@@ -45,49 +45,8 @@ local function storePosition ()
   options.anchor = {farmerFrame:GetPoint()};
 end
 
-local function displayMovingIcon ()
-  local icon = addon.getIcon(GetItemIcon(ADDON_ICON_ID));
-
-  farmerFrame:Clear();
-  farmerFrame:AddMessage(icon);
-end
-
-local function stopMovingFrame ()
-  displayMovingIcon();
-
-  farmerFrame:EnableMouse(false);
-  farmerFrame:SetMovable(false);
-  farmerFrame:SetFading(true);
-  farmerFrame:StopMovingOrSizing();
-  farmerFrame:SetScript('OnDragStart', nil);
-  farmerFrame:SetScript('OnReceiveDrag', nil);
-  storePosition();
-end
-
-local function frameOnDragStart (frame)
-  if (frame:IsMovable() == true) then
-    frame:StartMoving();
-  end
-end
-
 local function moveFrame ()
-  displayMovingIcon();
-
-  farmerFrame:RegisterForDrag('LeftButton');
-  farmerFrame:SetFading(false);
-  farmerFrame:EnableMouse(true);
-  farmerFrame:SetMovable(true);
-  farmerFrame:SetScript('OnDragStart', frameOnDragStart);
-
-  farmerFrame:SetScript('OnReceiveDrag', stopMovingFrame);
-end
-
-local function setInsertMode (mode)
-  farmerFrame:SetInsertMode(mode);
-end
-
-local function setHorizontalAlignment (alignment)
-  farmerFrame:SetJustifyH(alignment);
+  farmerFrame:Move(addon.getIcon(GetItemIcon(ADDON_ICON_ID)), storePosition);
 end
 
 local function setFramePosition (position)
@@ -97,18 +56,7 @@ end
 
 local function setDefaultPosition ()
   setFramePosition(ANCHOR_DEFAULT);
-
-  -- setting to the default insert mode first and then applying the actual
-  -- insert mode will move the frame to the correct mode position
-  farmerFrame:SetInsertMode(GROW_DIRECTION_DEFAULT);
-  setInsertMode(options.insertMode);
-
-  -- setting the default horizontal alignment first and then applying the
-  -- actual aligment to move the frame to the correct position
-  farmerFrame:SetJustifyH(HORIZONTAL_ALIGN_DEFAULT);
-  setHorizontalAlignment(options.horizontalAlign);
-
-  displayMovingIcon();
+  storePosition();
 end
 
 local function setFontOptions (options)
@@ -127,14 +75,14 @@ local function setFontOptions (options)
 end
 
 local function setVisibleTime (displayTime)
-  farmerFrame:SetTimeVisible(displayTime - farmerFrame:GetFadeDuration());
+  farmerFrame:SetVisibleTime(displayTime - farmerFrame:GetFadeDuration());
 end
 
 local function applyOptions ()
-  setInsertMode(options.insertMode);
   setFontOptions(options);
+  farmerFrame:SetGrowDirection(options.insertMode);
   setVisibleTime(options.displayTime);
-  setHorizontalAlignment(options.horizontalAlign);
+  farmerFrame:SetTextAlign(options.horizontalAlign);
 end
 
 do
@@ -205,10 +153,7 @@ end
 
 saved:OnLoad(function ()
   setFramePosition(options.anchor);
-  farmerFrame:SetInsertMode(options.insertMode);
-  setFontOptions(options);
-  setVisibleTime(options.displayTime);
-  farmerFrame:SetJustifyH(options.horizontalAlign);
+  applyOptions();
 end);
 
 --[[
