@@ -60,18 +60,15 @@ local function setDefaultPosition ()
 end
 
 local function setFontOptions (options)
-  local scale = farmerFrame:GetEffectiveScale();
-  local shadowOffset = options.fontSize / 10;
-  local iconSize = options.fontSize * options.iconScale * scale;
+  local shadowOffset = addon.round(options.fontSize / 10);
+  local iconSize = addon.round(options.fontSize * options.iconScale / 1.5);
 
   --[[ we have to use the standard font because on screen messages are always
        localized --]]
   farmerFrame:SetFont(STANDARD_TEXT_FONT, options.fontSize, options.outline);
-  farmerFrame:SetShadowColor(0, 0, 0);
   farmerFrame:SetShadowOffset(shadowOffset, -shadowOffset);
   farmerFrame:SetSpacing(options.spacing);
-  addonVars.iconOffset = addon.stringJoin(
-      {'', iconSize, iconSize}, ':');
+  addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize}, ':');
 end
 
 local function setVisibleTime (displayTime)
