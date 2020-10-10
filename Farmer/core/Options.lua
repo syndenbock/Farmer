@@ -38,12 +38,17 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 
 local options = saved.vars.farmerOptions.Core;
 
+local function getAddonIcon ()
+  --[[ this cannot be done on file load, as the icons are not ready yet ]]
+  return addon.getIcon(GetItemIcon(ADDON_ICON_ID));
+end
+
 local function storePosition ()
   options.anchor = {farmerFrame:GetPoint()};
 end
 
 local function moveFrame ()
-  farmerFrame:Move(addon.getIcon(GetItemIcon(ADDON_ICON_ID)), storePosition);
+  farmerFrame:Move(getAddonIcon(), storePosition);
 end
 
 local function setFramePosition (position)
@@ -54,6 +59,7 @@ end
 local function setDefaultPosition ()
   setFramePosition(ANCHOR_DEFAULT);
   storePosition();
+  farmerFrame:AddAnchorMessage(getAddonIcon());
 end
 
 local function setFontOptions (options)

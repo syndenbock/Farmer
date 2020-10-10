@@ -111,14 +111,10 @@ function MessageFrame:New (options)
 end
 
 function MessageFrame:Move (message, callback)
-  local anchor = self.anchor;
-  local fontString = self:CreateFontString(message);
+  local fontString = self:CreateAnchorFontString(message);
 
-  fontString:SetParent(self.anchor);
-  fontString:SetPoint('CENTER', anchor, 'CENTER', 0, 0);
-  transformFrameAnchorsToCenter(anchor);
-  anchor:SetSize(200, 200);
-
+  transformFrameAnchorsToCenter(self.anchor);
+  self.anchor:SetSize(200, 200);
   self:StartMoving(fontString, callback);
 end
 
@@ -174,6 +170,10 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   end
 
   return fontString;
+end
+
+function MessageFrame:AddAnchorMessage (text, r, g, b, a)
+  self:StartFontStringAnimation(self:CreateAnchorFontString(text, r, g, b, a));
 end
 
 function MessageFrame:RemoveMessage (fontString)
@@ -345,6 +345,15 @@ function MessageFrame:CreateFontString (text, r, g, b, a)
   fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
   fontString:SetText(text);
   fontString:Show();
+
+  return fontString;
+end
+
+function MessageFrame:CreateAnchorFontString (message, r, g, b, a)
+  local fontString = self:CreateFontString(message, r, g, b, a);
+
+  fontString:SetParent(self.anchor);
+  fontString:SetPoint('CENTER', self.anchor, 'CENTER', 0, 0);
 
   return fontString;
 end
