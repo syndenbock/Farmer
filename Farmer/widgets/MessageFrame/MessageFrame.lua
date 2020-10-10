@@ -2,12 +2,10 @@ local _, addon = ...;
 
 local CreateFontStringPool = _G.CreateFontStringPool;
 local CreateFrame = _G.CreateFrame;
-local C_Timer = _G.C_Timer;
 local UIPARENT = _G.UIParent;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
 local transformFrameAnchorsToCenter = addon.transformFrameAnchorsToCenter;
-local Set = addon.Class.Set;
 
 local MessageFrame = {};
 
@@ -71,7 +69,6 @@ local function createBase (options)
   this.fontSize = 18;
   this.fontFlags = 'OUTLINE';
   this.fading = true;
-  this.updateInterval = 0.01;
   this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
   this.shadowOffset = {x = 0, y = 0};
 
@@ -107,7 +104,6 @@ function MessageFrame:New (options)
   });
 
   this.anchor = anchor;
-  this.updates = Set:new();
   this.pool = CreateFontStringPool(anchor, this.frameStrata,
       this.frameLevel);
 
@@ -145,7 +141,7 @@ function MessageFrame:StartMoving (fontString, callback)
 
   anchor:SetScript('OnReceiveDrag', function ()
     self.isMoving = false;
-    self:StartDisplayTimeout(fontString);
+    self:StartFontStringAnimation(fontString);
     self:StopMoving();
 
     transformFrameAnchorsToCenter(anchor);
@@ -174,7 +170,7 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   self:InsertMessage(fontString);
 
   if (self.fading) then
-    self:StartDisplayTimeout(fontString);
+    self:StartFontStringAnimation(fontString);
   end
 
   return fontString;
@@ -214,7 +210,7 @@ function MessageFrame:SetFading (fading)
   --[[ when toggling from not fading to fading, current permanent messages
   will fade ]]
   if (not self.fading and fading) then
-    self:ForEachDisplayedMessage(self.StartDisplayTimeout);
+    self:ForEachDisplayedMessage(self.StartFontStringAnimation);
   end
 
   self.fading = fading;
@@ -327,14 +323,6 @@ function MessageFrame:GetShadowOffset ()
   return self.shadowOffset.x, self.shadowOffset.y;
 end
 
-function MessageFrame:SetUpdateInterval (interval)
-  self.updateInterval = interval;
-end
-
-function MessageFrame:GetUpdateInterval ()
-  return self.updateInterval;
-end
-
 --[[ aliases for default frame methods ]]
 MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
 MessageFrame.GetJustifyH = MessageFrame.GetTextAlign;
@@ -368,6 +356,10 @@ function MessageFrame:ResetFontString (fontString)
   fontString.tail = nil;
   fontString.isFading = nil;
   fontString.fadeSpeed = nil;
+
+  if (fontString.animationGroup) then
+    fontString.animationGroup:Stop();
+  end
 end
 
 function MessageFrame:InsertMessage (fontString)
@@ -450,89 +442,42 @@ end
 -- fontString visibility methods
 --******************************************************************************
 
-function MessageFrame:StartDisplayTimeout (fontString)
-  local visibleTime = self.visibleTime or 0;
-
-  if (visibleTime > 0) then
-    C_Timer.After(visibleTime, function ()
-      self:FadeMessage(fontString);
-    end);
-  else
-    self:FadeMessage(fontString);
-  end
-end
-
-function MessageFrame:FadeMessage (fontString)
-  assert(fontString.isFading ~= true, 'message is already fading');
-
-  --[[ fontString was removed by something like Clear ]]
-  if (not self.pool:IsActive(fontString)) then
-    return;
-  end
-
-  local fadeDuration = self.fadeDuration;
-
-  if (not fadeDuration or fadeDuration <= 0) then
+function MessageFrame:StartFontStringAnimation (fontString)
+  if (self.visibleTime <= 0 and self.fadeDuration <= 0) then
     self:RemoveMessage(fontString);
     return;
   end
 
-  fontString.isFading = true;
-  fontString.fadeSpeed = fontString:GetAlpha() / fadeDuration;
-
-  self:AddAlphaHandler(fontString);
+  self:CreateFontStringAnimation(fontString);
+  fontString.animationGroup:Play();
 end
 
-function MessageFrame:AddAlphaHandler (fontString)
-  if (self.updates:getItemCount() == 0) then
-    self:InitUpdateHandler();
+function MessageFrame:CreateFontStringAnimation (fontString)
+  local animation = fontString.animation;
+
+  if (not fontString.animationGroup) then
+    fontString.animationGroup = fontString:CreateAnimationGroup();
   end
 
-  self.updates:addItem(fontString);
-end
+  if (not animation) then
+    animation = fontString.animationGroup:CreateAnimation('Alpha');
 
-function MessageFrame:InitUpdateHandler ()
-  local this = self;
+    animation:SetToAlpha(0);
+    animation:SetOrder(1);
+    animation.parent = self;
+    animation.fontString = fontString;
 
-  self.elapsed = 0;
-
-  self.anchor:SetScript('OnUpdate', function (_, elapsed)
-    elapsed = this.elapsed + elapsed;
-
-    if (elapsed >= this.updateInterval) then
-      this:HandleUpdate(elapsed);
-      self.elapsed = 0;
-    else
-      self.elapsed = elapsed;
-    end
-  end);
-end
-
-function MessageFrame:HandleUpdate (elapsed)
-  self.updates:forEach(function (fontString)
-    self:HandleMessageFade(fontString, elapsed);
-  end);
-end
-
-function MessageFrame:HandleMessageFade (fontString, elapsed)
-  assert(fontString.isFading == true, 'message is not fading!');
-
-  local alpha = fontString:GetAlpha() - fontString.fadeSpeed * elapsed, 0;
-
-  if (alpha > 0) then
-    fontString:SetAlpha(alpha);
-  else
-    self:RemoveMessage(fontString);
-    self:RemoveAlphaHandler(fontString);
+    animation:SetScript('OnFinished', self.OnFontStringAnimationFinished);
+    fontString.animation = animation;
   end
+
+  animation:SetStartDelay(self.visibleTime);
+  animation:SetDuration(self.fadeDuration);
+  animation:SetFromAlpha(fontString:GetAlpha());
 end
 
-function MessageFrame:RemoveAlphaHandler (fontString)
-  self.updates:removeItem(fontString);
-
-  if (self.updates:getItemCount() == 0) then
-    self.anchor:SetScript('OnUpdate', nil);
-  end
+function MessageFrame.OnFontStringAnimationFinished (animation)
+  animation.parent:RemoveMessage(animation.fontString);
 end
 
 --******************************************************************************
