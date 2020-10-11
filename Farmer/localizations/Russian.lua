@@ -4,7 +4,6 @@ if (_G.GetLocale() ~= 'ruRU') then return end
 
 local L = addon.L;
 
-L = L or {}
 L["unknown command"] = "Неизвестная команда"
 L[ [=[You seem to have used an old Version of Farmer
 Check out all the new features in the options!]=] ] = [=[Похоже, вы использовали старую версию Farmer
@@ -16,20 +15,28 @@ L["ignore Honor"] = "Игнорировать честь"
 L["show currencies"] = "Показывать валюту"
 
 -- Display
+L["center"] = "по центру"
 L["display time"] = "Время отображения"
 L["don't display at mailboxes"] = "Не показывать добычу из почтовых ящиков"
 L["don't display in arena"] = "Не показывать на арене"
 L["don't display on island expeditions"] = "Не показывать на островных экспедициях"
+L["down"] = "вниз"
 L["font size"] = "Размер шрифта"
+L["grow direction"] = "Направление роста текста добычи"
+L["left"] = "слева"
+L["line spacing"] = "Межстрочный интервал"
 L["Monochrome"] = "Одноцветный"
 L["move display"] = "Переместить текст"
 L["None"] = "Ничего"
 L["outline mode"] = "Режим контура текста"
 L["reset position"] = "Сбросить расположение"
+L["right"] = "справа"
 L["show names of all items"] = "всегда показывать имена"
+L["text alignment"] = "Выравнивание текста"
 L["Thick"] = "Жирный"
 L["Thick Monochrome"] = "Жирный одноцветный"
 L["Thin"] = "Тонкий"
+L["up"] = "вверх"
 
 -- Farm radar
 L["enable tooltips for default nodes"] = "включить всплывающие подсказки для добычи по умолчанию"
@@ -56,6 +63,10 @@ L["only show focused items"] = "Показывать только предмет
 L["show bag count for stackable items"] = "Показать количество собранных предметов в сумках"
 L["show items based on rarity"] = "Показывать добычу на основе качества"
 L["show total count for stackable items"] = "Показывать общее количество каждого из собранных предметов"
+
+-- Minimap
+L["display vignettes that appear on the minimap"] = "Отображать значки, которые появляются на миникарте"
+L["Minimap"] = "Миникарта"
 
 -- Misc
 L["enable fast autoloot"] = "Включить быструю автодобычу"
@@ -91,3 +102,4 @@ L["skip readable items when autoselling"] = "пропускать читаемы
 
 -- Skills
 L["show skill levelups"] = "Показывать уровень профессий и навыков"
+L["Skills"] = "Навыки"
