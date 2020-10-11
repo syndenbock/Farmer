@@ -2,6 +2,7 @@
   <script file="Items.lua"/>
   <include file="storages\storages.xml"/>
   <script file="Currencies.lua"/>
+  <script file="Experience.lua"/>
   <script file="Reputation.lua"/>
   <script file="Money.lua"/>
   <script file="Professions.lua"/>
