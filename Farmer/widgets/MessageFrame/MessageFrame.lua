@@ -7,7 +7,29 @@ local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
 local transformFrameAnchorsToCenter = addon.transformFrameAnchorsToCenter;
 
-local MessageFrame = {};
+local ANCHOR_NONE = '';
+local ANCHOR_CENTER = 'CENTER';
+local ANCHOR_LEFT = 'LEFT';
+local ANCHOR_RIGHT = 'RIGHT';
+local ANCHOR_TOP = 'TOP';
+local ANCHOR_BOTTOM = 'BOTTOM';
+local GROW_DIRECTION_UP = 'UP';
+local GROW_DIRECTION_DOWN = 'DOWN';
+local INSERTMODE_PREPEND = 'PREPEND';
+local INSERTMODE_APPEND = 'APPEND';
+local ALIGNMENT_LEFT = 'LEFT';
+local ALIGNMENT_CENTER = 'CENTER';
+local ALIGNMENT_RIGHT = 'RIGHT';
+
+local MessageFrame = {
+  GROW_DIRECTION_UP = GROW_DIRECTION_UP,
+  GROW_DIRECTION_DOWN = GROW_DIRECTION_DOWN,
+  ALIGNMENT_LEFT = ALIGNMENT_LEFT,
+  ALIGNMENT_CENTER = ALIGNMENT_CENTER,
+  ALIGNMENT_RIGHT = ALIGNMENT_RIGHT,
+  INSERTMODE_PREPEND = INSERTMODE_PREPEND,
+  INSERTMODE_APPEND = INSERTMODE_APPEND,
+};
 
 addon.share('Widget').MessageFrame = MessageFrame;
 
@@ -45,7 +67,7 @@ local function createAnchor (name, frameStrata, frameLevel)
   local anchor = CreateFrame('Frame', name, UIPARENT);
 
   anchor:SetSize(2, 2);
-  anchor:SetPoint('CENTER', UIPARENT, 'CENTER', 0, 0);
+  anchor:SetPoint(ANCHOR_CENTER, UIPARENT, ANCHOR_CENTER, 0, 0);
   anchor:SetFrameStrata(frameStrata);
   anchor:SetFrameLevel(frameLevel);
   anchor:Show();
@@ -69,7 +91,7 @@ local function createBase (options)
   this.fontSize = 18;
   this.fontFlags = 'OUTLINE';
   this.fading = true;
-  this.insertMode = 'PREPEND';
+  this.insertMode = INSERTMODE_PREPEND;
   this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
   this.shadowOffset = {x = 0, y = 0};
 
@@ -302,12 +324,12 @@ function MessageFrame:SetShadowColor (r, g, b, a)
 end
 
 function MessageFrame:SetInsertMode (insertMode)
-  if ((self.insertMode == 'APPEND') ~= (insertMode == 'APPEND')) then
+  if ((self.insertMode == INSERTMODE_PREPEND) ~=
+      (insertMode == INSERTMODE_PREPEND)) then
     self:ForEachDisplayedMessage(self.InvertFontStringDirection);
   end
 
   self.insertMode = insertMode;
-
 end
 
 function MessageFrame:GetInsertMode ()
@@ -361,7 +383,7 @@ function MessageFrame:CreateAnchorFontString (message, r, g, b, a)
   local fontString = self:CreateFontString(message, r, g, b, a);
 
   fontString:SetParent(self.anchor);
-  fontString:SetPoint('CENTER', self.anchor, 'CENTER', 0, 0);
+  fontString:SetPoint(ANCHOR_CENTER, self.anchor, ANCHOR_CENTER, 0, 0);
 
   return fontString;
 end
@@ -380,7 +402,7 @@ function MessageFrame:ResetFontString (fontString)
 end
 
 function MessageFrame:InsertMessage (fontString)
-  if (self.insertMode == 'APPEND') then
+  if (self.insertMode == INSERTMODE_PREPEND) then
     self:AppendMessage(fontString);
   else
     self:PrependMessage(fontString);
@@ -427,18 +449,18 @@ function MessageFrame:SetMessagePoints (fontString)
   local alignmentAnchor;
   local anchorPoint;
 
-  if (self.alignment == 'LEFT') then
-    alignmentAnchor = 'LEFT';
-  elseif (self.alignment == 'RIGHT') then
-    alignmentAnchor = 'RIGHT';
+  if (self.alignment == ALIGNMENT_LEFT) then
+    alignmentAnchor = ANCHOR_LEFT;
+  elseif (self.alignment == ALIGNMENT_RIGHT) then
+    alignmentAnchor = ANCHOR_RIGHT;
   else
-    alignmentAnchor = '';
+    alignmentAnchor = ANCHOR_NONE;
   end
 
-  if (self.direction == 'UP') then
-    anchorPoint = 'BOTTOM' .. alignmentAnchor;
+  if (self.direction == GROW_DIRECTION_UP) then
+    anchorPoint = ANCHOR_BOTTOM .. alignmentAnchor;
   else
-    anchorPoint = 'TOP' .. alignmentAnchor;
+    anchorPoint = ANCHOR_TOP .. alignmentAnchor;
   end
 
   fontString:ClearAllPoints();
@@ -447,17 +469,17 @@ function MessageFrame:SetMessagePoints (fontString)
     local headAnchorPoint;
     local yOffset;
 
-    if (self.direction == 'UP') then
+    if (self.direction == GROW_DIRECTION_UP) then
       yOffset = self.spacing;
-      headAnchorPoint = 'TOP' .. alignmentAnchor;
+      headAnchorPoint = ANCHOR_TOP .. alignmentAnchor;
     else
       yOffset = -self.spacing;
-      headAnchorPoint = 'BOTTOM' .. alignmentAnchor;
+      headAnchorPoint = ANCHOR_BOTTOM .. alignmentAnchor;
     end
 
     fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, yOffset);
   else
-    fontString:SetPoint(anchorPoint, self.anchor, 'CENTER', 0, 0);
+    fontString:SetPoint(anchorPoint, self.anchor, ANCHOR_CENTER, 0, 0);
   end
 end
 

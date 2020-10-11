@@ -21,7 +21,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Core = {
       anchor = ANCHOR_DEFAULT,
-      insertMode = 'UP',
+      insertMode = farmerFrame.GROW_DIRECTION_UP,
       displayTime = 4,
       fontSize = 24,
       iconScale = 1,
@@ -31,7 +31,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
       hideInArena = true,
       hideOnExpeditions = true,
       itemNames = true,
-      horizontalAlign = 'CENTER',
+      horizontalAlign = farmerFrame.ALIGNMENT_CENTER,
     },
   },
 });
@@ -104,23 +104,23 @@ do
   optionMap.insertMode = mainPanel:addDropdown(L['grow direction'], {
     {
       text = L['up'],
-      value = 'UP',
+      value = farmerFrame.GROW_DIRECTION_UP,
     }, {
       text = L['down'],
-      value = 'DOWN',
+      value = farmerFrame.GROW_DIRECTION_DOWN,
     },
   });
 
   optionMap.horizontalAlign = mainPanel:addDropdown(L['text alignment'], {
     {
       text = L['left'],
-      value = 'LEFT',
+      value = farmerFrame.ALIGNMENT_LEFT,
     }, {
       text = L['center'],
-      value = 'CENTER',
+      value = farmerFrame.ALIGNMENT_CENTER,
     }, {
       text = L['right'],
-      value = 'RIGHT',
+      value = farmerFrame.ALIGNMENT_RIGHT,
     },
   });
 
