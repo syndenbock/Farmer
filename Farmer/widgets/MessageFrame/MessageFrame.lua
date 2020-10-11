@@ -69,6 +69,7 @@ local function createBase (options)
   this.fontSize = 18;
   this.fontFlags = 'OUTLINE';
   this.fading = true;
+  this.insertMode = 'PREPEND';
   this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
   this.shadowOffset = {x = 0, y = 0};
 
@@ -194,10 +195,6 @@ function MessageFrame:RemoveMessage (fontString)
 
   self:SetMessagePointsIfExists(tail);
 
-  if (fontString.isFading) then
-    self:RemoveAlphaHandler(fontString);
-  end
-
   self.pool:Release(fontString);
   self:ResetFontString(fontString);
 end
@@ -304,6 +301,19 @@ function MessageFrame:SetShadowColor (r, g, b, a)
   self:ForEachDisplayedMessage(self.SetFontStringShadowColor);
 end
 
+function MessageFrame:SetInsertMode (insertMode)
+  if ((self.insertMode == 'APPEND') ~= (insertMode == 'APPEND')) then
+    self:ForEachDisplayedMessage(self.InvertFontStringDirection);
+  end
+
+  self.insertMode = insertMode;
+
+end
+
+function MessageFrame:GetInsertMode ()
+  return self.insertMode;
+end
+
 function MessageFrame:GetShadowColor ()
   local colors = self.shadowColors;
 
@@ -326,8 +336,6 @@ end
 --[[ aliases for default frame methods ]]
 MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
 MessageFrame.GetJustifyH = MessageFrame.GetTextAlign;
-MessageFrame.SetInsertMode = MessageFrame.SetGrowDirection;
-MessageFrame.GetInsertMode = MessageFrame.GetGrowDirection;
 MessageFrame.SetTimeVisible = MessageFrame.SetVisibleTime;
 MessageFrame.GetTimeVisible = MessageFrame.GetVisibleTime;
 
@@ -372,8 +380,20 @@ function MessageFrame:ResetFontString (fontString)
 end
 
 function MessageFrame:InsertMessage (fontString)
-  --[[ TODO build support for insert modes ]]
-  self:PrependMessage(fontString);
+  if (self.insertMode == 'APPEND') then
+    self:AppendMessage(fontString);
+  else
+    self:PrependMessage(fontString);
+  end
+end
+
+function MessageFrame:AppendMessage (fontString)
+  self:AttachFontString(self.tail, fontString);
+
+  self.head = self.head or fontString;
+  self.tail = fontString;
+
+  self:SetMessagePoints(fontString);
 end
 
 function MessageFrame:PrependMessage (fontString)
@@ -391,6 +411,16 @@ end
 --******************************************************************************
 -- message positioning methods
 --******************************************************************************
+
+function MessageFrame:AttachFontString (head, tail)
+  if (head) then
+    head.tail = tail;
+  end
+
+  if (tail) then
+    tail.head = head;
+  end
+end
 
 function MessageFrame:SetMessagePoints (fontString)
   local head = fontString.head;
@@ -437,14 +467,15 @@ function MessageFrame:SetMessagePointsIfExists (fontString)
   self:SetMessagePoints(fontString);
 end
 
-function MessageFrame:AttachFontString (head, tail)
-  if (head) then
-    head.tail = tail;
-  end
+function MessageFrame:InvertFontStringDirection (fontString)
+  --[[ Only use this function when applying it to all fontStrings in the chain.
+    Otherwise, this will cause a loop in the chain. ]]
+  local head = fontString.head;
 
-  if (tail) then
-    tail.head = head;
-  end
+  fontString.head = fontString.tail;
+  fontString.tail = head;
+
+  self:SetMessagePoints(fontString);
 end
 
 --******************************************************************************
