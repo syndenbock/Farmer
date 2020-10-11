@@ -5,31 +5,53 @@ local UnitXPMax = _G.UnitXPMax;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
 local truncate = addon.truncate;
+local ImmutableMap = addon.Factory.ImmutableMap;
 
 local UNIT_PLAYER = 'player';
 
 local currentExperience;
 local currentLevelupExperience;
 
+local function yellExperience (info)
+  addon.yell('EXPERIENCE_GAINED', ImmutableMap(info));
+end
+
 local function checkExperience ()
   local newExperience = UnitXP(UNIT_PLAYER);
-  local difference = newExperience - currentExperience;
+  local gain = newExperience - currentExperience;
+  local levelUp = false;
 
-  currentLevelupExperience = currentLevelupExperience or UnitXPMax(UNIT_PLAYER);
+  if (currentLevelupExperience == nil) then
+    levelUp = true;
+    currentLevelupExperience = UnitXPMax(UNIT_PLAYER);
+  end
+
   currentExperience = newExperience;
 
-  if (difference <= 0) then
+  if (gain <= 0) then
     -- print('no xp gain: ', difference);
     return;
   end
 
-  local percentage = truncate(difference * 100 / currentLevelupExperience, 1);
-
-  -- print(truncate(currentExperience * 100 / currentLevelupExperience, 1));
+  local percentageGain = truncate(gain * 100 / currentLevelupExperience, 1);
+  local currentPercentage =
+      truncate(currentExperience * 100 / currentLevelupExperience, 1);
 
   addon.frame:AddMessage(addon.stringJoin({
-    'experience:', BreakUpLargeNumbers(difference), '(' .. percentage .. '%)',
+    'experience:',
+    BreakUpLargeNumbers(gain),
+    '(' .. percentageGain .. '%',
+    '/',
+    currentPercentage .. '%)',
   }, ' '));
+
+  yellExperience({
+    current = currentExperience,
+    percentage = currentPercentage,
+    gain = gain,
+    percentageGain = percentageGain,
+    levelUp = levelUp,
+  });
 end
 
 addon.on('PLAYER_LOGIN', function ()
