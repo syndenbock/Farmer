@@ -403,9 +403,9 @@ end
 
 function MessageFrame:InsertMessage (fontString)
   if (self.insertMode == INSERTMODE_PREPEND) then
-    self:AppendMessage(fontString);
-  else
     self:PrependMessage(fontString);
+  else
+    self:AppendMessage(fontString);
   end
 end
 
