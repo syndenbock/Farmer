@@ -4,6 +4,7 @@ local min = _G.min;
 local unpack = _G.unpack;
 local tinsert = _G.tinsert;
 local strfind = _G.strfind;
+local delayedExecute = _G.C_Timer.After;
 local hooksecurefunc = _G.hooksecurefunc;
 local CreateFrame = _G.CreateFrame;
 local GetCVar = _G.GetCVar;
@@ -283,7 +284,7 @@ end
 
 local function updateMinimapChildren ()
   --[[ Execute on the next frame so other addons can update their icons ]]
-  addon.executeOnNextFrame(function ()
+  delayedExecute(0, function ()
     local children = getMinimapChildrenToHide();
 
     for x = 1, #children, 1 do

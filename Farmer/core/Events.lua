@@ -55,40 +55,12 @@ function addon.off (eventList, callback)
   end
 end
 
-do
-  local updateFrame = _G.CreateFrame('Frame');
-  local updateList;
-
-  local function executeUpdateCallbacks ()
-    local list = updateList;
-
-    -- updateList has to be swapped out before executing callbacks so if
-    -- callbacks add new hooks they are not immediately executed
-    updateFrame:SetScript('OnUpdate', nil);
-    updateList = nil;
-
-    for x = 1, #list, 1 do
-      list[x]();
-    end
-  end
-
-  function addon.executeOnNextFrame (callback)
-    if (not updateList) then
-      updateList = {callback};
-      updateFrame:SetScript('OnUpdate', executeUpdateCallbacks);
-    else
-      tinsert(updateList, callback);
-    end
-  end
-end
-
 --[[
 //##############################################################################
 // event funneling
 //##############################################################################
 --]]
 local function generateFunnel (timeSpan, callback)
-  local minTime = 0.01;
   local flag = false;
   local handler = function ()
     flag = false;
@@ -101,12 +73,7 @@ local function generateFunnel (timeSpan, callback)
     end
 
     flag = true;
-
-    if (timeSpan < minTime) then
-      addon.executeOnNextFrame(handler);
-    else
-      C_Timer.After(timeSpan, handler);
-    end
+    C_Timer.After(timeSpan, handler);
   end
 
   return funnel;

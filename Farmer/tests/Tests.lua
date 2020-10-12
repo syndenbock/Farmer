@@ -2,21 +2,6 @@ local addonName, addon = ...;
 
 local tests = addon.share('tests');
 
-function tests.testNextFrame ()
-  local GetTime = _G.GetTime;
-  local time = GetTime();
-
-  print(time);
-
-  _G.C_Timer.After(0, function ()
-    print('C_Timer', GetTime());
-  end);
-
-  addon.executeOnNextFrame(function ()
-    print('OnUpdate', GetTime());
-  end);
-end
-
 function tests.memory (_addonName)
   local usage;
 
