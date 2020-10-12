@@ -59,8 +59,4 @@ addon.on('PLAYER_LEVEL_UP', function ()
   currentLevelupExperience = nil;
 end);
 
-addon.on('PLAYER_XP_UPDATE', function (unit)
-  if (unit ~= UNIT_PLAYER) then return end
-
-  checkExperience();
-end);
+addon.funnel('PLAYER_XP_UPDATE', checkExperience);
