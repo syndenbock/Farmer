@@ -37,6 +37,7 @@ local function checkExperience ()
   yellExperience({
     current = currentExperience,
     percentage = currentPercentage,
+    nextLevel = currentLevelupExperience,
     gain = gain,
     percentageGain = percentageGain,
     levelUp = levelUp,
