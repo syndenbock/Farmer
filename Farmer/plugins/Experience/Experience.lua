@@ -19,10 +19,9 @@ addon.listen('EXPERIENCE_GAINED', function (info)
   if (not checkExperienceOptions(info)) then return end
 
   Print.printMessage(stringJoin({
-    'experience:',
     BreakUpLargeNumbers(truncate(info.gain, 1)),
     '(' .. truncate(info.percentageGain, 1) .. '%',
     '/',
     truncate(info.percentage, 1) .. '%)',
-  }, ' '));
+  }, ' '), {0.5, 0.5, 1});
 end);
