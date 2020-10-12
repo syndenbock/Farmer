@@ -215,7 +215,7 @@ function MessageFrame:RemoveMessage (fontString)
     self.tail = head;
   end
 
-  self:SetMessagePointsIfExists(tail);
+  self:SetFontStringPointsIfExists(tail);
 
   self.pool:Release(fontString);
   self:ResetFontString(fontString);
@@ -243,7 +243,7 @@ function MessageFrame:SetSpacing (spacing)
   self.spacing = spacing;
   --[[ Calls of GetPoint are so expensive that recalculating all anchors is
     faster than only updating the y-offset ]]
-  self:ForEachDisplayedMessage(self.SetMessagePoints);
+  self:ForEachDisplayedMessage(self.SetFontStringPoints);
 end
 
 function MessageFrame:SetFrameStrata (frameStrata)
@@ -296,7 +296,7 @@ end
 
 function MessageFrame:SetTextAlign (alignment)
   self.alignment = alignment;
-  self:ForEachMessage(self.SetMessagePoints);
+  self:ForEachMessage(self.SetFontStringPoints);
 end
 
 function MessageFrame:GetTextAlign ()
@@ -305,7 +305,7 @@ end
 
 function MessageFrame:SetGrowDirection (direction)
   self.direction = direction;
-  self:ForEachDisplayedMessage(self.SetMessagePoints);
+  self:ForEachDisplayedMessage(self.SetFontStringPoints);
 end
 
 function MessageFrame:GetGrowDirection ()
@@ -383,7 +383,7 @@ function MessageFrame:CreateAnchorFontString (message, r, g, b, a)
   local fontString = self:CreateFontString(message, r, g, b, a);
 
   fontString:SetParent(self.anchor);
-  self:SetMessagePoints(fontString);
+  self:SetFontStringPoints(fontString);
 
   return fontString;
 end
@@ -415,7 +415,7 @@ function MessageFrame:AppendMessage (fontString)
   self.head = self.head or fontString;
   self.tail = fontString;
 
-  self:SetMessagePoints(fontString);
+  self:SetFontStringPoints(fontString);
 end
 
 function MessageFrame:PrependMessage (fontString)
@@ -426,8 +426,8 @@ function MessageFrame:PrependMessage (fontString)
   self.head = fontString;
   self.tail = self.tail or fontString;
 
-  self:SetMessagePoints(fontString);
-  self:SetMessagePointsIfExists(head);
+  self:SetFontStringPoints(fontString);
+  self:SetFontStringPointsIfExists(head);
 end
 
 --******************************************************************************
@@ -444,7 +444,7 @@ function MessageFrame:AttachFontString (head, tail)
   end
 end
 
-function MessageFrame:SetMessagePoints (fontString)
+function MessageFrame:SetFontStringPoints (fontString)
   local head = fontString.head;
   local alignmentAnchor;
   local anchorPoint;
@@ -483,10 +483,10 @@ function MessageFrame:SetMessagePoints (fontString)
   end
 end
 
-function MessageFrame:SetMessagePointsIfExists (fontString)
+function MessageFrame:SetFontStringPointsIfExists (fontString)
   if (not fontString) then return end
 
-  self:SetMessagePoints(fontString);
+  self:SetFontStringPoints(fontString);
 end
 
 function MessageFrame:InvertFontStringDirection (fontString)
@@ -497,7 +497,7 @@ function MessageFrame:InvertFontStringDirection (fontString)
   fontString.head = fontString.tail;
   fontString.tail = head;
 
-  self:SetMessagePoints(fontString);
+  self:SetFontStringPoints(fontString);
 end
 
 --******************************************************************************
