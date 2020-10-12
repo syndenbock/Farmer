@@ -296,7 +296,7 @@ end
 
 function MessageFrame:SetTextAlign (alignment)
   self.alignment = alignment;
-  self:ForEachDisplayedMessage(self.SetMessagePoints);
+  self:ForEachMessage(self.SetMessagePoints);
 end
 
 function MessageFrame:GetTextAlign ()
@@ -383,7 +383,7 @@ function MessageFrame:CreateAnchorFontString (message, r, g, b, a)
   local fontString = self:CreateFontString(message, r, g, b, a);
 
   fontString:SetParent(self.anchor);
-  fontString:SetPoint(ANCHOR_CENTER, self.anchor, ANCHOR_CENTER, 0, 0);
+  self:SetMessagePoints(fontString);
 
   return fontString;
 end
