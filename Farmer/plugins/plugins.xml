@@ -1,5 +1,6 @@
 <UI>
   <include file="Currencies\Currencies.xml"/>
+  <include file="Experience\Experience.xml"/>
   <include file="Items\Items.xml"/>
   <include file="Farmradar\Farmradar.xml"/>
   <include file="Minimap\Minimap.xml"/>
