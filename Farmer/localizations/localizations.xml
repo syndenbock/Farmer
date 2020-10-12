@@ -1,6 +1,7 @@
 <UI>
   <script file="Localization.lua"/>
   <script file="English.lua"/>
+  <script file="French.lua"/>
   <script file="German.lua"/>
   <script file="Russian.lua"/>
   <script file="Korean.lua"/>

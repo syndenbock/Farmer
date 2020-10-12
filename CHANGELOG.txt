@@ -1,6 +1,7 @@
   version 3.3
 - Added options for text alignment, textbox growth direction and line spacing
 - Added module for scanning minimap vignettes
+- Replaced Blizzard Message Frame with own implementation
 
   version 3.2.3
 - Updated russian translations
