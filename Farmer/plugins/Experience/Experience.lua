@@ -1,14 +1,24 @@
-local _, addon = ...;
+local addonName, addon = ...;
 
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
 local stringJoin = addon.stringJoin;
 local truncate = addon.truncate;
 
-local farmerFrame = addon.frame;
+local Print = addon.Print;
+
+local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
+    .farmerOptions.Experience;
+
+local function checkExperienceOptions (info)
+  return (options.displayExperience and
+          info.percentageGain > options.experienceThreshold);
+end
 
 addon.listen('EXPERIENCE_GAINED', function (info)
-  farmerFrame:AddMessage(stringJoin({
+  if (not checkExperienceOptions(info)) then return end
+
+  Print.printMessage(stringJoin({
     'experience:',
     BreakUpLargeNumbers(truncate(info.gain, 1)),
     '(' .. truncate(info.percentageGain, 1) .. '%',
