@@ -88,7 +88,7 @@ end
 do
   local optionMap = {};
 
-  optionMap.itemNames = mainPanel:addCheckBox(L['show names of all items']);
+  optionMap.itemNames = mainPanel:addCheckBox(L['always show names']);
   optionMap.hideAtMailbox = mainPanel:addCheckBox(L['don\'t display at mailboxes']);
 
   if (not addon.isClassic()) then
