@@ -1,6 +1,7 @@
 local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
+local BACKDROP_TEMPLATE = _G.BackdropTemplateMixin and 'BackdropTemplate';
 
 local Factory = addon.share('OptionClass');
 
@@ -11,7 +12,8 @@ Factory.Slider = Slider;
 Slider.__index = Slider;
 
 local function createEditBox (name, parent)
-  local edit = CreateFrame('EditBox', name .. 'EditBox', parent);
+  local edit = CreateFrame('EditBox', name .. 'EditBox', parent,
+      BACKDROP_TEMPLATE);
 
   edit:SetAutoFocus(false);
   edit:Disable();

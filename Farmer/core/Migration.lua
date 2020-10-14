@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local strsplit = _G.strsplit;
 
-local CURRENT_VERSION = '3.3';
+local CURRENT_VERSION = '3.4';
 local TOC_VERSION = _G.GetAddOnMetadata(addonName, 'version');
 
 local Migration = {};

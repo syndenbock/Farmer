@@ -3,6 +3,8 @@ local _, addon = ...;
 local CreateFrame = _G.CreateFrame;
 local GameFontNormal = _G.GameFontNormal;
 
+local BACKDROP_TEMPLATE = _G.BackdropTemplateMixin and 'BackdropTemplate';
+
 local Factory = addon.share('OptionClass');
 
 local EditBox = {};
@@ -55,7 +57,7 @@ local function createEditbox (name, parent, width, height)
 end
 
 local function createBack (name, parent, width, height, anchors)
-  local back = CreateFrame('Frame', name .. 'Back', parent);
+  local back = CreateFrame('Frame', name .. 'Back', parent, BACKDROP_TEMPLATE);
 
   back:SetBackdrop({
     -- bgFile = 'Interface\\DialogFrame\\UI-DialogBox-Background',

@@ -3,12 +3,13 @@ local _, addon = ...;
 if (addon.isClassic()) then return end
 
 local tinsert = _G.tinsert;
-local GetCurrencyInfo = _G.GetCurrencyInfo;
-local GetCurrencyListSize = _G.GetCurrencyListSize;
-local GetCurrencyListInfo = _G.GetCurrencyListInfo;
-local GetCurrencyListLink = _G.GetCurrencyListLink;
-local ExpandCurrencyList = _G.ExpandCurrencyList;
-local GetCurrencyIDFromLink = _G.C_CurrencyInfo.GetCurrencyIDFromLink;
+local C_CurrencyInfo = _G.C_CurrencyInfo;
+local ExpandCurrencyList = C_CurrencyInfo.ExpandCurrencyList;
+local GetCurrencyIDFromLink = C_CurrencyInfo.GetCurrencyIDFromLink;
+local GetCurrencyInfo = C_CurrencyInfo.GetCurrencyInfo;
+local GetCurrencyListInfo = C_CurrencyInfo.GetCurrencyListInfo;
+local GetCurrencyListLink = C_CurrencyInfo.GetCurrencyListLink;
+local GetCurrencyListSize = C_CurrencyInfo.GetCurrencyListSize;
 
 local ImmutableMap = addon.Factory.ImmutableMap;
 
@@ -31,9 +32,7 @@ end
 tryToReadGlobalConstants();
 
 local function getCurrencyAmount (currencyId)
-  local info = {GetCurrencyInfo(currencyId)};
-
-  return info[2];
+  return GetCurrencyInfo(currencyId).quantity;
 end
 
 local function collapseExpandedCurrencies (expandedIndices)
@@ -51,12 +50,11 @@ local function fillCurrencyTable ()
   local i = 1;
 
   while (i <= listSize) do
-    local info = {GetCurrencyListInfo(i)};
-    local isHeader = info[2];
-    local isExpanded = info[3];
+    local info = GetCurrencyListInfo(i);
 
-    if (isHeader) then
-      if (not isExpanded) then
+    if (info.isHeader) then
+      print('header');
+      if (not info.isExpanded) then
         tinsert(expandedIndices, i);
         ExpandCurrencyList(i, 1);
         listSize = GetCurrencyListSize();
@@ -64,7 +62,7 @@ local function fillCurrencyTable ()
     else
       local link = GetCurrencyListLink(i);
       local id = GetCurrencyIDFromLink(link);
-      local count = info[6];
+      local count = info.quantity;
 
       data[id] = count;
     end
@@ -81,18 +79,18 @@ local function fillCurrencyTable ()
 end
 
 local function packCurrencyInfo (id)
-  local info = {GetCurrencyInfo(id)};
+  local info = GetCurrencyInfo(id);
 
   return {
     id = id,
-    name = info[1],
-    total = info[2],
-    icon = info[3],
-    earnedThisWeek = info[4],
-    weeklyMax = info[5],
-    totalMax = info[6],
-    isDiscovered = info[7],
-    rarity = info[8],
+    name = info.name,
+    total = info.quantity,
+    icon = info.iconFileID,
+    earnedThisWeek = info.quantityEarnedThisWeek,
+    weeklyMax = info.maxWeeklyQuantity,
+    totalMax = info.maxQuantity,
+    isDiscovered = info.discovered,
+    rarity = info.quality,
   };
 end
 
@@ -104,7 +102,7 @@ local function handleCurrency (id, total)
   local amount = total - (currencyTable[id] or 0);
 
   currencyTable[id] = total;
-  yellCurrency(id, amount, total);
+  yellCurrency(id, amount);
 end
 
 addon.on('PLAYER_LOGIN', fillCurrencyTable);
