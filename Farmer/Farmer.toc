@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: Farmer
 ## Version: 3.3.1
 ## Author: syndenbock

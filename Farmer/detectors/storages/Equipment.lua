@@ -9,7 +9,8 @@ local GetInventoryItemQuality = _G.GetInventoryItemQuality;
 local INVSLOT_FIRST_EQUIPPED = _G.INVSLOT_FIRST_EQUIPPED;
 local INVSLOT_LAST_EQUIPPED = _G.INVSLOT_LAST_EQUIPPED;
 local INVSLOT_OFFHAND = _G.INVSLOT_OFFHAND;
-local LE_ITEM_QUALITY_ARTIFACT = _G.LE_ITEM_QUALITY_ARTIFACT;
+local ITEM_QUALITY_ARTIFACT = _G.LE_ITEM_QUALITY_ARTIFACT or
+    _G.Enum.ItemQuality.ARTIFACT;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 
 local UNITID_PLAYER = 'player';
@@ -52,7 +53,7 @@ end
 local function checkSlotForArtifact (slot)
   local quality = GetInventoryItemQuality(UNITID_PLAYER, slot);
 
-  if (quality == LE_ITEM_QUALITY_ARTIFACT) then
+  if (quality == ITEM_QUALITY_ARTIFACT) then
     local id = GetInventoryItemID(UNITID_PLAYER, slot);
     local link = GetInventoryItemLink(UNITID_PLAYER, slot);
 
