@@ -14,28 +14,39 @@ L["ignore Honor"] = "Ignorer l'Honneur"
 L["show currencies"] = "Afficher les devises"
 
 -- Display
+L["always show names"] = "Toujours afficher les noms"
+L["center"] = "Centrer"
 L["display time"] = "Durée d'affichage"
 L["don't display at mailboxes"] = "Ne pas afficher dans les boîtes aux lettres"
 L["don't display in arena"] = "Ne pas afficher en Arènes"
 L["don't display on island expeditions"] = "Ne pas afficher lors des Expéditions dans les Îles"
+L["down"] = "Vers le bas"
 L["font size"] = "Taille de la police d'écriture"
+L["grow direction"] = "Orientation de l'affichage "
+L["left"] = "Vers la gauche"
+L["line spacing"] = "Inter-ligne "
 L["Monochrome"] = "Monochrome"
 L["move display"] = "Déplacer l'affichage"
 L["None"] = "Aucun"
 L["outline mode"] = "Mode contour"
 L["reset position"] = "Réinitialiser la position"
-L["always show names"] = "Afficher les noms de tous les objets"
+L["right"] = "Vers la droite"
+L["text alignment"] = "Alignement du texte"
 L["Thick"] = "Épais"
 L["Thick Monochrome"] = "Épais monochrome"
 L["Thin"] = "Mince"
+L["up"] = "Vers le haut"
 
 -- Farm radar
 L["enable tooltips for default nodes"] = "Activer les info-bulles pour les nœuds par défaut"
+L["Farm radar"] = "Radar de farm"
 L["It's recommended to enable shrinking the minimap when enabling this"] = "Il est recommandé d'activer la réduction de la minimap lors de l'activation de ceci"
 L["show addon node tooltips"] = "Afficher les info-bulles des nœuds de l'addon"
 L["show GatherMate nodes"] = "Afficher les nodes GatherMate"
 L["show HandyNotes pins"] = "Afficher les épingles HandyNotes"
 L["shrink minimap to radar size"] = "Réduire la minimap à la taille du radar"
+L["This will block all mouseovers under the minimap in farm mode!"] = "Bloquer tous les mouseovers sous la mini-carte en mode farm!"
+L["Toggle farming radar"] = "Basculer le radar de farm"
 
 -- Items
 L["always show focused items"] = "Toujours afficher les objets ciblés"
@@ -48,9 +59,13 @@ L["Items"] = "Objets"
 L["minimum"] = "Minimum"
 L["minimum rarity"] = "Rareté minimum"
 L["only show focused items"] = "Afficher uniquement les objets ciblés"
+L["show bag count for stackable items"] = "Afficher le nombre d'objets empilables en sacs"
 L["show items based on rarity"] = "Affichage des objets basé sur la rareté"
+L["show total count for stackable items"] = "Afficher le nombre total d'objets empilables"
 
 -- Minimap
+L["display vignettes that appear on the minimap"] = "Afficher les icônes sur la minimap"
+L["Minimap"] = "Minimap"
 
 -- Misc
 L["enable fast autoloot"] = "Activer la fouille automatique rapide"
@@ -80,7 +95,9 @@ L["Equipment has been repaired by your guild for %s"] = "L'équipement à été 
 L["Equipment has been repaired for %s"] = "L'équipement à été réparé à %s"
 L["Not enough gold for repairing your gear"] = "Pas assez d'or pour réparer votre équipement"
 L["Sell and Repair"] = "Vendre et réparer"
+L["Selling gray items for %s"] = "Vendre les objets gris à %s"
 L["skip readable items when autoselling"] = "Ignorer les objets lisibles lors de la vente automatique"
 
 -- Skills
 L["show skill levelups"] = "Afficher les niveaux de compétences gagnés"
+L["Skills"] = "Compétences"
