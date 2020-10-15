@@ -53,7 +53,6 @@ local function fillCurrencyTable ()
     local info = GetCurrencyListInfo(i);
 
     if (info.isHeader) then
-      print('header');
       if (not info.isExpanded) then
         tinsert(expandedIndices, i);
         ExpandCurrencyList(i, 1);
