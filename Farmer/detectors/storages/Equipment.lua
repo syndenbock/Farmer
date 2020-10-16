@@ -57,7 +57,9 @@ local function checkSlotForArtifact (slot)
     local id = GetInventoryItemID(UNITID_PLAYER, slot);
     local link = GetInventoryItemLink(UNITID_PLAYER, slot);
 
-    Items.addItemToCurrentInventory(id, link, 1);
+    if (id and link) then
+      Items.addItemToCurrentInventory(id, link, 1);
+    end
   end
 end
 
