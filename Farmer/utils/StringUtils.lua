@@ -90,14 +90,16 @@ function addon.findItemLink (string)
 end
 
 function addon.extractItemString (itemLink)
-  return strmatch(itemLink, 'item[%-?%d:]+') or itemLink;
+  return strmatch(itemLink, 'item[%-?%d:]+');
 end
 
 function addon.extractNormalizedItemString (itemLink)
-  --[[ the 9th position contains the character level, which causes different
-       links after levelups and therefor has to be removed ]]
-  local itemString = addon.extractItemString(itemLink);
-  local pattern = '(item:.-:.-:.-:.-:.-:.-:.-:.-:)(.-)(:.*)';
+  local pattern = '.*(item:.-:.-:.-:.-:.-:.-:.-:.-:)(.-)(:[%-?%d:]*).*';
+  local match = {strmatch(itemLink, pattern)};
 
-  return gsub(itemString, pattern, '%1%3', 1);
+  if (#match >= 3) then
+    return match[1] .. match[3];
+  else
+    return nil;
+  end
 end
