@@ -3,7 +3,7 @@ local _, addon = ...;
 local strfind = _G.strfind;
 local strsub = _G.strsub;
 local strmatch = _G.strmatch;
-local gsub = _G.gsub;
+local strjoin = _G.strjoin;
 local tinsert = _G.tinsert;
 local floor = _G.floor;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
@@ -94,11 +94,14 @@ function addon.extractItemString (itemLink)
 end
 
 function addon.extractNormalizedItemString (itemLink)
-  local pattern = '.*(item:.-:.-:.-:.-:.-:.-:.-:.-:)(.-)(:[%-?%d:]*).*';
+  --[[ the 9th and 10th positions contain character level and spec, which causes
+       different links after levelups or spec swaps and therefor have to be
+       removed ]]
+  local pattern = '.*(item:.-:.-:.-:.-:.-:.-:.-:.-:)(.-:)(.-:)([%-?%d:]*).*';
   local match = {strmatch(itemLink, pattern)};
 
-  if (#match >= 3) then
-    return match[1] .. match[3];
+  if (#match >= 4) then
+    return strjoin('', match[1], '::', match[4]);
   else
     return nil;
   end
