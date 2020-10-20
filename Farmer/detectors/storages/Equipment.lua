@@ -41,12 +41,8 @@ end
 local function updateStorage ()
   storage = Storage:new();
 
-  for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
-    local slotInfo = currentEquipment[x];
-
-    if (slotInfo) then
-      storage:addItem(slotInfo.id, slotInfo.link, 1);
-    end
+  for _, slotInfo in pairs(currentEquipment) do
+    storage:addItem(slotInfo.id, slotInfo.link, 1);
   end
 end
 
