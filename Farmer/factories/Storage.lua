@@ -52,8 +52,8 @@ function Storage:addItem (itemId, itemLink, itemCount)
 end
 
 function Storage:addStorage (updateStorage)
-  for itemLink, itemInfo in pairs(updateStorage.storage) do
-    self:addItem(itemLink, itemInfo.id, itemInfo.count);
+  for itemLink, itemInfo in pairs(updateStorage:getItems()) do
+    self:addItem(itemInfo.id, itemLink, itemInfo.count);
   end
 end
 
