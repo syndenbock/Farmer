@@ -2,7 +2,6 @@ local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
 local C_Item = _G.C_Item;
-local GetItemInfoInstant = _G.GetItemInfoInstant;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
@@ -45,8 +44,8 @@ function Items.updateCurrentInventory ()
   currentInventory = getCachedInventory();
 end
 
-function Items.addItemToCurrentInventory (link, count)
-  currentInventory:addItem(link, count);
+function Items.addItemToCurrentInventory (id, link, count)
+  currentInventory:addItem(id, link, count);
 end
 
 local function packItemInfo (itemId, itemLink)
@@ -98,9 +97,7 @@ local function fetchItem (id, link, count)
   end);
 end
 
-local function broadCastItem (itemLink, itemCount)
-  local itemId = GetItemInfoInstant(itemLink);
-
+local function broadCastItem (itemId, itemLink, itemCount)
   if (IsItemDataCachedByID(itemId)) then
     yellItem(itemId, itemLink, itemCount);
   else
@@ -108,9 +105,15 @@ local function broadCastItem (itemLink, itemCount)
   end
 end
 
+local function broadCastItemInfo (itemId, itemInfo)
+  for itemLink, itemCount in pairs(itemInfo.links) do
+    broadCastItem(itemId, itemLink, itemCount);
+  end
+end
+
 local function broadcastItems (items)
-  for itemLink, itemCount in pairs(items) do
-    broadCastItem(itemLink, itemCount);
+  for itemId, itemInfo in pairs(items) do
+    broadCastItemInfo(itemId, itemInfo);
   end
 end
 
@@ -119,7 +122,7 @@ local function checkInventory ()
   local newItems = currentInventory:compare(inventory);
 
   currentInventory = inventory;
-  broadcastItems(newItems:getItems());
+  broadcastItems(newItems.storage);
 end
 
 --[[ Funneling the check so it executes on the next frame after

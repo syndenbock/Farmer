@@ -6,6 +6,7 @@ local Storage = addon.Factory.Storage;
 local Items = addon.Items;
 
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
+local GetVoidItemInfo = _G.GetVoidItemInfo;
 
 local NUM_VOIDSTORAGE_TABS = 2;
 local NUM_VOIDSTORAGE_SLOTS = 80;
@@ -17,15 +18,17 @@ local function getCombinedIndex (tabIndex, slotIndex)
 end
 
 local function readVoidStorageSlot (voidStorage, tabIndex, slotIndex)
+  local id = GetVoidItemInfo(tabIndex, slotIndex);
+
+  if (not id) then return end
+
   --[[ For some reason, one function requires tabIndex and slotIndex
        and a related function requires slotIndex as if there was only
        one tab. Blizzard code at its best once again. ]]
   local combinedIndex = getCombinedIndex(tabIndex, slotIndex);
   local link = GetVoidItemHyperlinkString(combinedIndex);
 
-  if (link) then
-    voidStorage:addItem(link, 1);
-  end
+  voidStorage:addItem(id, link, 1);
 end
 
 local function readVoidStorageTab (voidStorage, tabIndex)
