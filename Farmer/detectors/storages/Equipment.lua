@@ -10,7 +10,7 @@ local INVSLOT_FIRST_EQUIPPED = _G.INVSLOT_FIRST_EQUIPPED;
 local INVSLOT_LAST_EQUIPPED = _G.INVSLOT_LAST_EQUIPPED;
 local INVSLOT_OFFHAND = _G.INVSLOT_OFFHAND;
 local ITEM_QUALITY_ARTIFACT = _G.LE_ITEM_QUALITY_ARTIFACT or
-    _G.Enum.ItemQuality.ARTIFACT;
+    _G.Enum.ItemQuality.Artifact;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 
 local UNITID_PLAYER = 'player';
@@ -72,11 +72,16 @@ end);
 addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
   --[[ we need to do this because when equipping artifact weapons, a second item
          appears in the offhand slot --]]
-  if (slot == INVSLOT_OFFHAND) then
-    checkSlotForArtifact(INVSLOT_OFFHAND);
-  end
 
-  currentEquipment[slot] = (not isEmpty and getEquipmentSlot(slot)) or nil;
+  if (isEmpty) then
+    currentEquipment[slot] = nil;
+  else
+    currentEquipment[slot] = getEquipmentSlot(slot);
+
+    if (slot == INVSLOT_OFFHAND) then
+      checkSlotForArtifact(INVSLOT_OFFHAND);
+    end
+  end
 
   updateStorage();
 end);
