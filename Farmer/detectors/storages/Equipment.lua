@@ -3,7 +3,6 @@ local _, addon = ...;
 local Storage = addon.Factory.Storage;
 local Items = addon.Items;
 
-local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
 local GetInventoryItemQuality = _G.GetInventoryItemQuality;
 local INVSLOT_FIRST_EQUIPPED = _G.INVSLOT_FIRST_EQUIPPED;
@@ -19,12 +18,7 @@ local currentEquipment = {};
 local storage = Storage:new();
 
 local function getEquipmentSlot (slot)
-  local id = GetInventoryItemID(UNITID_PLAYER, slot);
-
-  return id and {
-    id = id,
-    link = GetInventoryItemLink(UNITID_PLAYER, slot),
-  };
+  return GetInventoryItemLink(UNITID_PLAYER, slot);
 end
 
 local function getEquipment ()
@@ -41,12 +35,8 @@ end
 local function updateStorage ()
   storage = Storage:new();
 
-  for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED + NUM_BAG_SLOTS, 1 do
-    local slotInfo = currentEquipment[x];
-
-    if (slotInfo) then
-      storage:addItem(slotInfo.id, slotInfo.link, 1);
-    end
+  for _, itemLink in pairs(currentEquipment) do
+    storage:addItem(itemLink, 1);
   end
 end
 
@@ -54,11 +44,10 @@ local function checkSlotForArtifact (slot)
   local quality = GetInventoryItemQuality(UNITID_PLAYER, slot);
 
   if (quality == ITEM_QUALITY_ARTIFACT) then
-    local id = GetInventoryItemID(UNITID_PLAYER, slot);
     local link = GetInventoryItemLink(UNITID_PLAYER, slot);
 
-    if (id and link) then
-      Items.addItemToCurrentInventory(id, link, 1);
+    if (link) then
+      Items.addItemToCurrentInventory(link, 1);
     end
   end
 end

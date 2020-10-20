@@ -28,15 +28,13 @@ end
 local function readBagSlot (bagContent, bagIndex, slotIndex)
   --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
          nil if data is not ready --]]
-  local id = GetContainerItemID(bagIndex, slotIndex);
-
-  if (not id) then return end
-
   local info = {GetContainerItemInfo(bagIndex, slotIndex)};
   local count = info[2];
   local link = info[7];
 
-  bagContent:addItem(id, link, count);
+  if (link and count) then
+    bagContent:addItem(link, count);
+  end
 end
 
 local function updateBagCache (bagIndex)

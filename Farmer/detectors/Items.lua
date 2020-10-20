@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
 local C_Item = _G.C_Item;
+local GetItemInfoInstant = _G.GetItemInfoInstant;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
@@ -44,8 +45,8 @@ function Items.updateCurrentInventory ()
   currentInventory = getCachedInventory();
 end
 
-function Items.addItemToCurrentInventory (id, link, count)
-  currentInventory:addItem(id, link, count);
+function Items.addItemToCurrentInventory (link, count)
+  currentInventory:addItem(link, count);
 end
 
 local function packItemInfo (itemId, itemLink)
@@ -97,7 +98,9 @@ local function fetchItem (id, link, count)
   end);
 end
 
-local function broadCastItem (itemId, itemLink, itemCount)
+local function broadCastItem (itemLink, itemCount)
+  local itemId = GetItemInfoInstant(itemLink);
+
   if (IsItemDataCachedByID(itemId)) then
     yellItem(itemId, itemLink, itemCount);
   else
@@ -106,8 +109,8 @@ local function broadCastItem (itemId, itemLink, itemCount)
 end
 
 local function broadcastItems (items)
-  for itemLink, itemInfo in pairs(items) do
-    broadCastItem(itemInfo.id, itemLink, itemInfo.count);
+  for itemLink, itemCount in pairs(items) do
+    broadCastItem(itemLink, itemCount);
   end
 end
 

@@ -8,7 +8,6 @@ local Items = addon.Items;
 local GetCurrentGuildBankTab = _G.GetCurrentGuildBankTab;
 local GetGuildBankItemInfo = _G.GetGuildBankItemInfo;
 local GetGuildBankItemLink = _G.GetGuildBankItemLink;
-local GetItemInfoInstant = _G.GetItemInfoInstant;
 
 local storage;
 local currentTab;
@@ -16,14 +15,10 @@ local isOpen = false;
 
 local function readGuildBankSlot (tabContent, tabIndex, slotIndex)
   local link = GetGuildBankItemLink(tabIndex, slotIndex);
-
-  if (not link) then return end
-
-  local id = GetItemInfoInstant(link);
   local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
   local count = info[2];
 
-  tabContent:addItem(id, link, count);
+  tabContent:addItem(link, count);
 end
 
 local function readGuildBankTab (tabIndex)
