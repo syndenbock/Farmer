@@ -105,15 +105,9 @@ local function broadCastItem (itemId, itemLink, itemCount)
   end
 end
 
-local function broadCastItemInfo (itemId, itemInfo)
-  for itemLink, itemCount in pairs(itemInfo.links) do
-    broadCastItem(itemId, itemLink, itemCount);
-  end
-end
-
 local function broadcastItems (items)
-  for itemId, itemInfo in pairs(items) do
-    broadCastItemInfo(itemId, itemInfo);
+  for itemLink, itemInfo in pairs(items) do
+    broadCastItem(itemInfo.id, itemLink, itemInfo.count);
   end
 end
 
@@ -122,7 +116,7 @@ local function checkInventory ()
   local newItems = currentInventory:compare(inventory);
 
   currentInventory = inventory;
-  broadcastItems(newItems.storage);
+  broadcastItems(newItems:getItems());
 end
 
 --[[ Funneling the check so it executes on the next frame after
