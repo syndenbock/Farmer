@@ -3,6 +3,7 @@ local _, addon = ...;
 local strfind = _G.strfind;
 local strsub = _G.strsub;
 local strmatch = _G.strmatch;
+local gsub = _G.gsub;
 local tinsert = _G.tinsert;
 local floor = _G.floor;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
@@ -90,4 +91,13 @@ end
 
 function addon.extractItemString (itemLink)
   return strmatch(itemLink, 'item[%-?%d:]+') or itemLink;
+end
+
+function addon.extractNormalizedItemString (itemLink)
+  --[[ the 9th position contains the character level, which causes different
+       links after levelups and therefor has to be removed ]]
+  local itemString = addon.extractItemString(itemLink);
+  local pattern = '(item:.-:.-:.-:.-:.-:.-:.-:.-:)(.-)(:.*)';
+
+  return gsub(itemString, pattern, '%1%3', 1);
 end
