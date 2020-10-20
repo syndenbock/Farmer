@@ -4,7 +4,6 @@ local Items = addon.Items;
 local Storage = addon.Factory.Storage;
 
 local BANK_CONTAINER = _G.BANK_CONTAINER;
-local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
 local GetContainerNumSlots = _G.GetContainerNumSlots;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
@@ -19,7 +18,7 @@ local FIRST_SLOT = BANKBAG_CONTAINER;
 local LAST_SLOT = LAST_BANK_SLOT;
 
 local flaggedBags = {};
-local bagCache;
+local bagCache = {};
 
 local function flagBag (index)
   flaggedBags[index] = true;
