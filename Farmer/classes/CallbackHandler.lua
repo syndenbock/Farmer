@@ -43,7 +43,7 @@ function CallbackHandler:removeCallback (identifier, callback)
 
   for x = 1, #callbacks, 1 do
     if (callbacks[x] == callback) then
-      callbacks[x] = nil;
+      callbacks[x] = false;
       found = true;
     end
   end
