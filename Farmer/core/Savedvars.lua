@@ -62,9 +62,7 @@ end
 local function readGlobalsIntoObject (object, globalNames)
   local loaded = {};
 
-  for x = 1, #globalNames, 1 do
-    local globalName = globalNames[x];
-
+  for _, globalName in ipairs(globalNames) do
     loaded[globalName] = _G[globalName];
   end
 
@@ -90,8 +88,8 @@ local function migrateAddonVariables (addonName)
 end
 
 local function executeCallbackList (callbackList, ...)
-  for x = 1, #callbackList, 1 do
-    callbackList[x](...);
+  for _, callback in ipairs(callbackList) do
+    callback(...);
   end
 end
 

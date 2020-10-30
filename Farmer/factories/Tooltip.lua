@@ -19,8 +19,8 @@ local function createTooltipName ()
 end
 
 local function addTooltipLines (tooltip, lines)
-  for x = 1, #lines, 1 do
-    tooltip:AddLine(lines[x]);
+  for _, line in ipairs(lines) do
+    tooltip:AddLine(line);
   end
 end
 

@@ -1,10 +1,8 @@
 local addonName, addon = ...;
 
-local tinsert = _G.tinsert;
 local C_Timer = _G.C_Timer;
 
 local callbackHandler = addon.Class.CallbackHandler:new();
-
 local eventFrame = _G.CreateFrame('frame');
 
 eventFrame:SetScript('OnEvent', function (_, event, ...)
@@ -18,8 +16,8 @@ local function hookEvent (eventName, callback)
 end
 
 local function hookMultipleEvents (eventList, callback)
-  for x = 1, #eventList, 1 do
-    hookEvent(eventList[x], callback);
+  for _, event in ipairs(eventList) do
+    hookEvent(event, callback);
   end
 end
 
@@ -39,8 +37,8 @@ function addon.on (eventList, callback)
 end
 
 local function unhookMultipleEvents (eventList, callback)
-  for x = 1, #eventList, 1 do
-    unhookEvent(eventList[x], callback);
+  for _, event in ipairs(eventList) do
+    unhookEvent(event, callback);
   end
 end
 

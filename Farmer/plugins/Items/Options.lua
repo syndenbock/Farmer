@@ -49,8 +49,8 @@ local function parseItemIds (text)
 
   text = {string.split('\n', text)};
 
-  for x = 1, #text, 1 do
-    parseItemIdLine(list, text[x]);
+  for _, line in ipairs(text) do
+    parseItemIdLine(list, line);
   end
 
   return list;

@@ -85,8 +85,8 @@ local function readProfessionCategoryInfo (data, professionId, icon)
 
   if (not skillList) then return end
 
-  for x = 1, #skillList, 1 do
-    readSkillLineInfo(data, skillList[x], icon);
+  for _, skill in ipairs(skillList) do
+    readSkillLineInfo(data, skill, icon);
   end
 end
 

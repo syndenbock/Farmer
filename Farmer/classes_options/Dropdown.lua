@@ -25,9 +25,7 @@ local function generateDropdownInitializer (dropdown, options, width)
     info.minWidth = width;
     info.justifyH = 'CENTER';
 
-    for i = 1, #options do
-      local option = options[i];
-
+    for _, option in ipairs(options) do
       info.func = dropdown.SetValue;
       info.text = option.text;
       info.arg1 = option.value;

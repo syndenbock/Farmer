@@ -16,8 +16,8 @@ end
 local function printVersionMessage (lines)
   print('New in ' .. addonName .. ' version ' .. VERSION_TOC .. ':');
 
-  for x = 1, #lines, 1 do
-    print(lines[x]);
+  for _, line in ipairs(lines) do
+    print(line);
   end
 end
 

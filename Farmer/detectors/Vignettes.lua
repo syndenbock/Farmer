@@ -42,10 +42,8 @@ local function readVignette (guid)
 end
 
 local function scanVignettes ()
-  local list = GetVignettes();
-
-  for x = 1, #list, 1 do
-    readVignette(list[x]);
+  for _, guid in ipairs(GetVignettes()) do
+    readVignette(guid);
   end
 end
 

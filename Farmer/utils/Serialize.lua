@@ -12,9 +12,8 @@ function addon.serialize (...)
   local info = {};
   local dataString = '';
 
-  for x = 1, #data, 1 do
-    local fragment = tostring(data[x]);
-
+  for _, fragment in ipairs(data) do
+    fragment = tostring(fragment);
     table.insert(info, strlen(fragment));
     dataString = dataString .. fragment;
   end
@@ -32,8 +31,8 @@ function addon.deserialize (dataString)
   dataString = strsub(dataString, position + 1);
   info = {strsplit(',', info)};
 
-  for x = 1, #info, 1 do
-    local length = tonumber(info[x]);
+  for _, fragment in ipairs(info) do
+    local length = tonumber(fragment);
 
     table.insert(data, strsub(dataString, 1, length));
     dataString = strsub(dataString, length + 1);

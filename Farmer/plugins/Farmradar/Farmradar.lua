@@ -104,8 +104,8 @@ local function fixMinimapTaint ()
 
   local children = {Minimap:GetChildren()};
 
-  for x = 1, #children, 1 do
-    moveFrameToMinimapClusterIfProtected(children[x]);
+  for _, child in ipairs(children) do
+    moveFrameToMinimapClusterIfProtected(child);
   end
 
   return true;
@@ -174,8 +174,8 @@ local function hideFrame (frame, hook)
 end
 
 local function hideFrames (frames, hook)
-  for x = 1, #frames, 1 do
-    hideFrame(frames[x], hook);
+  for _, frame in ipairs(frames) do
+    hideFrame(frame, hook);
   end
 end
 
@@ -208,8 +208,8 @@ local function storeFrame (frame)
 end
 
 local function storeFrames (frames)
-  for x = 1, #frames, 1 do
-    storeFrame(frames[x]);
+  for _, frame in ipairs(frames) do
+    storeFrame(frame);
   end
 end
 
@@ -247,9 +247,7 @@ local function getMinimapChildrenToHide ()
   local children = {Minimap:GetChildren()};
   local list = {};
 
-  for x = 1, #children, 1 do
-    local child = children[x];
-
+  for _, child in ipairs(children) do
     if (shouldMinimapChildBeHidden(child)) then
       tinsert(list, child);
     end
@@ -267,8 +265,8 @@ local function setFrameIgnoreParentAlpha (frame, ignore)
 end
 
 local function setIgnoreParentAlpha (frames, ignore)
-  for x = 1, #frames, 1 do
-    setFrameIgnoreParentAlpha(frames[x], ignore);
+  for _, frame in ipairs(frames) do
+    setFrameIgnoreParentAlpha(frame, ignore);
   end
 end
 
@@ -287,9 +285,7 @@ local function updateMinimapChildren ()
   delayedExecute(0, function ()
     local children = getMinimapChildrenToHide();
 
-    for x = 1, #children, 1 do
-      local child = children[x];
-
+    for _, child in ipairs(children) do
       if (trackedFrames[child] == nil) then
         storeFrame(child);
       end
@@ -386,8 +382,8 @@ local function checkAddonTooltips ()
 
   local children = {Minimap:GetChildren()};
 
-  for x = 1, #children, 1 do
-    setFrameMouseEnabled(children[x], false);
+  for _, child in ipairs(children) do
+    setFrameMouseEnabled(child, false);
   end
 end
 

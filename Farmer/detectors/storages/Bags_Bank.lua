@@ -3,11 +3,12 @@ local _, addon = ...;
 local Items = addon.Items;
 local Storage = addon.Factory.Storage;
 
-local BANK_CONTAINER = _G.BANK_CONTAINER;
+local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
 local GetContainerNumSlots = _G.GetContainerNumSlots;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
+local BANK_CONTAINER = _G.BANK_CONTAINER;
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
 
 local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;

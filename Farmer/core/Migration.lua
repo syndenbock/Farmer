@@ -55,9 +55,7 @@ local function executeMigrationHandlers (variables)
   local lastVersion = getLastVersion(variables);
   local versionList = callbackHandler:getSortedIdentifiers();
 
-  for x = 1, #versionList, 1 do
-    local version = versionList[x];
-
+  for _, version in ipairs(versionList) do
     if (version >= lastVersion) then
       callbackHandler:call(version, variables, lastVersion);
     end

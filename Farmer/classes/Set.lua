@@ -39,8 +39,8 @@ function Set:addItem (item)
 end
 
 function Set:addItems (items)
-  for x = 1, #items, 1 do
-    self:addItem(items[x]);
+  for _, item in ipairs(items) do
+    self:addItem(item);
   end
 end
 
@@ -60,8 +60,8 @@ function Set:removeItem (item)
 end
 
 function Set:removeItems (items)
-  for x = 1, #items, 1 do
-    self:removeItem(items[x]);
+  for _, item in ipairs(items) do
+    self:removeItem(item);
   end
 end
 
@@ -71,10 +71,8 @@ function Set:clear ()
 end
 
 function Set:forEach (callback)
-  local items = self:getItems()
-
-  for x = 1, #items, 1 do
-    callback(items[x]);
+  for _, item in ipairs(self:getItems()) do
+    callback(item);
   end
 end
 

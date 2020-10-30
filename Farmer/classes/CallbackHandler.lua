@@ -41,8 +41,8 @@ function CallbackHandler:removeCallback (identifier, callback)
 
   local found = false;
 
-  for x = 1, #callbacks, 1 do
-    if (callbacks[x] == callback) then
+  for x, storedCallback in ipairs(callbacks) do
+    if (storedCallback == callback) then
       callbacks[x] = false;
       found = true;
     end
@@ -81,9 +81,7 @@ function CallbackHandler:call (identifier, ...)
     return false;
   end
 
-  for x = 1, #callbacks, 1 do
-    local callback = callbacks[x];
-
+  for _, callback in ipairs(callbacks) do
     if (callback) then
       callback(...);
     end

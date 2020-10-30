@@ -29,8 +29,8 @@ local function getCachedInventory ()
     normalized = true,
   });
 
-  for x = 1, #storageList, 1 do
-    addStorageContainerToInventory(inventory, storageList[x]);
+  for _, storage in ipairs(storageList) do
+    addStorageContainerToInventory(inventory, storage);
   end
 
   return inventory;
@@ -154,9 +154,9 @@ local function testPredefinedItems ()
     156631 -- Silas' Sphere of Transmutation
   };
 
-  for x = 1, #testItems, 1 do
-    testItem(testItems[x], 1);
-    testItem(testItems[x], 4);
+  for _, item in ipairs(testItems) do
+    testItem(item, 1);
+    testItem(item, 4);
   end
 end
 
