@@ -22,13 +22,14 @@ function addon.stringEndsWith (string, check)
 end
 
 function addon.stringJoin (stringList, joiner)
-  joiner = joiner or '';
   local result;
 
+  joiner = joiner or '';
+
+  --[[ use pairs instead of ipairs to not break on empty items ]]
   for _, fragment in pairs(stringList) do
-    if (fragment) then
-      result = result and result .. joiner .. fragment or fragment;
-    end
+    fragment = tostring(fragment);
+    result = (result and result .. joiner .. fragment) or fragment;
   end
 
   return result or '';
