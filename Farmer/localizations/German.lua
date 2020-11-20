@@ -14,6 +14,7 @@ L["ignore Honor"] = "Ignoriere Ehre"
 L["show currencies"] = "Zeige Währungen"
 
 -- Display
+L["always show names"] = "Zeige Namen immer an"
 L["center"] = "mittig"
 L["display time"] = "Anzeigedauer"
 L["don't display at mailboxes"] = "Keine Anzeige an Briefkästen"
@@ -30,12 +31,16 @@ L["None"] = "Keine"
 L["outline mode"] = "Textumrandung"
 L["reset position"] = "Position zurücksetzen"
 L["right"] = "rechts"
-L["always show names"] = "Zeige Namen immer an"
 L["text alignment"] = "Textausrichtung"
 L["Thick"] = "Breit"
 L["Thick Monochrome"] = "Breit Monochrom"
 L["Thin"] = "Dünn"
 L["up"] = "Nach oben"
+
+-- Experience
+L["Experience"] = "Erfahrung"
+L["minimum %"] = "Minimale %"
+L["show experience"] = "Zeige Erfahrungspunkte"
 
 -- Farm radar
 L["enable tooltips for default nodes"] = "Erlaube tooltips für spielinterne Icons"

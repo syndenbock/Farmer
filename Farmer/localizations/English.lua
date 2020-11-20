@@ -36,6 +36,11 @@ L["left"] = "left"
 L["center"] = "center"
 L["right"] = "right"
 
+-- Experience
+L["Experience"] = "Experience"
+L["show experience"] = "show experience"
+L["minimum %"] = "minimum %"
+
 -- Farm radar
 L["enable tooltips for default nodes"] = "enable tooltips for default nodes"
 L["Farm radar"] = "Farm radar"
