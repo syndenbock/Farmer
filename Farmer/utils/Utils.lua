@@ -76,22 +76,6 @@ function addon.transformFrameAnchorsToCenter (frame)
   frame:SetPoint(unpack(points));
 end
 
-function addon.printTable (table)
-  if (type(table) ~= 'table') then
-    print(table);
-    return;
-  end
-
-  if (not next(table)) then
-    print('table is empty');
-    return;
-  end
-
-  for i,v in pairs(table) do
-    print(i, ' - ', v);
-  end
-end
-
 function addon.secureCall (callback, ...)
   local success, message = pcall(callback, ...);
 
