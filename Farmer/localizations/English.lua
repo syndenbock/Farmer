@@ -13,33 +13,33 @@ L["ignore Honor"] = "ignore Honor"
 L["show currencies"] = "show currencies"
 
 -- Display
+L["always show names"] = "always show names"
+L["center"] = "center"
 L["display time"] = "display time"
 L["don't display at mailboxes"] = "don't display at mailboxes"
 L["don't display in arena"] = "don't display in arena"
 L["don't display on island expeditions"] = "don't display on island expeditions"
+L["down"] = "down"
 L["font size"] = "font size"
+L["grow direction"] = "grow direction"
+L["left"] = "left"
+L["line spacing"] = "line spacing"
 L["Monochrome"] = "Monochrome"
 L["move display"] = "move display"
 L["None"] = "None"
 L["outline mode"] = "outline mode"
 L["reset position"] = "reset position"
-L["always show names"] = "always show names"
+L["right"] = "right"
+L["text alignment"] = "text alignment"
 L["Thick"] = "Thick"
 L["Thick Monochrome"] = "Thick Monochrome"
 L["Thin"] = "Thin"
-L["line spacing"] = "line spacing"
-L["grow direction"] = "grow direction"
 L["up"] = "up"
-L["down"] = "down"
-L["text alignment"] = "text alignment"
-L["left"] = "left"
-L["center"] = "center"
-L["right"] = "right"
 
 -- Experience
 L["Experience"] = "Experience"
-L["show experience"] = "show experience"
 L["minimum %"] = "minimum %"
+L["show experience"] = "show experience"
 
 -- Farm radar
 L["enable tooltips for default nodes"] = "enable tooltips for default nodes"
@@ -68,8 +68,8 @@ L["show items based on rarity"] = "show items based on rarity"
 L["show total count for stackable items"] = "show total count for stackable items"
 
 -- Minimap
-L["Minimap"] = "Minimap"
 L["display vignettes that appear on the minimap"] = "display vignettes that appear on the minimap"
+L["Minimap"] = "Minimap"
 
 -- Misc
 L["enable fast autoloot"] = "enable fast autoloot"
