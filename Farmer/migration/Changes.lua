@@ -47,6 +47,13 @@ Migration.addMigration('3.2.3', function (variables, lastVersion)
   });
 end);
 
+Migration.addMigration('3.4.2', function ()
+  printVersionMessage({
+    '- Farmer can now display experience you gain.',
+    'You can enable the option and set a minimum threshold in the options panel.',
+  });
+end);
+
 addon.slash('version', function ()
   print(addonName .. ' version ' .. VERSION_TOC);
 end);
