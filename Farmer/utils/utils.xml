@@ -1,4 +1,5 @@
 <UI>
+  <script file="Debug.lua"></script>
   <script file="Keybindings.lua"></script>
   <script file="Serialize.lua"></script>
   <script file="SlashCommands.lua"></script>

@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 addon.L = setmetatable({}, {
   __index = function (_, key)
-    -- print(addonName, '- missing translation: ', key);
+    addon.Debug.print('missing translation: ', key);
     return key;
   end,
 });
