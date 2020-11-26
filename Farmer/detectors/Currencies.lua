@@ -107,10 +107,22 @@ end
 addon.on('PLAYER_LOGIN', fillCurrencyTable);
 
 -- amount passed by the event is always positive so we cannot use it
-addon.on('CURRENCY_DISPLAY_UPDATE', function (id, total)
-  if (not currencyTable or not id) then return end
+addon.funnel('CURRENCY_DISPLAY_UPDATE', function (paramCollection)
+  if (not currencyTable) then return end
 
-  handleCurrency(id, total);
+  local idMap = {};
+
+  for _, paramList in ipairs(paramCollection) do
+    local id, total = unpack(paramList);
+
+    if (id) then
+      idMap[id] = total;
+    end
+  end
+
+  for id, total in pairs(idMap) do
+    handleCurrency(id, total);
+  end
 end);
 
 --##############################################################################

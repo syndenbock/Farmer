@@ -1,6 +1,7 @@
 local addonName, addon = ...;
 
 local C_Timer = _G.C_Timer;
+local tinsert = _G.tinsert;
 
 local callbackHandler = addon.Class.CallbackHandler:new();
 local eventFrame = _G.CreateFrame('frame');
@@ -59,19 +60,19 @@ end
 //##############################################################################
 --]]
 local function generateFunnel (timeSpan, callback)
-  local flag = false;
+  local paramCollection;
   local handler = function ()
-    flag = false;
-    callback();
+    callback(paramCollection);
+    paramCollection = nil;
   end
 
-  local funnel = function ()
-    if (flag) then
-      return;
+  local funnel = function (...)
+    if (paramCollection == nil) then
+      paramCollection = {};
+      C_Timer.After(timeSpan, handler);
     end
 
-    flag = true;
-    C_Timer.After(timeSpan, handler);
+    tinsert(paramCollection, {...});
   end
 
   return funnel;
