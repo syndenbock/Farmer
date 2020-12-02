@@ -20,7 +20,7 @@ local function displayVignette (info, coords)
 end
 
 addon.listen('NEW_VIGNETTE', function (info, coords)
-  if (options.displayVignettes == true) then
+  if (options.displayVignettes == true and info.onMinimap) then
     displayVignette(info, coords);
   end
 end);
