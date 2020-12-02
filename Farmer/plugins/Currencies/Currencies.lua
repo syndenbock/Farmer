@@ -6,7 +6,8 @@ local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
 local checkHideOptions = addon.Print.checkHideOptions;
 
-local HONOR_ID = 1585;
+local ACCOUNT_HONOR_ID = 1585;
+local HONOR_ID = 1792;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Currency;
 
@@ -15,7 +16,8 @@ local function checkDisplayOptions (id)
     return false;
   end
 
-  if (options.ignoreHonor == true and id == HONOR_ID) then
+  if (options.ignoreHonor == true and
+      (id == ACCOUNT_HONOR_ID or id == HONOR_ID)) then
     return false;
   end
 
