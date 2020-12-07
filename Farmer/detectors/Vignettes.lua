@@ -27,6 +27,9 @@ local function readVignette (guid)
   if (vignetteCache:has(guid)) then return end
 
   local info = guid and currentMapId and GetVignetteInfo(guid);
+
+  if (not info) then return end
+
   local coords = GetVignettePosition(guid, currentMapId);
 
   if (not coords) then return end
