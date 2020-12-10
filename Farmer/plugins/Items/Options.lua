@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
 local strtrim = _G.strtrim;
+local strsplit = _G.strsplit;
 
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
@@ -47,7 +48,7 @@ end
 local function parseItemIds (text)
   local list = {};
 
-  text = {string.split('\n', text)};
+  text = {strsplit('\n', text)};
 
   for _, line in ipairs(text) do
     parseItemIdLine(list, line);
