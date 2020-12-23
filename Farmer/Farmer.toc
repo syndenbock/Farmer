@@ -4,7 +4,7 @@
 ## Author: syndenbock
 ## Notes: Shows information on all the stuff you loot
 ## Notes-deDe: Zeigt Infos über all das Zeug das du lootest
-## SavedVariablesPerCharacter: earningStamp
 ## SavedVariables: farmerOptions
+## SavedVariablesPerCharacter: farmerCharOptions
 
 Farmer.xml
