@@ -7,6 +7,9 @@ local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
 local transformFrameAnchorsToCenter = addon.transformFrameAnchorsToCenter;
 
+local ON_MOUSE_DOWN = 'OnMouseDown';
+local ON_MOUSE_UP = 'OnMouseUp';
+
 local ANCHOR_NONE = '';
 local ANCHOR_CENTER = 'CENTER';
 local ANCHOR_LEFT = 'LEFT';
@@ -148,23 +151,22 @@ function MessageFrame:StartMoving (fontString, callback)
 
   self.isMoving = true;
 
-  anchor:RegisterForDrag('LeftButton');
   anchor:EnableMouse(true);
   anchor:SetMovable(true);
 
-  anchor:SetScript('OnDragStart', function ()
+  anchor:SetScript(ON_MOUSE_DOWN, function ()
     if (anchor:IsMovable() == true) then
       anchor:StartMoving();
     end
   end);
 
-  anchor:SetScript('OnReceiveDrag', function ()
+  anchor:SetScript(ON_MOUSE_UP, function ()
     self.isMoving = false;
     self:StartFontStringAnimation(fontString);
     self:StopMoving();
 
     transformFrameAnchorsToCenter(anchor);
-    anchor:SetSize(2, 2);
+    anchor:SetSize(20, 20);
 
     if (callback) then
       callback();
@@ -179,8 +181,8 @@ function MessageFrame:StopMoving ()
   anchor:EnableMouse(false);
   anchor:SetMovable(false);
   anchor:StopMovingOrSizing();
-  anchor:SetScript('OnDragStart', nil);
-  anchor:SetScript('OnReceiveDrag', nil);
+  anchor:SetScript(ON_MOUSE_DOWN, nil);
+  anchor:SetScript(ON_MOUSE_UP, nil);
 end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
