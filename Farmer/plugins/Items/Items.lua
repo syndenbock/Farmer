@@ -174,6 +174,11 @@ end
 
 local function getConduitText (item)
   local info = GetConduitCollectionDataByVirtualID(item.id);
+
+  if (not info) then
+    return 'Conduit';
+  end
+
   local string = getConduitTypeString(info.conduitType);
 
   return _G['CONDUIT_TYPE_' .. strupper(string)] or string;
