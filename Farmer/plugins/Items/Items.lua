@@ -1,6 +1,15 @@
 local addonName, addon = ...;
 
+local strupper = _G.strupper;
+
+local GetItemInfo = _G.GetItemInfo;
 local GetDetailedItemLevelInfo = _G.GetDetailedItemLevelInfo;
+local C_Soulbinds = _G.C_Soulbinds;
+local IsItemConduitByItemInfo =
+    C_Soulbinds and _G.C_Soulbinds.IsItemConduitByItemInfo;
+local GetConduitCollectionDataByVirtualID =
+    C_Soulbinds and C_Soulbinds.GetConduitCollectionDataByVirtualID
+
 local LE_ITEM_CLASS_TRADEGOODS = _G.LE_ITEM_CLASS_TRADEGOODS;
 local LE_ITEM_CLASS_QUESTITEM = _G.LE_ITEM_CLASS_QUESTITEM;
 local LE_ITEM_CLASS_KEY = _G.LE_ITEM_CLASS_KEY;
@@ -153,6 +162,53 @@ local function handleArtifactRelic (item, count)
   end
 end
 
+local function getConduitTypeString (type)
+  for key, value in pairs(_G.Enum.SoulbindConduitType) do
+    if (value == type) then
+      return key;
+    end
+  end
+
+  error('invalid conduit type: ' .. type);
+end
+
+local function getConduitText (item)
+  local info = GetConduitCollectionDataByVirtualID(item.id);
+  local string = getConduitTypeString(info.conduitType);
+
+  return _G['CONDUIT_TYPE_' .. strupper(string)] or string;
+end
+
+local function displayConduit (item, count)
+  local itemLevel = GetDetailedItemLevelInfo(item.link);
+  local text = addon.stringJoin({itemLevel, getConduitText(item)}, ' ');
+
+  ItemPrint.displayEquipment(item, text, count, getRarityColor(item.rarity));
+end
+
+local function isConduit (item)
+  if (addon.isClassic()) then
+    return false;
+  end
+
+  local _, info = GetItemInfo(item.id);
+
+  if (not info) then
+    return false;
+  end
+
+  return IsItemConduitByItemInfo(info);
+end
+
+local function handleConduit (item, count)
+  if (isConduit(item)) then
+    displayConduit(item, count);
+    return true;
+  else
+    return false;
+  end
+end
+
 local function isContainer (item)
   return (item.classId == LE_ITEM_CLASS_CONTAINER);
 end
@@ -251,6 +307,7 @@ local function handleItem (item, count)
   if (handleCraftingReagent(item, count)) then return end
   if (handleQuestItem(item, count)) then return end
   if (handleArtifactRelic(item, count)) then return end
+  if (handleConduit(item, count)) then return end
   if (handleEquippable(item, count)) then return end
 
   displayUncategorizedItem(item, count);
