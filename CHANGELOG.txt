@@ -1,3 +1,7 @@
+  version 3.6
+- Added basic support for conduits
+- Added (hopefully) temporary workaround for radar incompatibility with ElvUI
+
   version 3.5
 - Added module for displaying gained experience
 - Small bug fixes
