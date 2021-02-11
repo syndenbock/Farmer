@@ -128,7 +128,6 @@ local function shouldHookBeApplied (frame)
           trackedFrames[frame].hidden);
 end
 
-
 local function hookFrameShow (frame)
   hooksecurefunc(frame, 'Show', function (self)
     if (not shouldHookBeApplied(self)) then return end
@@ -427,6 +426,12 @@ local function enableFarmMode ()
   currentMode = MODE_ENUM.ON;
 end
 
+local function hideMinimapBackdropIfNeeded ()
+  if (Minimap.backdrop and Minimap.backdrop.Center) then
+    Minimap.backdrop.Center:Hide();
+  end
+end
+
 local function disableFarmMode ()
   currentMode = MODE_ENUM.TOGGLING;
 
@@ -450,6 +455,8 @@ local function disableFarmMode ()
   setMinimapRotation(minimapDefaults.rotation);
 
   currentMode = MODE_ENUM.OFF;
+
+  hideMinimapBackdropIfNeeded();
 end
 
 local function toggleFarmMode ()
