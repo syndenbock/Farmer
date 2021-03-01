@@ -25,7 +25,7 @@ local function checkDisplayOptions (id)
 end
 
 local function shouldCurrencyBeDisplayed (info, amount)
-  return (amount >= 0 and
+  return (amount > 0 and
           checkDisplayOptions(info.id) and
           checkHideOptions());
 end
