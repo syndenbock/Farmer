@@ -93,35 +93,37 @@ local function packCurrencyInfo (id)
   };
 end
 
-local function yellCurrency (id, change)
-  addon.yell('CURRENCY_CHANGED', ImmutableMap(packCurrencyInfo(id)), change);
+local function yellCurrencyInfo (info, change)
+  addon.yell('CURRENCY_CHANGED', ImmutableMap(info), change);
 end
 
-local function handleCurrency (id, total)
-  local amount = total - (currencyTable[id] or 0);
+local function handleCurrency (id)
+  local info = packCurrencyInfo(id);
+  local amount = info.total - (currencyTable[id] or 0);
 
-  currencyTable[id] = total;
-  yellCurrency(id, amount);
+  currencyTable[id] = info.total;
+  yellCurrencyInfo(info, amount);
 end
 
 addon.on('PLAYER_LOGIN', fillCurrencyTable);
 
--- amount passed by the event is always positive so we cannot use it
+-- quantities passed by the event can be factorized or negative so they cannot
+-- be used
 addon.funnel('CURRENCY_DISPLAY_UPDATE', function (paramCollection)
   if (not currencyTable) then return end
 
   local idMap = {};
 
   for _, paramList in ipairs(paramCollection) do
-    local id, total = unpack(paramList);
+    local id = paramList[1];
 
     if (id) then
-      idMap[id] = total;
+      idMap[id] = true;
     end
   end
 
-  for id, total in pairs(idMap) do
-    handleCurrency(id, total);
+  for id in pairs(idMap) do
+    handleCurrency(id);
   end
 end);
 
@@ -130,5 +132,5 @@ end);
 --##############################################################################
 
 addon.share('tests').currency = function ()
-  yellCurrency(1755, 15357);
+  yellCurrencyInfo(packCurrencyInfo(1755), 15357);
 end
