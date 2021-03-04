@@ -31,7 +31,7 @@ local function slashHandler (input)
   local paramList = {strsplit(' ', input)}
   local command = tremove(paramList, 1)
 
-  command = strlower(command or 'default');
+  command = command or 'default';
   command = command == '' and 'default' or command;
 
   executeSlashCommand(command, unpack(paramList));
