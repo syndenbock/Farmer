@@ -1,6 +1,7 @@
 local addonName, addon = ...;
 
 local strupper = _G.strupper;
+local strmatch = _G.strmatch;
 
 local GetItemInfo = _G.GetItemInfo;
 local GetDetailedItemLevelInfo = _G.GetDetailedItemLevelInfo;
@@ -25,8 +26,12 @@ local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 local INVTYPE_TABARD = 'INVTYPE_TABARD';
 local INVTYPE_CLOAK = 'INVTYPE_CLOAK';
 
+local CONTAINER_PATTERN = _G.gsub(_G.gsub(
+    _G.CONTAINER_SLOTS, '%%s', '%.+'),'%%d', '(%%d+)');
+
 local Print = addon.Print;
 local ItemPrint = addon.ItemPrint;
+local TooltipScanner = addon.TooltipScanner;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Items;
@@ -214,14 +219,32 @@ local function handleConduit (item, count)
   end
 end
 
+local function getContainerSize (item)
+  local lines = TooltipScanner.getLinesByItemLink(item.link);
+
+  for _, line in ipairs(lines) do
+    local match = strmatch(line, CONTAINER_PATTERN);
+
+    if (match ~= nil) then
+      return tonumber(match);
+    end
+  end
+end
+
+local function displayContainer (item, count)
+  local size = getContainerSize(item);
+  local text = addon.stringJoin({size, item.subType}, ' ');
+
+  ItemPrint.displayEquipment(item, text, count, getRarityColor(item.rarity));
+end
+
 local function isContainer (item)
   return (item.classId == LE_ITEM_CLASS_CONTAINER);
 end
 
 local function handleContainer (item, count)
   if (isContainer(item)) then
-    ItemPrint.displayEquipment(item, item.subType, count,
-        getRarityColor(item.rarity));
+    displayContainer(item, count);
     return true;
   else
     return false;
