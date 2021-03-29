@@ -1,10 +1,10 @@
 local addonName, addon = ...;
 
 local unpack = _G.unpack;
-local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local IsActiveBattlefieldArena = _G.IsActiveBattlefieldArena;
 
 local farmerFrame = addon.frame;
+local getIcon = addon.getIcon;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {},
 }).vars.farmerOptions.Core;
@@ -46,35 +46,23 @@ function Print.checkHideOptions ()
   return true;
 end
 
-function Print.printMessage (message, colors)
+local function printMessage (message, colors)
   colors = colors or {1, 1, 1};
 
   farmerFrame:AddMessage(message, unpack(colors, 1, 3));
 end
 
-function Print.printItem (texture, name, count, text, colors, funcOptions)
-  count = count or 1;
-  funcOptions = funcOptions or {};
-
-  local icon = addon.getIcon(texture);
-  local itemName;
-  local itemCount;
-  local message;
-
-  if (not funcOptions.minimumCount or count > funcOptions.minimumCount) then
-    itemCount = 'x' .. BreakUpLargeNumbers(count);
-  end
-
-  if (options.itemNames == true or
-      funcOptions.forceName == true) then
-    itemName = name;
-  end
-
-  message = addon.stringJoin({itemName, itemCount, text}, ' ');
+local function printItemMessage (item, message, colors)
+  local icon = getIcon(item.texture);
 
   if (message == '') then
-    message = name;
+    message = item.name;
+  elseif (options.itemNames == true)  then
+    message = item.name .. ' ' .. message;
   end
 
-  Print.printMessage(icon .. ' ' .. message, colors);
+  printMessage(icon .. ' ' .. message, colors);
 end
+
+Print.printMessage = printMessage;
+Print.printItemMessage = printItemMessage;

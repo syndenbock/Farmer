@@ -3,6 +3,8 @@ local addonName, addon = ...;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetItemCount = _G.GetItemCount;
 
+local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
+
 local ItemPrint = {};
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
@@ -10,93 +12,72 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
 
 addon.ItemPrint = ItemPrint;
 
-local printItem = addon.Print.printItem;
+local printItemMessage = addon.Print.printItemMessage;
+local stringJoin = addon.stringJoin;
+
+ItemPrint.COLORS = {
+  reagent = {0, 0.8, 0.8},
+  quest = {1, 0.8, 0, 1},
+};
+
+local function getRarityColor (rarity)
+  local colors = ITEM_QUALITY_COLORS[rarity];
+
+  return {
+    colors.r,
+    colors.g,
+    colors.b,
+  };
+end
 
 local function getFormattedItemCount (id, includeBank)
   return BreakUpLargeNumbers(GetItemCount(id, includeBank, false));
 end
 
-local function printStackableItemTotal (id, texture, name, count, colors)
-  local totalCount = getFormattedItemCount(id, true);
-  local text = addon.stringJoin({'(', totalCount, ')'}, '');
-
-  printItem(texture, name, count, text, colors);
-end
-
-local function printStackableItemBags (id, texture, name, count, colors)
-  local bagCount = getFormattedItemCount(id, false);
-  local text = addon.stringJoin({'(', bagCount, ')'}, '');
-
-  printItem(texture, name, count, text, colors);
-end
-
-local function printStackableItemTotalAndBags (id, texture, name, count, colors)
-  local bagCount = getFormattedItemCount(id, false);
-  local totalCount = getFormattedItemCount(id, true);
-  local text = addon.stringJoin({'(', bagCount, '/', totalCount, ')'}, '');
-
-  printItem(texture, name, count, text, colors);
-end
-
-local function printItemIncludingTotal (id, texture, name, count, colors)
-  if (options.showBagCount == true) then
-    printStackableItemTotalAndBags(id, texture, name, count, colors);
-  else
-    printStackableItemTotal(id, texture, name, count, colors);
+local function formatItemInfo (data)
+  if (data.info == nil) then return
+    nil;
   end
+
+  return '[' .. data.info .. ']';
 end
 
-local function printItemExcludingTotal (id, texture, name, count, colors)
+local function formatAdditionalCounts (item)
+  local bagCount = nil;
+  local totalCount = nil;
+
   if (options.showBagCount == true) then
-    printStackableItemBags(id, texture, name, count, colors);
-  else
-    printItem(texture, name, count, nil, colors);
+    bagCount = getFormattedItemCount(item.link, false);
   end
-end
 
-local function printStackableItem (id, texture, name, count, colors)
   if (options.showTotalCount == true) then
-    printItemIncludingTotal(id, texture, name, count, colors);
+    totalCount = getFormattedItemCount(item.link, true);
+  end
+
+  if (bagCount ~= nil or totalCount ~= nil) then
+    return '(' .. stringJoin({bagCount, totalCount}, '/') .. ')';
   else
-    printItemExcludingTotal(id, texture, name, count, colors);
+    return nil;
   end
 end
 
-local function printEquip (texture, name, text, count, colors)
-  if (text and text ~= '') then
-    text = '[' .. text .. ']';
-  end
-
-  printItem(texture, name, count, text, colors, {minimumCount = 1});
-end
-
-local function displayNonStackableItem (item, count, colors)
-  printItem(item.texture, item.name, count, nil, colors,
-      {forceName = true, minimumCount = 1});
-end
-
-local function displayStackableItem (item, count, colors)
-  printStackableItem(item.link, item.texture, item.name, count, colors);
-end
-
-local function displayItem (item, count, colors)
-  if (item.stackSize > 1) then
-    displayStackableItem(item, count, colors);
+local function formatItemCount (item, data)
+  if (item.stackSize > 1 or data.count > 1) then
+    return 'x' .. BreakUpLargeNumbers(data.count);
   else
-    displayNonStackableItem(item, count, colors);
+    return nil;
   end
 end
 
-ItemPrint.displayItem = displayItem;
+local function printItem (item, data)
+  local text = stringJoin({
+    formatItemInfo(data),
+    formatItemCount(item, data),
+    formatAdditionalCounts(item),
+  }, ' ');
 
-function ItemPrint.displayEquipment (item, text, count, colors)
-  printEquip(item.texture, item.name, text, count, colors);
+  printItemMessage(item, text, data.color or getRarityColor(item.rarity));
 end
 
-function ItemPrint.displayCraftingReagent (item, count)
-  displayItem(item, count, {0, 0.8, 0.8});
-end
-
-function ItemPrint.displayQuestItem (item, count)
-  displayItem(item, count, {1, 0.8, 0, 1});
-end
+ItemPrint.printItem = printItem;
+ItemPrint.getRarityColor = getRarityColor;
