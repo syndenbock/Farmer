@@ -43,6 +43,10 @@ local function formatItemInfo (data)
 end
 
 local function formatAdditionalCounts (item)
+  if (item.stackSize <= 1) then
+    return nil;
+  end
+
   local bagCount = nil;
   local totalCount = nil;
 
