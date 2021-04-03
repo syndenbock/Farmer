@@ -5,12 +5,17 @@ local Storage = addon.Factory.Storage;
 
 local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
+local ContainerIDToInventoryID = _G.ContainerIDToInventoryID;
+local GetInventoryItemID = _G.GetInventoryItemID;
+local GetInventoryItemLink = _G.GetInventoryItemLink;
 local GetContainerNumSlots = _G.GetContainerNumSlots;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
 local BANK_CONTAINER = _G.BANK_CONTAINER;
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
 
+local UNIT_PLAYER = 'player';
+local FIRST_BAG_SLOT = 1;
 local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;
 local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
 -- for some reason there is no constant for bank bag container
@@ -39,11 +44,32 @@ local function readBagSlot (bagContent, bagIndex, slotIndex)
   bagContent:addItem(id, link, count);
 end
 
-local function updateBagCache (bagIndex)
+local function isContainerSlot (bagIndex)
+  return FIRST_BAG_SLOT <= bagIndex and LAST_BANK_SLOT >= bagIndex;
+end
+
+local function readContainerSlot (bagContent, bagIndex)
+  if (not isContainerSlot(bagIndex)) then return end
+
+  local inventoryIndex = ContainerIDToInventoryID(bagIndex);
+  local id = GetInventoryItemID(UNIT_PLAYER, inventoryIndex);
+
+  if (not id) then return end
+
+  bagContent:addItem(id, GetInventoryItemLink(UNIT_PLAYER, inventoryIndex), 1);
+end
+
+local function getContainerSlotCount (bagIndex)
   -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
-  local slotCount = bagIndex == BANKBAG_CONTAINER and NUM_BANKBAGSLOTS or
-      GetContainerNumSlots(bagIndex);
+  return (bagIndex == BANKBAG_CONTAINER and NUM_BANKBAGSLOTS) or
+    GetContainerNumSlots(bagIndex);
+end
+
+local function updateBagCache (bagIndex)
+  local slotCount = getContainerSlotCount(bagIndex);
   local bagContent = Storage:new();
+
+  readContainerSlot(bagContent, bagIndex);
 
   for slotIndex = 1, slotCount, 1 do
     readBagSlot(bagContent, bagIndex, slotIndex);
@@ -92,7 +118,7 @@ local function addEventListeners ()
     end
   end);
 
-  addon.on('BAG_UPDATE', flagBag);
+  addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
 
   addon.on('PLAYERBANKSLOTS_CHANGED', function (slot)
     local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
