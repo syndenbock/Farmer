@@ -31,7 +31,7 @@ local function readVoidStorageSlot (voidStorage, tabIndex, slotIndex)
   local combinedIndex = getCombinedIndex(tabIndex, slotIndex);
   local link = GetVoidItemHyperlinkString(combinedIndex);
 
-  voidStorage:setItem(slotIndex, id, link, 1);
+  voidStorage:setSlot(slotIndex, id, link, 1);
 end
 
 local function readVoidStorageTab (voidStorage, tabIndex)

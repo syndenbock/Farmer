@@ -44,7 +44,7 @@ local function readBagSlot (bagContent, bagIndex, slotIndex)
   local count = info[2];
   local link = info[7];
 
-  bagContent:setItem(slotIndex, id, link, count);
+  bagContent:setSlot(slotIndex, id, link, count);
 end
 
 local function isContainerSlot (bagIndex)
@@ -62,7 +62,7 @@ local function readContainerSlot (bagContent, bagIndex)
     return;
   end
 
-  bagContent:setItem(0, id, GetInventoryItemLink(UNIT_PLAYER, inventoryIndex), 1);
+  bagContent:setSlot(0, id, GetInventoryItemLink(UNIT_PLAYER, inventoryIndex), 1);
 end
 
 local function getContainerSlotCount (bagIndex)

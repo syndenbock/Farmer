@@ -26,7 +26,7 @@ local function readGuildBankSlot (tabContent, tabIndex, slotIndex)
   local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
   local count = info[2];
 
-  tabContent:setItem(slotIndex, id, link, count);
+  tabContent:setSlot(slotIndex, id, link, count);
 end
 
 local function readGuildBankTab (tabIndex)

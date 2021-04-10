@@ -1,10 +1,8 @@
 local _, addon = ...;
 
-local Factory = addon.share('Factory');
-
 local Storage = {};
 
-Factory.Storage = Storage;
+addon.share('Factory').Storage = Storage;
 
 Storage.__index = Storage;
 
@@ -32,29 +30,41 @@ function Storage:getChanges ()
   return self.changes;
 end
 
-function Storage:setItem (slot, id, link, count)
-  local previousContent = self.items[slot];
-
-  if (previousContent == nil) then
-    self:addChange(id, link, count);
-  else
-    if (previousContent.id ~= id) then
-      self:addChange(previousContent.id, previousContent.link,
-          -previousContent.count);
-      self:addChange(id, link, count);
-    elseif (previousContent.count ~= count) then
-      self:addChange(id, link, count - previousContent.count);
-    end
-  end
-
+function Storage:setSlot (slot, id, link, count)
+  self:applySlotChange(slot, id, link, count);
   self.items[slot] = {
     id = id,
     count = count,
     link = link,
-  }
+  };
+end
+
+function Storage:applySlotChange (slot, id, link, count)
+  local previousContent = self.items[slot];
+
+  if (previousContent == nil) then
+    self:addChange(id, link, count);
+    return;
+  end
+
+  if (previousContent.id ~= id) then
+    self:addChange(previousContent.id, previousContent.link,
+        -previousContent.count);
+    self:addChange(id, link, count);
+    return;
+  end
+
+  if (previousContent.count ~= count) then
+    self:addChange(id, link, count - previousContent.count);
+  end
 end
 
 function Storage:clearSlot (slot)
+  self:applySlotClearChange(slot);
+  self.items[slot] = nil;
+end
+
+function Storage:applySlotClearChange (slot)
   local previousContent = self.items[slot];
 
   if (previousContent == nil) then
@@ -63,7 +73,6 @@ function Storage:clearSlot (slot)
 
   self:addChange(previousContent.id, previousContent.link,
       -previousContent.count);
-  self.items[slot] = nil;
 end
 
 function Storage:addChange (id, link, count)
@@ -75,13 +84,14 @@ function Storage:addChange (id, link, count)
       count = count,
       link = link,
     };
-  else
-    local newCount = changes.count + count;
+    return;
+  end
 
-    if (newCount == 0) then
-      self.changes[link] = nil;
-    else
-      changes.count = changes.count + count;
-    end
+  local newCount = changes.count + count;
+
+  if (newCount == 0) then
+    self.changes[link] = nil;
+  else
+    changes.count = changes.count + count;
   end
 end

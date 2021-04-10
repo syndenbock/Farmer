@@ -34,7 +34,7 @@ local function updateEquipmentSlot (slot)
     return;
   end
 
-  currentEquipment:setItem(slot, id, link, 1);
+  currentEquipment:setSlot(slot, id, link, 1);
 end
 
 local function initEquipment ()
