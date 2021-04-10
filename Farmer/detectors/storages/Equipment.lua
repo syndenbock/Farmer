@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local Storage = addon.Factory.SlotStorage;
+local Storage = addon.Factory.Storage;
 local Items = addon.Items;
 
 local GetInventoryItemID = _G.GetInventoryItemID;

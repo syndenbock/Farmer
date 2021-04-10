@@ -1,6 +1,5 @@
 <UI>
   <script file="Maps.lua"/>
-  <script file="SlotStorage.lua"/>
-  <!-- <script file="Storage.lua"/> -->
+  <script file="Storage.lua"/>
   <script file="Tooltip.lua"/>
 </UI>

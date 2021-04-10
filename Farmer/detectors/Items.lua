@@ -7,7 +7,7 @@ local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
 local Item = _G.Item;
 
-local Storage = addon.Factory.SlotStorage;
+local Storage = addon.Factory.Storage;
 local ImmutableMap = addon.Factory.ImmutableMap;
 
 local Items = {};
