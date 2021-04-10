@@ -2,7 +2,7 @@ local _, addon = ...;
 
 if (addon.isClassic()) then return end
 
-local Storage = addon.Factory.Storage;
+local Storage = addon.Factory.SlotStorage;
 local Items = addon.Items;
 
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
@@ -20,7 +20,10 @@ end
 local function readVoidStorageSlot (voidStorage, tabIndex, slotIndex)
   local id = GetVoidItemInfo(tabIndex, slotIndex);
 
-  if (not id) then return end
+  if (not id) then
+    voidStorage:clearSlot(slotIndex);
+    return;
+  end
 
   --[[ For some reason, one function requires tabIndex and slotIndex
        and a related function requires slotIndex as if there was only
@@ -28,7 +31,7 @@ local function readVoidStorageSlot (voidStorage, tabIndex, slotIndex)
   local combinedIndex = getCombinedIndex(tabIndex, slotIndex);
   local link = GetVoidItemHyperlinkString(combinedIndex);
 
-  voidStorage:addItem(id, link, 1);
+  voidStorage:setItem(slotIndex, id, link, 1);
 end
 
 local function readVoidStorageTab (voidStorage, tabIndex)
@@ -38,13 +41,11 @@ local function readVoidStorageTab (voidStorage, tabIndex)
 end
 
 local function readVoidStorage ()
-  local voidStorage = Storage:new();
+  storage = storage or Storage:new();
 
   for tabIndex = 1, NUM_VOIDSTORAGE_TABS, 1 do
-    readVoidStorageTab(voidStorage, tabIndex);
+    readVoidStorageTab(storage, tabIndex);
   end
-
-  storage = voidStorage;
 end
 
 addon.on('VOID_STORAGE_OPEN', function ()
@@ -60,7 +61,7 @@ addon.on({'VOID_STORAGE_UPDATE', 'VOID_STORAGE_CONTENTS_UPDATE',
   readVoidStorage();
 
   if (isInit) then
-    Items.updateCurrentInventory();
+    storage:clearChanges();
   end
 end);
 

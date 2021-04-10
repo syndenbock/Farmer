@@ -1,7 +1,7 @@
 local _, addon = ...;
 
 local Items = addon.Items;
-local Storage = addon.Factory.Storage;
+local Storage = addon.Factory.SlotStorage;
 
 local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
@@ -35,13 +35,16 @@ local function readBagSlot (bagContent, bagIndex, slotIndex)
          nil if data is not ready --]]
   local id = GetContainerItemID(bagIndex, slotIndex);
 
-  if (not id) then return end
+  if (not id) then
+    bagContent:clearSlot(slotIndex);
+    return;
+  end
 
   local info = {GetContainerItemInfo(bagIndex, slotIndex)};
   local count = info[2];
   local link = info[7];
 
-  bagContent:addItem(id, link, count);
+  bagContent:setItem(slotIndex, id, link, count);
 end
 
 local function isContainerSlot (bagIndex)
@@ -54,9 +57,12 @@ local function readContainerSlot (bagContent, bagIndex)
   local inventoryIndex = ContainerIDToInventoryID(bagIndex);
   local id = GetInventoryItemID(UNIT_PLAYER, inventoryIndex);
 
-  if (not id) then return end
+  if (not id) then
+    bagContent:clearSlot(0);
+    return;
+  end
 
-  bagContent:addItem(id, GetInventoryItemLink(UNIT_PLAYER, inventoryIndex), 1);
+  bagContent:setItem(0, id, GetInventoryItemLink(UNIT_PLAYER, inventoryIndex), 1);
 end
 
 local function getContainerSlotCount (bagIndex)
@@ -67,7 +73,12 @@ end
 
 local function updateBagCache (bagIndex)
   local slotCount = getContainerSlotCount(bagIndex);
-  local bagContent = Storage:new();
+  local bagContent = bagCache[bagIndex];
+
+  if (bagContent == nil) then
+    bagContent = Storage:new();
+    bagCache[bagIndex] = bagContent;
+  end
 
   readContainerSlot(bagContent, bagIndex);
 
@@ -75,7 +86,11 @@ local function updateBagCache (bagIndex)
     readBagSlot(bagContent, bagIndex, slotIndex);
   end
 
-  bagCache[bagIndex] = bagContent;
+  return bagContent;
+end
+
+local function initBagCache (bagIndex)
+  updateBagCache(bagIndex):clearChanges();
 end
 
 local function updateFlaggedBags ()
@@ -91,22 +106,18 @@ local function initInventory ()
   flaggedBags = {};
 
   for x = FIRST_SLOT, LAST_SLOT, 1 do
-    updateBagCache(x);
+    initBagCache(x);
   end
-
-  Items.updateCurrentInventory();
 end
 
 local function addEventListeners ()
   addon.on('BANKFRAME_OPENED', function ()
-    updateBagCache(BANKBAG_CONTAINER);
-    updateBagCache(BANK_CONTAINER);
+    initBagCache(BANKBAG_CONTAINER);
+    initBagCache(BANK_CONTAINER);
 
     for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
-      updateBagCache(x);
+      initBagCache(x);
     end
-
-    Items.updateCurrentInventory();
   end);
 
   addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()

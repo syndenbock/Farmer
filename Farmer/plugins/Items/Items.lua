@@ -78,7 +78,11 @@ local function checkName (itemInfo)
   return (itemInfo.name ~= nil);
 end
 
-local function checkDisplayOptions (itemInfo)
+local function checkDisplayOptions (itemInfo, count)
+  if (count < 0) then
+    return false;
+  end
+
   if (not Print.checkHideOptions()) then
     return false;
   end
@@ -362,7 +366,7 @@ local function handleItem (item, count)
 end
 
 local function checkItem (itemInfo, count)
-  if (checkDisplayOptions(itemInfo)) then
+  if (checkDisplayOptions(itemInfo, count)) then
     handleItem(itemInfo, count);
   end
 end

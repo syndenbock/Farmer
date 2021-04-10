@@ -4,7 +4,7 @@ local tostring = _G.tostring;
 local tinsert = _G.tinsert;
 
 local Debug = {};
-local enabled = false;
+local enabled = true;
 
 addon.Debug = Debug;
 

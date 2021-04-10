@@ -2,7 +2,7 @@ local _, addon = ...;
 
 if (addon.isClassic()) then return end
 
-local Storage = addon.Factory.Storage;
+local Storage = addon.Factory.SlotStorage;
 local Items = addon.Items;
 
 local GetCurrentGuildBankTab = _G.GetCurrentGuildBankTab;
@@ -17,13 +17,16 @@ local isOpen = false;
 local function readGuildBankSlot (tabContent, tabIndex, slotIndex)
   local link = GetGuildBankItemLink(tabIndex, slotIndex);
 
-  if (not link) then return end
+  if (not link) then
+    tabContent:clearSlot(slotIndex);
+    return;
+  end
 
   local id = GetItemInfoInstant(link);
   local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
   local count = info[2];
 
-  tabContent:addItem(id, link, count);
+  tabContent:setItem(slotIndex, id, link, count);
 end
 
 local function readGuildBankTab (tabIndex)
@@ -33,38 +36,37 @@ local function readGuildBankTab (tabIndex)
        Again, I have no clue why they did not put a global constant in the code
        for this.]]
   local MAX_GUILDBANK_SLOTS_PER_TAB = _G.MAX_GUILDBANK_SLOTS_PER_TAB or 98;
-  local tabContent = Storage:new();
 
   for slotIndex = 1, MAX_GUILDBANK_SLOTS_PER_TAB, 1 do
-    readGuildBankSlot(tabContent, tabIndex, slotIndex);
+    readGuildBankSlot(storage, tabIndex, slotIndex);
   end
 
-  return tabContent;
+  return storage;
 end
 
-local function readCurrentTab ()
-  local tabIndex = GetCurrentGuildBankTab();
+local function readCurrentGuildBankTab ()
+  local index = GetCurrentGuildBankTab();
 
-  storage = readGuildBankTab(tabIndex);
+  readGuildBankTab(index);
 
-  return tabIndex;
+  return index;
 end
 
 addon.on('GUILDBANKFRAME_OPENED', function ()
   isOpen = true;
-  currentTab = readCurrentTab();
-  Items.updateCurrentInventory();
+  storage = Storage:new();
 end);
 
 addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
   if (isOpen == false) then return end
 
-  local tabIndex = readCurrentTab();
+  local tabIndex = readCurrentGuildBankTab();
 
-  --[[ Guild bank content was not updated, but tab was switched. ]]
+  --[[ Guild bank content was not updated, but tab was switched.
+    This includes handling the guild bank getting opened ]]
   if (tabIndex ~= currentTab) then
+    storage:clearChanges();
     currentTab = tabIndex;
-    Items.updateCurrentInventory();
   end
 end);
 

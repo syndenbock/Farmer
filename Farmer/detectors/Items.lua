@@ -7,45 +7,50 @@ local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
 local Item = _G.Item;
 
-local Storage = addon.Factory.Storage;
+local Storage = addon.Factory.SlotStorage;
 local ImmutableMap = addon.Factory.ImmutableMap;
 
 local Items = {};
 local storageList = {};
-local currentInventory = {};
 
 addon.Items = Items;
-
-local function addStorageContainerToInventory (inventory, storage)
-  if (type(storage) == 'function') then
-    storage = storage();
-  end
-
-  inventory:addMultipleStorages(storage);
-end
-
-local function getCachedInventory ()
-  local inventory = Storage:new({
-    normalized = true,
-  });
-
-  for _, storage in ipairs(storageList) do
-    addStorageContainerToInventory(inventory, storage);
-  end
-
-  return inventory;
-end
 
 function Items.addStorage (storage)
   tinsert(storageList, storage);
 end
 
-function Items.updateCurrentInventory ()
-  currentInventory = getCachedInventory();
+local function addContainerChanges (changes, container)
+  local containerChanges = container:getChanges();
+
+  container:clearChanges();
+
+  for _, info in pairs(containerChanges) do
+    changes:addChange(info.id, info.link, info.count);
+  end
 end
 
-function Items.addItemToCurrentInventory (id, link, count)
-  currentInventory:addItem(id, link, count);
+local function addMultipleChanges (changes, storage)
+  for _, container in pairs(storage) do
+    addContainerChanges(changes, container);
+  end
+end
+
+local function addStorageChanges (changes, storage)
+  if (type(storage) == 'function') then
+    storage = storage();
+  end
+
+  addMultipleChanges(changes, storage);
+end
+
+local function getInventoryChanges ()
+  local changes = Storage:new();
+
+  for _, storage in ipairs(storageList) do
+    addStorageChanges(changes, storage);
+  end
+
+  return changes:getChanges();
 end
 
 local function packItemInfo (itemId, itemLink)
@@ -97,32 +102,22 @@ local function fetchItem (id, link, count)
   end);
 end
 
-local function broadCastItem (itemId, itemLink, itemCount)
-  if (IsItemDataCachedByID(itemId)) then
-    yellItem(itemId, itemLink, itemCount);
+local function broadCastItem (itemInfo)
+  if (IsItemDataCachedByID(itemInfo.id)) then
+    yellItem(itemInfo.id, itemInfo.link, itemInfo.count);
   else
-    fetchItem(itemId, itemLink, itemCount);
-  end
-end
-
-local function broadCastItemInfo (itemId, itemInfo)
-  for itemLink, itemCount in pairs(itemInfo.links) do
-    broadCastItem(itemId, itemLink, itemCount);
+    fetchItem(itemInfo.id, itemInfo.link, itemInfo.count);
   end
 end
 
 local function broadcastItems (items)
-  for itemId, itemInfo in pairs(items) do
-    broadCastItemInfo(itemId, itemInfo);
+  for _, itemInfo in pairs(items) do
+    broadCastItem(itemInfo);
   end
 end
 
 local function checkInventory ()
-  local inventory = getCachedInventory();
-  local newItems = currentInventory:compare(inventory);
-
-  currentInventory = inventory;
-  broadcastItems(newItems.storage);
+  broadcastItems(getInventoryChanges());
 end
 
 --[[ Funneling the check so it executes on the next frame after
