@@ -23,8 +23,8 @@ local BANKBAG_CONTAINER = -4;
 local FIRST_SLOT = BANKBAG_CONTAINER;
 local LAST_SLOT = LAST_BANK_SLOT;
 
-local flaggedBags = {};
 local bagCache = {};
+local flaggedBags = {};
 
 local function flagBag (index)
   flaggedBags[index] = true;
@@ -71,14 +71,20 @@ local function getContainerSlotCount (bagIndex)
     GetContainerNumSlots(bagIndex);
 end
 
-local function updateBagCache (bagIndex)
-  local slotCount = getContainerSlotCount(bagIndex);
+local function initBagContent (bagIndex)
   local bagContent = bagCache[bagIndex];
 
   if (bagContent == nil) then
     bagContent = Storage:new();
     bagCache[bagIndex] = bagContent;
   end
+
+  return bagContent;
+end
+
+local function updateBagCache (bagIndex)
+  local slotCount = getContainerSlotCount(bagIndex);
+  local bagContent = initBagContent(bagIndex);
 
   readContainerSlot(bagContent, bagIndex);
 
@@ -102,11 +108,12 @@ local function updateFlaggedBags ()
 end
 
 local function initInventory ()
-  bagCache = {};
-  flaggedBags = {};
-
   for x = FIRST_SLOT, LAST_SLOT, 1 do
     initBagCache(x);
+  end
+
+  if (addon.isClassic()) then
+    initBagCache(REAGENTBANK_CONTAINER);
   end
 end
 
@@ -141,13 +148,11 @@ local function addEventListeners ()
     end
   end);
 
-  addon.on('BAG_UPDATE_DELAYED', function ()
-    updateFlaggedBags();
-  end);
+  addon.on('BAG_UPDATE_DELAYED', updateFlaggedBags);
 
   if (addon.isClassic() == false) then
-    addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function ()
-      flagBag(REAGENTBANK_CONTAINER);
+    addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (slot)
+      readBagSlot(bagCache[REAGENTBANK_CONTAINER], REAGENTBANK_CONTAINER, slot);
     end);
   end
 end
