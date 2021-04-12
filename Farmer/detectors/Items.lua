@@ -7,6 +7,7 @@ local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
 local Item = _G.Item;
 
+local fetchItemLink = addon.fetchItemLink;
 local Storage = addon.Factory.Storage;
 local ImmutableMap = addon.Factory.ImmutableMap;
 
@@ -83,30 +84,11 @@ local function yellItem (itemId, itemLink, itemCount)
       itemCount);
 end
 
-local function fetchItem (id, link, count)
-  --[[ Apparently you can actually have non-existent items in your bags ]]
-  if (not DoesItemExistByID(id)) then
-    return yellItem(id, link, count);
-  end
-
-  local item = Item:CreateFromItemID(id);
-
-  item:ContinueOnItemLoad(function()
-    --[[ The original link does contain enough information for a call to
-         GetItemInfo which then returns a complete itemLink ]]
-    --[[ Some items like mythic keystones and caged pets don't get a new link
-         by GetItemInfo ]]
-    link = select(2, GetItemInfo(link)) or link;
-
-    yellItem(id, link, count);
-  end);
-end
-
 local function broadCastItem (itemInfo)
   if (IsItemDataCachedByID(itemInfo.id)) then
     yellItem(itemInfo.id, itemInfo.link, itemInfo.count);
   else
-    fetchItem(itemInfo.id, itemInfo.link, itemInfo.count);
+    fetchItemLink(itemInfo.id, itemInfo.link, yellItem, itemInfo.count);
   end
 end
 
