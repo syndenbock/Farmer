@@ -234,9 +234,9 @@ local function getContainerSize (item)
   local lines = TooltipScanner.getLinesByItemLink(item.link);
 
   for _, line in ipairs(lines) do
-    local match = strmatch(line, CONTAINER_PATTERN);
+    local success, match = pcall(strmatch, line, CONTAINER_PATTERN);
 
-    if (match ~= nil) then
+    if (success == true and match ~= nil) then
       return tonumber(match);
     end
   end
