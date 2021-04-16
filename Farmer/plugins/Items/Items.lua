@@ -22,7 +22,6 @@ local LE_ITEM_CLASS_WEAPON = _G.LE_ITEM_CLASS_WEAPON;
 local LE_ITEM_CLASS_ARMOR = _G.LE_ITEM_CLASS_ARMOR;
 local LE_ITEM_ARMOR_GENERIC = _G.LE_ITEM_ARMOR_GENERIC;
 local LE_ITEM_ARMOR_SHIELD = _G.LE_ITEM_ARMOR_SHIELD;
-local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 local INVTYPE_TABARD = 'INVTYPE_TABARD';
 local INVTYPE_CLOAK = 'INVTYPE_CLOAK';
 
@@ -110,14 +109,6 @@ local function checkDisplayOptions (itemInfo)
   end
 
   return false;
-end
-
-local function getRarityColor (rarity)
-  return {
-    ITEM_QUALITY_COLORS[rarity].r,
-    ITEM_QUALITY_COLORS[rarity].g,
-    ITEM_QUALITY_COLORS[rarity].b,
-  };
 end
 
 local function isCraftingReagent (item)
