@@ -3,10 +3,9 @@ local addonName, addon = ...;
 local tinsert = _G.tinsert;
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
-local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
-local Item = _G.Item;
 
+local extractNormalizedItemString = addon.extractNormalizedItemString;
 local fetchItemLink = addon.fetchItemLink;
 local Storage = addon.Factory.Storage;
 local ImmutableMap = addon.Factory.ImmutableMap;
@@ -21,13 +20,13 @@ function Items.addStorage (storage)
 end
 
 local function addContainerChanges (changes, container)
-  local containerChanges = container:getChanges();
+  for id, info in pairs(container:getChanges()) do
+    for link, count in pairs(info.links) do
+      changes:addChange(id, extractNormalizedItemString(link) or link, count);
+    end
+  end
 
   container:clearChanges();
-
-  for _, info in pairs(containerChanges) do
-    changes:addChange(info.id, info.link, info.count);
-  end
 end
 
 local function addMultipleChanges (changes, storage)
@@ -84,22 +83,28 @@ local function yellItem (itemId, itemLink, itemCount)
       itemCount);
 end
 
-local function broadCastItem (itemInfo)
-  if (IsItemDataCachedByID(itemInfo.id)) then
-    yellItem(itemInfo.id, itemInfo.link, itemInfo.count);
+local function broadCastItem (id, link, count)
+  if (IsItemDataCachedByID(id)) then
+    yellItem(id, link, count);
   else
-    fetchItemLink(itemInfo.id, itemInfo.link, yellItem, itemInfo.count);
+    fetchItemLink(id, link, yellItem, count);
   end
 end
 
-local function broadcastItems (items)
-  for _, itemInfo in pairs(items) do
-    broadCastItem(itemInfo);
+local function broadCastItemInfo (id, info)
+  for link, count in pairs(info.links) do
+    if (count ~= 0) then
+      broadCastItem(id, link, count);
+    end
   end
 end
 
 local function checkInventory ()
-  broadcastItems(getInventoryChanges());
+  for id, info in pairs(getInventoryChanges()) do
+    if (info.count ~= 0) then
+      broadCastItemInfo(id, info);
+    end
+  end
 end
 
 --[[ Funneling the check so it executes on the next frame after

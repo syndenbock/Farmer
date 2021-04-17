@@ -117,58 +117,53 @@ local function initInventory ()
   end
 end
 
-local function addEventListeners ()
-  addon.on('BANKFRAME_OPENED', function ()
-    initBagCache(BANKBAG_CONTAINER);
-    initBagCache(BANK_CONTAINER);
+addon.on('PLAYER_LOGIN', initInventory);
 
-    for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
-      initBagCache(x);
-    end
-  end);
+addon.on('BANKFRAME_OPENED', function ()
+  initBagCache(BANKBAG_CONTAINER);
+  initBagCache(BANK_CONTAINER);
 
-  addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
-    bagCache[BANKBAG_CONTAINER] = nil;
-    bagCache[BANK_CONTAINER] = nil;
-
-    for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
-      bagCache[x] = nil;
-    end
-  end);
-
-  addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
-
-  addon.on('PLAYERBANKSLOTS_CHANGED', function (slot)
-    local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
-    local bagSlot, bagContent;
-
-    if (slot <= maxSlot) then
-      bagSlot = BANK_CONTAINER;
-    else
-      slot = slot - maxSlot;
-      bagSlot = BANKBAG_CONTAINER;
-    end
-
-    bagContent = bagCache[bagSlot];
-
-    if (bagContent ~= nil) then
-      readBagSlot(bagContent, bagSlot, slot)
-    end
-  end);
-
-  addon.on('BAG_UPDATE_DELAYED', updateFlaggedBags);
-
-  if (not addon.isClassic()) then
-    addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (slot)
-      readBagSlot(bagCache[REAGENTBANK_CONTAINER], REAGENTBANK_CONTAINER, slot);
-    end);
+  for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
+    initBagCache(x);
   end
+end);
+
+addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
+  bagCache[BANKBAG_CONTAINER] = nil;
+  bagCache[BANK_CONTAINER] = nil;
+
+  for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
+    bagCache[x] = nil;
+  end
+end);
+
+addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
+
+addon.on('PLAYERBANKSLOTS_CHANGED', function (slot)
+  local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
+  local bagSlot, bagContent;
+
+  if (slot <= maxSlot) then
+    bagSlot = BANK_CONTAINER;
+  else
+    slot = slot - maxSlot;
+    bagSlot = BANKBAG_CONTAINER;
+  end
+
+  bagContent = bagCache[bagSlot];
+
+  if (bagContent ~= nil) then
+    readBagSlot(bagContent, bagSlot, slot)
+  end
+end);
+
+if (not addon.isClassic()) then
+  addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (slot)
+    readBagSlot(bagCache[REAGENTBANK_CONTAINER], REAGENTBANK_CONTAINER, slot);
+  end);
 end
 
-addon.on('PLAYER_LOGIN', function ()
-  initInventory();
-  addEventListeners();
-end);
+addon.on('BAG_UPDATE_DELAYED', updateFlaggedBags);
 
 Items.addStorage(function ()
   return bagCache;

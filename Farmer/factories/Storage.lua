@@ -71,7 +71,7 @@ function Storage:applySlotChange (slot, id, link, count)
     return;
   end
 
-  if (previousContent.id ~= id) then
+  if (previousContent.link ~= link) then
     self:addChange(previousContent.id, previousContent.link,
         -previousContent.count);
     self:addChange(id, link, count);
@@ -100,22 +100,20 @@ function Storage:applySlotClearChange (slot)
 end
 
 function Storage:addChange (id, link, count)
-  local changes = self.changes[link];
+  local changes = self.changes[id];
 
   if (changes == nil) then
-    self.changes[link] = {
-      id = id,
+    self.changes[id] = {
       count = count,
-      link = link,
+      links = {
+        [link] = count,
+      },
     };
     return;
   end
 
-  local newCount = changes.count + count;
+  local links = changes.links;
 
-  if (newCount == 0) then
-    self.changes[link] = nil;
-  else
-    changes.count = changes.count + count;
-  end
+  changes.count = changes.count + count;
+  links[link] = (links[link] or 0) + count;
 end
