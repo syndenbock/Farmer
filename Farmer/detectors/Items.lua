@@ -19,35 +19,52 @@ function Items.addStorage (storage)
   tinsert(storageList, storage);
 end
 
-local function addContainerChanges (changes, container)
-  for id, info in pairs(container:getChanges()) do
-    for link, count in pairs(info.links) do
+local function readStorage (storage)
+  if (type(storage) == 'function') then
+    return storage();
+  end
+
+  return storage;
+end
+
+local function readItemChanges (changes, id, itemInfo)
+  --[[In theory, if an item gets moved to another bag while another item with
+      the same id gets looted into the original bag of the item, this will
+      cause the already owned item to be displayed instead of the new one.
+      In reality, that case is extremely rare and the game will propably send
+      two BAG_UPDATE_DELAYED events for that anyways, so we can use this to
+      gain performance]]
+  if (itemInfo.count == 0) then
+    return;
+  end
+
+  for link, count in pairs(itemInfo.links) do
+    if (count ~= 0) then
       changes:addChange(id, extractNormalizedItemString(link) or link, count);
     end
+  end
+end
+
+local function readContainerChanges (changes, container)
+  for id, itemInfo in pairs(container:getChanges()) do
+    readItemChanges(changes, id, itemInfo);
   end
 
   container:clearChanges();
 end
 
-local function addMultipleChanges (changes, storage)
-  for _, container in pairs(storage) do
-    addContainerChanges(changes, container);
-  end
-end
 
-local function addStorageChanges (changes, storage)
-  if (type(storage) == 'function') then
-    storage = storage();
+local function readStorageChanges (changes, storage)
+  for _, container in pairs(readStorage(storage)) do
+    readContainerChanges(changes, container);
   end
-
-  addMultipleChanges(changes, storage);
 end
 
 local function getInventoryChanges ()
   local changes = Storage:new();
 
   for _, storage in ipairs(storageList) do
-    addStorageChanges(changes, storage);
+    readStorageChanges(changes, storage);
   end
 
   return changes:getChanges();
