@@ -1,101 +1,109 @@
 local _, addon = ...;
 
-local Factory = addon.share('Factory');
-
 local Storage = {};
 
-Factory.Storage = Storage;
+addon.share('Factory').Storage = Storage;
 
 Storage.__index = Storage;
 
-function Storage:new (options)
+function Storage:new ()
   local this = {};
 
   setmetatable(this, Storage);
 
-  if (options) then
-    this.normalized = options.normalized;
-  end
-
-  this.storage = {};
+  this.items = {};
+  this.changes = {};
 
   return this;
 end
 
-function Storage:createItem (itemId, itemLink, itemCount)
-  self.storage[itemId] = {
-    count = itemCount,
-    links = {
-      [itemLink] = itemCount,
-    },
+function Storage:clear ()
+  self.items = {};
+  self.changes = {};
+end
+
+function Storage:clearChanges ()
+  self.changes = {};
+end
+
+function Storage:getChanges ()
+  return self.changes;
+end
+
+function Storage:setSlot (slot, id, link, count)
+  self:applySlotChange(slot, id, link, count);
+  self.items[slot] = {
+    id = id,
+    count = count,
+    link = link,
   };
 end
 
-function Storage:updateItem (itemId, itemLink, itemCount)
-  local itemInfo = self.storage[itemId];
-  local links = itemInfo.links;
+function Storage:applySlotChange (slot, id, link, count)
+  local previousContent = self.items[slot];
 
-  itemInfo.count = itemInfo.count + itemCount;
-  links[itemLink] = (links[itemLink] or 0) + itemCount;
-end
-
-function Storage:addItem (itemId, itemLink, itemCount)
-  -- This is the main inventory handling function and gets called a lot.
-  -- Therefor, performance has priority over code shortage.
-  local itemInfo = self.storage[itemId];
-
-  if (self.normalized) then
-    itemLink = addon.extractNormalizedItemString(itemLink) or itemLink;
+  if (previousContent == nil) then
+    self:addChange(id, link, count);
+    return;
   end
 
-  if (not itemInfo) then
-    self:createItem(itemId, itemLink, itemCount);
-  else
-    self:updateItem(itemId, itemLink, itemCount);
+  if (previousContent.link ~= link) then
+    self:addChange(previousContent.id, previousContent.link,
+        -previousContent.count);
+    self:addChange(id, link, count);
+    return;
+  end
+
+  if (previousContent.count ~= count) then
+    self:addChange(id, link, count - previousContent.count);
   end
 end
 
-function Storage:addItemInfo (itemId, itemInfo)
-  for itemLink, itemCount in pairs(itemInfo.links) do
-    self:addItem(itemId, itemLink, itemCount);
+function Storage:clearSlot (slot)
+  self:applySlotClearChange(slot);
+  self.items[slot] = nil;
+end
+
+function Storage:applySlotClearChange (slot)
+  local previousContent = self.items[slot];
+
+  if (previousContent == nil) then
+    return;
+  end
+
+  self:addChange(previousContent.id, previousContent.link,
+      -previousContent.count);
+end
+
+function Storage:addChange (id, link, count)
+  local changes = self.changes[id];
+
+  if (changes == nil) then
+    self.changes[id] = {
+      count = count,
+      links = {
+        [link] = count,
+      },
+    };
+    return;
+  end
+
+  local links = changes.links;
+
+  changes.count = changes.count + count;
+  links[link] = (links[link] or 0) + count;
+end
+
+function Storage:printContents ()
+  for slot, info in pairs(self.items) do
+    print(slot, info.link, info.count);
   end
 end
 
-function Storage:addStorage (updateStorage)
-  for itemId, itemInfo in pairs(updateStorage.storage) do
-    self:addItemInfo(itemId, itemInfo);
-  end
-end
-
-function Storage:addMultipleStorages (storageMap)
-  for _, storage in pairs(storageMap) do
-    self:addStorage(storage);
-  end
-end
-
-function Storage:compare (compareStorage)
-  local thisStorage = self.storage;
-  local new = Storage:new();
-
-  for itemId, itemInfo in pairs(compareStorage.storage) do
-    local thisItemInfo = thisStorage[itemId];
-
-    if (not thisItemInfo) then
-      for itemLink, itemCount in pairs(itemInfo.links) do
-        new:addItem(itemId, itemLink, itemCount);
-      end
-    elseif (itemInfo.count > thisItemInfo.count) then
-      local thisItemLinks = thisItemInfo.links;
-
-      for itemLink, itemCount in pairs(itemInfo.links) do
-        local thisItemCount = thisItemLinks[itemLink] or 0;
-
-        if (itemCount > thisItemCount) then
-          new:addItem(itemId, itemLink, itemCount - thisItemCount);
-        end
-      end
+function Storage:printChanges ()
+  for _, info in pairs (self.changes) do
+    for link, count in pairs(info.links) do
+      print(link, count);
     end
   end
-
-  return new;
 end

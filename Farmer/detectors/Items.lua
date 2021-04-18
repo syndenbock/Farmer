@@ -3,49 +3,76 @@ local addonName, addon = ...;
 local tinsert = _G.tinsert;
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
-local DoesItemExistByID = C_Item.DoesItemExistByID;
 local GetItemInfo = _G.GetItemInfo;
-local Item = _G.Item;
 
+local extractNormalizedItemString = addon.extractNormalizedItemString;
+local fetchItemLink = addon.fetchItemLink;
 local Storage = addon.Factory.Storage;
 local ImmutableMap = addon.Factory.ImmutableMap;
 
 local Items = {};
 local storageList = {};
-local currentInventory = {};
 
 addon.Items = Items;
-
-local function addStorageContainerToInventory (inventory, storage)
-  if (type(storage) == 'function') then
-    storage = storage();
-  end
-
-  inventory:addMultipleStorages(storage);
-end
-
-local function getCachedInventory ()
-  local inventory = Storage:new({
-    normalized = true,
-  });
-
-  for _, storage in ipairs(storageList) do
-    addStorageContainerToInventory(inventory, storage);
-  end
-
-  return inventory;
-end
 
 function Items.addStorage (storage)
   tinsert(storageList, storage);
 end
 
-function Items.updateCurrentInventory ()
-  currentInventory = getCachedInventory();
+local function readStorage (storage)
+  if (type(storage) == 'function') then
+    return storage();
+  end
+
+  return storage;
 end
 
-function Items.addItemToCurrentInventory (id, link, count)
-  currentInventory:addItem(id, link, count);
+local function readItemChanges (changes, id, itemInfo)
+  --[[In theory, if an item gets moved to another bag while another item with
+      the same id gets looted into the original bag of the item, this will
+      cause the already owned item to be displayed instead of the new one.
+      In reality, that case is extremely rare and the game will propably send
+      two BAG_UPDATE_DELAYED events for that anyways, so we can use this to
+      gain performance]]
+  if (itemInfo.count == 0) then
+    return;
+  end
+
+  for link, count in pairs(itemInfo.links) do
+    if (count ~= 0) then
+      changes:addChange(id, extractNormalizedItemString(link) or link, count);
+    end
+  end
+end
+
+local function readContainerChanges (changes, container)
+  for id, itemInfo in pairs(container:getChanges()) do
+    readItemChanges(changes, id, itemInfo);
+  end
+
+  container:clearChanges();
+end
+
+local function readStorageChanges (changes, storage)
+  local containers = readStorage(storage);
+
+  if (containers == nil) then
+    return;
+  end
+
+  for _, container in pairs(containers) do
+    readContainerChanges(changes, container);
+  end
+end
+
+local function getInventoryChanges ()
+  local changes = Storage:new();
+
+  for _, storage in ipairs(storageList) do
+    readStorageChanges(changes, storage);
+  end
+
+  return changes:getChanges();
 end
 
 local function packItemInfo (itemId, itemLink)
@@ -78,51 +105,28 @@ local function yellItem (itemId, itemLink, itemCount)
       itemCount);
 end
 
-local function fetchItem (id, link, count)
-  --[[ Apparently you can actually have non-existent items in your bags ]]
-  if (not DoesItemExistByID(id)) then
-    return yellItem(id, link, count);
-  end
-
-  local item = Item:CreateFromItemID(id);
-
-  item:ContinueOnItemLoad(function()
-    --[[ The original link does contain enough information for a call to
-         GetItemInfo which then returns a complete itemLink ]]
-    --[[ Some items like mythic keystones and caged pets don't get a new link
-         by GetItemInfo ]]
-    link = select(2, GetItemInfo(link)) or link;
-
+local function broadCastItem (id, link, count)
+  if (IsItemDataCachedByID(id)) then
     yellItem(id, link, count);
-  end);
-end
-
-local function broadCastItem (itemId, itemLink, itemCount)
-  if (IsItemDataCachedByID(itemId)) then
-    yellItem(itemId, itemLink, itemCount);
   else
-    fetchItem(itemId, itemLink, itemCount);
+    fetchItemLink(id, link, yellItem, count);
   end
 end
 
-local function broadCastItemInfo (itemId, itemInfo)
-  for itemLink, itemCount in pairs(itemInfo.links) do
-    broadCastItem(itemId, itemLink, itemCount);
-  end
-end
-
-local function broadcastItems (items)
-  for itemId, itemInfo in pairs(items) do
-    broadCastItemInfo(itemId, itemInfo);
+local function broadCastItemInfo (id, info)
+  for link, count in pairs(info.links) do
+    if (count ~= 0) then
+      broadCastItem(id, link, count);
+    end
   end
 end
 
 local function checkInventory ()
-  local inventory = getCachedInventory();
-  local newItems = currentInventory:compare(inventory);
-
-  currentInventory = inventory;
-  broadcastItems(newItems.storage);
+  for id, info in pairs(getInventoryChanges()) do
+    if (info.count ~= 0) then
+      broadCastItemInfo(id, info);
+    end
+  end
 end
 
 --[[ Funneling the check so it executes on the next frame after
