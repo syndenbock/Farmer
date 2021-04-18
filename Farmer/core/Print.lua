@@ -9,11 +9,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {},
 }).vars.farmerOptions.Core;
 
-local Print = {};
 local mailIsOpen = false;
-
-addon.Print = Print;
-
 addon.on('MAIL_SHOW', function ()
   mailIsOpen = true;
 end);
@@ -24,7 +20,7 @@ addon.on({'MAIL_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
   mailIsOpen = false;
 end);
 
-function Print.checkHideOptions ()
+local function checkHideOptions ()
   if (options.hideAtMailbox == true and
       mailIsOpen) then
     return false;
@@ -52,17 +48,12 @@ local function printMessage (message, colors)
   farmerFrame:AddMessage(message, unpack(colors, 1, 3));
 end
 
-local function printItemMessage (item, message, colors)
-  local icon = getIcon(item.texture);
-
-  if (message == '') then
-    message = item.name;
-  elseif (options.itemNames == true)  then
-    message = item.name .. ' ' .. message;
-  end
-
-  printMessage(icon .. ' ' .. message, colors);
+local function printIconMessage (texture, message, colors)
+  printMessage(getIcon(texture) .. ' ' .. message, colors);
 end
 
-Print.printMessage = printMessage;
-Print.printItemMessage = printItemMessage;
+addon.Print = {
+  checkHideOptions = checkHideOptions,
+  printMessage = printMessage;
+  printIconMessage = printIconMessage;
+};

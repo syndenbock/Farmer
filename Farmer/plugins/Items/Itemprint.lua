@@ -7,12 +7,12 @@ local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
 local ItemPrint = {};
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.Items;
+local addonOptions = addon.SavedVariablesHandler(addonName, 'farmerOptions')
+    .vars.farmerOptions.Items;
 
 addon.ItemPrint = ItemPrint;
 
-local printItemMessage = addon.Print.printItemMessage;
+local printIconMessage = addon.Print.printIconMessage;
 local stringJoin = addon.stringJoin;
 
 ItemPrint.COLORS = {
@@ -50,11 +50,11 @@ local function formatAdditionalCounts (item)
   local bagCount = nil;
   local totalCount = nil;
 
-  if (options.showBagCount == true) then
+  if (addonOptions.showBagCount == true) then
     bagCount = getFormattedItemCount(item.link, false);
   end
 
-  if (options.showTotalCount == true) then
+  if (addonOptions.showTotalCount == true) then
     totalCount = getFormattedItemCount(item.link, true);
   end
 
@@ -73,14 +73,23 @@ local function formatItemCount (item, data)
   end
 end
 
-local function printItem (item, data)
+local function printItem (item, data, options)
   local text = stringJoin({
     formatItemInfo(data),
     formatItemCount(item, data),
     formatAdditionalCounts(item),
   }, ' ');
 
-  printItemMessage(item, text, data.color or getRarityColor(item.rarity));
+  options = options or {};
+
+  if (text == '' or
+      options.displayName == true or
+      addonOptions.itemNames ==  true) then
+    text = item.name .. ' ' .. text;
+  end
+
+  printIconMessage(item.texture, text,
+      data.color or getRarityColor(item.rarity), options);
 end
 
 ItemPrint.printItem = printItem;

@@ -4,8 +4,9 @@ if (addon.isClassic()) then return end
 
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
+local stringJoin = addon.stringJoin;
 local checkHideOptions = addon.Print.checkHideOptions;
-local printItemMessage = addon.Print.printItemMessage;
+local printIconMessage = addon.Print.printIconMessage;
 
 local ACCOUNT_HONOR_ID = 1585;
 local HONOR_ID = 1792;
@@ -35,13 +36,10 @@ local function displayCurrency (info, amount)
   -- warfronts show hidden currencies without icons
   if (not info.name or not info.icon) then return end
 
-  local text = 'x' .. amount .. ' ' ..
-      '(' .. BreakUpLargeNumbers(info.total) .. ')';
+  local text = stringJoin({info.name, ' x' .. amount, ' ', '(',
+      BreakUpLargeNumbers(info.total), ')'}, '');
 
-  printItemMessage({
-    texture = info.icon,
-    name = info.name,
-  },  text, {1, 0.9, 0, 1});
+  printIconMessage(info.icon, text, {1, 0.9, 0, 1});
 end
 
 addon.listen('CURRENCY_CHANGED', function (info, amount)

@@ -141,6 +141,8 @@ local function handleQuestItem (item, count)
     printItem(item, {
       count = count,
       color = COLORS.quest,
+    }, {
+      displayName = true,
     });
     return true;
   else
