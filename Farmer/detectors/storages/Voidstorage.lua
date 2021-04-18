@@ -5,23 +5,31 @@ if (addon.isClassic()) then return end
 local Storage = addon.Factory.Storage;
 local Items = addon.Items;
 
+local IsVoidStorageReady = _G.IsVoidStorageReady;
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
 local GetVoidItemInfo = _G.GetVoidItemInfo;
 
 local NUM_VOIDSTORAGE_TABS = 2;
 local NUM_VOIDSTORAGE_SLOTS = 80;
-local storage;
-local isOpen = false;
+local storageTabs = nil;
+
+local function initStorageTabs ()
+  storageTabs = {};
+
+  for tabIndex = 1, NUM_VOIDSTORAGE_TABS, 1 do
+    storageTabs[tabIndex] = Storage:new();
+  end
+end
 
 local function getCombinedIndex (tabIndex, slotIndex)
   return (tabIndex - 1) * NUM_VOIDSTORAGE_SLOTS + slotIndex;
 end
 
-local function readVoidStorageSlot (voidStorage, tabIndex, slotIndex)
+local function readVoidStorageSlot (storage, tabIndex, slotIndex)
   local id = GetVoidItemInfo(tabIndex, slotIndex);
 
   if (not id) then
-    voidStorage:clearSlot(slotIndex);
+    storage:clearSlot(slotIndex);
     return;
   end
 
@@ -31,45 +39,39 @@ local function readVoidStorageSlot (voidStorage, tabIndex, slotIndex)
   local combinedIndex = getCombinedIndex(tabIndex, slotIndex);
   local link = GetVoidItemHyperlinkString(combinedIndex);
 
-  voidStorage:setSlot(slotIndex, id, link, 1);
+  storage:setSlot(slotIndex, id, link, 1);
 end
 
-local function readVoidStorageTab (voidStorage, tabIndex)
+local function readVoidStorageTab (tabIndex)
+  local storage = storageTabs[tabIndex];
+
   for slotIndex = 1, NUM_VOIDSTORAGE_SLOTS, 1 do
-    readVoidStorageSlot(voidStorage, tabIndex, slotIndex);
+    readVoidStorageSlot(storage, tabIndex, slotIndex);
   end
 end
 
 local function readVoidStorage ()
-  storage = storage or Storage:new();
-
   for tabIndex = 1, NUM_VOIDSTORAGE_TABS, 1 do
-    readVoidStorageTab(storage, tabIndex);
+    readVoidStorageTab(tabIndex);
   end
 end
 
-addon.on('VOID_STORAGE_OPEN', function ()
-  isOpen = true;
-end);
-
-addon.on({'VOID_STORAGE_UPDATE', 'VOID_STORAGE_CONTENTS_UPDATE',
-    'VOID_TRANSFER_DONE'}, function ()
-  if (isOpen == false) then return end
-
-  local isInit = (storage == nil);
-
-  readVoidStorage();
-
-  if (isInit) then
+local function clearVoidStorageChanges ()
+  for _, storage in pairs(storageTabs) do
     storage:clearChanges();
   end
-end);
+end
 
-addon.on({'VOID_STORAGE_CLOSE', 'PLAYER_ENTERING_WORLD'}, function ()
-  isOpen = false;
-  storage = nil;
-end);
+local function initVoidStorage ()
+  initStorageTabs();
+  readVoidStorage();
+  clearVoidStorageChanges();
+end
+
+addon.on('VOID_STORAGE_OPEN', initVoidStorage);
+addon.on({'VOID_STORAGE_CONTENTS_UPDATE', 'VOID_TRANSFER_DONE'},
+    readVoidStorage);
 
 Items.addStorage(function ()
-  return {storage};
+  return storageTabs;
 end);

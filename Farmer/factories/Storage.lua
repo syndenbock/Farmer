@@ -93,3 +93,17 @@ function Storage:addChange (id, link, count)
   changes.count = changes.count + count;
   links[link] = (links[link] or 0) + count;
 end
+
+function Storage:printContents ()
+  for slot, info in pairs(self.items) do
+    print(slot, info.link, info.count);
+  end
+end
+
+function Storage:printChanges ()
+  for _, info in pairs (self.changes) do
+    for link, count in pairs(info.links) do
+      print(link, count);
+    end
+  end
+end

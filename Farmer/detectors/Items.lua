@@ -53,9 +53,14 @@ local function readContainerChanges (changes, container)
   container:clearChanges();
 end
 
-
 local function readStorageChanges (changes, storage)
-  for _, container in pairs(readStorage(storage)) do
+  local containers = readStorage(storage);
+
+  if (containers == nil) then
+    return;
+  end
+
+  for _, container in pairs(containers) do
     readContainerChanges(changes, container);
   end
 end
