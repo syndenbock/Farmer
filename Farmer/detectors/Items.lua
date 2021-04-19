@@ -155,7 +155,8 @@ local function testPredefinedItems ()
     6975, -- Whirlwind Axe
     4322, -- Enchanter's Cowl
     13521, -- Recipe: Flask of Supreme Power
-    156631 -- Silas' Sphere of Transmutation
+    156631, -- Silas' Sphere of Transmutation
+    71636, -- Monstrous Egg
   };
 
   for _, item in ipairs(testItems) do

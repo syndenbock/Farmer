@@ -30,6 +30,7 @@ local CONTAINER_PATTERN = _G.gsub(_G.gsub(
 
 local Print = addon.Print;
 local printItem = addon.ItemPrint.printItem;
+local printItemWithName = addon.ItemPrint.printItemWithName;
 local COLORS = addon.ItemPrint.COLORS;
 local TooltipScanner = addon.TooltipScanner;
 
@@ -138,11 +139,9 @@ end
 
 local function handleQuestItem (item, count)
   if (isQuestItem(item)) then
-    printItem(item, {
+    printItemWithName(item, {
       count = count,
       color = COLORS.quest,
-    }, {
-      displayName = true,
     });
     return true;
   else

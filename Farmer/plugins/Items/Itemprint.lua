@@ -73,24 +73,31 @@ local function formatItemCount (item, data)
   end
 end
 
-local function printItem (item, data, options)
+local function printItemDynamic (item, data, forceName)
   local text = stringJoin({
     formatItemInfo(data),
     formatItemCount(item, data),
     formatAdditionalCounts(item),
   }, ' ');
 
-  options = options or {};
-
   if (text == '' or
-      options.displayName == true or
+      forceName == true or
       addonOptions.itemNames ==  true) then
     text = item.name .. ' ' .. text;
   end
 
   printIconMessage(item.texture, text,
-      data.color or getRarityColor(item.rarity), options);
+      data.color or getRarityColor(item.rarity));
+end
+
+local function printItemWithName (item, data)
+  printItemDynamic(item, data, true);
+end
+
+local function printItem (item, data)
+  printItemDynamic(item, data, false);
 end
 
 ItemPrint.printItem = printItem;
+ItemPrint.printItemWithName = printItemWithName;
 ItemPrint.getRarityColor = getRarityColor;
