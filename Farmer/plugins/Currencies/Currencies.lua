@@ -10,15 +10,17 @@ local printIconMessage = addon.Print.printIconMessage;
 
 local ACCOUNT_HONOR_ID = 1585;
 local HONOR_ID = 1792;
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.Currency;
+local ADDON_OPTIONS = addon.SavedVariablesHandler(addonName, 'farmerOptions')
+  .vars.farmerOptions;
+local CORE_OPTIONS = ADDON_OPTIONS.Core;
+local CURRENCY_OPTIONS = ADDON_OPTIONS.Currency;
 
 local function checkDisplayOptions (id)
-  if (options.displayCurrencies == false) then
+  if (CURRENCY_OPTIONS.displayCurrencies == false) then
     return false;
   end
 
-  if (options.ignoreHonor == true and
+  if (CURRENCY_OPTIONS.ignoreHonor == true and
       (id == ACCOUNT_HONOR_ID or id == HONOR_ID)) then
     return false;
   end
@@ -36,8 +38,12 @@ local function displayCurrency (info, amount)
   -- warfronts show hidden currencies without icons
   if (not info.name or not info.icon) then return end
 
-  local text = stringJoin({info.name, ' x' .. amount, ' ', '(',
+  local text = stringJoin({'x' .. amount, ' ', '(',
       BreakUpLargeNumbers(info.total), ')'}, '');
+
+  if (CORE_OPTIONS.itemNames == true) then
+    text = info.name .. ' ' .. text;
+  end
 
   printIconMessage(info.icon, text, {1, 0.9, 0, 1});
 end
