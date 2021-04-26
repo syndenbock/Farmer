@@ -50,18 +50,18 @@ local function printMessage (message, colors)
   farmerFrame:AddMessage(message, unpack(colors, 1, 3));
 end
 
-local function printMessageWithData (identifier, data, message, colors)
+local function printMessageWithData (subspace, identifier, data, message, colors)
   colors = colors or DEFAULT_COLOR;
 
-  farmerFrame:AddMessageWithData(identifier, data, message, unpack(colors));
+  farmerFrame:AddMessageWithData(subspace, identifier, data, message, unpack(colors));
 end
 
 local function printIconMessage (texture, message, colors)
   printMessage(getIcon(texture) .. ' ' .. message, colors);
 end
 
-local function printIconMessageWithData (identifier, data, texture, message, colors)
-  printMessageWithData(identifier, data, getIcon(texture) .. ' ' .. message, colors);
+local function printIconMessageWithData (subspace, identifier, data, texture, message, colors)
+  printMessageWithData(subspace, identifier, data, getIcon(texture) .. ' ' .. message, colors);
 end
 
 addon.Print = {

@@ -1,3 +1,4 @@
 <UI>
   <include file="MessageFrame\MessageFrame.xml"/>
+  <include file="DataMessageFrame\DataMessageFrame.xml"/>
 </UI>

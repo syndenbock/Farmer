@@ -97,7 +97,6 @@ local function createBase (options)
   this.insertMode = INSERTMODE_PREPEND;
   this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
   this.shadowOffset = {x = 0, y = 0};
-  this.messages = {};
 
   updateOptions(this, options);
 
@@ -114,7 +113,7 @@ function MessageFrame:New (options)
 
   setmetatable(this, {
     __index = function (_, key)
-      local value = MessageFrame[key];
+      local value = self[key];
 
       if (value ~= nil) then
         return value;
@@ -198,40 +197,6 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   return fontString;
 end
 
-function MessageFrame:AddMessageWithData (identifier, data, text, r, g, b, a)
-  local message = self:AddMessage(text, r, g, b, a);
-
-  self:ClearMessageByIdentifier(identifier);
-
-  self.messages[identifier] = {
-    message = message,
-    data = data,
-  };
-  message.identifier = identifier
-
-  return message;
-end
-
-function MessageFrame:GetMessageData (identifier)
-  local data = self.messages[identifier];
-
-  return data and data.data;
-end
-
-function MessageFrame:RemoveMessageData (identifier)
-  self.messages[identifier] = nil;
-end
-
-function MessageFrame:ClearMessageByIdentifier (identifier)
-  local data = self.messages[identifier];
-
-  if (data == nil) then
-    return;
-  end
-
-  self:RemoveMessage(data.message);
-end
-
 function MessageFrame:AddAnchorMessage (text, r, g, b, a)
   self:StartFontStringAnimation(self:CreateAnchorFontString(text, r, g, b, a));
 end
@@ -253,10 +218,6 @@ function MessageFrame:RemoveMessage (fontString)
   end
 
   self:SetFontStringPointsIfExists(tail);
-
-  if (fontString.identifier ~= nil) then
-    self:RemoveMessageData(fontString.identifier);
-  end
 
   self.pool:Release(fontString);
   self:ResetFontString(fontString);
@@ -436,6 +397,8 @@ function MessageFrame:ResetFontString (fontString)
   fontString.tail = nil;
   fontString.isFading = nil;
   fontString.fadeSpeed = nil;
+  fontString.subspace = nil;
+  fontString.identifier = nil;
 
   if (fontString.animationGroup) then
     fontString.animationGroup:Stop();
