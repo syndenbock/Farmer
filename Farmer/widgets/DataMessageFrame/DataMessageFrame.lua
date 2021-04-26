@@ -3,6 +3,8 @@ local _, addon = ...;
 local MessageFrame = addon.Widget.MessageFrame;
 local DataMessageFrame = {};
 
+addon.share('Widget').DataMessageFrame = DataMessageFrame;
+
 DataMessageFrame.__index = DataMessageFrame;
 
 setmetatable(DataMessageFrame, {
@@ -11,12 +13,6 @@ setmetatable(DataMessageFrame, {
     return self:New(...);
   end
 });
-
-MessageFrame:New();
-
-addon.share('Widget').DataMessageFrame = DataMessageFrame;
-
-DataMessageFrame.__index = DataMessageFrame;
 
 function DataMessageFrame:New (options)
   local this = MessageFrame.New(DataMessageFrame, options);

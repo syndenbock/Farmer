@@ -32,7 +32,21 @@ local MessageFrame = {
   ALIGNMENT_RIGHT = ALIGNMENT_RIGHT,
   INSERTMODE_PREPEND = INSERTMODE_PREPEND,
   INSERTMODE_APPEND = INSERTMODE_APPEND,
+  frameStrata = 'TOOLTIP';
+  frameLevel = 0;
+  spacing = 0;
+  fadeDuration = 2;
+  visibleTime = 3;
+  font = STANDARD_TEXT_FONT;
+  fontSize = 18;
+  fontFlags = 'OUTLINE';
+  fading = true;
+  insertMode = INSERTMODE_PREPEND;
+  shadowColors = {r = 0, g = 0, b = 0, a = 1};
+  shadowOffset = {x = 0, y = 0};
 };
+
+MessageFrame.__index = MessageFrame;
 
 addon.share('Widget').MessageFrame = MessageFrame;
 
@@ -46,16 +60,6 @@ local function proxyMethod (object, proxy, methodName, method)
   return callback;
 end
 
-local function updateOptions (defaults, options)
-  for key, value in pairs(options) do
-    if (defaults[key] ~= nil) then
-      defaults[key] = value;
-    else
-      -- print('unknown option:', key .. '=' .. value);
-    end
-  end
-end
-
 local function transformOptions (options)
   if (type(options) == 'string') then
     return {
@@ -64,6 +68,25 @@ local function transformOptions (options)
   else
     return options or {};
   end
+end
+
+local function createBase (class, options)
+  local this = {};
+
+  setmetatable(this, class);
+
+  options = transformOptions(options);
+  this.name = options.name;
+
+  for key, value in pairs(options) do
+    if (this[key] ~= nil) then
+      this[key] = value;
+    else
+      -- print('unknown option:', key .. '=' .. value);
+    end
+  end
+
+  return this;
 end
 
 local function createAnchor (name, frameStrata, frameLevel)
@@ -78,37 +101,12 @@ local function createAnchor (name, frameStrata, frameLevel)
   return anchor;
 end
 
-local function createBase (options)
-  local this = {};
-
-  options = transformOptions(options);
-
-  --[[ options ]]
-  this.name = options.name;
-  this.frameStrata = 'TOOLTIP';
-  this.frameLevel = 0;
-  this.spacing = 0;
-  this.fadeDuration = 2;
-  this.visibleTime = 3;
-  this.font = STANDARD_TEXT_FONT;
-  this.fontSize = 18;
-  this.fontFlags = 'OUTLINE';
-  this.fading = true;
-  this.insertMode = INSERTMODE_PREPEND;
-  this.shadowColors = {r = 0, g = 0, b = 0, a = 1};
-  this.shadowOffset = {x = 0, y = 0};
-
-  updateOptions(this, options);
-
-  return this;
-end
-
 --##############################################################################
 -- public methods
 --##############################################################################
 
 function MessageFrame:New (options)
-  local this = createBase(options);
+  local this = createBase(self, options);
   local anchor = createAnchor(this.name, this.frameStrata, this.frameLevel);
 
   setmetatable(this, {
