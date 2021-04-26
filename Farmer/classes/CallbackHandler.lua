@@ -74,6 +74,14 @@ function CallbackHandler:getSortedIdentifiers ()
   return identifiers;
 end
 
+local function callCallback (callback, ...)
+  local success, error = pcall(callback, ...);
+
+  if (not success) then
+    print(error);
+  end
+end
+
 function CallbackHandler:call (identifier, ...)
   local callbacks = self.callMap[identifier];
 
@@ -83,7 +91,7 @@ function CallbackHandler:call (identifier, ...)
 
   for _, callback in ipairs(callbacks) do
     if (callback) then
-      callback(...);
+      callCallback(callback, ...);
     end
   end
 
