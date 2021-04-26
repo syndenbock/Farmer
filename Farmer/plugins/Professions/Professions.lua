@@ -29,9 +29,8 @@ local function displayProfession (info, change)
     changeText = change;
   end
 
-
-  printMessageWithData(SUBSPACE, info.id, change, addon.stringJoin(
-      {icon, info.name, changeText, text}, ' '), MESSAGE_COLORS);
+  text = addon.stringJoin({icon, info.name, changeText, text}, ' ');
+  printMessageWithData(SUBSPACE, info.id, change, text, MESSAGE_COLORS);
 end
 
 addon.listen('PROFESSION_CHANGED', function (info, change)

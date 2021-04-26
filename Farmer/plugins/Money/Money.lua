@@ -5,6 +5,7 @@ local printMessageWithData = addon.Print.printMessageWithData;
 
 local farmerFrame = addon.frame;
 
+local MESSAGE_COLORS = {1, 1, 1};
 local SUBSPACE = farmerFrame:CreateSubspace();
 local IDENTIFIER = 'money';
 
@@ -20,7 +21,7 @@ end
 local function displayMoney (amount)
   amount = amount + (farmerFrame:GetMessageData(SUBSPACE, IDENTIFIER) or 0);
   printMessageWithData(SUBSPACE, IDENTIFIER, amount, addon.formatMoney(amount),
-      {1, 1, 1});
+      MESSAGE_COLORS);
 end
 
 addon.listen('MONEY_CHANGED', function (amount)
