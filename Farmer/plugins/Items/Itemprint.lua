@@ -9,7 +9,7 @@ local printIconMessageWithData = addon.Print.printIconMessageWithData;
 local stringJoin = addon.stringJoin;
 local farmerFrame = addon.frame;
 
-local SUBSPACE_IDENTIFIER = farmerFrame:CreateSubspace();
+local SUBSPACE = farmerFrame:CreateSubspace();
 local ItemPrint = {};
 
 local addonOptions = addon.SavedVariablesHandler(addonName, 'farmerOptions')
@@ -77,7 +77,8 @@ local function formatItemCount (item, data)
 end
 
 local function updateData (item, data)
-  data.count = (farmerFrame:GetMessageData(SUBSPACE_IDENTIFIER, item.link) or 0) + data.count;
+  data.count = (farmerFrame:GetMessageData(SUBSPACE, item.link) or 0) +
+      data.count;
 end
 
 local function printItemDynamic (item, data, forceName)
@@ -95,7 +96,7 @@ local function printItemDynamic (item, data, forceName)
     text = item.name .. ' ' .. text;
   end
 
-  printIconMessageWithData(SUBSPACE_IDENTIFIER, item.link, data.count,
+  printIconMessageWithData(SUBSPACE, item.link, data.count,
       item.texture, text, data.color or getRarityColor(item.rarity));
 end
 

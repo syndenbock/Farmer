@@ -37,22 +37,24 @@ function DataMessageFrame:GenerateSubspaceIdentifier ()
 end
 
 function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  local message = self:AddMessage(text, r, g, b, a);
+  local message;
 
   self:RemoveMessageByIdentifier(subspace, identifier);
+  message = self:AddMessage(text, r, g, b, a);
   self:SetMessageData(subspace, identifier, message, data);
-  message.subspace = subspace;
-  message.identifier = identifier;
 
   return message;
 end
 
 function DataMessageFrame:RemoveMessage (message)
-  MessageFrame.RemoveMessage(self, message);
   self:RemoveMessageData(message);
+  MessageFrame.RemoveMessage(self, message);
 end
 
 function DataMessageFrame:SetMessageData (subspace, identifier, message, data)
+  message.subspace = subspace;
+  message.identifier = identifier;
+
   self.subspaces[subspace][identifier] = {
     message = message,
     data = data,
@@ -85,4 +87,10 @@ function DataMessageFrame:RemoveMessageByIdentifier (subspace, identifier)
   end
 
   self:RemoveMessage(data.message);
+end
+
+function DataMessageFrame:ResetFontString (fontString)
+  fontString.subspace = nil;
+  fontString.identifier = nil;
+  MessageFrame.ResetFontString(self, fontString);
 end

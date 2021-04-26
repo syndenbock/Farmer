@@ -216,7 +216,6 @@ function MessageFrame:RemoveMessage (fontString)
   end
 
   self:SetFontStringPointsIfExists(tail);
-
   self.pool:Release(fontString);
   self:ResetFontString(fontString);
 end
@@ -395,11 +394,13 @@ function MessageFrame:ResetFontString (fontString)
   fontString.tail = nil;
   fontString.isFading = nil;
   fontString.fadeSpeed = nil;
-  fontString.subspace = nil;
-  fontString.identifier = nil;
 
   if (fontString.animationGroup) then
     fontString.animationGroup:Stop();
+  end
+
+  if (fontString.animation) then
+    fontString.animation:Stop();
   end
 end
 
