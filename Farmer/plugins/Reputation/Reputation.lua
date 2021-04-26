@@ -3,11 +3,15 @@ local addonName, addon = ...;
 local abs = _G.abs;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetFactionInfoByID = _G.GetFactionInfoByID;
+local printMessageWithData = addon.Print.printMessageWithData;
+
+local farmerFrame = addon.frame;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Reputation;
 
 local MESSAGE_COLORS = {0, 0.35, 1};
+local SUBSPACE = farmerFrame:CreateSubspace();
 
 local function getStandingLabel (standing)
   local labelPrefix = 'FACTION_STANDING_LABEL';
@@ -26,22 +30,41 @@ local function shouldReputationBeDisplayed (info)
           abs(info.reputationChange) > options.reputationThreshold);
 end
 
-local function displayReputation (info)
-  local repChange = info.reputationChange;
-  local text = BreakUpLargeNumbers(repChange);
+local function getDisplayData (info)
+  local previousData = farmerFrame:GetMessageData(SUBSPACE, info.faction);
 
-  if (repChange > 0) then
+  if (previousData == nil) then
+    return {
+      reputationChange = info.reputationChange,
+      standingChanged = info.standingChanged,
+      paragonLevelGained = info.paragonLevelGained,
+    };
+  end
+
+  return {
+    reputationChange = previousData.reputationChange + info.reputationChange,
+    standingChanged = previousData.standingChanged or info.standingChanged,
+    paragonLevelGained = previousData.paragonLevelGained or
+        info.paragonLevelGained,
+  };
+end
+
+local function displayReputation (info)
+  local displayData = getDisplayData(info);
+  local text = BreakUpLargeNumbers(displayData.reputationChange);
+
+  if (displayData.reputationChange > 0) then
     text = '+' .. text;
   end
 
-  if (info.standingChanged) then
+  if (displayData.standingChanged) then
     local iconPath = 'interface/icons/spell_holy_prayerofmendingtga.blp';
 
     text = addon.stringJoin({text, addon.getIcon(iconPath),
                              getStandingLabel(info.standing)}, ' ');
   end
 
-  if (info.paragonLevelGained) then
+  if (displayData.paragonLevelGained) then
     local iconPath = 'interface/icons/inv_treasurechest_felfirecitadel.blp';
 
     text = addon.stringJoin({text, addon.getIcon(iconPath)}, ' ');
@@ -51,7 +74,8 @@ local function displayReputation (info)
        can afford getting the name now for saving the memory ]]
   text = GetFactionInfoByID(info.faction) .. ' ' .. text;
 
-  addon.Print.printMessage(text, MESSAGE_COLORS);
+  printMessageWithData(SUBSPACE, info.faction, displayData, text,
+      MESSAGE_COLORS);
 end
 
 addon.listen('REPUTATION_CHANGED', function (reputationInfo)
