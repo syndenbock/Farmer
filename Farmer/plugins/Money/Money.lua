@@ -1,7 +1,12 @@
 local addonName, addon = ...;
 
 local checkHideOptions = addon.Print.checkHideOptions;
-local printMessage = addon.Print.printMessage;
+local printMessageWithData = addon.Print.printMessageWithData;
+
+local farmerFrame = addon.frame;
+
+local SUBSPACE = farmerFrame:CreateSubspace();
+local IDENTIFIER = 'money';
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Money;
@@ -13,7 +18,9 @@ local function shouldMoneyBeDisplayed (amount)
 end
 
 local function displayMoney (amount)
-  printMessage(addon.formatMoney(amount), {1, 1, 1});
+  amount = amount + (farmerFrame:GetMessageData(SUBSPACE, IDENTIFIER) or 0);
+  printMessageWithData(SUBSPACE, IDENTIFIER, amount, addon.formatMoney(amount),
+      {1, 1, 1});
 end
 
 addon.listen('MONEY_CHANGED', function (amount)
