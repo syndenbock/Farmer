@@ -10,6 +10,16 @@ function addon.isClassic ()
   return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
 end
 
+function addon.cloneTable (table)
+  local copy = {};
+
+  for key, value in pairs(table) do
+    copy[key] = value;
+  end
+
+  return copy;
+end
+
 function addon.round (number)
   return floor(number + 0.5);
 end
