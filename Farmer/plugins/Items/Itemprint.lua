@@ -5,6 +5,11 @@ local GetItemCount = _G.GetItemCount;
 
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
+local printIconMessageWithData = addon.Print.printIconMessageWithData;
+local stringJoin = addon.stringJoin;
+local farmerFrame = addon.frame;
+
+local SUBSPACE = farmerFrame:CreateSubspace();
 local ItemPrint = {};
 
 local addonOptions = addon.SavedVariablesHandler(addonName, 'farmerOptions')
@@ -12,8 +17,6 @@ local addonOptions = addon.SavedVariablesHandler(addonName, 'farmerOptions')
 
 addon.ItemPrint = ItemPrint;
 
-local printIconMessage = addon.Print.printIconMessage;
-local stringJoin = addon.stringJoin;
 
 ItemPrint.COLORS = {
   reagent = {0, 0.8, 0.8},
@@ -73,7 +76,14 @@ local function formatItemCount (item, data)
   end
 end
 
+local function updateData (item, data)
+  data.count = (farmerFrame:GetMessageData(SUBSPACE, item.link) or 0) +
+      data.count;
+end
+
 local function printItemDynamic (item, data, forceName)
+  updateData(item, data);
+
   local text = stringJoin({
     formatItemInfo(data),
     formatItemCount(item, data),
@@ -86,8 +96,8 @@ local function printItemDynamic (item, data, forceName)
     text = item.name .. ' ' .. text;
   end
 
-  printIconMessage(item.texture, text,
-      data.color or getRarityColor(item.rarity));
+  printIconMessageWithData(SUBSPACE, item.link, data.count,
+      item.texture, text, data.color or getRarityColor(item.rarity));
 end
 
 local function printItemWithName (item, data)

@@ -28,7 +28,11 @@ function Factory.WeakMap (baseMap)
 end
 
 function Factory.ImmutableMap (baseMap)
-  return setmetatable({}, {
+  return setmetatable({
+    pairs = function ()
+      return pairs(baseMap);
+    end,
+  }, {
     __index = baseMap,
     __newindex = function ()
       error('tried to modify immutable table');

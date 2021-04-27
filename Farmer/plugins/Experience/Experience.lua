@@ -5,7 +5,11 @@ local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local stringJoin = addon.stringJoin;
 local truncate = addon.truncate;
 
-local Print = addon.Print;
+local printMessageWithData = addon.Print.printMessageWithData;
+local farmerFrame = addon.frame;
+
+local SUBSPACE = farmerFrame:CreateSubspace();
+local IDENTIFIER = 'experience';
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Experience;
@@ -15,12 +19,27 @@ local function checkExperienceOptions (info)
           info.percentageGain > options.experienceThreshold);
 end
 
+local function determineGains (info)
+  local stored = farmerFrame:GetMessageData(SUBSPACE, IDENTIFIER);
+
+  if (stored == nil) then
+    return info.gain, info.percentageGain;
+  end
+
+  return info.gain + stored.gain, info.percentageGain + stored.percentageGain;
+end
+
 addon.listen('EXPERIENCE_GAINED', function (info)
   if (not checkExperienceOptions(info)) then return end
 
-  Print.printMessage(stringJoin({
-    BreakUpLargeNumbers(truncate(info.gain, 1)),
-    '(' .. truncate(info.percentageGain, 1) .. '%',
+  local gain, percentageGain = determineGains(info);
+
+  printMessageWithData(SUBSPACE, IDENTIFIER, {
+    gain = gain,
+    percentageGain = percentageGain,
+  }, stringJoin({
+    BreakUpLargeNumbers(truncate(gain, 1)),
+    '(' .. truncate(percentageGain, 1) .. '%',
     '/',
     truncate(info.percentage, 1) .. '%)',
   }, ' '), {0.5, 0.5, 1});
