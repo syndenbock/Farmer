@@ -54,13 +54,13 @@ local function readVignette (guid)
       info = cloneTable(info);
       info.onMinimap = true;
 
+      setVignetteCache(guid, onMinimap);
       yellVignette(GetVignetteInfo(guid), coords);
     end
   elseif (state == false and onMinimap == true) then
+    setVignetteCache(guid, onMinimap);
     yellVignette(info, coords);
   end
-
-  setVignetteCache(guid, onMinimap);
 end
 
 local function scanVignettes ()
