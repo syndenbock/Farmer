@@ -33,47 +33,61 @@ local function getRarityColor (rarity)
   };
 end
 
-local function getFormattedItemCount (id, includeBank)
-  return BreakUpLargeNumbers(GetItemCount(id, includeBank, false));
+local function getItemCount (identifier, includeBank)
+  return GetItemCount(identifier, includeBank, false);
 end
 
 local function formatItemInfo (data)
-  if (data.info == nil) then return
-    nil;
+  if (data.info == nil) then
+    return nil;
   end
 
   return '[' .. data.info .. ']';
 end
 
-local function formatAdditionalCounts (item)
-  if (item.stackSize <= 1) then
+local function formatAdditionalCountsFragment (data, count)
+  if (count <= data.count) then
     return nil;
   end
 
-  local bagCount = nil;
-  local totalCount = nil;
+  return BreakUpLargeNumbers(count);
+end
 
-  if (addonOptions.showBagCount == true) then
-    bagCount = getFormattedItemCount(item.link, false);
+local function formatBagCount (item, data)
+  if (addonOptions.showBagCount ~= true) then
+    return nil;
   end
 
-  if (addonOptions.showTotalCount == true) then
-    totalCount = getFormattedItemCount(item.link, true);
+  return formatAdditionalCountsFragment(data,
+      getItemCount(item.link, false));
+end
+
+local function formatTotalCount (item, data)
+  if (addonOptions.showTotalCount ~= true) then
+    return nil;
   end
 
-  if (bagCount ~= nil or totalCount ~= nil) then
+  return formatAdditionalCountsFragment(data,
+      getItemCount(item.link, true));
+end
+
+local function formatAdditionalCounts (item, data)
+  local totalCount = formatTotalCount(item, data);
+  local bagCount = formatBagCount(item, data);
+
+  if (totalCount ~= nil or bagCount ~= nil) then
     return '(' .. stringJoin({bagCount, totalCount}, '/') .. ')';
   else
     return nil;
   end
 end
 
-local function formatItemCount (item, data)
-  if (item.stackSize > 1 or data.count > 1) then
-    return 'x' .. BreakUpLargeNumbers(data.count);
-  else
+local function formatItemCount (data)
+  if (data.count <= 1) then
     return nil;
   end
+
+  return 'x' .. BreakUpLargeNumbers(data.count);
 end
 
 local function updateData (item, data)
@@ -86,8 +100,8 @@ local function printItemDynamic (item, data, forceName)
 
   local text = stringJoin({
     formatItemInfo(data),
-    formatItemCount(item, data),
-    formatAdditionalCounts(item),
+    formatItemCount(data),
+    formatAdditionalCounts(item, data),
   }, ' ');
 
   if (text == '' or
