@@ -98,7 +98,7 @@ do
 
   optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0);
   optionMap.iconScale = mainPanel:addSlider(0.1, 3, L['icon scale'], '0.1', '3', 1);
-  optionMap.displayTime = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 0);
+  optionMap.displayTime = mainPanel:addSlider(1, 60, L['display time'], '1', '60', 0);
   optionMap.spacing = mainPanel:addSlider(0, 20, L['line spacing'], '0', '20', 0);
 
   optionMap.insertMode = mainPanel:addDropdown(L['grow direction'], {
