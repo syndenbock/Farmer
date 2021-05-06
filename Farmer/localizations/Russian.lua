@@ -38,6 +38,11 @@ L["Thick Monochrome"] = "Жирный одноцветный"
 L["Thin"] = "Тонкий"
 L["up"] = "вверх"
 
+-- Experience
+L["Experience"] = "Опыт"
+L["minimum %"] = "Минимум %"
+L["show experience"] = "Показывать опыт"
+
 -- Farm radar
 L["enable tooltips for default nodes"] = "включить всплывающие подсказки для добычи по умолчанию"
 L["Farm radar"] = "Фарм радар"
