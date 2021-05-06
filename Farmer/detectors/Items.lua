@@ -157,11 +157,13 @@ local function testPredefinedItems ()
     13521, -- Recipe: Flask of Supreme Power
     156631, -- Silas' Sphere of Transmutation
     71636, -- Monstrous Egg
+    168207, -- plundered anima cell
+    172045 -- Tenebrous Crown Roast Aspic
   };
 
   for _, item in ipairs(testItems) do
     testItem(item, 1);
-    testItem(item, 4);
+    -- testItem(item, 4);
   end
 end
 
