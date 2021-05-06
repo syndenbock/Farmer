@@ -78,8 +78,8 @@ do
   local focusIdBox;
 
   panel:mapOptions(options, {
-    showTotalCount = panel:addCheckBox(L['show total count for stackable items']);
-    showBagCount = panel:addCheckBox(L['show bag count for stackable items']);
+    showTotalCount = panel:addCheckBox(L['show total count for items']);
+    showBagCount = panel:addCheckBox(L['show bag count for items']);
     filterByRarity = panel:addCheckBox(L['show items based on rarity']),
     minimumRarity = createRaritySlider(),
     alwaysShowReagents = panel:addCheckBox(L['always show reagents']),

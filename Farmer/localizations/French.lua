@@ -59,9 +59,9 @@ L["Items"] = "Objets"
 L["minimum"] = "Minimum"
 L["minimum rarity"] = "Rareté minimum"
 L["only show focused items"] = "Afficher uniquement les objets ciblés"
-L["show bag count for stackable items"] = "Afficher le nombre d'objets empilables en sacs"
+L["show bag count for items"] = "Afficher le nombre d'objets en sacs"
 L["show items based on rarity"] = "Affichage des objets basé sur la rareté"
-L["show total count for stackable items"] = "Afficher le nombre total d'objets empilables"
+L["show total count for items"] = "Afficher le nombre total d'objets"
 
 -- Minimap
 L["display vignettes that appear on the minimap"] = "Afficher les icônes sur la minimap"
