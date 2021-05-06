@@ -75,15 +75,15 @@ local function formatAdditionalCounts (item, data)
   local totalCount = formatTotalCount(item, data);
   local bagCount = formatBagCount(item, data);
 
-  if (totalCount ~= nil or bagCount ~= nil) then
-    return '(' .. stringJoin({bagCount, totalCount}, '/') .. ')';
-  else
+  if (totalCount == nil and bagCount == nil) then
     return nil;
   end
+
+  return '(' .. stringJoin({bagCount, totalCount}, '/') .. ')';
 end
 
-local function formatItemCount (data)
-  if (data.count <= 1) then
+local function formatItemCount (item, data)
+  if (item.stackSize <= 1 and data.count <= 1) then
     return nil;
   end
 
@@ -100,7 +100,7 @@ local function printItemDynamic (item, data, forceName)
 
   local text = stringJoin({
     formatItemInfo(data),
-    formatItemCount(data),
+    formatItemCount(item, data),
     formatAdditionalCounts(item, data),
   }, ' ');
 
