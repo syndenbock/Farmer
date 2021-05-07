@@ -44,7 +44,15 @@ local function getAddonIcon ()
 end
 
 local function storePosition ()
-  options.anchor = {farmerFrame:GetPoint()};
+  local coords = addon.getFrameRelativeCoords(farmerFrame);
+
+  options.anchor = {
+    'CENTER',
+    'UIParent',
+    'CENTER',
+    coords.x,
+    coords.y,
+  };
 end
 
 local function moveFrame ()

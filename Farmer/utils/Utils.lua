@@ -61,29 +61,26 @@ function addon.setTrueScale (frame, scale)
   frame:SetScale(scale / frame:GetEffectiveScale());
 end
 
-function addon.transformFrameAnchorsToCenter (frame)
-  local points = {frame:GetPoint()};
-  local anchor = points[1];
+function addon.getFrameRelativeCoords (frame, anchorFrame)
+  anchorFrame = anchorFrame or _G.UIParent;
 
-  if (addon.stringEndsWith(anchor, 'LEFT')) then
-    points[4] = points[4] + frame:GetWidth() / 2;
-  end
+  local points = {frame:GetCenter()};
+  local anchorPoints = {anchorFrame:GetCenter()};
 
-  if (addon.stringEndsWith(anchor, 'RIGHT')) then
-    points[4] = points[4] - frame:GetWidth() / 2;
-  end
+  return {
+    x = points[1] - anchorPoints[1],
+    y = points[2] - anchorPoints[2],
+  };
+end
 
-  if (addon.stringStartsWith(anchor, 'TOP')) then
-    points[5] = points[5] - frame:GetHeight() / 2;
-  end
+function addon.transformFrameAnchorsToCenter (frame, anchorFrame)
+  anchorFrame = anchorFrame or _G.UIParent;
 
-  if (addon.stringStartsWith(anchor, 'BOTTOM')) then
-    points[5] = points[5] + frame:GetHeight() / 2;
-  end
+  local relativePoints = addon.getFrameRelativeCoords(frame, anchorFrame);
 
-  points[1] = 'CENTER';
   frame:ClearAllPoints();
-  frame:SetPoint(unpack(points));
+  frame:SetPoint('CENTER', anchorFrame, 'CENTER', relativePoints.x,
+      relativePoints.y);
 end
 
 function addon.secureCall (callback, ...)
