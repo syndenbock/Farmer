@@ -117,7 +117,7 @@ local function initInventory ()
   end
 end
 
-addon.on('PLAYER_LOGIN', initInventory);
+addon.onOnce('PLAYER_LOGIN', initInventory);
 
 addon.on('BANKFRAME_OPENED', function ()
   initBagCache(BANKBAG_CONTAINER);

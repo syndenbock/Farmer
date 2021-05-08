@@ -114,7 +114,7 @@ local function checkProfessionChange (id, info)
   end
 end
 
-addon.on('PLAYER_LOGIN', function ()
+addon.onOnce('PLAYER_LOGIN', function ()
   PROFESSION_CATEGORIES = getProfessionCategories();
   professionCache = getLearnedProfessionInfo();
 end);

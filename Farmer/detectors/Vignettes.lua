@@ -69,11 +69,14 @@ local function scanVignettes ()
   end
 end
 
-addon.on({'PLAYER_LOGIN', 'ZONE_CHANGED_NEW_AREA'}, function ()
+local function initZone ()
   currentMapId = getCurrentMap();
   vignetteCache = {};
   scanVignettes();
-end);
+end
+
+addon.onOnce('PLAYER_LOGIN', initZone);
+addon.on('ZONE_CHANGED_NEW_AREA', initZone);
 
 addon.on('VIGNETTES_UPDATED', scanVignettes);
 addon.on('VIGNETTE_MINIMAP_UPDATED', readVignette);

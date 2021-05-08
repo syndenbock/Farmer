@@ -44,7 +44,7 @@ local function checkExperience ()
   });
 end
 
-addon.on('PLAYER_LOGIN', function ()
+addon.onOnce('PLAYER_LOGIN', function ()
   currentExperience = UnitXP(UNIT_PLAYER);
   currentLevelupExperience = UnitXPMax(UNIT_PLAYER)
 end);

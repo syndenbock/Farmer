@@ -83,7 +83,7 @@ addon.on('CHAT_MSG_SKILL', function ()
   checkSkills();
 end);
 
-addon.on('PLAYER_LOGIN', function ()
+addon.onOnce('PLAYER_LOGIN', function ()
   skillCache = getSkillInfo();
 end);
 

@@ -122,7 +122,7 @@ local function checkReputations ()
   reputationCache = repInfo;
 end
 
-addon.on('PLAYER_LOGIN', function ()
+addon.onOnce('PLAYER_LOGIN', function ()
   reputationCache = getReputationInfo();
 end);
 

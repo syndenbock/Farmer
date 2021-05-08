@@ -53,7 +53,7 @@ local function checkSlotForArtifact (slot)
   end
 end
 
-addon.on('PLAYER_LOGIN', initEquipment);
+addon.onOnce('PLAYER_LOGIN', initEquipment);
 
 addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
   --[[ we need to do this because when equipping artifact weapons, a second item

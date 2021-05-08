@@ -105,7 +105,7 @@ local function handleCurrency (id)
   yellCurrencyInfo(info, amount);
 end
 
-addon.on('PLAYER_LOGIN', fillCurrencyTable);
+addon.onOnce('PLAYER_LOGIN', fillCurrencyTable);
 
 -- quantities passed by the event can be factorized or negative so they cannot
 -- be used
