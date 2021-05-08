@@ -3,55 +3,63 @@ local addonName, addon = ...;
 local C_Timer = _G.C_Timer;
 local tinsert = _G.tinsert;
 
-local callbackHandler = addon.Class.CallbackHandler:new();
 local eventFrame = _G.CreateFrame('frame');
+local callbackHandler = addon.Class.CallbackHandler:new();
 
 eventFrame:SetScript('OnEvent', function (_, event, ...)
   callbackHandler:call(event, ...);
 end);
 
-local function hookEvent (eventName, callback)
-  if (callbackHandler:addCallback(eventName, callback)) then
-    eventFrame:RegisterEvent(eventName);
+local function addCallback (event, callback)
+  if (callbackHandler:addCallback(event, callback)) then
+    print('registering', event);
+    eventFrame:RegisterEvent(event);
   end
 end
 
-local function hookMultipleEvents (eventList, callback)
-  for _, event in ipairs(eventList) do
-    hookEvent(event, callback);
+local function removeCallback (event, callback)
+  if (callbackHandler:removeCallback(event, callback)) then
+    print('unregistering', event);
+    eventFrame:UnregisterEvent(event);
   end
 end
 
-local function unhookEvent (eventName, callback)
-  callbackHandler:removeCallback(eventName, callback);
+local function addSingleFireCallback (event, callback)
+  local function wrapper (...)
+    callback(...);
+    removeCallback(event, wrapper);
+  end
+
+  addCallback(event, wrapper);
 end
 
-function addon.on (eventList, callback)
+--##############################################################################
+-- public methods
+--##############################################################################
+
+local function callForEvents (events, callback, method)
   assert(type(callback) == 'function',
     addonName .. ': callback is not a function');
 
-  if (type(eventList) == 'table') then
-    hookMultipleEvents(eventList, callback);
+  if (type(events) == 'table') then
+    for _, event in ipairs(events) do
+      method(event, callback);
+    end
   else
-    hookEvent(eventList, callback);
+    method(events, callback);
   end
 end
 
-local function unhookMultipleEvents (eventList, callback)
-  for _, event in ipairs(eventList) do
-    unhookEvent(event, callback);
-  end
+function addon.on (events, callback)
+  callForEvents(events, callback, addCallback);
 end
 
-function addon.off (eventList, callback)
-  assert(type(callback) == 'function',
-    addonName .. ': callback is not a function');
+function addon.onOnce (events, callback)
+  callForEvents(events, callback, addSingleFireCallback);
+end
 
-  if (type(eventList) == 'table') then
-    unhookMultipleEvents(eventList, callback);
-  else
-    unhookEvent(eventList, callback);
-  end
+function addon.off (events, callback)
+  callForEvents(events, callback, removeCallback);
 end
 
 --[[
@@ -59,6 +67,7 @@ end
 // event funneling
 //##############################################################################
 --]]
+
 local function generateFunnel (timeSpan, callback)
   local paramCollection;
   local handler = function ()

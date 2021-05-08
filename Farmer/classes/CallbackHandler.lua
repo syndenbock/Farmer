@@ -18,11 +18,9 @@ local function callCallback (callback, ...)
 end
 
 function CallbackHandler:new ()
-  local this = {
+  return setmetatable({
     callbacks = {},
-  };
-
-  return setmetatable(this, CallbackHandler);
+  }, CallbackHandler);
 end
 
 function CallbackHandler:__callCallbacks (identifier, ...)
@@ -70,6 +68,13 @@ function CallbackHandler:removeCallback (identifier, callback)
       addonName .. ': callback was not registered for ' .. identifier);
 
   callbacks[callback] = nil;
+
+  if (next(callbacks) == nil) then
+    self.callbacks[identifier] = nil;
+    return true;
+  else
+    return false;
+  end
 end
 
 function CallbackHandler:has (identifier, callback)
