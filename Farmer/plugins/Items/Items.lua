@@ -342,7 +342,7 @@ local function handleEquippable (item, count)
 end
 
 local function displayUncategorizedItem (item, count)
-  printItem(item, {
+  printItemWithName(item, {
     count = count,
   });
 end
