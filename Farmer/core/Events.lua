@@ -12,14 +12,12 @@ end);
 
 local function addCallback (event, callback)
   if (callbackHandler:addCallback(event, callback)) then
-    print('registering', event);
     eventFrame:RegisterEvent(event);
   end
 end
 
 local function removeCallback (event, callback)
   if (callbackHandler:removeCallback(event, callback)) then
-    print('unregistering', event);
     eventFrame:UnregisterEvent(event);
   end
 end
