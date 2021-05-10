@@ -82,7 +82,9 @@ end
 local function migrateAddonVariables (addonName)
   if (addonName ~= thisAddonName) then return end
 
-  addon.Migration.migrate(addonData[addonName].values or {});
+  if (addon.Migration) then
+    addon.Migration.migrate(addonData[addonName].values or {});
+  end
 end
 
 local function executeCallbackList (callbackList, ...)
