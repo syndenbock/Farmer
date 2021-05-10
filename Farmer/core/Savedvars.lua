@@ -5,8 +5,7 @@ local tinsert = _G.tinsert;
 local Set = addon.Class.Set;
 
 local variableStorage = {};
-local awaiting = {};
-local loadCallbacks = {};
+local addonData = nil;
 
 local function isArray (table)
   local x = 1;
@@ -57,34 +56,33 @@ local function fillObject (target, source)
       fillObject(currentValue, value);
     end
   end
+
+  return target;
 end
 
-local function readGlobalsIntoObject (object, globalNames)
+local function readGlobalsIntoObject (object, variableSet)
   local loaded = {};
 
-  for _, globalName in ipairs(globalNames) do
+  variableSet:forEach(function (globalName)
     loaded[globalName] = _G[globalName];
-  end
+  end);
 
   assignObject(object, loaded);
 end
 
-local function readAddonVariables(addonName)
-  local variableSet = awaiting[addonName];
+local function readAddonVariables (addonName)
+  readGlobalsIntoObject(addonData[addonName].values,
+      addonData[addonName].variables);
+end
 
-  if (not variableSet) then
-    return;
-  end
-
-  readGlobalsIntoObject(variableStorage[addonName], variableSet:getItems());
-
-  awaiting[addonName] = nil;
+local function storeAddonVariables(addonName)
+  variableStorage[addonName] = addonData[addonName].values;
 end
 
 local function migrateAddonVariables (addonName)
   if (addonName ~= thisAddonName) then return end
 
-  addon.Migration.migrate(variableStorage[addonName] or {});
+  addon.Migration.migrate(addonData[addonName].values or {});
 end
 
 local function executeCallbackList (callbackList, ...)
@@ -94,21 +92,23 @@ local function executeCallbackList (callbackList, ...)
 end
 
 local function executeLoadCallbacks (addonName)
-  local callbackList = loadCallbacks[addonName];
+  local callbackList = addonData[addonName].callbacks;
 
   if (not callbackList) then return end
 
-  executeCallbackList(callbackList, variableStorage[addonName]);
-  loadCallbacks[addonName] = nil;
+  executeCallbackList(callbackList, addonData[addonName].values);
 end
 
 local function addLoadListener (addonName, callback)
   assert(type(callback) == 'function', 'callback is not a function');
 
-  local callbackList = loadCallbacks[addonName] or {};
+  local callbackList = addonData[addonName].callbacks;
 
-  tinsert(callbackList, callback)
-  loadCallbacks[addonName] = callbackList;
+  if (callbackList == nil) then
+    addonData[addonName].callbacks = {callback};
+  else
+    tinsert(callbackList, callback)
+  end
 end
 
 local function globalizeVariables (variables)
@@ -123,34 +123,46 @@ local function globalizeSavedVariables ()
   end
 end
 
-addon.on('ADDON_LOADED', function (addonName)
+local function handleAddonLoad (addonName)
+  if (addonData[addonName] == nil) then
+    return;
+  end
+
   readAddonVariables(addonName);
+  storeAddonVariables(addonName);
   migrateAddonVariables(addonName);
   executeLoadCallbacks(addonName);
-end);
+  addonData[addonName] = nil;
+
+  if (next(addonData) == nil) then
+    addonData = nil;
+    addon.off('ADDON_LOADED', handleAddonLoad);
+  end
+end
 
 addon.on('PLAYER_LOGOUT', globalizeSavedVariables);
 
 local function SavedVariablesHandler (addonName, variables, defaults)
-  local variableSet = awaiting[addonName];
-  local vars = variableStorage[addonName];
+  if (addonData == nil) then
+    addonData = {};
+    addon.on('ADDON_LOADED', handleAddonLoad);
+  end
 
-  if (not variableSet) then
-    variableSet = Set:new(variables);
-    awaiting[addonName] = variableSet;
+  local data = addonData[addonName];
+
+  if (data == nil) then
+    data = {
+      variables = Set:new(variables),
+      values = fillObject({}, defaults or {}),
+    };
+    addonData[addonName] = data;
   else
-    variableSet:add(variables);
+    data.variables:add(variables);
+    fillObject(data.values, defaults or {});
   end
-
-  if (not vars) then
-    vars = {};
-    variableStorage[addonName] = vars;
-  end
-
-  fillObject(vars, defaults or {});
 
   return {
-    vars = vars,
+    vars = data.values,
     OnLoad = function (_, callback)
       addLoadListener(addonName, callback);
     end,
