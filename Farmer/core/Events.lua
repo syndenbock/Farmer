@@ -31,10 +31,6 @@ local function addSingleFireCallback (event, callback)
   addCallback(event, wrapper);
 end
 
---##############################################################################
--- public methods
---##############################################################################
-
 local function callForEvents (events, callback, method)
   assert(type(callback) == 'function',
     addonName .. ': callback is not a function');
@@ -47,6 +43,10 @@ local function callForEvents (events, callback, method)
     method(events, callback);
   end
 end
+
+--##############################################################################
+-- public methods
+--##############################################################################
 
 function addon.on (events, callback)
   callForEvents(events, callback, addCallback);

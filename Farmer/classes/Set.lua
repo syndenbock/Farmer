@@ -71,7 +71,7 @@ function Set:clear ()
 end
 
 function Set:forEach (callback)
-  for _, item in ipairs(self:getItems()) do
+  for item in pairs(self.items) do
     callback(item);
   end
 end
