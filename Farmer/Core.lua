@@ -4,14 +4,7 @@ local proxy = {};
 
 setmetatable(addon, {
   __metatable = false,
-  __index = function (_, key)
-    local value = proxy[key];
-
-    assert(value ~= nil,
-        addonName .. ': addon key does not exist: ' .. key);
-
-    return value;
-  end,
+  __index = proxy,
   __newindex = function (_, key, value)
     assert(proxy[key] == nil,
         addonName .. ': addon key already in use: ' .. key);
