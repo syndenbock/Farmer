@@ -1,5 +1,4 @@
 <UI>
   <script file="Maps.lua"/>
-  <script file="Storage.lua"/>
   <script file="Tooltip.lua"/>
 </UI>
