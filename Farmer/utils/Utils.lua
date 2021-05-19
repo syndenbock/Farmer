@@ -3,11 +3,20 @@ local addonName, addon = ...;
 local floor = _G.floor;
 local log10 = _G.log10;
 
-local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
-local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
+local IS_RETAIL = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE);
+local IS_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC);
+local IS_BC_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC);
+
+function addon.isRetail ()
+  return IS_RETAIL;
+end
 
 function addon.isClassic ()
-  return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
+  return IS_CLASSIC;
+end
+
+function addon.isBCClassic ()
+  return IS_BC_CLASSIC;
 end
 
 function addon.cloneTable (table)
