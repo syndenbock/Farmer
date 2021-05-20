@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (_G.GetProfessionInfo == nil) then return end
+if (_G.TradeSkillUI == nil) then return end
 
 local Migration = addon.Migration;
 
