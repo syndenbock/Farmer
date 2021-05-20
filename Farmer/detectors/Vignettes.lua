@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end
+if (_G.GetVignetteInfo == nil) then return end
 
 local GetBestMapForUnit = _G.C_Map.GetBestMapForUnit;
 local GetVignettes = _G.C_VignetteInfo.GetVignettes;
