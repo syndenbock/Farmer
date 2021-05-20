@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end
+if (_G.GetGuildBankItemInfo == nil) then return end
 
 local Storage = addon.Factory.Storage;
 local Items = addon.Items;

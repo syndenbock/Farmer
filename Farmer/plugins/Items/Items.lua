@@ -204,7 +204,7 @@ local function displayConduit (item, count)
 end
 
 local function isConduit (item)
-  if (addon.isClassic()) then
+  if (IsItemConduitByItemInfo == nil) then
     return false;
   end
 

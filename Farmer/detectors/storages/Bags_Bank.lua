@@ -112,7 +112,7 @@ local function initInventory ()
     initBagCache(x);
   end
 
-  if (not addon.isClassic()) then
+  if (REAGENTBANK_CONTAINER ~= nil) then
     initBagCache(REAGENTBANK_CONTAINER);
   end
 end
@@ -157,7 +157,7 @@ addon.on('PLAYERBANKSLOTS_CHANGED', function (slot)
   end
 end);
 
-if (not addon.isClassic()) then
+if (REAGENTBANK_CONTAINER ~= nil) then
   addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (slot)
     readBagSlot(bagCache[REAGENTBANK_CONTAINER], REAGENTBANK_CONTAINER, slot);
   end);

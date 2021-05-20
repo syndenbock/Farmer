@@ -1,11 +1,10 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end
+if (_G.GetVoidItemInfo == nil) then return end
 
 local Storage = addon.Factory.Storage;
 local Items = addon.Items;
 
-local IsVoidStorageReady = _G.IsVoidStorageReady;
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
 local GetVoidItemInfo = _G.GetVoidItemInfo;
 
