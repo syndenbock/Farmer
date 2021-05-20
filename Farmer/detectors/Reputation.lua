@@ -1,12 +1,10 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end
-
 local floor = _G.floor;
 local tinsert = _G.tinsert;
 local C_Reputation = _G.C_Reputation;
-local GetFactionParagonInfo = C_Reputation and C_Reputation.GetFactionParagonInfo or nil;
-local IsFactionParagon = C_Reputation and C_Reputation.IsFactionParagon or nil;
+local GetFactionParagonInfo = C_Reputation and C_Reputation.GetFactionParagonInfo;
+local IsFactionParagon = C_Reputation and C_Reputation.IsFactionParagon;
 local GetNumFactions = _G.GetNumFactions;
 local GetFactionInfo = _G.GetFactionInfo;
 local ExpandFactionHeader = _G.ExpandFactionHeader;
