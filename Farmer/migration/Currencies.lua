@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end
+if (_G.C_CurrencyInfo == nil) then return end
 
 local Migrate = addon.Migration;
 
