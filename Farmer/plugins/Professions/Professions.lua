@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-if (addon.isClassic()) then return end
+if (_G.GetProfessionInfo == nil) then return end
 
 local printMessageWithData = addon.Print.printMessageWithData;
 
