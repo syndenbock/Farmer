@@ -1,6 +1,7 @@
 local addonName, addon = ...;
 
-if (_G.C_CurrencyInfo == nil) then return end
+if (_G.C_CurrencyInfo == nil or
+    _G.C_CurrencyInfo.GetCurrencyListInfo == nil) then return end
 
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
