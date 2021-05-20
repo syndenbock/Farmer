@@ -99,7 +99,7 @@ do
   optionMap.itemNames = mainPanel:addCheckBox(L['always show names']);
   optionMap.hideAtMailbox = mainPanel:addCheckBox(L['don\'t display at mailboxes']);
 
-  if (not addon.isClassic()) then
+  if (addon.isRetail()) then
     optionMap.hideInArena = mainPanel:addCheckBox(L['don\'t display in arena']);
     optionMap.hideOnExpeditions = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
   end

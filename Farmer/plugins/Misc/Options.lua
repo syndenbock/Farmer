@@ -25,7 +25,7 @@ panel:mapOptions(options, {
 
 local function applyOptions ()
   if (options.hideLootToasts == true) then
-    if (not addon.isClassic()) then
+    if (addon.isRetail()) then
       AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST')
       AlertFrame:UnregisterEvent('SHOW_LOOT_TOAST_UPGRADE')
       AlertFrame:UnregisterEvent('BONUS_ROLL_RESULT')
@@ -33,7 +33,7 @@ local function applyOptions ()
 
     AlertFrame:UnregisterEvent('LOOT_ITEM_ROLL_WON')
   else
-    if (not addon.isClassic()) then
+    if (addon.isRetail()) then
       AlertFrame:RegisterEvent('SHOW_LOOT_TOAST')
       AlertFrame:RegisterEvent('SHOW_LOOT_TOAST_UPGRADE')
       AlertFrame:RegisterEvent('BONUS_ROLL_RESULT')
