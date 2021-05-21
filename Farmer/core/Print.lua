@@ -1,19 +1,17 @@
 local addonName, addon = ...;
 
 local unpack = _G.unpack;
-local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local IsActiveBattlefieldArena = _G.IsActiveBattlefieldArena;
 
+local DEFAULT_COLOR = {1, 1, 1};
+
 local farmerFrame = addon.frame;
+local getIcon = addon.getIcon;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {},
 }).vars.farmerOptions.Core;
 
-local Print = {};
 local mailIsOpen = false;
-
-addon.Print = Print;
-
 addon.on('MAIL_SHOW', function ()
   mailIsOpen = true;
 end);
@@ -24,7 +22,7 @@ addon.on({'MAIL_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
   mailIsOpen = false;
 end);
 
-function Print.checkHideOptions ()
+local function checkHideOptions ()
   if (options.hideAtMailbox == true and
       mailIsOpen) then
     return false;
@@ -46,35 +44,30 @@ function Print.checkHideOptions ()
   return true;
 end
 
-function Print.printMessage (message, colors)
-  colors = colors or {1, 1, 1};
+local function printMessage (message, colors)
+  colors = colors or DEFAULT_COLOR;
 
   farmerFrame:AddMessage(message, unpack(colors, 1, 3));
 end
 
-function Print.printItem (texture, name, count, text, colors, funcOptions)
-  count = count or 1;
-  funcOptions = funcOptions or {};
+local function printMessageWithData (subspace, identifier, data, message, colors)
+  colors = colors or DEFAULT_COLOR;
 
-  local icon = addon.getIcon(texture);
-  local itemName;
-  local itemCount;
-  local message;
-
-  if (not funcOptions.minimumCount or count > funcOptions.minimumCount) then
-    itemCount = 'x' .. BreakUpLargeNumbers(count);
-  end
-
-  if (options.itemNames == true or
-      funcOptions.forceName == true) then
-    itemName = name;
-  end
-
-  message = addon.stringJoin({itemName, itemCount, text}, ' ');
-
-  if (message == '') then
-    message = name;
-  end
-
-  Print.printMessage(icon .. ' ' .. message, colors);
+  farmerFrame:AddMessageWithData(subspace, identifier, data, message, unpack(colors));
 end
+
+local function printIconMessage (texture, message, colors)
+  printMessage(getIcon(texture) .. ' ' .. message, colors);
+end
+
+local function printIconMessageWithData (subspace, identifier, data, texture, message, colors)
+  printMessageWithData(subspace, identifier, data, getIcon(texture) .. ' ' .. message, colors);
+end
+
+addon.Print = {
+  checkHideOptions = checkHideOptions,
+  printMessage = printMessage;
+  printMessageWithData = printMessageWithData;
+  printIconMessage = printIconMessage;
+  printIconMessageWithData = printIconMessageWithData;
+};

@@ -1,18 +1,18 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end
+if (_G.GetVignetteInfo == nil) then return end
 
 local GetBestMapForUnit = _G.C_Map.GetBestMapForUnit;
 local GetVignettes = _G.C_VignetteInfo.GetVignettes;
 local GetVignetteInfo = _G.C_VignetteInfo.GetVignetteInfo;
 local GetVignettePosition = _G.C_VignetteInfo.GetVignettePosition;
 
+local cloneTable = addon.cloneTable;
 local ImmutableMap = addon.Factory.ImmutableMap;
-local Set = addon.Class.Set;
 
 local UNIT_PLAYER = 'player';
 
-local vignetteCache = Set:new();
+local vignetteCache = {};
 local currentMapId;
 
 local function getCurrentMap ()
@@ -23,10 +23,14 @@ local function yellVignette (info, coords)
   addon.yell('NEW_VIGNETTE', ImmutableMap(info), ImmutableMap(coords));
 end
 
-local function readVignette (guid)
-  if (vignetteCache:has(guid)) then return end
+local function setVignetteCache (guid, onMinimap)
+  vignetteCache[guid] = onMinimap;
+end
 
-  local info = guid and currentMapId and GetVignetteInfo(guid);
+local function readVignette (guid)
+  if (currentMapId == nil) then return end
+
+  local info = GetVignetteInfo(guid);
 
   if (not info) then return end
 
@@ -34,11 +38,29 @@ local function readVignette (guid)
 
   if (not coords) then return end
 
-  vignetteCache:addItem(guid);
-  yellVignette(info, {
+  local onMinimap = info.onMinimap;
+  local state = vignetteCache[guid];
+
+  coords = {
     x = coords.x * 100,
     y = coords.y * 100,
-  });
+  };
+
+  if (state == nil) then
+    info.onMinimap = false;
+    yellVignette(info, coords);
+
+    if (onMinimap == true) then
+      info = cloneTable(info);
+      info.onMinimap = true;
+
+      setVignetteCache(guid, onMinimap);
+      yellVignette(GetVignetteInfo(guid), coords);
+    end
+  elseif (state == false and onMinimap == true) then
+    setVignetteCache(guid, onMinimap);
+    yellVignette(info, coords);
+  end
 end
 
 local function scanVignettes ()
@@ -47,20 +69,14 @@ local function scanVignettes ()
   end
 end
 
-local function clearVignetteCache ()
-  vignetteCache:clear();
+local function initZone ()
+  currentMapId = getCurrentMap();
+  vignetteCache = {};
+  scanVignettes();
 end
 
-addon.on('PLAYER_LOGIN', function ()
-  currentMapId = getCurrentMap();
-  scanVignettes();
-end);
-
-addon.on('ZONE_CHANGED_NEW_AREA', function ()
-  currentMapId = getCurrentMap();
-  clearVignetteCache();
-  scanVignettes();
-end);
+addon.onOnce('PLAYER_LOGIN', initZone);
+addon.on('ZONE_CHANGED_NEW_AREA', initZone);
 
 addon.on('VIGNETTES_UPDATED', scanVignettes);
 addon.on('VIGNETTE_MINIMAP_UPDATED', readVignette);

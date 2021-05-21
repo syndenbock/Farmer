@@ -4,7 +4,7 @@ local GetMoney = _G.GetMoney;
 
 local moneyStamp;
 
-addon.on('PLAYER_LOGIN', function ()
+addon.onOnce('PLAYER_LOGIN', function ()
   moneyStamp = GetMoney();
 end);
 

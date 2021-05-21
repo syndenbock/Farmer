@@ -44,7 +44,15 @@ local function getAddonIcon ()
 end
 
 local function storePosition ()
-  options.anchor = {farmerFrame:GetPoint()};
+  local coords = addon.getFrameRelativeCoords(farmerFrame);
+
+  options.anchor = {
+    'CENTER',
+    'UIParent',
+    'CENTER',
+    coords.x,
+    coords.y,
+  };
 end
 
 local function moveFrame ()
@@ -91,14 +99,14 @@ do
   optionMap.itemNames = mainPanel:addCheckBox(L['always show names']);
   optionMap.hideAtMailbox = mainPanel:addCheckBox(L['don\'t display at mailboxes']);
 
-  if (not addon.isClassic()) then
+  if (addon.isRetail()) then
     optionMap.hideInArena = mainPanel:addCheckBox(L['don\'t display in arena']);
     optionMap.hideOnExpeditions = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
   end
 
   optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0);
   optionMap.iconScale = mainPanel:addSlider(0.1, 3, L['icon scale'], '0.1', '3', 1);
-  optionMap.displayTime = mainPanel:addSlider(1, 10, L['display time'], '1', '10', 0);
+  optionMap.displayTime = mainPanel:addSlider(1, 60, L['display time'], '1', '60', 0);
   optionMap.spacing = mainPanel:addSlider(0, 20, L['line spacing'], '0', '20', 0);
 
   optionMap.insertMode = mainPanel:addDropdown(L['grow direction'], {
@@ -151,19 +159,7 @@ do
   mainPanel:OnCancel(applyOptions);
 end
 
-local function checkOptions ()
-  if (not options.anchor) then
-    local message = addonName .. ' has reset its position because of internal changes, please reposition it';
-
-    options.anchor = ANCHOR_DEFAULT;
-    print(message);
-    addon.frame:AddMessage(message);
-  end
-end
-
 saved:OnLoad(function ()
-  checkOptions();
-
   setFramePosition(options.anchor);
   applyOptions();
 end);

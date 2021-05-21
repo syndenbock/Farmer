@@ -477,7 +477,7 @@ local function restoreMinimapRotation ()
   setMinimapRotation(minimapDefaults.rotation);
 end
 
-addon.on('PLAYER_LOGIN', fixMinimapTaint);
+addon.onOnce('PLAYER_LOGIN', fixMinimapTaint);
 addon.on('PLAYER_LOGOUT', restoreMinimapRotation);
 
 addon.slash('radar', toggleFarmMode);

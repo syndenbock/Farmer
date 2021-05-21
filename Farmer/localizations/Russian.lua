@@ -38,6 +38,11 @@ L["Thick Monochrome"] = "Жирный одноцветный"
 L["Thin"] = "Тонкий"
 L["up"] = "вверх"
 
+-- Experience
+L["Experience"] = "Опыт"
+L["minimum %"] = "Минимум %"
+L["show experience"] = "Показывать опыт"
+
 -- Farm radar
 L["enable tooltips for default nodes"] = "включить всплывающие подсказки для добычи по умолчанию"
 L["Farm radar"] = "Фарм радар"
@@ -60,9 +65,9 @@ L["Items"] = "Предметы"
 L["minimum"] = "минимум"
 L["minimum rarity"] = "Минимальное качество"
 L["only show focused items"] = "Показывать только предметы из списка"
-L["show bag count for stackable items"] = "Показать количество собранных предметов в сумках"
+L["show bag count for items"] = "Показать количество собранных предметов в сумках"
 L["show items based on rarity"] = "Показывать добычу на основе качества"
-L["show total count for stackable items"] = "Показывать общее количество каждого из собранных предметов"
+L["show total count for items"] = "Показывать общее количество каждого из собранных предметов"
 
 -- Minimap
 L["display vignettes that appear on the minimap"] = "Отображать значки, которые появляются на миникарте"

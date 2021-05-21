@@ -63,9 +63,9 @@ L["Items"] = "Items"
 L["minimum"] = "minimum"
 L["minimum rarity"] = "minimum rarity"
 L["only show focused items"] = "only show focused items"
-L["show bag count for stackable items"] = "show bag count for stackable items"
+L["show bag count for items"] = "show bag count for items"
 L["show items based on rarity"] = "show items based on rarity"
-L["show total count for stackable items"] = "show total count for stackable items"
+L["show total count for items"] = "show total count for items"
 
 -- Minimap
 L["display vignettes that appear on the minimap"] = "display vignettes that appear on the minimap"

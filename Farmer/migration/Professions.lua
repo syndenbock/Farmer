@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end
+if (_G.TradeSkillUI == nil) then return end
 
 local Migration = addon.Migration;
 

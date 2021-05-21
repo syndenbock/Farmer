@@ -11,8 +11,6 @@ local callbackHandler = addon.Class.CallbackHandler:new();
 addon.Migration = Migration;
 
 local function versionToNumber (version)
-  if (not version) then return 0 end
-
   local segmentCount = 3;
 
   if (type(version) == 'number') then
@@ -42,6 +40,10 @@ local function getLastVersion (variables)
   store = store and store.Migrate;
   store = store and store.lastVersion;
 
+  if (store == nil) then
+    return nil;
+  end
+
   return versionToNumber(store);
 end
 
@@ -53,6 +55,11 @@ end
 
 local function executeMigrationHandlers (variables)
   local lastVersion = getLastVersion(variables);
+
+  if (lastVersion == nil) then
+    return;
+  end
+
   local versionList = callbackHandler:getSortedIdentifiers();
 
   for _, version in ipairs(versionList) do

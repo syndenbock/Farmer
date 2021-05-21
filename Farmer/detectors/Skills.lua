@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (not addon.isClassic()) then return end
+if (_G.GetSkillLineInfo == nil) then return end
 
 local tinsert = _G.tinsert;
 local GetNumSkillLines = _G.GetNumSkillLines;
@@ -83,6 +83,14 @@ addon.on('CHAT_MSG_SKILL', function ()
   checkSkills();
 end);
 
-addon.on('PLAYER_LOGIN', function ()
+addon.onOnce('PLAYER_LOGIN', function ()
   skillCache = getSkillInfo();
 end);
+
+addon.share('tests').skills = function ()
+  yellSkill({
+    name = 'testskill',
+    rank = 2,
+    maxRank = 20,
+  }, 1);
+end

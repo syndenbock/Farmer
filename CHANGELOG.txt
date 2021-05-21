@@ -1,8 +1,16 @@
+  version 3.8
+- Added support for BC Classic
+- Implemented batching of similar messages
+- Updated item count displays
+- Updated some translations
+- Reworked item detection for better performance
+- Fixed minimap vignette detection
+- Smaller bug fixes and improvements
+
   version 3.7
 - Updated interface version
 - Container sizes are now displayed when looting containers
 - Bug fixes
-
 
   version 3.6
 - Added basic support for conduits

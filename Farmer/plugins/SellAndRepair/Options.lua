@@ -21,7 +21,7 @@ do
 
   optionMap.autoRepair = panel:addCheckBox(L['autorepair when visiting merchants']);
 
-  if (not addon.isClassic()) then
+  if (_G.CanGuildBankRepair ~= nil) then
     optionMap.autoRepairAllowGuild =
         panel:addCheckBox(L['allow using guild funds for autorepair']);
   end

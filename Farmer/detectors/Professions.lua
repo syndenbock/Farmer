@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end;
+if (_G.TradeSkillUI == nil) then return end
 
 local tinsert = _G.tinsert;
 local TradeSkillUI = _G.C_TradeSkillUI;
@@ -114,7 +114,7 @@ local function checkProfessionChange (id, info)
   end
 end
 
-addon.on('PLAYER_LOGIN', function ()
+addon.onOnce('PLAYER_LOGIN', function ()
   PROFESSION_CATEGORIES = getProfessionCategories();
   professionCache = getLearnedProfessionInfo();
 end);

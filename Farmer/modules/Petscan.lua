@@ -1,6 +1,6 @@
 local _, addon = ...
 
-if (addon.isClassic()) then return end
+if (_G.C_PetJournal == nil) then return end
 
 local tinsert = _G.tinsert;
 local tremove = _G.tremove;

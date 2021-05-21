@@ -9,57 +9,97 @@ addon.share('Class').CallbackHandler = CallbackHandler;
 
 CallbackHandler.__index = CallbackHandler;
 
+local function callCallback (callback, ...)
+  local success, error = pcall(callback, ...);
+
+  if (success == false) then
+    _G.geterrorhandler()(error);
+  end
+end
+
 function CallbackHandler:new ()
-  local this = {};
+  return setmetatable({
+    callbacks = {},
+  }, CallbackHandler);
+end
 
-  setmetatable(this, CallbackHandler);
-  this.callMap = {};
-
-  return this;
+function CallbackHandler:__callCallbacks (identifier, ...)
+  for callback in pairs(self.callbacks[identifier]) do
+    callCallback(callback, ...);
+  end
 end
 
 function CallbackHandler:addCallback (identifier, callback)
   assert(type(callback) == 'function', 'callback is not a function');
 
-  local callMap = self.callMap;
-  local callbacks = callMap[identifier];
+  local callbacks = self.callbacks;
 
-  if (callbacks) then
-    tinsert(callbacks, callback);
-    return false;
-  else
-    callMap[identifier] = {callback};
+  if (callbacks[identifier] == nil) then
+    callbacks[identifier] = {
+      [callback] = true,
+    };
     return true;
+  else
+    assert(callbacks[identifier][callback] == nil,
+        'callback was already registered for ' .. identifier);
+
+    callbacks[identifier][callback] = true;
+    return false;
   end
+end
+
+function CallbackHandler:call (identifier, ...)
+  if (self.callbacks[identifier] == nil) then
+    return false;
+  end
+
+  self:__callCallbacks(identifier, ...);
+
+  return true;
 end
 
 function CallbackHandler:removeCallback (identifier, callback)
-  local callbacks = self.callMap[identifier];
+  local callbacks = self.callbacks[identifier];
 
-  assert(callbacks,
+  assert(callbacks ~= nil,
       addonName .. ': no callbacks were registered for ' .. identifier);
 
-  local found = false;
-
-  for x, storedCallback in ipairs(callbacks) do
-    if (storedCallback == callback) then
-      callbacks[x] = false;
-      found = true;
-    end
-  end
-
-  assert(found,
+  assert(callbacks[callback] ~= nil,
       addonName .. ': callback was not registered for ' .. identifier);
+
+  callbacks[callback] = nil;
+
+  if (next(callbacks) == nil) then
+    self.callbacks[identifier] = nil;
+    return true;
+  else
+    return false;
+  end
+end
+
+function CallbackHandler:has (identifier, callback)
+  return (self.callbacks[identifier] ~= nil and
+      self.callbacks[identifier][callback] ~= nil);
+end
+
+function CallbackHandler:clear ()
+  self.callbacks = {};
 end
 
 function CallbackHandler:clearCallbacks (identifier)
-  self.callMap[identifier] = nil;
+  self.callbacks[identifier] = nil;
+end
+
+function CallbackHandler:callAll (...)
+  for identifier in pairs(self.callbacks) do
+    self:call(identifier, ...);
+  end
 end
 
 function CallbackHandler:getIdentifiers ()
   local list = {};
 
-  for identifier in pairs(self.callMap) do
+  for identifier in pairs(self.callbacks) do
     tinsert(list, identifier);
   end
 
@@ -72,30 +112,4 @@ function CallbackHandler:getSortedIdentifiers ()
   tsort(identifiers);
 
   return identifiers;
-end
-
-function CallbackHandler:call (identifier, ...)
-  local callbacks = self.callMap[identifier];
-
-  if (not callbacks) then
-    return false;
-  end
-
-  for _, callback in ipairs(callbacks) do
-    if (callback) then
-      callback(...);
-    end
-  end
-
-  return true;
-end
-
-function CallbackHandler:callAll (...)
-  for identifier in pairs(self.callMap) do
-    self:call(identifier, ...);
-  end
-end
-
-function CallbackHandler:clear ()
-  self.callMap = {};
 end

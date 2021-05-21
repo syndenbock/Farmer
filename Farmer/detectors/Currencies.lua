@@ -1,6 +1,7 @@
 local _, addon = ...;
 
-if (addon.isClassic()) then return end
+if (_G.C_CurrencyInfo == nil or
+    _G.C_CurrencyInfo.GetCurrencyListInfo == nil) then return end
 
 local tinsert = _G.tinsert;
 local C_CurrencyInfo = _G.C_CurrencyInfo;
@@ -105,7 +106,7 @@ local function handleCurrency (id)
   yellCurrencyInfo(info, amount);
 end
 
-addon.on('PLAYER_LOGIN', fillCurrencyTable);
+addon.onOnce('PLAYER_LOGIN', fillCurrencyTable);
 
 -- quantities passed by the event can be factorized or negative so they cannot
 -- be used

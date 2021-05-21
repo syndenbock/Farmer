@@ -22,7 +22,6 @@ local LE_ITEM_CLASS_WEAPON = _G.LE_ITEM_CLASS_WEAPON;
 local LE_ITEM_CLASS_ARMOR = _G.LE_ITEM_CLASS_ARMOR;
 local LE_ITEM_ARMOR_GENERIC = _G.LE_ITEM_ARMOR_GENERIC;
 local LE_ITEM_ARMOR_SHIELD = _G.LE_ITEM_ARMOR_SHIELD;
-local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 local INVTYPE_TABARD = 'INVTYPE_TABARD';
 local INVTYPE_CLOAK = 'INVTYPE_CLOAK';
 
@@ -30,7 +29,9 @@ local CONTAINER_PATTERN = _G.gsub(_G.gsub(
     _G.CONTAINER_SLOTS, '%%s', '%.+'),'%%d', '(%%d+)');
 
 local Print = addon.Print;
-local ItemPrint = addon.ItemPrint;
+local printItem = addon.ItemPrint.printItem;
+local printItemWithName = addon.ItemPrint.printItemWithName;
+local COLORS = addon.ItemPrint.COLORS;
 local TooltipScanner = addon.TooltipScanner;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
@@ -77,7 +78,11 @@ local function checkName (itemInfo)
   return (itemInfo.name ~= nil);
 end
 
-local function checkDisplayOptions (itemInfo)
+local function checkDisplayOptions (itemInfo, count)
+  if (count < 0) then
+    return false;
+  end
+
   if (not Print.checkHideOptions()) then
     return false;
   end
@@ -111,21 +116,16 @@ local function checkDisplayOptions (itemInfo)
   return false;
 end
 
-local function getRarityColor (rarity)
-  return {
-    ITEM_QUALITY_COLORS[rarity].r,
-    ITEM_QUALITY_COLORS[rarity].g,
-    ITEM_QUALITY_COLORS[rarity].b,
-  };
-end
-
 local function isCraftingReagent (item)
   return (item.isCraftingReagent or item.classId == LE_ITEM_CLASS_TRADEGOODS);
 end
 
 local function handleCraftingReagent (item, count)
   if (isCraftingReagent(item)) then
-    ItemPrint.displayCraftingReagent(item, count);
+    printItem(item, {
+      count = count,
+      color = COLORS.reagent,
+    });
     return true;
   else
     return false;
@@ -139,7 +139,10 @@ end
 
 local function handleQuestItem (item, count)
   if (isQuestItem(item)) then
-    ItemPrint.displayQuestItem(item, count);
+    printItemWithName(item, {
+      count = count,
+      color = COLORS.quest,
+    });
     return true;
   else
     return false;
@@ -148,9 +151,11 @@ end
 
 local function displayArtifactRelic (item, count)
   local itemLevel = GetDetailedItemLevelInfo(item.link);
-  local text = addon.stringJoin({itemLevel, item.subType}, ' ');
 
-  ItemPrint.displayEquipment(item, text, count, getRarityColor(item.rarity));
+  printItem(item, {
+    count = count,
+    info = addon.stringJoin({itemLevel, item.subType}, ' '),
+  });
 end
 
 local function isArtifactRelic (item)
@@ -191,13 +196,15 @@ end
 
 local function displayConduit (item, count)
   local itemLevel = GetDetailedItemLevelInfo(item.link);
-  local text = addon.stringJoin({itemLevel, getConduitText(item)}, ' ');
 
-  ItemPrint.displayEquipment(item, text, count, getRarityColor(item.rarity));
+  printItem(item, {
+    count = count,
+    info = addon.stringJoin({itemLevel, getConduitText(item)}, ' '),
+  });
 end
 
 local function isConduit (item)
-  if (addon.isClassic()) then
+  if (IsItemConduitByItemInfo == nil) then
     return false;
   end
 
@@ -223,9 +230,9 @@ local function getContainerSize (item)
   local lines = TooltipScanner.getLinesByItemLink(item.link);
 
   for _, line in ipairs(lines) do
-    local match = strmatch(line, CONTAINER_PATTERN);
+    local success, match = pcall(strmatch, line, CONTAINER_PATTERN);
 
-    if (match ~= nil) then
+    if (success == true and match ~= nil) then
       return tonumber(match);
     end
   end
@@ -233,9 +240,11 @@ end
 
 local function displayContainer (item, count)
   local size = getContainerSize(item);
-  local text = addon.stringJoin({size, item.subType}, ' ');
 
-  ItemPrint.displayEquipment(item, text, count, getRarityColor(item.rarity));
+  printItem(item, {
+    count = count,
+    info = addon.stringJoin({size, item.subType}, ' '),
+  });
 end
 
 local function isContainer (item)
@@ -253,9 +262,11 @@ end
 
 local function displayWeapon (item, count)
   local itemLevel = GetDetailedItemLevelInfo(item.link);
-  local text = addon.stringJoin({itemLevel, item.subType}, ' ');
 
-  ItemPrint.displayEquipment(item, text, count, getRarityColor(item.rarity));
+  printItem(item, {
+    count = count,
+    info = addon.stringJoin({itemLevel, item.subType}, ' '),
+  });
 end
 
 local function isWeapon (item)
@@ -297,7 +308,10 @@ local function displayArmor (item, count)
 
   text = addon.stringJoin(textList, ' ');
 
-  ItemPrint.displayEquipment(item, text, count, getRarityColor(item.rarity));
+  printItem(item, {
+    count = count,
+    info = text,
+  });
 end
 
 local function isArmor (item)
@@ -328,7 +342,9 @@ local function handleEquippable (item, count)
 end
 
 local function displayUncategorizedItem (item, count)
-  ItemPrint.displayItem(item, count, getRarityColor(item.rarity));
+  printItemWithName(item, {
+    count = count,
+  });
 end
 
 local function handleItem (item, count)
@@ -342,7 +358,7 @@ local function handleItem (item, count)
 end
 
 local function checkItem (itemInfo, count)
-  if (checkDisplayOptions(itemInfo)) then
+  if (checkDisplayOptions(itemInfo, count)) then
     handleItem(itemInfo, count);
   end
 end

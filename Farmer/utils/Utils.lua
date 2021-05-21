@@ -3,11 +3,30 @@ local addonName, addon = ...;
 local floor = _G.floor;
 local log10 = _G.log10;
 
-local WOW_PROJECT_ID = _G.WOW_PROJECT_ID;
-local WOW_PROJECT_CLASSIC = _G.WOW_PROJECT_CLASSIC;
+local IS_RETAIL = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE);
+local IS_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC);
+local IS_BC_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC);
+
+function addon.isRetail ()
+  return IS_RETAIL;
+end
 
 function addon.isClassic ()
-  return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC;
+  return IS_CLASSIC;
+end
+
+function addon.isBCClassic ()
+  return IS_BC_CLASSIC;
+end
+
+function addon.cloneTable (table)
+  local copy = {};
+
+  for key, value in pairs(table) do
+    copy[key] = value;
+  end
+
+  return copy;
 end
 
 function addon.round (number)
@@ -51,29 +70,35 @@ function addon.setTrueScale (frame, scale)
   frame:SetScale(scale / frame:GetEffectiveScale());
 end
 
-function addon.transformFrameAnchorsToCenter (frame)
-  local points = {frame:GetPoint()};
-  local anchor = points[1];
+local function getFrameCenteredCoords (frame)
+  local points = {frame:GetCenter()};
 
-  if (addon.stringEndsWith(anchor, 'LEFT')) then
-    points[4] = points[4] + frame:GetWidth() / 2;
-  end
+  return {
+    x = points[1] * frame:GetEffectiveScale(),
+    y = points[2] * frame:GetEffectiveScale(),
+  };
+end
 
-  if (addon.stringEndsWith(anchor, 'RIGHT')) then
-    points[4] = points[4] - frame:GetWidth() / 2;
-  end
+function addon.getFrameRelativeCoords (frame, anchorFrame)
+  anchorFrame = anchorFrame or _G.UIParent;
 
-  if (addon.stringStartsWith(anchor, 'TOP')) then
-    points[5] = points[5] - frame:GetHeight() / 2;
-  end
+  local points = getFrameCenteredCoords(frame);
+  local anchorPoints = getFrameCenteredCoords(anchorFrame);
 
-  if (addon.stringStartsWith(anchor, 'BOTTOM')) then
-    points[5] = points[5] + frame:GetHeight() / 2;
-  end
+  return {
+    x = (points.x - anchorPoints.x) / frame:GetEffectiveScale(),
+    y = (points.y - anchorPoints.y) / frame:GetEffectiveScale(),
+  };
+end
 
-  points[1] = 'CENTER';
+function addon.transformFrameAnchorsToCenter (frame, anchorFrame)
+  anchorFrame = anchorFrame or _G.UIParent;
+
+  local relativePoints = addon.getFrameRelativeCoords(frame, anchorFrame);
+
   frame:ClearAllPoints();
-  frame:SetPoint(unpack(points));
+  frame:SetPoint('CENTER', anchorFrame, 'CENTER', relativePoints.x,
+      relativePoints.y);
 end
 
 function addon.secureCall (callback, ...)

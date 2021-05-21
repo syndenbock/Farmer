@@ -25,7 +25,7 @@ panel:mapOptions(options, {
   displayMoney = panel:addCheckBox(L['show money']),
 });
 
-addon.on('PLAYER_LOGIN', function ()
+addon.onOnce('PLAYER_LOGIN', function ()
     --[[ GetMoney returns 0 when called before PLAYER_LOGIN ]]
   if (charOptions.earningStamp == nil) then
     charOptions.earningStamp = GetMoney();

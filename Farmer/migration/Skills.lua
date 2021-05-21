@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (not addon.isClassic()) then return end
+if (_G.GetSkillLineInfo == nil) then return end
 
 local Migration = addon.Migration;
 
