@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+if (not addon.isDetectorAvailable('experience')) then return end
+
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
 local stringJoin = addon.stringJoin;

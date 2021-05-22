@@ -1,6 +1,11 @@
 local _, addon = ...;
 
-if (_G.GetSkillLineInfo == nil) then return end
+if (_G.GetSkillLineInfo == nil) then
+  addon.registerUnavailableDetector('skills');
+  return;
+end
+
+addon.registerAvailableDetector('skills');
 
 local tinsert = _G.tinsert;
 local GetNumSkillLines = _G.GetNumSkillLines;

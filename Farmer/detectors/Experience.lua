@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+addon.registerAvailableDetector('experience');
+
 local UnitXP = _G.UnitXP;
 local UnitXPMax = _G.UnitXPMax;
 

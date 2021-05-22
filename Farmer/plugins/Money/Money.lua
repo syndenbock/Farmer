@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+if (not addon.isDetectorAvailable('money')) then return end
+
 local checkHideOptions = addon.Print.checkHideOptions;
 local printMessageWithData = addon.Print.printMessageWithData;
 

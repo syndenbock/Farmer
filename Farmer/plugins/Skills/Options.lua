@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-if (_G.GetSkillLineInfo == nil) then return end
+if (not addon.isDetectorAvailable('skills')) then return end
 
 local L = addon.L;
 

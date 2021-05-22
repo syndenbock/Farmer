@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+if (not addon.isDetectorAvailable('reputation')) then return end
+
 local L = addon.L;
 
 local panel = addon.OptionClass.Panel:new(L['Reputation'], addon.mainPanel);

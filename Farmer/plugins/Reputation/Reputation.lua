@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+if (not addon.isDetectorAvailable('reputation')) then return end
+
 local abs = _G.abs;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetFactionInfoByID = _G.GetFactionInfoByID;

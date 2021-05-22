@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+addon.registerAvailableDetector('money');
+
 local GetMoney = _G.GetMoney;
 
 local moneyStamp;

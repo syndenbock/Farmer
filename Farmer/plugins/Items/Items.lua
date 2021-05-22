@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+if (not addon.isDetectorAvailable('items')) then return end
+
 local strupper = _G.strupper;
 local strmatch = _G.strmatch;
 

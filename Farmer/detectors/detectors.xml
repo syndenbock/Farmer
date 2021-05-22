@@ -1,4 +1,6 @@
 <UI>
+  <script file="Register.lua"/>
+
   <script file="Items.lua"/>
   <include file="storages\storages.xml"/>
   <script file="Currencies.lua"/>

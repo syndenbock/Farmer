@@ -1,4 +1,4 @@
-local _, addon = ...;
+local addonName, addon = ...;
 
 local strfind = _G.strfind;
 local strsub = _G.strsub;
@@ -11,7 +11,13 @@ local COPPER_PER_GOLD = _G.COPPER_PER_GOLD;
 local COPPER_PER_SILVER = _G.COPPER_PER_SILVER;
 local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
 
+local ADDON_MESSAGE_PREFIX = '|cff00ffff' .. addonName .. '|r: ';
+
 local addonVars = addon.share('vars');
+
+function addon.createAddonMessage (message)
+  return ADDON_MESSAGE_PREFIX .. message;
+end
 
 function addon.stringStartsWith (string, check)
   return (string:sub(1, #check) == check);
