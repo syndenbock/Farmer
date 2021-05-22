@@ -24,6 +24,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
       alwaysShowRecipes = false,
       alwaysShowFocusItems = true,
       onlyShowFocusItems = false,
+      showEquipmentItemLevels = true,
       focusItems = {},
     },
   },
@@ -82,6 +83,7 @@ do
   panel:mapOptions(options, {
     showTotalCount = panel:addCheckBox(L['show total count for items']);
     showBagCount = panel:addCheckBox(L['show bag count for items']);
+    showEquipmentItemLevels = panel:addCheckBox(L['show item levels for equipment']);
     filterByRarity = panel:addCheckBox(L['show items based on rarity']),
     minimumRarity = createRaritySlider(),
     alwaysShowReagents = panel:addCheckBox(L['always show reagents']),
@@ -92,7 +94,7 @@ do
   });
 
   panel:addLabel(L['focused item ids:']);
-  focusIdBox = panel:addEditBox(150, 200);
+  focusIdBox = panel:addEditBox(150, 180);
 
   panel:OnLoad(function ()
     focusIdBox:SetText(stringifyItemIds(options.focusItems));

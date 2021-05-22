@@ -118,6 +118,14 @@ local function checkDisplayOptions (itemInfo, count)
   return false;
 end
 
+local function getItemLevelText (item)
+  if (options.showEquipmentItemLevels ~= true) then
+    return nil;
+  end
+
+  return GetDetailedItemLevelInfo(item.link);
+end
+
 local function isCraftingReagent (item)
   return (item.isCraftingReagent or item.classId == LE_ITEM_CLASS_TRADEGOODS);
 end
@@ -152,11 +160,9 @@ local function handleQuestItem (item, count)
 end
 
 local function displayArtifactRelic (item, count)
-  local itemLevel = GetDetailedItemLevelInfo(item.link);
-
   printItem(item, {
     count = count,
-    info = addon.stringJoin({itemLevel, item.subType}, ' '),
+    info = addon.stringJoin({getItemLevelText(item), item.subType}, ' '),
   });
 end
 
@@ -197,11 +203,9 @@ local function getConduitText (item)
 end
 
 local function displayConduit (item, count)
-  local itemLevel = GetDetailedItemLevelInfo(item.link);
-
   printItem(item, {
     count = count,
-    info = addon.stringJoin({itemLevel, getConduitText(item)}, ' '),
+    info = addon.stringJoin({getItemLevelText(item), getConduitText(item)}, ' '),
   });
 end
 
@@ -263,11 +267,9 @@ local function handleContainer (item, count)
 end
 
 local function displayWeapon (item, count)
-  local itemLevel = GetDetailedItemLevelInfo(item.link);
-
   printItem(item, {
     count = count,
-    info = addon.stringJoin({itemLevel, item.subType}, ' '),
+    info = addon.stringJoin({getItemLevelText(item), item.subType}, ' '),
   });
 end
 
@@ -291,7 +293,7 @@ end
 local function displayArmor (item, count)
   local equipLocation = item.equipLocation;
   local subClassId = item.subClassId;
-  local itemLevel = GetDetailedItemLevelInfo(item.link);
+  local itemLevelText = getItemLevelText(item);
   local slotText = getItemSlotText(equipLocation);
   local textList;
   local text;
@@ -299,13 +301,13 @@ local function displayArmor (item, count)
   if (equipLocation == INVTYPE_TABARD) then
     textList = {slotText};
   elseif (equipLocation == INVTYPE_CLOAK) then
-    textList = {itemLevel, slotText};
+    textList = {itemLevelText, slotText};
   elseif (subClassId == LE_ITEM_ARMOR_GENERIC) then
-    textList = {itemLevel, slotText}; -- fingers/trinkets
+    textList = {itemLevelText, slotText}; -- fingers/trinkets
   elseif (subClassId > LE_ITEM_ARMOR_SHIELD) then -- we all know shields are offhand
-    textList = {itemLevel, slotText};
+    textList = {itemLevelText, slotText};
   else
-    textList = {itemLevel, item.subType, slotText};
+    textList = {itemLevelText, item.subType, slotText};
   end
 
   text = addon.stringJoin(textList, ' ');
