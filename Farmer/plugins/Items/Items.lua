@@ -197,9 +197,9 @@ local function getConduitText (item)
     return 'Conduit';
   end
 
-  local string = getConduitTypeString(info.conduitType);
+  local text = getConduitTypeString(info.conduitType);
 
-  return _G['CONDUIT_TYPE_' .. strupper(string)] or string;
+  return _G['CONDUIT_TYPE_' .. strupper(text)] or text;
 end
 
 local function displayConduit (item, count)
