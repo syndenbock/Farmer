@@ -41,8 +41,9 @@ addon.listen('EXPERIENCE_GAINED', function (info)
     percentageGain = percentageGain,
   }, stringJoin({
     BreakUpLargeNumbers(truncate(gain, 1)),
+    ' ',
     '(' .. truncate(percentageGain, 1) .. '%',
     '/',
     truncate(info.percentage, 1) .. '%)',
-  }, ' '), {0.5, 0.5, 1});
+  }, ''), {0.5, 0.5, 1});
 end);
