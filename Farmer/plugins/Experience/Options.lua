@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+if (not addon.isDetectorAvailable('experience')) then return end
+
 local L = addon.L;
 
 local panel = addon.OptionClass.Panel:new(L['Experience'], addon.mainPanel);

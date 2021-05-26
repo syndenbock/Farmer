@@ -1,6 +1,6 @@
 ## Interface: 20501
 ## Title: Farmer
-## Version: 3.8
+## Version: 3.8.1
 ## Author: syndenbock
 ## Notes: Shows information on all the stuff you loot
 ## Notes-deDe: Zeigt Infos über all das Zeug das du lootest

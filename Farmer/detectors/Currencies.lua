@@ -1,7 +1,12 @@
 local _, addon = ...;
 
 if (_G.C_CurrencyInfo == nil or
-    _G.C_CurrencyInfo.GetCurrencyListInfo == nil) then return end
+    _G.C_CurrencyInfo.GetCurrencyListInfo == nil) then
+  addon.registerUnavailableDetector('currencies');
+  return;
+end
+
+addon.registerAvailableDetector('currencies');
 
 local tinsert = _G.tinsert;
 local C_CurrencyInfo = _G.C_CurrencyInfo;

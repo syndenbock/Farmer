@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-if (_G.GetVignetteInfo == nil) then return end
+if (not addon.isDetectorAvailable('vignettes')) then return end
 
 local truncate = addon.truncate;
 local printMessage = addon.Print.printMessage;

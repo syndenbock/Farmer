@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+addon.registerAvailableDetector('items');
+
 local tinsert = _G.tinsert;
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;

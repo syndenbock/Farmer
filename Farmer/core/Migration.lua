@@ -2,7 +2,6 @@ local addonName, addon = ...;
 
 local strsplit = _G.strsplit;
 
-local CURRENT_VERSION = '3.7';
 local TOC_VERSION = _G.GetAddOnMetadata(addonName, 'version');
 
 local Migration = {};
@@ -50,7 +49,7 @@ end
 local function storeCurrentVersion (variables)
   variables.farmerOptions = variables.farmerOptions or {};
   variables.farmerOptions.Migrate = variables.farmerOptions.Migrate or {};
-  variables.farmerOptions.Migrate.lastVersion = versionToNumber(CURRENT_VERSION);
+  variables.farmerOptions.Migrate.lastVersion = versionToNumber(TOC_VERSION);
 end
 
 local function executeMigrationHandlers (variables)
@@ -97,22 +96,5 @@ function Migration.migrateOptionsToSubobject(options, subKey, mapping)
       subObject[newKey] = oldValue;
       -- print('migrated', oldKey, 'to', subKey .. '/' .. newKey);
     end
-  end
-end
-
-do
-  TOC_VERSION = versionToNumber(TOC_VERSION);
-  CURRENT_VERSION = versionToNumber(CURRENT_VERSION);
-
-  if (TOC_VERSION > CURRENT_VERSION) then
-    print(addon.stringJoin({
-      addonName .. ': you seem to have rolled back to an older version while the client was running.',
-      'Please restart the client to prevent errors.'
-    }, ' '));
-  elseif (CURRENT_VERSION > TOC_VERSION) then
-    print(addon.stringJoin({
-      addonName .. ': you seem to have installed a new version while the client was running.',
-      'Please restart the client to prevent errors.'
-    }, ' '));
   end
 end

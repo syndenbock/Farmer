@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-if (_G.TradeSkillUI == nil) then return end
+if (not addon.isDetectorAvailable('professions')) then return end
 
 local printMessageWithData = addon.Print.printMessageWithData;
 

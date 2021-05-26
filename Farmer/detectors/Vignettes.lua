@@ -1,6 +1,11 @@
 local _, addon = ...;
 
-if (_G.GetVignetteInfo == nil) then return end
+if (_G.GetVignetteInfo == nil) then
+  addon.registerUnavailableDetector('vignettes');
+  return;
+end
+
+addon.registerAvailableDetector('vignettes');
 
 local GetBestMapForUnit = _G.C_Map.GetBestMapForUnit;
 local GetVignettes = _G.C_VignetteInfo.GetVignettes;

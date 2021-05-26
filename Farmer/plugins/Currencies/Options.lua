@@ -1,7 +1,6 @@
 local addonName, addon = ...;
 
-if (_G.C_CurrencyInfo == nil or
-    _G.C_CurrencyInfo.GetCurrencyListInfo == nil) then return end
+if (not addon.isDetectorAvailable('currencies')) then return end
 
 local L = addon.L;
 

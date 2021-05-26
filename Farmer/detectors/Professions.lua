@@ -1,6 +1,11 @@
 local _, addon = ...;
 
-if (_G.TradeSkillUI == nil) then return end
+if (_G.TradeSkillUI == nil) then
+  addon.registerUnavailableDetector('professions');
+  return;
+end
+
+addon.registerAvailableDetector('professions');
 
 local tinsert = _G.tinsert;
 local TradeSkillUI = _G.C_TradeSkillUI;

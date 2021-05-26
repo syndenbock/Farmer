@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+if (not addon.isDetectorAvailable('items')) then return end
+
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetItemCount = _G.GetItemCount;
 

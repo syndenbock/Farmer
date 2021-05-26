@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+addon.registerAvailableDetector('reputation');
+
 local floor = _G.floor;
 local tinsert = _G.tinsert;
 local C_Reputation = _G.C_Reputation;
