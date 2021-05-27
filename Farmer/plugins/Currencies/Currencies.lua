@@ -51,7 +51,6 @@ local function displayCurrency (info, amount)
     text = info.name .. ' ' .. text;
   end
 
-
   printIconMessageWithData(SUBSPACE, info.id, amount, info.icon, text,
       {1, 0.9, 0, 1});
 end

@@ -15,7 +15,9 @@ local SUBSPACE = farmerFrame:CreateSubspace();
 local ItemPrint = {};
 
 local addonOptions = addon.SavedVariablesHandler(addonName, 'farmerOptions')
-    .vars.farmerOptions.Items;
+    .vars.farmerOptions;
+local itemOptions = addonOptions.Items;
+local coreOptions = addonOptions.Core;
 
 addon.ItemPrint = ItemPrint;
 
@@ -56,7 +58,7 @@ local function formatAdditionalCountsFragment (data, count)
 end
 
 local function formatBagCount (item, data)
-  if (addonOptions.showBagCount ~= true) then
+  if (itemOptions.showBagCount ~= true) then
     return nil;
   end
 
@@ -65,7 +67,7 @@ local function formatBagCount (item, data)
 end
 
 local function formatTotalCount (item, data)
-  if (addonOptions.showTotalCount ~= true) then
+  if (itemOptions.showTotalCount ~= true) then
     return nil;
   end
 
@@ -108,7 +110,7 @@ local function printItemDynamic (item, data, forceName)
 
   if (text == '' or
       forceName == true or
-      addonOptions.itemNames ==  true) then
+      coreOptions.itemNames ==  true) then
     text = item.name .. ' ' .. text;
   end
 
