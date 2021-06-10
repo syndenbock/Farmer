@@ -130,7 +130,7 @@ local function testItem (id, count)
   local _, link = GetItemInfo(id);
 
   if (link) then
-    yellItem(id, link, count);
+    broadCastItem(id, link, count);
   else
     print(addonName .. ': no data for item id', id);
   end
