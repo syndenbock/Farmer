@@ -76,6 +76,4 @@ addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
   end
 end);
 
-Items.addStorage(function ()
-  return {currentEquipment};
-end);
+Items.addStorage({currentEquipment});
