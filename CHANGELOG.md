@@ -1,0 +1,2 @@
+- Fixed rare bug when looting an item the game thinks does not exist (This actually is a thing)
+- Guild repairs are now enabled by default

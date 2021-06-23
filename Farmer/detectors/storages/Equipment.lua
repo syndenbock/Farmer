@@ -37,11 +37,14 @@ local function updateEquipmentSlot (slot)
   currentEquipment:setSlot(slot, id, link, 1);
 end
 
-local function initEquipment ()
+local function updateEquipment ()
   for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED, 1 do
     updateEquipmentSlot(x);
   end
+end
 
+local function initEquipment ()
+  updateEquipment();
   currentEquipment:clearChanges();
 end
 
@@ -54,6 +57,9 @@ local function checkSlotForArtifact (slot)
 end
 
 addon.onOnce('PLAYER_LOGIN', initEquipment);
+-- this is needed to detect gear updates when automatically switching specs
+-- when joining an LFG instance
+addon.on('PLAYER_ENTERING_WORLD', updateEquipment);
 
 addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
   --[[ we need to do this because when equipping artifact weapons, a second item
@@ -70,6 +76,4 @@ addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
   end
 end);
 
-Items.addStorage(function ()
-  return {currentEquipment};
-end);
+Items.addStorage({currentEquipment});

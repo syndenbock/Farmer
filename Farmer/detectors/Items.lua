@@ -2,7 +2,6 @@ local addonName, addon = ...;
 
 addon.registerAvailableDetector('items');
 
-local tinsert = _G.tinsert;
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local GetItemInfo = _G.GetItemInfo;
@@ -13,20 +12,13 @@ local Storage = addon.Factory.Storage;
 local ImmutableMap = addon.Factory.ImmutableMap;
 
 local Items = {};
-local storageList = {};
+local storages = {};
 
 addon.Items = Items;
 
 function Items.addStorage (storage)
-  tinsert(storageList, storage);
-end
-
-local function readStorage (storage)
-  if (type(storage) == 'function') then
-    return storage();
-  end
-
-  return storage;
+  assert(storages[storage] == nil, 'storage was already added');
+  storages[storage] = true;
 end
 
 local function readItemChanges (changes, id, itemInfo)
@@ -56,13 +48,7 @@ local function readContainerChanges (changes, container)
 end
 
 local function readStorageChanges (changes, storage)
-  local containers = readStorage(storage);
-
-  if (containers == nil) then
-    return;
-  end
-
-  for _, container in pairs(containers) do
+  for _, container in pairs(storage) do
     readContainerChanges(changes, container);
   end
 end
@@ -70,7 +56,7 @@ end
 local function getInventoryChanges ()
   local changes = Storage:new();
 
-  for _, storage in ipairs(storageList) do
+  for storage in pairs(storages) do
     readStorageChanges(changes, storage);
   end
 
@@ -144,7 +130,7 @@ local function testItem (id, count)
   local _, link = GetItemInfo(id);
 
   if (link) then
-    yellItem(id, link, count);
+    broadCastItem(id, link, count);
   else
     print(addonName .. ': no data for item id', id);
   end

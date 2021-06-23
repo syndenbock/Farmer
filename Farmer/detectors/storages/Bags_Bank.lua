@@ -165,6 +165,4 @@ end
 
 addon.on('BAG_UPDATE_DELAYED', updateFlaggedBags);
 
-Items.addStorage(function ()
-  return bagCache;
-end);
+Items.addStorage(bagCache);

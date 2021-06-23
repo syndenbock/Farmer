@@ -10,11 +10,9 @@ local GetVoidItemInfo = _G.GetVoidItemInfo;
 
 local NUM_VOIDSTORAGE_TABS = 2;
 local NUM_VOIDSTORAGE_SLOTS = 80;
-local storageTabs = nil;
+local storageTabs = {};
 
 local function initStorageTabs ()
-  storageTabs = {};
-
   for tabIndex = 1, NUM_VOIDSTORAGE_TABS, 1 do
     storageTabs[tabIndex] = Storage:new();
   end
@@ -71,6 +69,4 @@ addon.on('VOID_STORAGE_OPEN', initVoidStorage);
 addon.on({'VOID_STORAGE_CONTENTS_UPDATE', 'VOID_TRANSFER_DONE'},
     readVoidStorage);
 
-Items.addStorage(function ()
-  return storageTabs;
-end);
+Items.addStorage(storageTabs);

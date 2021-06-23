@@ -7,7 +7,7 @@ local GetItemInfo = _G.GetItemInfo;
 function addon.fetchItemLink (id, link, callback, ...)
   --[[ Apparently you can actually have non-existent items in your bags ]]
   if (not DoesItemExistByID(id)) then
-    return callback(link, ...);
+    return callback(id, link, ...);
   end
 
   local item = Item:CreateFromItemID(id);
