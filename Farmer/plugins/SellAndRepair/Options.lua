@@ -9,7 +9,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     SellAndRepair = {
       autoRepair = true,
-      autoRepairAllowGuild = false,
+      autoRepairAllowGuild = true,
       autoSell = true,
       autoSellSkipReadable = true,
     },
