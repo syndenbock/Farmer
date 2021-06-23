@@ -1,0 +1,12 @@
+package-as: Farmer
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
+
+ignore:
+  - Media
+  - .gitignore
+
+move-folders:
+  Farmer/Farmer: Farmer
