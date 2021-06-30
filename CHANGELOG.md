@@ -1,2 +1,1 @@
-- Fixed rare bug when looting an item the game thinks does not exist (This actually is a thing)
-- Guild repairs are now enabled by default
+- Updated interface version for 9.1
