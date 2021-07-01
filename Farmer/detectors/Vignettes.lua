@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (_G.GetVignetteInfo == nil) then
+if (_G.C_VignetteInfo == nil) then
   addon.registerUnavailableDetector('vignettes');
   return;
 end
