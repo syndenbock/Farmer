@@ -1,1 +1,1 @@
-- Updated interface version for 9.1
+- Fixed vignette scanning not being available
