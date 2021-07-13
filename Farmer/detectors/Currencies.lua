@@ -49,30 +49,30 @@ local function collapseExpandedCurrencies (expandedIndices)
   end
 end
 
-local function fillCurrencyTable ()
+local function readCurrencyTable ()
   local data = {};
   local expandedIndices = {};
   local listSize = GetCurrencyListSize();
-  local i = 1;
+  local index = 1;
 
-  while (i <= listSize) do
-    local info = GetCurrencyListInfo(i);
+  while (index <= listSize) do
+    local info = GetCurrencyListInfo(index);
 
     if (info.isHeader) then
       if (not info.isExpanded) then
-        tinsert(expandedIndices, i);
-        ExpandCurrencyList(i, 1);
+        tinsert(expandedIndices, index);
+        ExpandCurrencyList(index, 1);
         listSize = GetCurrencyListSize();
       end
     else
-      local link = GetCurrencyListLink(i);
+      local link = GetCurrencyListLink(index);
       local id = GetCurrencyIDFromLink(link);
       local count = info.quantity;
 
       data[id] = count;
     end
 
-    i = i + 1;
+    index = index + 1;
   end
 
   collapseExpandedCurrencies(expandedIndices);
@@ -80,7 +80,7 @@ local function fillCurrencyTable ()
   data[HONOR_ID] = getCurrencyAmount(HONOR_ID);
   data[CONQUEST_ID] = getCurrencyAmount(CONQUEST_ID);
 
-  currencyTable = data;
+  return data;
 end
 
 local function packCurrencyInfo (id)
@@ -103,7 +103,11 @@ local function yellCurrencyInfo (info, change)
   addon.yell('CURRENCY_CHANGED', ImmutableMap(info), change);
 end
 
-local function handleCurrency (id)
+-- quantities passed by the event can be factorized or negative so they cannot
+-- be used
+local function handleCurrency (_, id)
+  if (id == nil) then return end
+
   local info = packCurrencyInfo(id);
   local amount = info.total - (currencyTable[id] or 0);
 
@@ -111,14 +115,9 @@ local function handleCurrency (id)
   yellCurrencyInfo(info, amount);
 end
 
-addon.onOnce('PLAYER_LOGIN', fillCurrencyTable);
-
--- quantities passed by the event can be factorized or negative so they cannot
--- be used
-addon.on('CURRENCY_DISPLAY_UPDATE', function (_, id)
-  if (not id or not currencyTable) then return end
-
-  handleCurrency(id);
+addon.onOnce('PLAYER_LOGIN', function ()
+  currencyTable = readCurrencyTable();
+  addon.on('CURRENCY_DISPLAY_UPDATE', handleCurrency);
 end);
 
 --##############################################################################

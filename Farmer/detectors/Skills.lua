@@ -82,14 +82,9 @@ local function checkSkills ()
   skillCache = data;
 end
 
-addon.on('CHAT_MSG_SKILL', function ()
-  if (not skillCache) then return end
-
-  checkSkills();
-end);
-
 addon.onOnce('PLAYER_LOGIN', function ()
   skillCache = getSkillInfo();
+  addon.on('CHAT_MSG_SKILL', checkSkills);
 end);
 
 addon.share('tests').skills = function ()

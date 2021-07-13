@@ -119,21 +119,20 @@ local function checkProfessionChange (id, info)
   end
 end
 
+local function checkProfessions ()
+  local data = getLearnedProfessionInfo();
+
+    for id, info in pairs(data) do
+      checkProfessionChange(id, info);
+    end
+
+    professionCache = data;
+end
+
 addon.onOnce('PLAYER_LOGIN', function ()
   PROFESSION_CATEGORIES = getProfessionCategories();
   professionCache = getLearnedProfessionInfo();
-end);
-
-addon.on('CHAT_MSG_SKILL', function ()
-  if (not professionCache) then return end
-
-  local data = getLearnedProfessionInfo();
-
-  for id, info in pairs(data) do
-    checkProfessionChange(id, info);
-  end
-
-  professionCache = data;
+  addon.on('CHAT_MSG_SKILL', checkProfessions);
 end);
 
 --##############################################################################

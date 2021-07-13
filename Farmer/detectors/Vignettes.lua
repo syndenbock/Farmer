@@ -7,6 +7,8 @@ end
 
 addon.registerAvailableDetector('vignettes');
 
+local wipe = _G.wipe;
+
 local GetBestMapForUnit = _G.C_Map.GetBestMapForUnit;
 local GetVignettes = _G.C_VignetteInfo.GetVignettes;
 local GetVignetteInfo = _G.C_VignetteInfo.GetVignetteInfo;
@@ -77,7 +79,7 @@ end
 
 local function initZone ()
   currentMapId = getCurrentMap();
-  vignetteCache = {};
+  wipe(vignetteCache);
   scanVignettes();
 end
 

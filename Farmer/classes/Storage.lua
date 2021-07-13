@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+local wipe = _G.wipe;
+
 local Storage = {};
 
 addon.share('Factory').Storage = Storage;
@@ -7,23 +9,23 @@ addon.share('Factory').Storage = Storage;
 Storage.__index = Storage;
 
 function Storage:new ()
-  local this = {};
+  local this = {
+    items = {},
+    changes = {},
+  };
 
   setmetatable(this, Storage);
-
-  this.items = {};
-  this.changes = {};
 
   return this;
 end
 
 function Storage:clear ()
-  self.items = {};
-  self.changes = {};
+  wipe(self.items);
+  wipe(self.changes);
 end
 
 function Storage:clearChanges ()
-  self.changes = {};
+  wipe(self.changes);
 end
 
 function Storage:getChanges ()

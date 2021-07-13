@@ -3,6 +3,7 @@ local _, addon = ...;
 local Items = addon.Items;
 local Storage = addon.Factory.Storage;
 
+local wipe = _G.wipe;
 local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
 local ContainerIDToInventoryID = _G.ContainerIDToInventoryID;
@@ -100,7 +101,7 @@ local function updateFlaggedBags ()
     updateBagCache(bagIndex);
   end
 
-  flaggedBags = {};
+  wipe(flaggedBags);
 end
 
 local function initInventory ()

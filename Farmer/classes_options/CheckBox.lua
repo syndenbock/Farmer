@@ -10,8 +10,6 @@ Factory.CheckBox = CheckBox;
 
 CheckBox.__index = CheckBox;
 
-local function doNothing () end
-
 local function createCheckBox (name, parent, text, anchors)
   local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent,
       'OptionsCheckButtonTemplate');
