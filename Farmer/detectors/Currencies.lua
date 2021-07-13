@@ -115,22 +115,10 @@ addon.onOnce('PLAYER_LOGIN', fillCurrencyTable);
 
 -- quantities passed by the event can be factorized or negative so they cannot
 -- be used
-addon.funnel('CURRENCY_DISPLAY_UPDATE', function (paramCollection)
+addon.on('CURRENCY_DISPLAY_UPDATE', function (id)
   if (not currencyTable) then return end
 
-  local idMap = {};
-
-  for _, paramList in ipairs(paramCollection) do
-    local id = paramList[1];
-
-    if (id) then
-      idMap[id] = true;
-    end
-  end
-
-  for id in pairs(idMap) do
-    handleCurrency(id);
-  end
+  handleCurrency(id);
 end);
 
 --##############################################################################
