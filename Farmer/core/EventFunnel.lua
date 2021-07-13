@@ -30,9 +30,7 @@ end
 local function addFunnel (event, callback)
   if (callbackMap[event] == nil) then
     callbackMap[event] = {[callback] = true};
-    addon.on(event, function ()
-      handleFunnel(event);
-    end);
+    addon.on(event, handleFunnel);
   else
     callbackMap[event][callback] = true;
   end

@@ -26,10 +26,6 @@ local LAST_SLOT = LAST_BANK_SLOT;
 local bagCache = {};
 local flaggedBags = {};
 
-local function flagBag (index)
-  flaggedBags[index] = true;
-end
-
 local function readBagSlot (bagContent, bagIndex, slotIndex)
   --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
          nil if data is not ready --]]
@@ -137,9 +133,11 @@ addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
   end
 end);
 
-addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
+addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, function (_, index)
+  flaggedBags[index] = true;
+end);
 
-addon.on('PLAYERBANKSLOTS_CHANGED', function (slot)
+addon.on('PLAYERBANKSLOTS_CHANGED', function (_, slot)
   local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
   local bagSlot, bagContent;
 
@@ -158,7 +156,7 @@ addon.on('PLAYERBANKSLOTS_CHANGED', function (slot)
 end);
 
 if (REAGENTBANK_CONTAINER ~= nil) then
-  addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (slot)
+  addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (_, slot)
     readBagSlot(bagCache[REAGENTBANK_CONTAINER], REAGENTBANK_CONTAINER, slot);
   end);
 end

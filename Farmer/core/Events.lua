@@ -4,7 +4,7 @@ local eventFrame = _G.CreateFrame('frame');
 local callbackHandler = addon.Class.CallbackHandler:new();
 
 eventFrame:SetScript('OnEvent', function (_, event, ...)
-  callbackHandler:call(event, ...);
+  callbackHandler:call(event, event, ...);
 end);
 
 local function addCallback (event, callback)

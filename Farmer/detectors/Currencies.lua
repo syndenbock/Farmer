@@ -115,8 +115,8 @@ addon.onOnce('PLAYER_LOGIN', fillCurrencyTable);
 
 -- quantities passed by the event can be factorized or negative so they cannot
 -- be used
-addon.on('CURRENCY_DISPLAY_UPDATE', function (id)
-  if (not currencyTable) then return end
+addon.on('CURRENCY_DISPLAY_UPDATE', function (_, id)
+  if (not id or not currencyTable) then return end
 
   handleCurrency(id);
 end);

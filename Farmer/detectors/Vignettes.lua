@@ -32,7 +32,8 @@ local function setVignetteCache (guid, onMinimap)
   vignetteCache[guid] = onMinimap;
 end
 
-local function readVignette (guid)
+-- first parameter is unused to be able to use it as an event listener
+local function readVignette (_, guid)
   if (currentMapId == nil) then return end
 
   local info = GetVignetteInfo(guid);
@@ -70,7 +71,7 @@ end
 
 local function scanVignettes ()
   for _, guid in ipairs(GetVignettes()) do
-    readVignette(guid);
+    readVignette(nil, guid);
   end
 end
 

@@ -24,7 +24,7 @@ local function performAutoLoot ()
   end
 end
 
-addon.on('LOOT_READY', function (autoLoot)
+addon.on('LOOT_READY', function (_, autoLoot)
   --[[ the LOOT_READY sometimes fires multiple times when looting, so we only
     handle it once until loot is closed ]]
   if (lootIsOpen == true) then
