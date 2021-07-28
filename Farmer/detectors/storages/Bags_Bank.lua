@@ -140,19 +140,15 @@ end);
 
 addon.on('PLAYERBANKSLOTS_CHANGED', function (_, slot)
   local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
-  local bagSlot, bagContent;
 
-  if (slot <= maxSlot) then
-    bagSlot = BANK_CONTAINER;
-  else
-    slot = slot - maxSlot;
-    bagSlot = BANKBAG_CONTAINER;
+  if (slot > maxSlot) then
+    return;
   end
 
-  bagContent = bagCache[bagSlot];
+  local bagContent = bagCache[BANK_CONTAINER];
 
   if (bagContent ~= nil) then
-    readBagSlot(bagContent, bagSlot, slot)
+    readBagSlot(bagContent, BANK_CONTAINER, slot)
   end
 end);
 
