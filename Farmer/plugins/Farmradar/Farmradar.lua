@@ -427,9 +427,10 @@ local function enableFarmMode ()
 end
 
 local function hideMinimapBackdropIfNeeded ()
-  if (Minimap.backdrop and Minimap.backdrop.Center) then
-    Minimap.backdrop.Center:Hide();
-  end
+  if (not Minimap.backdrop or not Minimap.backdrop.GetRegions) then return end
+
+  Minimap.backdrop:SetFrameStrata('BACKGROUND');
+  Minimap.backdrop:SetFrameLevel(0);
 end
 
 local function disableFarmMode ()
