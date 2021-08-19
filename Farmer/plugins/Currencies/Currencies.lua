@@ -44,7 +44,7 @@ local function displayCurrency (info, amount)
   local text;
 
   amount = (farmerFrame:GetMessageData(SUBSPACE, info.id) or 0) + amount;
-  text = stringJoin({'x' .. amount, ' ', '(',
+  text = stringJoin({'x' .. BreakUpLargeNumbers(amount), ' ', '(',
       BreakUpLargeNumbers(info.total), ')'}, '');
 
   if (CORE_OPTIONS.itemNames == true) then
