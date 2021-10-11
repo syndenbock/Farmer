@@ -37,9 +37,13 @@ function DataMessageFrame:GenerateSubspaceIdentifier ()
 end
 
 function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
+  local info = self:GetMessageInfo(subspace, identifier);
   local message;
 
-  self:RemoveMessageByIdentifier(subspace, identifier);
+  if (info) then
+    MessageFrame.RemoveMessage(self, info.message);
+  end
+
   message = self:AddMessage(text, r, g, b, a);
   self:SetMessageData(subspace, identifier, message, data);
 
@@ -52,17 +56,28 @@ function DataMessageFrame:RemoveMessage (message)
 end
 
 function DataMessageFrame:SetMessageData (subspace, identifier, message, data)
+  local info = self:GetMessageInfo(subspace, identifier);
+
   message.subspace = subspace;
   message.identifier = identifier;
 
-  self.subspaces[subspace][identifier] = {
-    message = message,
-    data = data,
-  };
+  if (not info) then
+    self.subspaces[subspace][identifier] = {
+      message = message,
+      data = data,
+    };
+  else
+    info.message = message;
+    info.data = data;
+  end
+end
+
+function DataMessageFrame:GetMessageInfo (subspace, identifier)
+  return self.subspaces[subspace][identifier];
 end
 
 function DataMessageFrame:GetMessageData (subspace, identifier)
-  local data = self.subspaces[subspace][identifier];
+  local data = self:GetMessageInfo(subspace, identifier);
 
   return data and data.data;
 end
