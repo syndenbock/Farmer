@@ -36,11 +36,7 @@ local function getDisplayData (info)
   local previousData = farmerFrame:GetMessageData(SUBSPACE, info.faction);
 
   if (previousData == nil) then
-    return {
-      reputationChange = info.reputationChange,
-      standingChanged = info.standingChanged,
-      paragonLevelGained = info.paragonLevelGained,
-    };
+    return info;
   end
 
   return {
