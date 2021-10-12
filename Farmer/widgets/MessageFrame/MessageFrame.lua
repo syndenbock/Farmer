@@ -10,12 +10,16 @@ local transformFrameAnchorsToCenter = addon.transformFrameAnchorsToCenter;
 local ON_MOUSE_DOWN = 'OnMouseDown';
 local ON_MOUSE_UP = 'OnMouseUp';
 
+local LAYER_ARTWORK = 'ARTWORK';
+
 local ANCHOR_NONE = '';
 local ANCHOR_CENTER = 'CENTER';
 local ANCHOR_LEFT = 'LEFT';
 local ANCHOR_RIGHT = 'RIGHT';
 local ANCHOR_TOP = 'TOP';
 local ANCHOR_BOTTOM = 'BOTTOM';
+local ANCHOR_TOPLEFT = 'TOPLEFT';
+local ANCHOR_BOTTOMRIGHT = 'BOTTOMRIGHT';
 local GROW_DIRECTION_UP = 'UP';
 local GROW_DIRECTION_DOWN = 'DOWN';
 local INSERTMODE_PREPEND = 'PREPEND';
@@ -374,6 +378,29 @@ function MessageFrame:CreateFontString (text, r, g, b, a)
   fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
   fontString:SetText(text);
   fontString:Show();
+
+  if (fontString.iconFrame == nil) then
+    local iconFrame = CreateFrame('frame');
+    local iconTexture = iconFrame:CreateTexture(LAYER_ARTWORK);
+
+    iconFrame:SetParent(self.anchor);
+    iconFrame:SetSize(fontString:GetHeight(), fontString:GetHeight());
+    iconFrame:SetPoint('RIGHT', fontString, 'LEFT', -5, 0);
+    -- iconFrame:SetParent(fontString);
+    iconFrame:Show();
+
+    iconTexture:SetParent(iconFrame);
+    iconTexture:SetSize(fontString:GetHeight(), fontString:GetHeight());
+    iconTexture:ClearAllPoints();
+    iconTexture:SetPoint(ANCHOR_TOPLEFT, iconFrame, ANCHOR_TOPLEFT, 0, 0);
+    iconTexture:SetPoint(ANCHOR_BOTTOMRIGHT, iconFrame, ANCHOR_BOTTOMRIGHT, 0, 0);
+    iconTexture:Show();
+    iconFrame.iconTexture = iconTexture;
+
+    fontString.iconFrame = iconFrame;
+  end
+
+  fontString.iconFrame.iconTexture:SetTexture(135844);
 
   return fontString;
 end
