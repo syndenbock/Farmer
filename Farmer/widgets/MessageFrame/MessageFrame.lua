@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local CreateFontStringPool = _G.CreateFontStringPool;
+local CreateFramePool = _G.CreateFramePool;
 local CreateFrame = _G.CreateFrame;
 local UIPARENT = _G.UIParent;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
@@ -9,6 +9,8 @@ local transformFrameAnchorsToCenter = addon.transformFrameAnchorsToCenter;
 
 local ON_MOUSE_DOWN = 'OnMouseDown';
 local ON_MOUSE_UP = 'OnMouseUp';
+
+local FRAME = 'frame';
 
 local LAYER_ARTWORK = 'ARTWORK';
 
@@ -132,8 +134,7 @@ function MessageFrame:New (options)
   });
 
   this.anchor = anchor;
-  this.pool = CreateFontStringPool(anchor, this.frameStrata,
-      this.frameLevel);
+  this.framePool = CreateFramePool(FRAME, anchor, nil, nil, false);
 
   return this;
 end
@@ -188,15 +189,15 @@ function MessageFrame:StopMoving ()
 end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
-  local fontString = self:CreateFontString(text, r, g, b, a);
+  local message = self:CreateMessage(text, r, g, b, a);
 
-  self:InsertMessage(fontString);
+  self:InsertMessage(message);
 
   if (self.fading) then
-    self:StartFontStringAnimation(fontString);
+    self:StartFontStringAnimation(message);
   end
 
-  return fontString;
+  return message;
 end
 
 function MessageFrame:AddAnchorMessage (text, r, g, b, a)
@@ -204,7 +205,7 @@ function MessageFrame:AddAnchorMessage (text, r, g, b, a)
 end
 
 function MessageFrame:RemoveMessage (fontString)
-  assert(self.pool:IsActive(fontString), 'message is not currently displayed!');
+  assert(self.framePool:IsActive(fontString), 'message is not currently displayed!');
 
   local head = fontString.head;
   local tail = fontString.tail;
@@ -220,7 +221,7 @@ function MessageFrame:RemoveMessage (fontString)
   end
 
   self:SetFontStringPointsIfExists(tail);
-  self.pool:Release(fontString);
+  self.framePool:Release(fontString);
   self:ResetFontString(fontString);
 end
 
@@ -252,7 +253,7 @@ end
 function MessageFrame:SetFrameStrata (frameStrata)
   self.frameStrata = frameStrata;
   self.anchor:SetFrameStrata(frameStrata);
-  self.pool.layer = frameStrata;
+  self.framePool.layer = frameStrata;
 
   self:ForEachDisplayedMessage(self.SetFontStringFrameStrata);
 end
@@ -264,7 +265,7 @@ end
 function MessageFrame:SetFrameLevel (frameLevel)
   self.frameLevel = frameLevel;
   self.anchor:SetFrameLevel(frameLevel);
-  self.pool.subLayer = frameLevel;
+  self.framePool.subLayer = frameLevel;
 
   self:ForEachDisplayedMessage(self.SetFontStringFrameLevel)
 end
@@ -368,41 +369,52 @@ MessageFrame.GetTimeVisible = MessageFrame.GetVisibleTime;
 -- private methods
 --##############################################################################
 
-function MessageFrame:CreateFontString (text, r, g, b, a)
-  local fontString = self.pool:Acquire();
+function MessageFrame:CreateMessage (text, r, g, b, a)
+  local message = self.framePool:Acquire();
 
-  fontString:SetParent(self.anchor);
+  if (message.fontString == nil) then
+    message.fontString = self:CreateFontString(message);
+  end
+
+  message.fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
+  message.fontString:SetText(text);
+
+  if (message.iconFrame == nil) then
+    message.iconFrame = self:CreateIconFrame(message);
+  end
+
+  message.iconFrame:SetTexture(135844);
+
+  message:SetWidth(message.fontString:GetWidth() + message.iconFrame:GetWidth());
+  message:SetHeight(message.fontString:GetHeight());
+  message:Show();
+
+  return message;
+end
+
+function MessageFrame:CreateFontString (parent)
+  local fontString = parent:CreateFontString();
+
+  fontString:SetParent(parent);
+  fontString:SetPoint(ANCHOR_RIGHT, parent, ANCHOR_RIGHT, 0, 0);
+  fontString:Show();
+
   self:SetFontStringFont(fontString);
   self:SetFontStringShadowColor(fontString);
   self:SetFontStringShadowOffset(fontString);
-  fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
-  fontString:SetText(text);
-  fontString:Show();
-
-  if (fontString.iconFrame == nil) then
-    local iconFrame = CreateFrame('frame');
-    local iconTexture = iconFrame:CreateTexture(LAYER_ARTWORK);
-
-    iconFrame:SetParent(self.anchor);
-    iconFrame:SetSize(fontString:GetHeight(), fontString:GetHeight());
-    iconFrame:SetPoint('RIGHT', fontString, 'LEFT', -5, 0);
-    -- iconFrame:SetParent(fontString);
-    iconFrame:Show();
-
-    iconTexture:SetParent(iconFrame);
-    iconTexture:SetSize(fontString:GetHeight(), fontString:GetHeight());
-    iconTexture:ClearAllPoints();
-    iconTexture:SetPoint(ANCHOR_TOPLEFT, iconFrame, ANCHOR_TOPLEFT, 0, 0);
-    iconTexture:SetPoint(ANCHOR_BOTTOMRIGHT, iconFrame, ANCHOR_BOTTOMRIGHT, 0, 0);
-    iconTexture:Show();
-    iconFrame.iconTexture = iconTexture;
-
-    fontString.iconFrame = iconFrame;
-  end
-
-  fontString.iconFrame.iconTexture:SetTexture(135844);
 
   return fontString;
+end
+
+function MessageFrame:CreateIconFrame (parent)
+  local iconFrame = parent:CreateTexture(LAYER_ARTWORK);
+
+  iconFrame:SetParent(parent);
+  iconFrame:SetSize(parent.fontString:GetHeight(), parent.fontString:GetHeight());
+  iconFrame:SetPoint(ANCHOR_LEFT, parent, ANCHOR_LEFT, 0, 0);
+  iconFrame:Show();
+
+  return iconFrame;
 end
 
 function MessageFrame:CreateAnchorFontString (message, r, g, b, a)
@@ -602,8 +614,8 @@ end
 --******************************************************************************
 
 function MessageFrame:ForEachMessage (callback, ...)
-  for fontString in self.pool:EnumerateActive() do
-    callback(self, fontString, ...);
+  for message in self.framePool:EnumerateActive() do
+    callback(self, message, ...);
   end
 end
 
