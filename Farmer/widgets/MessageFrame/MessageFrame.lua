@@ -30,6 +30,8 @@ local ALIGNMENT_LEFT = 'LEFT';
 local ALIGNMENT_CENTER = 'CENTER';
 local ALIGNMENT_RIGHT = 'RIGHT';
 
+local ICON_OFFSET = 5;
+
 local MessageFrame = {
   GROW_DIRECTION_UP = GROW_DIRECTION_UP,
   GROW_DIRECTION_DOWN = GROW_DIRECTION_DOWN,
@@ -380,9 +382,7 @@ function MessageFrame:CreateMessage (text, r, g, b, a)
   end
 
   message.iconFrame:SetTexture(135844);
-
-  message:SetWidth(message.fontString:GetWidth() + message.iconFrame:GetWidth());
-  message:SetHeight(message.fontString:GetHeight());
+  self:ResizeMessage(message);
   message:Show();
 
   return message;
@@ -406,11 +406,17 @@ function MessageFrame:CreateIconFrame (parent)
   local iconFrame = parent:CreateTexture(LAYER_ARTWORK);
 
   iconFrame:SetParent(parent);
-  iconFrame:SetSize(parent.fontString:GetHeight(), parent.fontString:GetHeight());
   iconFrame:SetPoint(ANCHOR_LEFT, parent, ANCHOR_LEFT, 0, 0);
   iconFrame:Show();
 
   return iconFrame;
+end
+
+function MessageFrame:ResizeMessage (message)
+  local textWidth, textHeight = message.fontString:GetSize();
+
+  message.iconFrame:SetSize(textHeight, textHeight);
+  message:SetSize(textHeight + ICON_OFFSET + textWidth, textHeight);
 end
 
 function MessageFrame:CreateAnchorMessage (text, r, g, b, a)
@@ -586,6 +592,7 @@ end
 
 function MessageFrame:SetMessageFont (message)
   self:SetFontStringFont(message.fontString);
+  self:ResizeMessage(message);
 end
 
 function MessageFrame:SetMessageShadowColor (message)
