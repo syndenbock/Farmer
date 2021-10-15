@@ -95,8 +95,7 @@ function Panel:__addCallback (identifier, callback)
     local success, errorMessage = pcall(callback);
 
     if (not success) then
-      print(addonName, 'error in', identifier, 'handler:');
-      print(errorMessage);
+      _G.geterrorhandler()(addonName .. ': error in ' .. identifier .. ' handler: ' .. errorMessage);
     end
   end
 
