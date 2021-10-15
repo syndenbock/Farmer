@@ -144,6 +144,7 @@ function MessageFrame:New (options)
 
   this.anchor = anchor;
   this.framePool = CreateFramePool(FRAME, anchor, nil, nil, false);
+  this:UpdateSizes();
 
   return this;
 end
@@ -285,11 +286,16 @@ function MessageFrame:SetFont (font, fontSize, fontFlags)
   self.fontFlags = fontFlags;
 
   self:ForEachMessage(self.SetMessageFont);
+  self:UpdateSizes();
 end
 
 function MessageFrame:SetIconScale (scale)
   self.iconScale = scale;
+  self:UpdateSizes();
+end
 
+function MessageFrame:UpdateSizes ()
+  self.iconSize = self.fontSize * self.iconScale;
   self:ForEachActiveMessage(self.ResizeMessage);
 end
 
@@ -388,7 +394,7 @@ function MessageFrame:CreateMessage (icon, text, r, g, b, a)
   end
 
   message.fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
-  message.fontString:SetText(text or ' ');
+  message.fontString:SetText(text);
 
   if (message.iconFrame == nil) then
     message.iconFrame = self:CreateIconFrame(message);
@@ -432,7 +438,7 @@ end
 
 function MessageFrame:ResizeMessage (message)
   local textWidth, textHeight = message.fontString:GetSize();
-  local iconSize = textHeight * self.iconScale;
+  local iconSize = self.iconSize;
 
   message.iconFrame:SetSize(iconSize, iconSize);
   message:SetSize(iconSize + ICON_OFFSET + textWidth, max(iconSize, textHeight));
@@ -445,7 +451,6 @@ function MessageFrame:CreateAnchorMessage (icon, text, r, g, b, a)
   local message = self:CreateMessage(icon, nil, r, g, b, a);
 
   self:SetMessagePoints(message);
-  message:Raise();
 
   return message;
 end
@@ -614,7 +619,6 @@ end
 
 function MessageFrame:SetMessageFont (message)
   self:SetFontStringFont(message.fontString);
-  self:ResizeMessage(message);
 end
 
 function MessageFrame:SetMessageShadowColor (message)
