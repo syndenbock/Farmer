@@ -115,6 +115,10 @@ function MessageFrame:New (options)
   local this = createBase(self, options);
   local anchor = createAnchor(this.name, this.frameStrata, this.frameLevel);
 
+  -- these are only needed for initialization
+  this.frameStrata = nil;
+  this.frameLevel = nil;
+
   setmetatable(this, {
     __index = function (_, key)
       local value = self[key];
@@ -251,27 +255,19 @@ function MessageFrame:SetSpacing (spacing)
 end
 
 function MessageFrame:SetFrameStrata (frameStrata)
-  self.frameStrata = frameStrata;
   self.anchor:SetFrameStrata(frameStrata);
-  self.framePool.layer = frameStrata;
-
-  self:ForEachDisplayedMessage(self.SetFontStringFrameStrata);
 end
 
 function MessageFrame:GetFrameStrata ()
-  return self.frameStrata;
+  return self.anchor:GetFrameStrata();
 end
 
 function MessageFrame:SetFrameLevel (frameLevel)
-  self.frameLevel = frameLevel;
   self.anchor:SetFrameLevel(frameLevel);
-  self.framePool.subLayer = frameLevel;
-
-  self:ForEachDisplayedMessage(self.SetFontStringFrameLevel)
 end
 
 function MessageFrame:GetFrameLevel ()
-  return self.frameLevel;
+  return self.anchor:GetFrameLevel();
 end
 
 function MessageFrame:SetFont (font, fontSize, fontFlags)
@@ -599,14 +595,6 @@ end
 
 function MessageFrame:SetFontStringShadowOffset (fontString)
   fontString:SetShadowOffset(self.shadowOffset.x, self.shadowOffset.y);
-end
-
-function MessageFrame:SetFontStringFrameStrata (fontString)
-  fontString:SetFrameStrata(self.frameStrata);
-end
-
-function MessageFrame:SetFontStringFrameLevel (fontString)
-  fontString:SetFrameLevel(self.frameLevel);
 end
 
 --******************************************************************************
