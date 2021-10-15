@@ -143,7 +143,8 @@ function MessageFrame:New (options)
   });
 
   this.anchor = anchor;
-  this.framePool = CreateFramePool(FRAME, anchor, nil, nil, false);
+  this.framePool = CreateFramePool(FRAME, anchor, nil, this.ResetMessage, false);
+  this.framePool:SetResetDisallowedIfNew(true);
   this:UpdateSizes();
 
   return this;
@@ -236,7 +237,6 @@ function MessageFrame:RemoveMessage (message)
 
   self:SetMessagePointsIfExists(tail);
   self.framePool:Release(message);
-  self:ResetMessage(message);
 end
 
 function MessageFrame:Clear ()
@@ -456,12 +456,10 @@ function MessageFrame:CreateAnchorMessage (icon, text, r, g, b, a)
 end
 
 function MessageFrame:ResetMessage (message)
-  --[[ no need to reset default attributes, as the pool resetter automatically
-    does this ]]
+  message:Hide();
   message.head = nil;
   message.tail = nil;
   message.isFading = nil;
-  message.fadeSpeed = nil;
 
   if (message.animationGroup) then
     message.animationGroup:Stop();
