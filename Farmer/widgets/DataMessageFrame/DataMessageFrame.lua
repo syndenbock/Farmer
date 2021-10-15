@@ -37,14 +37,10 @@ function DataMessageFrame:GenerateSubspaceIdentifier ()
 end
 
 function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  self:HandleAddMessageWithData(subspace, identifier, data, nil, text, r, g, b, a);
+  self:HandleAddIconMessageWithData(subspace, identifier, data, nil, text, r, g, b, a);
 end
 
 function DataMessageFrame:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
-  self:HandleAddMessageWithData(subspace, identifier, data, icon, text, r, g, b, a);
-end
-
-function DataMessageFrame:HandleAddMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
   local info = self:GetMessageInfo(subspace, identifier);
   local message;
 
@@ -52,11 +48,7 @@ function DataMessageFrame:HandleAddMessageWithData (subspace, identifier, data, 
     MessageFrame.RemoveMessage(self, info.message);
   end
 
-  if (icon) then
-    message = self:AddIconMessage(icon, text, r, g, b, a);
-  else
-    message = self:AddMessage(text, r, g, b, a);
-  end
+  message = self:AddIconMessage(icon, text, r, g, b, a);
 
   self:SetMessageData(subspace, identifier, message, data);
 
