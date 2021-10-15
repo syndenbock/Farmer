@@ -275,7 +275,7 @@ function MessageFrame:SetFont (font, fontSize, fontFlags)
   self.fontSize = fontSize;
   self.fontFlags = fontFlags;
 
-  self:ForEachActiveMessage(self.SetFontStringFont);
+  self:ForEachActiveMessage(self.SetMessageFont);
 end
 
 function MessageFrame:SetFadeDuration (duration)
@@ -320,7 +320,7 @@ function MessageFrame:SetShadowColor (r, g, b, a)
   colors.b = b or colors.b;
   colors.a = a or colors.a;
 
-  self:ForEachActiveMessage(self.SetFontStringShadowColor);
+  self:ForEachActiveMessage(self.SetMessageShadowColor);
 end
 
 function MessageFrame:SetInsertMode (insertMode)
@@ -348,7 +348,7 @@ function MessageFrame:SetShadowOffset (x, y)
   offset.x = x or offset.x;
   offset.y = y or offset.y;
 
-  self:ForEachActiveMessage(self.SetFontStringShadowOffset);
+  self:ForEachActiveMessage(self.SetMessageShadowOffset);
 end
 
 function MessageFrame:GetShadowOffset ()
@@ -578,6 +578,22 @@ end
 
 function MessageFrame.OnFontStringAnimationFinished (animation)
   animation.parent:RemoveMessage(animation.fontString);
+end
+
+--******************************************************************************
+-- Message attribute setters
+--******************************************************************************
+
+function MessageFrame:SetMessageFont (message)
+  self:SetFontStringFont(message.fontString);
+end
+
+function MessageFrame:SetMessageShadowColor (message)
+  self:SetFontStringShadowColor(message.fontString);
+end
+
+function MessageFrame:SetMessageShadowOffset (message)
+  self:SetFontStringShadowOffset(message.fontString);
 end
 
 --******************************************************************************
