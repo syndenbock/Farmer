@@ -79,6 +79,7 @@ local function setFontOptions (options)
   farmerFrame:SetFont(STANDARD_TEXT_FONT, options.fontSize, options.outline);
   farmerFrame:SetShadowOffset(shadowOffset, -shadowOffset);
   farmerFrame:SetSpacing(options.spacing);
+  farmerFrame:SetIconScale(options.iconScale);
   addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize}, ':');
 end
 

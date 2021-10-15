@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+local max = _G.max;
+
 local CreateFramePool = _G.CreateFramePool;
 local CreateFrame = _G.CreateFrame;
 local UIPARENT = _G.UIParent;
@@ -30,7 +32,7 @@ local ALIGNMENT_LEFT = 'LEFT';
 local ALIGNMENT_CENTER = 'CENTER';
 local ALIGNMENT_RIGHT = 'RIGHT';
 
-local ICON_OFFSET = 5;
+local ICON_OFFSET = 3;
 
 local MessageFrame = {
   GROW_DIRECTION_UP = GROW_DIRECTION_UP,
@@ -40,18 +42,19 @@ local MessageFrame = {
   ALIGNMENT_RIGHT = ALIGNMENT_RIGHT,
   INSERTMODE_PREPEND = INSERTMODE_PREPEND,
   INSERTMODE_APPEND = INSERTMODE_APPEND,
-  frameStrata = 'TOOLTIP';
-  frameLevel = 0;
-  spacing = 0;
-  fadeDuration = 2;
-  visibleTime = 3;
-  font = STANDARD_TEXT_FONT;
-  fontSize = 18;
-  fontFlags = 'OUTLINE';
-  fading = true;
-  insertMode = INSERTMODE_PREPEND;
-  shadowColors = {r = 0, g = 0, b = 0, a = 1};
-  shadowOffset = {x = 0, y = 0};
+  frameStrata = 'TOOLTIP',
+  frameLevel = 0,
+  spacing = 0,
+  fadeDuration = 2,
+  visibleTime = 3,
+  font = STANDARD_TEXT_FONT,
+  fontSize = 18,
+  fontFlags = 'OUTLINE',
+  fading = true,
+  iconScale = 1,
+  insertMode = INSERTMODE_PREPEND,
+  shadowColors = {r = 0, g = 0, b = 0, a = 1},
+  shadowOffset = {x = 0, y = 0},
 };
 
 MessageFrame.__index = MessageFrame;
@@ -276,6 +279,12 @@ function MessageFrame:SetFont (font, fontSize, fontFlags)
   self:ForEachMessage(self.SetMessageFont);
 end
 
+function MessageFrame:SetIconScale (scale)
+  self.iconScale = scale;
+
+  self:ForEachActiveMessage(self.ResizeMessage);
+end
+
 function MessageFrame:SetFadeDuration (duration)
   self.fadeDuration = duration;
 end
@@ -435,9 +444,10 @@ end
 
 function MessageFrame:ResizeMessage (message)
   local textWidth, textHeight = message.fontString:GetSize();
+  local iconSize = textHeight * self.iconScale;
 
-  message.iconFrame:SetSize(textHeight, textHeight);
-  message:SetSize(textHeight + ICON_OFFSET + textWidth, textHeight);
+  message.iconFrame:SetSize(iconSize, iconSize);
+  message:SetSize(iconSize + ICON_OFFSET + textWidth, max(iconSize, textHeight));
 end
 
 function MessageFrame:CreateAnchorMessage (text, r, g, b, a)
