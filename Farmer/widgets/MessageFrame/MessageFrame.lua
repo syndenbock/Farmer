@@ -195,15 +195,11 @@ function MessageFrame:StopMoving ()
 end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
-  local message = self:CreateMessage(text, r, g, b, a);
+  return self:HandleAddMessage(nil, text, r, g, b, a);
+end
 
-  self:InsertMessage(message);
-
-  if (self.fading) then
-    self:StartMessageAnimation(message);
-  end
-
-  return message;
+function MessageFrame:AddIconMessage (icon, text, r, g, b, a)
+  return self:HandleAddMessage(icon, text, r, g, b, a);
 end
 
 function MessageFrame:AddAnchorMessage (text, r, g, b, a)
@@ -367,6 +363,25 @@ MessageFrame.GetTimeVisible = MessageFrame.GetVisibleTime;
 -- private methods
 --##############################################################################
 
+function MessageFrame:HandleAddMessage (icon, text, r, g, b, a)
+  local message = self:CreateMessage(text, r, g, b, a);
+
+  if (icon) then
+    message.iconFrame:SetTexture(icon);
+    message.iconFrame:Show();
+  else
+    message.iconFrame:Hide();
+  end
+
+  self:InsertMessage(message);
+
+  if (self.fading) then
+    self:StartMessageAnimation(message);
+  end
+
+  return message;
+end
+
 function MessageFrame:CreateMessage (text, r, g, b, a)
   local message = self.framePool:Acquire();
 
@@ -381,11 +396,18 @@ function MessageFrame:CreateMessage (text, r, g, b, a)
     message.iconFrame = self:CreateIconFrame(message);
   end
 
-  message.iconFrame:SetTexture(135844);
   self:ResizeMessage(message);
   message:Show();
+  message.iconFrame:Hide();
 
   return message;
+end
+
+function MessageFrame:CreateIconMessage (icon, text, r, g, b, a)
+  local message = self:CreateMessage(text, r, g, b, a);
+
+  message.iconFrame:SetTexture(icon);
+  message.iconFrame:Show();
 end
 
 function MessageFrame:CreateFontString (parent)
@@ -407,7 +429,6 @@ function MessageFrame:CreateIconFrame (parent)
 
   iconFrame:SetParent(parent);
   iconFrame:SetPoint(ANCHOR_LEFT, parent, ANCHOR_LEFT, 0, 0);
-  iconFrame:Show();
 
   return iconFrame;
 end
