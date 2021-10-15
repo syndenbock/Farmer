@@ -148,8 +148,8 @@ function MessageFrame:New (options)
   return this;
 end
 
-function MessageFrame:Move (text, callback)
-  local message = self:CreateAnchorMessage(text);
+function MessageFrame:Move (icon, text, callback)
+  local message = self:CreateAnchorMessage(icon, text);
 
   transformFrameAnchorsToCenter(self.anchor);
   self.anchor:SetSize(200, 200);
@@ -198,15 +198,23 @@ function MessageFrame:StopMoving ()
 end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
-  return self:HandleAddMessage(nil, text, r, g, b, a);
+  return self:AddIconMessage(nil, text, r, g, b, a);
 end
 
 function MessageFrame:AddIconMessage (icon, text, r, g, b, a)
-  return self:HandleAddMessage(icon, text, r, g, b, a);
+  local message = self:CreateMessage(icon, text, r, g, b, a);
+
+  self:InsertMessage(message);
+
+  if (self.fading) then
+    self:StartMessageAnimation(message);
+  end
+
+  return message;
 end
 
-function MessageFrame:AddAnchorMessage (text, r, g, b, a)
-  self:StartMessageAnimation(self:CreateAnchorMessage(text, r, g, b, a));
+function MessageFrame:AddAnchorMessage (icon, text, r, g, b, a)
+  self:StartMessageAnimation(self:CreateAnchorMessage(icon, r, g, b, a));
 end
 
 function MessageFrame:RemoveMessage (message)
@@ -372,8 +380,22 @@ MessageFrame.GetTimeVisible = MessageFrame.GetVisibleTime;
 -- private methods
 --##############################################################################
 
-function MessageFrame:HandleAddMessage (icon, text, r, g, b, a)
-  local message = self:CreateMessage(text, r, g, b, a);
+function MessageFrame:CreateMessage (icon, text, r, g, b, a)
+  local message = self.framePool:Acquire();
+
+  if (message.fontString == nil) then
+    message.fontString = self:CreateFontString(message);
+  end
+
+  message.fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
+  message.fontString:SetText(text or ' ');
+
+  if (message.iconFrame == nil) then
+    message.iconFrame = self:CreateIconFrame(message);
+  end
+
+  self:ResizeMessage(message);
+  message:Show();
 
   if (icon) then
     message.iconFrame:SetTexture(icon);
@@ -382,41 +404,7 @@ function MessageFrame:HandleAddMessage (icon, text, r, g, b, a)
     message.iconFrame:Hide();
   end
 
-  self:InsertMessage(message);
-
-  if (self.fading) then
-    self:StartMessageAnimation(message);
-  end
-
   return message;
-end
-
-function MessageFrame:CreateMessage (text, r, g, b, a)
-  local message = self.framePool:Acquire();
-
-  if (message.fontString == nil) then
-    message.fontString = self:CreateFontString(message);
-  end
-
-  message.fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
-  message.fontString:SetText(text);
-
-  if (message.iconFrame == nil) then
-    message.iconFrame = self:CreateIconFrame(message);
-  end
-
-  self:ResizeMessage(message);
-  message:Show();
-  message.iconFrame:Hide();
-
-  return message;
-end
-
-function MessageFrame:CreateIconMessage (icon, text, r, g, b, a)
-  local message = self:CreateMessage(text, r, g, b, a);
-
-  message.iconFrame:SetTexture(icon);
-  message.iconFrame:Show();
 end
 
 function MessageFrame:CreateFontString (parent)
@@ -450,11 +438,14 @@ function MessageFrame:ResizeMessage (message)
   message:SetSize(iconSize + ICON_OFFSET + textWidth, max(iconSize, textHeight));
 end
 
-function MessageFrame:CreateAnchorMessage (text, r, g, b, a)
-  local message = self:CreateMessage(text, r, g, b, a);
+function MessageFrame:CreateAnchorMessage (icon, text, r, g, b, a)
+  -- Setting an anchor text doesn't properly work yet as the message itself
+  -- cannot be dragged which causes parts of the message not being able to
+  -- clicked if they don't overlap the moving anchor.
+  local message = self:CreateMessage(icon, nil, r, g, b, a);
 
-  message:SetParent(self.anchor);
   self:SetMessagePoints(message);
+  message:Raise();
 
   return message;
 end

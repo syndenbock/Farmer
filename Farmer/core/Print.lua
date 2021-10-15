@@ -6,7 +6,6 @@ local IsActiveBattlefieldArena = _G.IsActiveBattlefieldArena;
 local DEFAULT_COLOR = {1, 1, 1};
 
 local farmerFrame = addon.frame;
-local getIcon = addon.getIcon;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {},
 }).vars.farmerOptions.Core;
