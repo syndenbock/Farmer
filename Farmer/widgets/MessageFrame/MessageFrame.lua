@@ -226,14 +226,14 @@ function MessageFrame:RemoveMessage (fontString)
 end
 
 function MessageFrame:Clear ()
-  self:ForEachDisplayedMessage(self.RemoveMessage);
+  self:ForEachActiveMessage(self.RemoveMessage);
 end
 
 function MessageFrame:SetFading (fading)
   --[[ when toggling from not fading to fading, current permanent messages
   will fade ]]
   if (not self.fading and fading) then
-    self:ForEachDisplayedMessage(self.StartFontStringAnimation);
+    self:ForEachActiveMessage(self.StartFontStringAnimation);
   end
 
   self.fading = fading;
@@ -247,7 +247,7 @@ function MessageFrame:SetSpacing (spacing)
   self.spacing = spacing;
   --[[ Calls of GetPoint are so expensive that recalculating all anchors is
     faster than only updating the y-offset ]]
-  self:ForEachDisplayedMessage(self.SetFontStringPoints);
+  self:ForEachActiveMessage(self.SetFontStringPoints);
 end
 
 function MessageFrame:SetFrameStrata (frameStrata)
@@ -279,7 +279,7 @@ function MessageFrame:SetFont (font, fontSize, fontFlags)
   self.fontSize = fontSize;
   self.fontFlags = fontFlags;
 
-  self:ForEachDisplayedMessage(self.SetFontStringFont);
+  self:ForEachActiveMessage(self.SetFontStringFont);
 end
 
 function MessageFrame:SetFadeDuration (duration)
@@ -309,7 +309,7 @@ end
 
 function MessageFrame:SetGrowDirection (direction)
   self.direction = direction;
-  self:ForEachDisplayedMessage(self.SetFontStringPoints);
+  self:ForEachActiveMessage(self.SetFontStringPoints);
 end
 
 function MessageFrame:GetGrowDirection ()
@@ -324,13 +324,13 @@ function MessageFrame:SetShadowColor (r, g, b, a)
   colors.b = b or colors.b;
   colors.a = a or colors.a;
 
-  self:ForEachDisplayedMessage(self.SetFontStringShadowColor);
+  self:ForEachActiveMessage(self.SetFontStringShadowColor);
 end
 
 function MessageFrame:SetInsertMode (insertMode)
   if ((self.insertMode == INSERTMODE_PREPEND) ~=
       (insertMode == INSERTMODE_PREPEND)) then
-    self:ForEachDisplayedMessage(self.InvertFontStringDirection);
+    self:ForEachActiveMessage(self.InvertFontStringDirection);
   end
 
   self.insertMode = insertMode;
@@ -352,7 +352,7 @@ function MessageFrame:SetShadowOffset (x, y)
   offset.x = x or offset.x;
   offset.y = y or offset.y;
 
-  self:ForEachDisplayedMessage(self.SetFontStringShadowOffset);
+  self:ForEachActiveMessage(self.SetFontStringShadowOffset);
 end
 
 function MessageFrame:GetShadowOffset ()
@@ -614,17 +614,18 @@ end
 --******************************************************************************
 
 function MessageFrame:ForEachMessage (callback, ...)
+  self:ForEachActiveMessage(callback, ...);
+  self:ForEachInactiveMessage(callback, ...);
+end
+
+function MessageFrame:ForEachActiveMessage (callback, ...)
   for message in self.framePool:EnumerateActive() do
     callback(self, message, ...);
   end
 end
 
-function MessageFrame:ForEachDisplayedMessage (callback, ...)
-  local tail = self.tail;
-
-  while (tail) do
-    local next = tail.head;
-    callback(self, tail, ...);
-    tail = next;
+function MessageFrame:ForEachInactiveMessage (callback, ...)
+  for message in self.framePool:EnumerateInactive() do
+    callback(self, message, ...);
   end
 end
