@@ -143,15 +143,15 @@ function MessageFrame:New (options)
   return this;
 end
 
-function MessageFrame:Move (message, callback)
-  local fontString = self:CreateAnchorFontString(message);
+function MessageFrame:Move (text, callback)
+  local message = self:CreateAnchorMessage(text);
 
   transformFrameAnchorsToCenter(self.anchor);
   self.anchor:SetSize(200, 200);
-  self:StartMoving(fontString, callback);
+  self:StartMoving(message, callback);
 end
 
-function MessageFrame:StartMoving (fontString, callback)
+function MessageFrame:StartMoving (message, callback)
   if (self.isMoving) then return end
 
   local anchor = self.anchor;
@@ -169,7 +169,7 @@ function MessageFrame:StartMoving (fontString, callback)
 
   anchor:SetScript(ON_MOUSE_UP, function ()
     self.isMoving = false;
-    self:StartFontStringAnimation(fontString);
+    self:StartMessageAnimation(message);
     self:StopMoving();
 
     transformFrameAnchorsToCenter(anchor);
@@ -198,35 +198,35 @@ function MessageFrame:AddMessage (text, r, g, b, a)
   self:InsertMessage(message);
 
   if (self.fading) then
-    self:StartFontStringAnimation(message);
+    self:StartMessageAnimation(message);
   end
 
   return message;
 end
 
 function MessageFrame:AddAnchorMessage (text, r, g, b, a)
-  self:StartFontStringAnimation(self:CreateAnchorFontString(text, r, g, b, a));
+  self:StartMessageAnimation(self:CreateAnchorMessage(text, r, g, b, a));
 end
 
-function MessageFrame:RemoveMessage (fontString)
-  assert(self.framePool:IsActive(fontString), 'message is not currently displayed!');
+function MessageFrame:RemoveMessage (message)
+  assert(self.framePool:IsActive(message), 'message is not currently displayed!');
 
-  local head = fontString.head;
-  local tail = fontString.tail;
+  local head = message.head;
+  local tail = message.tail;
 
-  self:AttachFontString(head, tail);
+  self:AttachMessage(head, tail);
 
-  if (self.head == fontString) then
+  if (self.head == message) then
     self.head = tail;
   end
 
-  if (self.tail == fontString) then
+  if (self.tail == message) then
     self.tail = head;
   end
 
-  self:SetFontStringPointsIfExists(tail);
-  self.framePool:Release(fontString);
-  self:ResetFontString(fontString);
+  self:SetMessagePointsIfExists(tail);
+  self.framePool:Release(message);
+  self:ResetMessage(message);
 end
 
 function MessageFrame:Clear ()
@@ -237,7 +237,7 @@ function MessageFrame:SetFading (fading)
   --[[ when toggling from not fading to fading, current permanent messages
   will fade ]]
   if (not self.fading and fading) then
-    self:ForEachActiveMessage(self.StartFontStringAnimation);
+    self:ForEachActiveMessage(self.StartMessageAnimation);
   end
 
   self.fading = fading;
@@ -251,7 +251,7 @@ function MessageFrame:SetSpacing (spacing)
   self.spacing = spacing;
   --[[ Calls of GetPoint are so expensive that recalculating all anchors is
     faster than only updating the y-offset ]]
-  self:ForEachActiveMessage(self.SetFontStringPoints);
+  self:ForEachActiveMessage(self.SetMessagePoints);
 end
 
 function MessageFrame:SetFrameStrata (frameStrata)
@@ -296,7 +296,7 @@ end
 
 function MessageFrame:SetTextAlign (alignment)
   self.alignment = alignment;
-  self:ForEachActiveMessage(self.SetFontStringPoints);
+  self:ForEachActiveMessage(self.SetMessagePoints);
 end
 
 function MessageFrame:GetTextAlign ()
@@ -305,7 +305,7 @@ end
 
 function MessageFrame:SetGrowDirection (direction)
   self.direction = direction;
-  self:ForEachActiveMessage(self.SetFontStringPoints);
+  self:ForEachActiveMessage(self.SetMessagePoints);
 end
 
 function MessageFrame:GetGrowDirection ()
@@ -326,7 +326,7 @@ end
 function MessageFrame:SetInsertMode (insertMode)
   if ((self.insertMode == INSERTMODE_PREPEND) ~=
       (insertMode == INSERTMODE_PREPEND)) then
-    self:ForEachActiveMessage(self.InvertFontStringDirection);
+    self:ForEachActiveMessage(self.InvertMessageDirection);
   end
 
   self.insertMode = insertMode;
@@ -413,66 +413,66 @@ function MessageFrame:CreateIconFrame (parent)
   return iconFrame;
 end
 
-function MessageFrame:CreateAnchorFontString (message, r, g, b, a)
-  local fontString = self:CreateFontString(message, r, g, b, a);
+function MessageFrame:CreateAnchorMessage (text, r, g, b, a)
+  local message = self:CreateMessage(text, r, g, b, a);
 
-  fontString:SetParent(self.anchor);
-  self:SetFontStringPoints(fontString);
+  message:SetParent(self.anchor);
+  self:SetMessagePoints(message);
 
-  return fontString;
+  return message;
 end
 
-function MessageFrame:ResetFontString (fontString)
+function MessageFrame:ResetMessage (message)
   --[[ no need to reset default attributes, as the pool resetter automatically
     does this ]]
-  fontString.head = nil;
-  fontString.tail = nil;
-  fontString.isFading = nil;
-  fontString.fadeSpeed = nil;
+  message.head = nil;
+  message.tail = nil;
+  message.isFading = nil;
+  message.fadeSpeed = nil;
 
-  if (fontString.animationGroup) then
-    fontString.animationGroup:Stop();
+  if (message.animationGroup) then
+    message.animationGroup:Stop();
   end
 
-  if (fontString.animation) then
-    fontString.animation:Stop();
+  if (message.animation) then
+    message.animation:Stop();
   end
 end
 
-function MessageFrame:InsertMessage (fontString)
+function MessageFrame:InsertMessage (message)
   if (self.insertMode == INSERTMODE_PREPEND) then
-    self:PrependMessage(fontString);
+    self:PrependMessage(message);
   else
-    self:AppendMessage(fontString);
+    self:AppendMessage(message);
   end
 end
 
 function MessageFrame:AppendMessage (fontString)
-  self:AttachFontString(self.tail, fontString);
+  self:AttachMessage(self.tail, fontString);
 
   self.head = self.head or fontString;
   self.tail = fontString;
 
-  self:SetFontStringPoints(fontString);
+  self:SetMessagePoints(fontString);
 end
 
 function MessageFrame:PrependMessage (fontString)
   local head = self.head;
 
-  self:AttachFontString(fontString, head);
+  self:AttachMessage(fontString, head);
 
   self.head = fontString;
   self.tail = self.tail or fontString;
 
-  self:SetFontStringPoints(fontString);
-  self:SetFontStringPointsIfExists(head);
+  self:SetMessagePoints(fontString);
+  self:SetMessagePointsIfExists(head);
 end
 
 --******************************************************************************
 -- message positioning methods
 --******************************************************************************
 
-function MessageFrame:AttachFontString (head, tail)
+function MessageFrame:AttachMessage (head, tail)
   if (head) then
     head.tail = tail;
   end
@@ -482,7 +482,7 @@ function MessageFrame:AttachFontString (head, tail)
   end
 end
 
-function MessageFrame:SetFontStringPoints (fontString)
+function MessageFrame:SetMessagePoints (fontString)
   local head = fontString.head;
   local alignmentAnchor;
   local anchorPoint;
@@ -521,13 +521,13 @@ function MessageFrame:SetFontStringPoints (fontString)
   end
 end
 
-function MessageFrame:SetFontStringPointsIfExists (fontString)
+function MessageFrame:SetMessagePointsIfExists (fontString)
   if (not fontString) then return end
 
-  self:SetFontStringPoints(fontString);
+  self:SetMessagePoints(fontString);
 end
 
-function MessageFrame:InvertFontStringDirection (fontString)
+function MessageFrame:InvertMessageDirection (fontString)
   --[[ Only use this function when applying it to all fontStrings in the chain.
     Otherwise, this will cause a loop in the chain. ]]
   local head = fontString.head;
@@ -535,49 +535,49 @@ function MessageFrame:InvertFontStringDirection (fontString)
   fontString.head = fontString.tail;
   fontString.tail = head;
 
-  self:SetFontStringPoints(fontString);
+  self:SetMessagePoints(fontString);
 end
 
 --******************************************************************************
 -- fontString visibility methods
 --******************************************************************************
 
-function MessageFrame:StartFontStringAnimation (fontString)
+function MessageFrame:StartMessageAnimation (message)
   if (self.visibleTime <= 0 and self.fadeDuration <= 0) then
-    self:RemoveMessage(fontString);
+    self:RemoveMessage(message);
     return;
   end
 
-  self:CreateFontStringAnimation(fontString);
-  fontString.animationGroup:Play();
+  self:CreateMessageAnimation(message);
+  message.animationGroup:Play();
 end
 
-function MessageFrame:CreateFontStringAnimation (fontString)
-  local animation = fontString.animation;
+function MessageFrame:CreateMessageAnimation (message)
+  local animation = message.animation;
 
-  if (not fontString.animationGroup) then
-    fontString.animationGroup = fontString:CreateAnimationGroup();
+  if (not message.animationGroup) then
+    message.animationGroup = message:CreateAnimationGroup();
   end
 
   if (not animation) then
-    animation = fontString.animationGroup:CreateAnimation('Alpha');
+    animation = message.animationGroup:CreateAnimation('Alpha');
 
     animation:SetToAlpha(0);
     animation:SetOrder(1);
     animation.parent = self;
-    animation.fontString = fontString;
+    animation.message = message;
 
-    animation:SetScript('OnFinished', self.OnFontStringAnimationFinished);
-    fontString.animation = animation;
+    animation:SetScript('OnFinished', self.OnMessageAnimationFinished);
+    message.animation = animation;
   end
 
   animation:SetStartDelay(self.visibleTime);
   animation:SetDuration(self.fadeDuration);
-  animation:SetFromAlpha(fontString:GetAlpha());
+  animation:SetFromAlpha(message:GetAlpha());
 end
 
-function MessageFrame.OnFontStringAnimationFinished (animation)
-  animation.parent:RemoveMessage(animation.fontString);
+function MessageFrame.OnMessageAnimationFinished (animation)
+  animation.parent:RemoveMessage(animation.message);
 end
 
 --******************************************************************************
