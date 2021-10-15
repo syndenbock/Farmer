@@ -275,7 +275,7 @@ function MessageFrame:SetFont (font, fontSize, fontFlags)
   self.fontSize = fontSize;
   self.fontFlags = fontFlags;
 
-  self:ForEachActiveMessage(self.SetMessageFont);
+  self:ForEachMessage(self.SetMessageFont);
 end
 
 function MessageFrame:SetFadeDuration (duration)
@@ -296,7 +296,7 @@ end
 
 function MessageFrame:SetTextAlign (alignment)
   self.alignment = alignment;
-  self:ForEachMessage(self.SetFontStringPoints);
+  self:ForEachActiveMessage(self.SetFontStringPoints);
 end
 
 function MessageFrame:GetTextAlign ()
@@ -623,13 +623,15 @@ function MessageFrame:ForEachMessage (callback, ...)
 end
 
 function MessageFrame:ForEachActiveMessage (callback, ...)
+  -- EnumerateActive returns pairs() and uses elements as keys
   for message in self.framePool:EnumerateActive() do
     callback(self, message, ...);
   end
 end
 
 function MessageFrame:ForEachInactiveMessage (callback, ...)
-  for message in self.framePool:EnumerateInactive() do
+  -- EnumerateActive returns ipairs() and uses elements as values
+  for _, message in self.framePool:EnumerateInactive() do
     callback(self, message, ...);
   end
 end
