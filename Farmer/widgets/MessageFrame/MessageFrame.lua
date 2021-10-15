@@ -484,24 +484,24 @@ function MessageFrame:InsertMessage (message)
   end
 end
 
-function MessageFrame:AppendMessage (fontString)
-  self:AttachMessage(self.tail, fontString);
+function MessageFrame:AppendMessage (message)
+  self:AttachMessage(self.tail, message);
 
-  self.head = self.head or fontString;
-  self.tail = fontString;
+  self.head = self.head or message;
+  self.tail = message;
 
-  self:SetMessagePoints(fontString);
+  self:SetMessagePoints(message);
 end
 
-function MessageFrame:PrependMessage (fontString)
+function MessageFrame:PrependMessage (message)
   local head = self.head;
 
-  self:AttachMessage(fontString, head);
+  self:AttachMessage(message, head);
 
-  self.head = fontString;
-  self.tail = self.tail or fontString;
+  self.head = message;
+  self.tail = self.tail or message;
 
-  self:SetMessagePoints(fontString);
+  self:SetMessagePoints(message);
   self:SetMessagePointsIfExists(head);
 end
 
@@ -519,8 +519,8 @@ function MessageFrame:AttachMessage (head, tail)
   end
 end
 
-function MessageFrame:SetMessagePoints (fontString)
-  local head = fontString.head;
+function MessageFrame:SetMessagePoints (message)
+  local head = message.head;
   local alignmentAnchor;
   local anchorPoint;
 
@@ -538,7 +538,7 @@ function MessageFrame:SetMessagePoints (fontString)
     anchorPoint = ANCHOR_TOP .. alignmentAnchor;
   end
 
-  fontString:ClearAllPoints();
+  message:ClearAllPoints();
 
   if (head) then
     local headAnchorPoint;
@@ -552,31 +552,31 @@ function MessageFrame:SetMessagePoints (fontString)
       headAnchorPoint = ANCHOR_BOTTOM .. alignmentAnchor;
     end
 
-    fontString:SetPoint(anchorPoint, head, headAnchorPoint, 0, yOffset);
+    message:SetPoint(anchorPoint, head, headAnchorPoint, 0, yOffset);
   else
-    fontString:SetPoint(anchorPoint, self.anchor, ANCHOR_CENTER, 0, 0);
+    message:SetPoint(anchorPoint, self.anchor, ANCHOR_CENTER, 0, 0);
   end
 end
 
-function MessageFrame:SetMessagePointsIfExists (fontString)
-  if (not fontString) then return end
+function MessageFrame:SetMessagePointsIfExists (message)
+  if (not message) then return end
 
-  self:SetMessagePoints(fontString);
+  self:SetMessagePoints(message);
 end
 
-function MessageFrame:InvertMessageDirection (fontString)
-  --[[ Only use this function when applying it to all fontStrings in the chain.
+function MessageFrame:InvertMessageDirection (message)
+  --[[ Only use this function when applying it to all messages in the chain.
     Otherwise, this will cause a loop in the chain. ]]
-  local head = fontString.head;
+  local head = message.head;
 
-  fontString.head = fontString.tail;
-  fontString.tail = head;
+  message.head = message.tail;
+  message.tail = head;
 
-  self:SetMessagePoints(fontString);
+  self:SetMessagePoints(message);
 end
 
 --******************************************************************************
--- fontString visibility methods
+-- message visibility methods
 --******************************************************************************
 
 function MessageFrame:StartMessageAnimation (message)
@@ -618,7 +618,7 @@ function MessageFrame.OnMessageAnimationFinished (animation)
 end
 
 --******************************************************************************
--- Message attribute setters
+-- message attribute setters
 --******************************************************************************
 
 function MessageFrame:SetMessageFont (message)
