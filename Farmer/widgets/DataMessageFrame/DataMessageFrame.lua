@@ -37,7 +37,7 @@ function DataMessageFrame:GenerateSubspaceIdentifier ()
 end
 
 function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  self:HandleAddIconMessageWithData(subspace, identifier, data, nil, text, r, g, b, a);
+  self:AddIconMessageWithData(subspace, identifier, data, nil, text, r, g, b, a);
 end
 
 function DataMessageFrame:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
