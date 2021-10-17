@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('professions')) then return end
 
-local printMessageWithData = addon.Print.printMessageWithData;
+local printIconMessageWithData = addon.Print.printIconMessageWithData;
 
 local farmerFrame = addon.frame;
 
@@ -17,7 +17,6 @@ local function checkProfessionOptions ()
 end
 
 local function displayProfession (info, change)
-  local icon = addon.getIcon(info.icon);
   local text = addon.stringJoin({'(', info.rank, '/', info.maxRank, ')'}, '');
   local changeText;
 
@@ -29,8 +28,8 @@ local function displayProfession (info, change)
     changeText = change;
   end
 
-  text = addon.stringJoin({icon, info.name, changeText, text}, ' ');
-  printMessageWithData(SUBSPACE, info.id, change, text, MESSAGE_COLORS);
+  text = addon.stringJoin({info.name, changeText, text}, ' ');
+  printIconMessageWithData(SUBSPACE, info.id, change, info.icon, text, MESSAGE_COLORS);
 end
 
 addon.listen('PROFESSION_CHANGED', function (info, change)

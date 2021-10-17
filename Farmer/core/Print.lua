@@ -3,10 +3,9 @@ local addonName, addon = ...;
 local unpack = _G.unpack;
 local IsActiveBattlefieldArena = _G.IsActiveBattlefieldArena;
 
-local DEFAULT_COLOR = {1, 1, 1};
+local DEFAULT_COLOR = {1, 1, 1, 1};
 
 local farmerFrame = addon.frame;
-local getIcon = addon.getIcon;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {},
 }).vars.farmerOptions.Core;
@@ -45,23 +44,19 @@ local function checkHideOptions ()
 end
 
 local function printMessage (message, colors)
-  colors = colors or DEFAULT_COLOR;
+  farmerFrame:AddMessage(message, unpack(colors or DEFAULT_COLOR));
+end
 
-  farmerFrame:AddMessage(message, unpack(colors, 1, 3));
+local function printIconMessage (icon, message, colors)
+  farmerFrame:AddIconMessage(icon, message, unpack(colors or DEFAULT_COLOR));
 end
 
 local function printMessageWithData (subspace, identifier, data, message, colors)
-  colors = colors or DEFAULT_COLOR;
-
-  farmerFrame:AddMessageWithData(subspace, identifier, data, message, unpack(colors));
+  farmerFrame:AddMessageWithData(subspace, identifier, data, message, unpack(colors or DEFAULT_COLOR));
 end
 
-local function printIconMessage (texture, message, colors)
-  printMessage(getIcon(texture) .. ' ' .. message, colors);
-end
-
-local function printIconMessageWithData (subspace, identifier, data, texture, message, colors)
-  printMessageWithData(subspace, identifier, data, getIcon(texture) .. ' ' .. message, colors);
+local function printIconMessageWithData (subspace, identifier, data, icon, message, colors)
+  farmerFrame:AddIconMessageWithData(subspace, identifier, data, icon, message, unpack(colors or DEFAULT_COLOR));
 end
 
 addon.Print = {

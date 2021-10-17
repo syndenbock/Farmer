@@ -8,7 +8,7 @@ local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 local L = addon.L;
 local addonVars = addon.share('vars');
 
-local ADDON_ICON_ID = 3334;
+local ADDON_ICON_ID = 134435;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
 local Panel = addon.OptionClass.Panel;
@@ -38,11 +38,6 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 
 local options = saved.vars.farmerOptions.Core;
 
-local function getAddonIcon ()
-  --[[ this cannot be done on file load, as the icons are not ready yet ]]
-  return addon.getIcon(GetItemIcon(ADDON_ICON_ID));
-end
-
 local function storePosition ()
   local coords = addon.getFrameRelativeCoords(farmerFrame);
 
@@ -56,7 +51,7 @@ local function storePosition ()
 end
 
 local function moveFrame ()
-  farmerFrame:Move(getAddonIcon(), storePosition);
+  farmerFrame:Move(ADDON_ICON_ID, addonName .. ' Anchor', storePosition);
 end
 
 local function setFramePosition (position)
@@ -67,7 +62,7 @@ end
 local function setDefaultPosition ()
   setFramePosition(ANCHOR_DEFAULT);
   storePosition();
-  farmerFrame:AddAnchorMessage(getAddonIcon());
+  farmerFrame:AddAnchorMessage(ADDON_ICON_ID);
 end
 
 local function setFontOptions (options)
@@ -79,6 +74,7 @@ local function setFontOptions (options)
   farmerFrame:SetFont(STANDARD_TEXT_FONT, options.fontSize, options.outline);
   farmerFrame:SetShadowOffset(shadowOffset, -shadowOffset);
   farmerFrame:SetSpacing(options.spacing);
+  farmerFrame:SetIconScale(options.iconScale);
   addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize}, ':');
 end
 

@@ -72,24 +72,12 @@ local function formatMoney (amount, icons)
   return addon.stringJoin(text, ' ');
 end
 
-function addon.formatMoneyWithOffset (amount)
-  return formatMoney (amount, {
-    gold = addon.getIcon('Interface\\MoneyFrame\\UI-GoldIcon'),
-    silver = addon.getIcon('Interface\\MoneyFrame\\UI-SilverIcon'),
-    copper = addon.getIcon('Interface\\MoneyFrame\\UI-CopperIcon'),
-  });
-end
-
 function addon.formatMoney (amount)
   return formatMoney (amount, {
     gold = '|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:0:0|t',
     silver = '|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:0:0|t',
     copper = '|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:0:0|t',
   });
-end
-
-function addon.getIcon (texture)
-  return addon.stringJoin({'|T', texture, addonVars.iconOffset, '|t'}, '');
 end
 
 function addon.findItemLink (string)
