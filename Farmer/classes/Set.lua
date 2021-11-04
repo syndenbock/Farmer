@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local tinsert = table.insert;
+local wipe = _G.wipe;
 
 local Set = {};
 
@@ -9,12 +9,12 @@ addon.share('Class').Set = Set;
 Set.__index = Set;
 
 function Set:new (items)
-  local this = {};
+  local this = {
+    items = {},
+    itemCount = 0,
+  };
 
   setmetatable(this, Set);
-
-  this.items = {};
-  this.itemCount = 0;
 
   if (items) then
     this:add(items);
@@ -66,7 +66,7 @@ function Set:removeItems (items)
 end
 
 function Set:clear ()
-  self.items = {};
+  wipe(self.items);
   self.itemCount = 0;
 end
 
@@ -74,14 +74,4 @@ function Set:forEach (callback)
   for item in pairs(self.items) do
     callback(item);
   end
-end
-
-function Set:getItems ()
-  local items = {};
-
-  for item in pairs(self.items) do
-    tinsert(items, item);
-  end
-
-  return items;
 end

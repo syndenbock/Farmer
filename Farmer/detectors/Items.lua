@@ -109,18 +109,16 @@ local function broadCastItemInfo (id, info)
   end
 end
 
-local function checkInventory ()
+--[[ Funneling the check so it executes on the next frame after
+     BAG_UPDATE_DELAYED. This allows storages to update first to avoid race
+     conditions ]]
+addon.funnel('BAG_UPDATE_DELAYED', function ()
   for id, info in pairs(getInventoryChanges()) do
     if (info.count ~= 0) then
       broadCastItemInfo(id, info);
     end
   end
-end
-
---[[ Funneling the check so it executes on the next frame after
-     BAG_UPDATE_DELAYED. This allows storages to update first to avoid race
-     conditions ]]
-addon.funnel('BAG_UPDATE_DELAYED', checkInventory);
+end);
 
 --##############################################################################
 -- testing

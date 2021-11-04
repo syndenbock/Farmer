@@ -3,6 +3,7 @@ local _, addon = ...;
 local Items = addon.Items;
 local Storage = addon.Factory.Storage;
 
+local wipe = _G.wipe;
 local GetContainerItemID = _G.GetContainerItemID;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
 local ContainerIDToInventoryID = _G.ContainerIDToInventoryID;
@@ -25,10 +26,6 @@ local LAST_SLOT = LAST_BANK_SLOT;
 
 local bagCache = {};
 local flaggedBags = {};
-
-local function flagBag (index)
-  flaggedBags[index] = true;
-end
 
 local function readBagSlot (bagContent, bagIndex, slotIndex)
   --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
@@ -104,7 +101,7 @@ local function updateFlaggedBags ()
     updateBagCache(bagIndex);
   end
 
-  flaggedBags = {};
+  wipe(flaggedBags);
 end
 
 local function initInventory ()
@@ -137,28 +134,26 @@ addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
   end
 end);
 
-addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
+addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, function (_, index)
+  flaggedBags[index] = true;
+end);
 
-addon.on('PLAYERBANKSLOTS_CHANGED', function (slot)
+addon.on('PLAYERBANKSLOTS_CHANGED', function (_, slot)
   local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
-  local bagSlot, bagContent;
 
-  if (slot <= maxSlot) then
-    bagSlot = BANK_CONTAINER;
-  else
-    slot = slot - maxSlot;
-    bagSlot = BANKBAG_CONTAINER;
+  if (slot > maxSlot) then
+    return;
   end
 
-  bagContent = bagCache[bagSlot];
+  local bagContent = bagCache[BANK_CONTAINER];
 
   if (bagContent ~= nil) then
-    readBagSlot(bagContent, bagSlot, slot)
+    readBagSlot(bagContent, BANK_CONTAINER, slot)
   end
 end);
 
 if (REAGENTBANK_CONTAINER ~= nil) then
-  addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (slot)
+  addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (_, slot)
     readBagSlot(bagCache[REAGENTBANK_CONTAINER], REAGENTBANK_CONTAINER, slot);
   end);
 end

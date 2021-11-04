@@ -1,5 +1,6 @@
 local addonName, addon = ...;
 
+local geterrorhandler = _G.geterrorhandler;
 local CreateFrame = _G.CreateFrame;
 local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
 local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
@@ -95,8 +96,7 @@ function Panel:__addCallback (identifier, callback)
     local success, errorMessage = pcall(callback);
 
     if (not success) then
-      print(addonName, 'error in', identifier, 'handler:');
-      print(errorMessage);
+      geterrorhandler()(addonName .. ': error in ' .. identifier .. ' handler: ' .. errorMessage);
     end
   end
 

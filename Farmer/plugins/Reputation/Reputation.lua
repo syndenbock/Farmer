@@ -5,7 +5,7 @@ if (not addon.isDetectorAvailable('reputation')) then return end
 local abs = _G.abs;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetFactionInfoByID = _G.GetFactionInfoByID;
-local printMessageWithData = addon.Print.printMessageWithData;
+local printIconMessageWithData = addon.Print.printIconMessageWithData;
 
 local farmerFrame = addon.frame;
 
@@ -36,11 +36,7 @@ local function getDisplayData (info)
   local previousData = farmerFrame:GetMessageData(SUBSPACE, info.faction);
 
   if (previousData == nil) then
-    return {
-      reputationChange = info.reputationChange,
-      standingChanged = info.standingChanged,
-      paragonLevelGained = info.paragonLevelGained,
-    };
+    return info;
   end
 
   return {
@@ -54,29 +50,25 @@ end
 local function displayReputation (info)
   local displayData = getDisplayData(info);
   local text = BreakUpLargeNumbers(displayData.reputationChange);
+  local icon;
 
   if (displayData.reputationChange > 0) then
     text = '+' .. text;
   end
 
-  if (displayData.standingChanged) then
-    local iconPath = 'interface/icons/spell_holy_prayerofmendingtga.blp';
-
-    text = addon.stringJoin({text, addon.getIcon(iconPath),
-                             getStandingLabel(info.standing)}, ' ');
-  end
-
   if (displayData.paragonLevelGained) then
-    local iconPath = 'interface/icons/inv_treasurechest_felfirecitadel.blp';
+    icon = 'interface/icons/inv_treasurechest_felfirecitadel.blp';
+  elseif (displayData.standingChanged) then
+    icon = 'interface/icons/spell_holy_prayerofmendingtga.blp';
 
-    text = addon.stringJoin({text, addon.getIcon(iconPath)}, ' ');
+    text = addon.stringJoin({text, getStandingLabel(info.standing)}, ' ');
   end
 
   --[[ could have stored faction name when generating faction info, but we
        can afford getting the name now for saving the memory ]]
   text = GetFactionInfoByID(info.faction) .. ' ' .. text;
 
-  printMessageWithData(SUBSPACE, info.faction, displayData, text,
+  printIconMessageWithData(SUBSPACE, info.faction, displayData, icon, text,
       MESSAGE_COLORS);
 end
 

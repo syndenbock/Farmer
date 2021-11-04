@@ -61,7 +61,7 @@ addon.onOnce('PLAYER_LOGIN', initEquipment);
 -- when joining an LFG instance
 addon.on('PLAYER_ENTERING_WORLD', updateEquipment);
 
-addon.on('PLAYER_EQUIPMENT_CHANGED', function (slot, isEmpty)
+addon.on('PLAYER_EQUIPMENT_CHANGED', function (_, slot, isEmpty)
   --[[ we need to do this because when equipping artifact weapons, a second item
          appears in the offhand slot --]]
 

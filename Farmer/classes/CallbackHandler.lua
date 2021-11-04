@@ -2,6 +2,9 @@ local addonName, addon = ...;
 
 local tinsert = _G.tinsert;
 local tsort = table.sort;
+local wipe = _G.wipe;
+
+local geterrorhandler = _G.geterrorhandler;
 
 local CallbackHandler = {};
 
@@ -13,7 +16,7 @@ local function callCallback (callback, ...)
   local success, error = pcall(callback, ...);
 
   if (success == false) then
-    _G.geterrorhandler()(error);
+    geterrorhandler()(error);
   end
 end
 
@@ -83,7 +86,7 @@ function CallbackHandler:has (identifier, callback)
 end
 
 function CallbackHandler:clear ()
-  self.callbacks = {};
+  wipe(self.callbacks);
 end
 
 function CallbackHandler:clearCallbacks (identifier)

@@ -361,10 +361,8 @@ local function handleItem (item, count)
   displayUncategorizedItem(item, count);
 end
 
-local function checkItem (itemInfo, count)
+addon.listen('NEW_ITEM', function (itemInfo, count)
   if (checkDisplayOptions(itemInfo, count)) then
     handleItem(itemInfo, count);
   end
-end
-
-addon.listen('NEW_ITEM', checkItem);
+end);

@@ -125,7 +125,7 @@ local function globalizeSavedVariables ()
   end
 end
 
-local function handleAddonLoad (addonName)
+local function handleAddonLoad (_, addonName)
   if (addonData[addonName] == nil) then
     return;
   end

@@ -3,6 +3,10 @@ local addonName, addon = ...;
 local floor = _G.floor;
 local log10 = _G.log10;
 
+local geterrorhandler = _G.geterrorhandler;
+
+local UIParent = _G.UIParent;
+
 local IS_RETAIL = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE);
 local IS_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC);
 local IS_BC_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC);
@@ -80,7 +84,7 @@ local function getFrameCenteredCoords (frame)
 end
 
 function addon.getFrameRelativeCoords (frame, anchorFrame)
-  anchorFrame = anchorFrame or _G.UIParent;
+  anchorFrame = anchorFrame or UIParent;
 
   local points = getFrameCenteredCoords(frame);
   local anchorPoints = getFrameCenteredCoords(anchorFrame);
@@ -92,7 +96,7 @@ function addon.getFrameRelativeCoords (frame, anchorFrame)
 end
 
 function addon.transformFrameAnchorsToCenter (frame, anchorFrame)
-  anchorFrame = anchorFrame or _G.UIParent;
+  anchorFrame = anchorFrame or UIParent;
 
   local relativePoints = addon.getFrameRelativeCoords(frame, anchorFrame);
 
@@ -105,6 +109,6 @@ function addon.secureCall (callback, ...)
   local success, message = pcall(callback, ...);
 
   if (not success) then
-    print('error in', addonName, 'plugin:', message);
+    geterrorhandler()('error in '.. addonName .. ' plugin: ' .. message);
   end
 end

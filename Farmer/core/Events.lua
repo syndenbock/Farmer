@@ -1,13 +1,10 @@
 local addonName, addon = ...;
 
-local C_Timer = _G.C_Timer;
-local tinsert = _G.tinsert;
-
 local eventFrame = _G.CreateFrame('frame');
 local callbackHandler = addon.Class.CallbackHandler:new();
 
 eventFrame:SetScript('OnEvent', function (_, event, ...)
-  callbackHandler:call(event, ...);
+  callbackHandler:call(event, event, ...);
 end);
 
 local function addCallback (event, callback)
@@ -58,53 +55,4 @@ end
 
 function addon.off (events, callback)
   callForEvents(events, callback, removeCallback);
-end
-
---[[
-//##############################################################################
-// event funneling
-//##############################################################################
---]]
-
-local function generateFunnel (timeSpan, callback)
-  local paramCollection;
-  local handler = function ()
-    callback(paramCollection);
-    paramCollection = nil;
-  end
-
-  local funnel = function (...)
-    if (paramCollection == nil) then
-      paramCollection = {};
-      C_Timer.After(timeSpan, handler);
-    end
-
-    tinsert(paramCollection, {...});
-  end
-
-  return funnel;
-end
-
-local function registerFunnel (eventList, timeSpan, callback)
-  local funnel = generateFunnel(timeSpan, callback);
-
-  addon.on(eventList, funnel);
-
-  return funnel;
-end
-
-function addon.funnel (eventList, ...)
-  local arguments = {...};
-  local callback;
-  local timeSpan;
-
-  if (#arguments >= 2) then
-    timeSpan = arguments[1];
-    callback = arguments[2];
-  else
-    timeSpan = 0;
-    callback = arguments[1];
-  end
-
-  return registerFunnel(eventList, timeSpan, callback);
 end
