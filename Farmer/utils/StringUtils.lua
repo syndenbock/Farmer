@@ -11,9 +11,11 @@ local COPPER_PER_GOLD = _G.COPPER_PER_GOLD;
 local COPPER_PER_SILVER = _G.COPPER_PER_SILVER;
 local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
 
-local ADDON_MESSAGE_PREFIX = '|cff00ffff' .. addonName .. '|r: ';
+local TEXTURE_COPPER =  _G.CreateAtlasMarkup('coin-copper');
+local TEXTURE_SILVER =  _G.CreateAtlasMarkup('coin-silver');
+local TEXTURE_GOLD =  _G.CreateAtlasMarkup('coin-gold');
 
-local addonVars = addon.share('vars');
+local ADDON_MESSAGE_PREFIX = '|cff00ffff' .. addonName .. '|r: ';
 
 function addon.createAddonMessage (message)
   return ADDON_MESSAGE_PREFIX .. message;
@@ -51,33 +53,25 @@ function addon.replaceString (string, match, replacement)
   end
 end
 
-local function formatMoney (amount, icons)
+function addon.formatMoney (amount)
   local gold = floor(amount / COPPER_PER_GOLD);
   local silver = floor(amount / COPPER_PER_SILVER) % SILVER_PER_GOLD;
   local copper = amount % COPPER_PER_SILVER;
   local text = {};
 
   if (gold > 0) then
-    tinsert(text, BreakUpLargeNumbers(gold) .. icons.gold);
+    tinsert(text, BreakUpLargeNumbers(gold) .. TEXTURE_GOLD);
   end
 
   if (silver > 0) then
-    tinsert(text, BreakUpLargeNumbers(silver) .. icons.silver);
+    tinsert(text, BreakUpLargeNumbers(silver) .. TEXTURE_SILVER);
   end
 
   if (copper > 0 or #text == 0) then
-    tinsert(text, BreakUpLargeNumbers(copper) .. icons.copper);
+    tinsert(text, BreakUpLargeNumbers(copper) .. TEXTURE_COPPER);
   end
 
   return addon.stringJoin(text, ' ');
-end
-
-function addon.formatMoney (amount)
-  return formatMoney (amount, {
-    gold = '|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:0:0|t',
-    silver = '|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:0:0|t',
-    copper = '|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:0:0|t',
-  });
 end
 
 function addon.findItemLink (string)
