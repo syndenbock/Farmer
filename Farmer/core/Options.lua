@@ -1,12 +1,10 @@
 local addonName, addon = ...;
 
 local unpack = _G.unpack;
-local GetItemIcon = _G.GetItemIcon;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 -- for some reason they are not strings but numbers unlike MessageFrame modes
 
 local L = addon.L;
-local addonVars = addon.share('vars');
 
 local ADDON_ICON_ID = 134435;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
