@@ -59,16 +59,6 @@ MessageFrame.__index = MessageFrame;
 
 addon.share('Widget').MessageFrame = MessageFrame;
 
-local function proxyMethod (object, proxy, methodName, method)
-  local function callback (_, ...)
-    return method(proxy, ...);
-  end
-
-  object[methodName] = callback;
-
-  return callback;
-end
-
 local function transformOptions (options)
   if (type(options) == 'string') then
     return {
@@ -82,8 +72,6 @@ end
 local function createBase (class, options)
   local this = {};
 
-  setmetatable(this, class);
-
   options = transformOptions(options);
   this.name = options.name;
 
@@ -94,6 +82,8 @@ local function createBase (class, options)
       -- print('unknown option:', key .. '=' .. value);
     end
   end
+
+  setmetatable(this, class);
 
   return this;
 end
@@ -121,24 +111,6 @@ function MessageFrame:New (options)
   -- these are only needed for initialization
   this.frameStrata = nil;
   this.frameLevel = nil;
-
-  setmetatable(this, {
-    __index = function (_, key)
-      local value = self[key];
-
-      if (value ~= nil) then
-        return value;
-      end
-
-      value = anchor[key];
-
-      if (type(value) == 'function') then
-        return proxyMethod(this, anchor, key, value);
-      end
-
-      return value;
-    end
-  });
 
   this.anchor = anchor;
   this.framePool = CreateFramePool(FRAME, anchor, nil, this.ResetMessage, false);
@@ -262,22 +234,6 @@ function MessageFrame:SetSpacing (spacing)
   self:ForEachActiveMessage(self.SetMessagePoints);
 end
 
-function MessageFrame:SetFrameStrata (frameStrata)
-  self.anchor:SetFrameStrata(frameStrata);
-end
-
-function MessageFrame:GetFrameStrata ()
-  return self.anchor:GetFrameStrata();
-end
-
-function MessageFrame:SetFrameLevel (frameLevel)
-  self.anchor:SetFrameLevel(frameLevel);
-end
-
-function MessageFrame:GetFrameLevel ()
-  return self.anchor:GetFrameLevel();
-end
-
 function MessageFrame:SetFont (font, fontSize, fontFlags)
   self.font = font;
   self.fontSize = fontSize;
@@ -373,6 +329,42 @@ end
 
 function MessageFrame:GetShadowOffset ()
   return self.shadowOffset.x, self.shadowOffset.y;
+end
+
+--##############################################################################
+-- anchor proxy methods
+--##############################################################################
+
+function MessageFrame:ClearAllPoints (...)
+  return self.anchor:ClearAllPoints(...);
+end
+
+function MessageFrame:SetPoint (...)
+  return self.anchor:SetPoint(...);
+end
+
+function MessageFrame:GetCenter (...)
+  return self.anchor:GetCenter(...);
+end
+
+function MessageFrame:SetFrameStrata (frameStrata, ...)
+  return self.anchor:SetFrameStrata(frameStrata, ...);
+end
+
+function MessageFrame:GetFrameStrata (...)
+  return self.anchor:GetFrameStrata(...);
+end
+
+function MessageFrame:SetFrameLevel (...)
+  return self.anchor:SetFrameLevel(...);
+end
+
+function MessageFrame:GetFrameLevel (...)
+  return self.anchor:GetFrameLevel(...);
+end
+
+function MessageFrame:GetEffectiveScale (...)
+  return self.anchor:GetEffectiveScale(...);
 end
 
 --[[ aliases for default frame methods ]]
