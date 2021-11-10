@@ -315,6 +315,7 @@ end
 
 function MessageFrame:SetTextAlign (alignment)
   self.alignment = alignment;
+  self:ForEachMessage(self.SetMessageTextAlign, alignment);
   self:ForEachActiveMessage(self.SetMessagePoints);
 end
 
@@ -419,6 +420,7 @@ function MessageFrame:CreateFontString (parent)
   fontString:Show();
 
   self:SetFontStringFont(fontString);
+  self:SetFontStringTextAlign(fontString, self.alignment);
   self:SetFontStringShadowColor(fontString);
   self:SetFontStringShadowOffset(fontString);
 
@@ -617,6 +619,10 @@ function MessageFrame:SetMessageFont (message)
   self:SetFontStringFont(message.fontString);
 end
 
+function MessageFrame:SetMessageTextAlign (message, alignment)
+  self:SetFontStringTextAlign(message.fontString, alignment);
+end
+
 function MessageFrame:SetMessageShadowColor (message)
   self:SetFontStringShadowColor(message.fontString);
 end
@@ -631,6 +637,10 @@ end
 
 function MessageFrame:SetFontStringFont (fontString)
   fontString:SetFont(self.font, self.fontSize, self.fontFlags);
+end
+
+function MessageFrame:SetFontStringTextAlign (fontString, alignment)
+  fontString:SetJustifyH(alignment);
 end
 
 function MessageFrame:SetFontStringShadowColor (fontString)
