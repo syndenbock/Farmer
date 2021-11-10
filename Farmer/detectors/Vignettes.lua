@@ -14,7 +14,6 @@ local GetVignettes = _G.C_VignetteInfo.GetVignettes;
 local GetVignetteInfo = _G.C_VignetteInfo.GetVignetteInfo;
 local GetVignettePosition = _G.C_VignetteInfo.GetVignettePosition;
 
-local cloneTable = addon.cloneTable;
 local ImmutableMap = addon.Factory.ImmutableMap;
 
 local UNIT_PLAYER = 'player';
@@ -26,17 +25,18 @@ local function getCurrentMap ()
   return GetBestMapForUnit(UNIT_PLAYER);
 end
 
-local function yellVignette (info, coords)
-  addon.yell('NEW_VIGNETTE', ImmutableMap(info), ImmutableMap(coords));
-end
-
-local function setVignetteCache (guid, onMinimap)
-  vignetteCache[guid] = onMinimap;
+local function yellVignette (info, coords, onMinimap)
+  addon.yell('NEW_VIGNETTE', info, coords, onMinimap);
 end
 
 -- first parameter is unused to be able to use it as an event listener
 local function readVignette (_, guid)
   if (currentMapId == nil) then return end
+
+  local state = vignetteCache[guid];
+
+  -- vignette was already triggered both as not on minimap and as on minimap
+  if (state == true) then return end
 
   local info = GetVignetteInfo(guid);
 
@@ -47,7 +47,11 @@ local function readVignette (_, guid)
   if (not coords) then return end
 
   local onMinimap = info.onMinimap;
-  local state = vignetteCache[guid];
+
+  -- info object could be used for both on minimap and not on minimap so
+  -- onMinimap flag will be passed separately
+  info.onMinimap = nil;
+  info = ImmutableMap(info);
 
   coords = {
     x = coords.x * 100,
@@ -55,20 +59,14 @@ local function readVignette (_, guid)
   };
 
   if (state == nil) then
-    info.onMinimap = false;
-    yellVignette(info, coords);
-
-    if (onMinimap == true) then
-      info = cloneTable(info);
-      info.onMinimap = true;
-
-      setVignetteCache(guid, onMinimap);
-      yellVignette(GetVignetteInfo(guid), coords);
-    end
-  elseif (state == false and onMinimap == true) then
-    setVignetteCache(guid, onMinimap);
-    yellVignette(info, coords);
+    yellVignette(info, coords, false);
   end
+
+  if (onMinimap == true) then
+    yellVignette(info, coords, true);
+  end
+
+  vignetteCache[guid] = onMinimap;
 end
 
 local function scanVignettes ()
