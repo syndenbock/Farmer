@@ -335,37 +335,21 @@ end
 -- anchor proxy methods
 --##############################################################################
 
-function MessageFrame:ClearAllPoints (...)
-  return self.anchor:ClearAllPoints(...);
+local function proxyAnchorMethod (methodName)
+  MessageFrame[methodName] = function (self, ...)
+    return self.anchor[methodName](self.anchor, ...);
+  end
 end
 
-function MessageFrame:SetPoint (...)
-  return self.anchor:SetPoint(...);
-end
-
-function MessageFrame:GetCenter (...)
-  return self.anchor:GetCenter(...);
-end
-
-function MessageFrame:SetFrameStrata (frameStrata, ...)
-  return self.anchor:SetFrameStrata(frameStrata, ...);
-end
-
-function MessageFrame:GetFrameStrata (...)
-  return self.anchor:GetFrameStrata(...);
-end
-
-function MessageFrame:SetFrameLevel (...)
-  return self.anchor:SetFrameLevel(...);
-end
-
-function MessageFrame:GetFrameLevel (...)
-  return self.anchor:GetFrameLevel(...);
-end
-
-function MessageFrame:GetEffectiveScale (...)
-  return self.anchor:GetEffectiveScale(...);
-end
+proxyAnchorMethod('ClearAllPoints');
+proxyAnchorMethod('SetPoint');
+proxyAnchorMethod('GetCenter');
+proxyAnchorMethod('SetFrameStrata');
+proxyAnchorMethod('GetFrameStrata');
+proxyAnchorMethod('SetFrameLevel');
+proxyAnchorMethod('GetFrameLevel');
+proxyAnchorMethod('GetScale');
+proxyAnchorMethod('GetEffectiveScale');
 
 --[[ aliases for default frame methods ]]
 MessageFrame.SetJustifyH = MessageFrame.SetTextAlign;
