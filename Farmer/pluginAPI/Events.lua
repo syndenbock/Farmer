@@ -22,8 +22,8 @@ local function addEvent (event, callback)
   end
 end
 
-function events.on(eventList, callback)
-  if (type(eventList) == "table") then
+function events.on (eventList, callback)
+  if (type(eventList) == 'table') then
     for _, event in ipairs(eventList) do
       addEvent(event, callback);
     end
