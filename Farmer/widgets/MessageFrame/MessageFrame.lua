@@ -32,18 +32,11 @@ local ALIGNMENT_RIGHT = 'RIGHT';
 
 local ICON_OFFSET = 3;
 
-local MessageFrame = {
-  GROW_DIRECTION_UP = GROW_DIRECTION_UP,
-  GROW_DIRECTION_DOWN = GROW_DIRECTION_DOWN,
-  ALIGNMENT_LEFT = ALIGNMENT_LEFT,
-  ALIGNMENT_CENTER = ALIGNMENT_CENTER,
-  ALIGNMENT_RIGHT = ALIGNMENT_RIGHT,
-  INSERTMODE_PREPEND = INSERTMODE_PREPEND,
-  INSERTMODE_APPEND = INSERTMODE_APPEND,
+local DEFAULT_OPTIONS = {
   frameStrata = 'TOOLTIP',
   frameLevel = 0,
   spacing = 0,
-  fadeDuration = 2,
+  fadeDuration = 1,
   visibleTime = 3,
   font = STANDARD_TEXT_FONT,
   fontSize = 18,
@@ -53,6 +46,16 @@ local MessageFrame = {
   insertMode = INSERTMODE_PREPEND,
   shadowColors = {r = 0, g = 0, b = 0, a = 1},
   shadowOffset = {x = 0, y = 0},
+};
+
+local MessageFrame = {
+  GROW_DIRECTION_UP = GROW_DIRECTION_UP,
+  GROW_DIRECTION_DOWN = GROW_DIRECTION_DOWN,
+  ALIGNMENT_LEFT = ALIGNMENT_LEFT,
+  ALIGNMENT_CENTER = ALIGNMENT_CENTER,
+  ALIGNMENT_RIGHT = ALIGNMENT_RIGHT,
+  INSERTMODE_PREPEND = INSERTMODE_PREPEND,
+  INSERTMODE_APPEND = INSERTMODE_APPEND,
 };
 
 MessageFrame.__index = MessageFrame;
@@ -69,19 +72,18 @@ local function transformOptions (options)
   end
 end
 
-local function createBase (class, options)
-  local this = {};
+local function readOptions (options)
+  local thisOptions;
 
   options = transformOptions(options);
-  this.name = options.name;
+  thisOptions = addon.readOptions(DEFAULT_OPTIONS, options);
+  thisOptions.name = options.name;
 
-  for key, value in pairs(options) do
-    if (this[key] ~= nil) then
-      this[key] = value;
-    else
-      -- print('unknown option:', key .. '=' .. value);
-    end
-  end
+  return thisOptions;
+end
+
+local function createBase (class, options)
+  local this = readOptions(options);
 
   setmetatable(this, class);
 

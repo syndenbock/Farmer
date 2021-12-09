@@ -59,6 +59,22 @@ function addon.truncate (number, digits)
   return number;
 end
 
+function addon.readOptions (defaults, options)
+  local newOptions = {};
+
+  options = options or {};
+
+  for option, default in pairs(defaults) do
+    if (type(default) == type(options[option])) then
+      newOptions[option] = options[option];
+    else
+      newOptions[option] = default;
+    end
+  end
+
+  return newOptions;
+end
+
 function addon.setTrueScale (frame, scale)
   frame:SetScale(1);
   frame:SetScale(scale / frame:GetEffectiveScale());
