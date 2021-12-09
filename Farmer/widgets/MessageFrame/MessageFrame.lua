@@ -404,10 +404,11 @@ function MessageFrame:CreateFontString (parent)
 end
 
 function MessageFrame:CreateIconFrame (parent)
-  local iconFrame = parent:CreateTexture(LAYER_ARTWORK);
+  local iconFrame = parent:CreateTexture();
 
   iconFrame:SetParent(parent);
   iconFrame:SetPoint(ANCHOR_LEFT, parent, ANCHOR_LEFT, 0, 0);
+  iconFrame:SetTexCoord(0.1, 0.9, 0.1, 0.9);
 
   return iconFrame;
 end
