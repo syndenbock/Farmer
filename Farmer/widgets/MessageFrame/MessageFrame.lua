@@ -111,10 +111,6 @@ function MessageFrame:New (options)
   return this;
 end
 
-function MessageFrame:readOptions (options)
-
-end
-
 function MessageFrame:Move (icon, text, callback)
   local message = self:CreateAnchorMessage(icon, text);
 
