@@ -8,10 +8,11 @@ local DataMessageFrame = ADDON.Widget.DataMessageFrame;
 local MESSAGE_MODES = {
   shift = 0,
   replace = 1,
+  combine = 2,
 };
 
 local DEFAULT_OPTIONS = {
-  mode = MESSAGE_MODES.replace,
+  mode = MESSAGE_MODES.combine,
 };
 
 local DataMessageModeFrame = {};
@@ -50,7 +51,25 @@ function ReplaceMode:AddIconMessageWithData (subspace, identifier, data, icon, t
   DataMessageFrame.AddIconMessageWithData(self, subspace, identifier, nil, icon, text, r, g, b, a);
 end
 
-ReplaceMode.GetMessageData = DataMessageFrame.GetMessageData;
+function ReplaceMode:GetMessageData ()
+  return nil;
+end
+
+--##############################################################################
+-- Combine mode handlers
+--##############################################################################
+
+local CombineMode = {};
+
+function CombineMode:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
+  DataMessageFrame.AddMessageWithData(self, subspace, identifier, data, nil, text, r, g, b, a);
+end
+
+function CombineMode:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
+  DataMessageFrame.AddIconMessageWithData(self, subspace, identifier, data, icon, text, r, g, b, a);
+end
+
+CombineMode.GetMessageData = DataMessageFrame.GetMessageData;
 
 --##############################################################################
 -- DataMessageModeFrame class
@@ -58,8 +77,6 @@ ReplaceMode.GetMessageData = DataMessageFrame.GetMessageData;
 
 function DataMessageModeFrame:New (options)
   local this = DataMessageFrame:New(options);
-
-  print(this.CreateSubspace);
 
   Mixin(this, DataMessageModeFrame);
   ADDON.readOptions(DEFAULT_OPTIONS, options, this);
@@ -69,11 +86,18 @@ function DataMessageModeFrame:New (options)
 end
 
 function DataMessageModeFrame:applyMode ()
+  if (self.mode == MESSAGE_MODES.shift) then
+    Mixin(self, ShiftMode);
+    return;
+  end
+
   if (self.mode == MESSAGE_MODES.replace) then
     Mixin(self, ReplaceMode);
     return;
-  elseif (self.mode == MESSAGE_MODES.shift) then
-    Mixin(self, ShiftMode);
+  end
+
+  if (self.mode == MESSAGE_MODES.combine) then
+    Mixin(self, CombineMode);
     return;
   end
 
