@@ -1,3 +1,5 @@
 local _, addon = ...;
 
-addon.frame = addon.Widget.DataMessageFrame('farmerFrame');
+addon.frame = addon.Widget.DataMessageFrame:New({
+  name = 'farmerFrame',
+});

@@ -3,6 +3,7 @@ local _, addon = ...;
 local max = _G.max;
 
 local CreateFramePool = _G.CreateFramePool;
+local CreateFromMixins = _G.CreateFromMixins;
 local CreateFrame = _G.CreateFrame;
 local UIPARENT = _G.UIParent;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
@@ -58,8 +59,6 @@ local MessageFrame = {
   INSERTMODE_APPEND = INSERTMODE_APPEND,
 };
 
-MessageFrame.__index = MessageFrame;
-
 addon.share('Widget').MessageFrame = MessageFrame;
 
 local function transformOptions (options)
@@ -72,22 +71,10 @@ local function transformOptions (options)
   end
 end
 
-local function readOptions (options)
-  local thisOptions;
-
+local function readOptions (self, options)
   options = transformOptions(options);
-  thisOptions = addon.readOptions(DEFAULT_OPTIONS, options);
-  thisOptions.name = options.name;
-
-  return thisOptions;
-end
-
-local function createBase (class, options)
-  local this = readOptions(options);
-
-  setmetatable(this, class);
-
-  return this;
+  addon.readOptions(DEFAULT_OPTIONS, options, self);
+  addon.name = options.name;
 end
 
 local function createAnchor (name, frameStrata, frameLevel)
@@ -107,19 +94,25 @@ end
 --##############################################################################
 
 function MessageFrame:New (options)
-  local this = createBase(self, options);
-  local anchor = createAnchor(this.name, this.frameStrata, this.frameLevel);
+  local this = CreateFromMixins(MessageFrame);
+
+  readOptions(this, options);
+
+  this.anchor = createAnchor(this.name, this.frameStrata, this.frameLevel);
 
   -- these are only needed for initialization
   this.frameStrata = nil;
   this.frameLevel = nil;
 
-  this.anchor = anchor;
-  this.framePool = CreateFramePool(FRAME, anchor, nil, this.ResetMessage, false);
+  this.framePool = CreateFramePool(FRAME, this.anchor, nil, this.ResetMessage, false);
   this.framePool:SetResetDisallowedIfNew(true);
   this:UpdateSizes();
 
   return this;
+end
+
+function MessageFrame:readOptions (options)
+
 end
 
 function MessageFrame:Move (icon, text, callback)

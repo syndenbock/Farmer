@@ -59,8 +59,8 @@ function addon.truncate (number, digits)
   return number;
 end
 
-function addon.readOptions (defaults, options)
-  local newOptions = {};
+function addon.readOptions (defaults, options, newOptions)
+  local newOptions = newOptions or {};
 
   options = options or {};
 
