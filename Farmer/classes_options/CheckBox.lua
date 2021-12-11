@@ -1,14 +1,13 @@
 local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
+local CreateFromMixins = _G.CreateFromMixins;
 
 local Factory = addon.share('OptionClass');
 
 local CheckBox = {};
 
 Factory.CheckBox = CheckBox;
-
-CheckBox.__index = CheckBox;
 
 local function createCheckBox (name, parent, text, anchors)
   local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent,
@@ -30,9 +29,7 @@ end
 
 function CheckBox:new (parent, name, anchorFrame, xOffset, yOffset, text,
                        anchor, parentAnchor)
-  local this = {};
-
-  setmetatable(this, CheckBox);
+  local this = CreateFromMixins(CheckBox);
 
   this.checkBox = createCheckBox(name, parent, text, {
     anchor = anchor or 'TOPLEFT',

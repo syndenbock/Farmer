@@ -1,4 +1,4 @@
-local ADDON_NAME, ADDON = ...;
+local _, ADDON = ...;
 
 local geterrorhandler = _G.geterrorhandler;
 local Mixin = _G.Mixin;
@@ -12,7 +12,7 @@ local MESSAGE_MODES = {
 };
 
 local DEFAULT_OPTIONS = {
-  mode = MESSAGE_MODES.combine,
+  mode = MESSAGE_MODES.replace,
 };
 
 local DataMessageModeFrame = {};

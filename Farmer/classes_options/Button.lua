@@ -1,12 +1,12 @@
 local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
+local CreateFromMixins = _G.CreateFromMixins;
 local Factory = addon.share('OptionClass');
+
 local Button = {};
 
 Factory.Button = Button;
-
-Button.__index = Button;
 
 local function createButton (name, parent, text, anchors)
   local button = CreateFrame('Button', name .. 'Button', parent,
@@ -22,9 +22,7 @@ end
 
 function Button:new (parent, name, anchorFrame, xOffset, yOffset, text, anchor,
                      parentAnchor, onClick)
-  local this = {};
-
-  setmetatable(this, Button);
+  local this = CreateFromMixins(Button);
 
   this.button = createButton(name, parent, text, {
     anchor = anchor or 'TOPLEFT',

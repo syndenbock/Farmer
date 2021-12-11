@@ -1,14 +1,13 @@
 local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
+local CreateFromMixins = _G.CreateFromMixins;
 
 local Factory = addon.share('Factory');
 
 local Tooltip = {};
 
 Factory.Tooltip = Tooltip;
-
-Tooltip.__index = Tooltip;
 
 local tooltipCount = 0;
 
@@ -49,9 +48,9 @@ local function createTooltip (parent, text)
 end
 
 function Tooltip:new (parent, text)
-  local this = {};
-
-  setmetatable(this, Tooltip);
+  local this = CreateFromMixins(Tooltip);
 
   this.tooltip = createTooltip(parent, text);
+
+  return this;
 end
