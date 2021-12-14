@@ -1,20 +1,17 @@
 local _, addon = ...;
 
+local CreateFromMixins = _G.CreateFromMixins;
 local wipe = _G.wipe;
 
 local Storage = {};
 
 addon.share('Factory').Storage = Storage;
 
-Storage.__index = Storage;
-
 function Storage:new ()
-  local this = {
-    items = {},
-    changes = {},
-  };
+  local this = CreateFromMixins(Storage);
 
-  setmetatable(this, Storage);
+  this.items = {};
+  this.changes = {};
 
   return this;
 end

@@ -3,6 +3,7 @@ local _, addon = ...;
 local max = _G.max;
 
 local CreateFramePool = _G.CreateFramePool;
+local CreateFromMixins = _G.CreateFromMixins;
 local CreateFrame = _G.CreateFrame;
 local UIPARENT = _G.UIParent;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
@@ -32,18 +33,11 @@ local ALIGNMENT_RIGHT = 'RIGHT';
 
 local ICON_OFFSET = 3;
 
-local MessageFrame = {
-  GROW_DIRECTION_UP = GROW_DIRECTION_UP,
-  GROW_DIRECTION_DOWN = GROW_DIRECTION_DOWN,
-  ALIGNMENT_LEFT = ALIGNMENT_LEFT,
-  ALIGNMENT_CENTER = ALIGNMENT_CENTER,
-  ALIGNMENT_RIGHT = ALIGNMENT_RIGHT,
-  INSERTMODE_PREPEND = INSERTMODE_PREPEND,
-  INSERTMODE_APPEND = INSERTMODE_APPEND,
+local DEFAULT_OPTIONS = {
   frameStrata = 'TOOLTIP',
   frameLevel = 0,
   spacing = 0,
-  fadeDuration = 2,
+  fadeDuration = 1,
   visibleTime = 3,
   font = STANDARD_TEXT_FONT,
   fontSize = 18,
@@ -55,7 +49,15 @@ local MessageFrame = {
   shadowOffset = {x = 0, y = 0},
 };
 
-MessageFrame.__index = MessageFrame;
+local MessageFrame = {
+  GROW_DIRECTION_UP = GROW_DIRECTION_UP,
+  GROW_DIRECTION_DOWN = GROW_DIRECTION_DOWN,
+  ALIGNMENT_LEFT = ALIGNMENT_LEFT,
+  ALIGNMENT_CENTER = ALIGNMENT_CENTER,
+  ALIGNMENT_RIGHT = ALIGNMENT_RIGHT,
+  INSERTMODE_PREPEND = INSERTMODE_PREPEND,
+  INSERTMODE_APPEND = INSERTMODE_APPEND,
+};
 
 addon.share('Widget').MessageFrame = MessageFrame;
 
@@ -69,23 +71,10 @@ local function transformOptions (options)
   end
 end
 
-local function createBase (class, options)
-  local this = {};
-
+local function readOptions (self, options)
   options = transformOptions(options);
-  this.name = options.name;
-
-  for key, value in pairs(options) do
-    if (this[key] ~= nil) then
-      this[key] = value;
-    else
-      -- print('unknown option:', key .. '=' .. value);
-    end
-  end
-
-  setmetatable(this, class);
-
-  return this;
+  addon.readOptions(DEFAULT_OPTIONS, options, self);
+  addon.name = options.name;
 end
 
 local function createAnchor (name, frameStrata, frameLevel)
@@ -105,15 +94,17 @@ end
 --##############################################################################
 
 function MessageFrame:New (options)
-  local this = createBase(self, options);
-  local anchor = createAnchor(this.name, this.frameStrata, this.frameLevel);
+  local this = CreateFromMixins(MessageFrame);
+
+  readOptions(this, options);
+
+  this.anchor = createAnchor(this.name, this.frameStrata, this.frameLevel);
 
   -- these are only needed for initialization
   this.frameStrata = nil;
   this.frameLevel = nil;
 
-  this.anchor = anchor;
-  this.framePool = CreateFramePool(FRAME, anchor, nil, this.ResetMessage, false);
+  this.framePool = CreateFramePool(FRAME, this.anchor, nil, this.ResetMessage, false);
   this.framePool:SetResetDisallowedIfNew(true);
   this:UpdateSizes();
 

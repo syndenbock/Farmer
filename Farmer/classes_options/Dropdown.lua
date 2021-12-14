@@ -1,21 +1,20 @@
 local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
-local UIDropDownMenu_SetWidth = _G.UIDropDownMenu_SetWidth;
+local CreateFromMixins = _G.CreateFromMixins;
+local ToggleDropDownMenu = _G.ToggleDropDownMenu;
+local UIDropDownMenu_AddButton = _G.UIDropDownMenu_AddButton;
+local UIDropDownMenu_CreateInfo = _G.UIDropDownMenu_CreateInfo;
+local UIDropDownMenu_Initialize = _G.UIDropDownMenu_Initialize;
 local UIDropDownMenu_JustifyText = _G.UIDropDownMenu_JustifyText;
 local UIDropDownMenu_SetText = _G.UIDropDownMenu_SetText;
-local UIDropDownMenu_Initialize = _G.UIDropDownMenu_Initialize;
-local UIDropDownMenu_CreateInfo = _G.UIDropDownMenu_CreateInfo;
-local UIDropDownMenu_AddButton = _G.UIDropDownMenu_AddButton;
-local ToggleDropDownMenu = _G.ToggleDropDownMenu;
+local UIDropDownMenu_SetWidth = _G.UIDropDownMenu_SetWidth;
 
 local Factory = addon.share('OptionClass');
 
 local Dropdown = {};
 
 Factory.Dropdown = Dropdown;
-
-Dropdown.__index = Dropdown;
 
 local function generateDropdownInitializer (dropdown, options, width)
   local function initializer (_, level)
@@ -84,9 +83,7 @@ end
 
 function Dropdown:new (parent, name, anchorFrame, xOffset, yOffset, text,
                        options, anchor, parentAnchor)
-  local this = {};
-
-  setmetatable(this, Dropdown);
+  local this = CreateFromMixins(Dropdown);
 
   this.dropdown = createDropdown(name, parent, text, options, {
     anchor = anchor or 'TOPLEFT',

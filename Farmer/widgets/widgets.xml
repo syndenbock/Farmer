@@ -1,4 +1,5 @@
 <UI>
   <include file="MessageFrame\MessageFrame.xml"/>
   <include file="DataMessageFrame\DataMessageFrame.xml"/>
+  <include file="DataMessageModeFrame\DataMessageModeFrame.xml"/>
 </UI>

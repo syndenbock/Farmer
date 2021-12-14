@@ -1,16 +1,14 @@
 local addonName, addon = ...;
 
+local CreateFromMixins = _G.CreateFromMixins;
+local geterrorhandler = _G.geterrorhandler;
 local tinsert = _G.tinsert;
 local tsort = table.sort;
 local wipe = _G.wipe;
 
-local geterrorhandler = _G.geterrorhandler;
-
 local CallbackHandler = {};
 
 addon.share('Class').CallbackHandler = CallbackHandler;
-
-CallbackHandler.__index = CallbackHandler;
 
 local function callCallback (callback, ...)
   local success, error = pcall(callback, ...);
@@ -21,9 +19,11 @@ local function callCallback (callback, ...)
 end
 
 function CallbackHandler:new ()
-  return setmetatable({
-    callbacks = {},
-  }, CallbackHandler);
+  local this = CreateFromMixins(CallbackHandler);
+
+  this.callbacks = {};
+
+  return this;
 end
 
 function CallbackHandler:__callCallbacks (identifier, ...)

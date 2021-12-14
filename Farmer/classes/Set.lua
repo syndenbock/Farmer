@@ -1,20 +1,17 @@
 local _, addon = ...;
 
+local CreateFromMixins = _G.CreateFromMixins;
 local wipe = _G.wipe;
 
 local Set = {};
 
 addon.share('Class').Set = Set;
 
-Set.__index = Set;
-
 function Set:new (items)
-  local this = {
-    items = {},
-    itemCount = 0,
-  };
+  local this = CreateFromMixins(Set);
 
-  setmetatable(this, Set);
+  this.items = {};
+  this.itemCount = 0;
 
   if (items) then
     this:add(items);

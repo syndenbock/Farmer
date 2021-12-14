@@ -1,6 +1,7 @@
 local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
+local CreateFromMixins = _G.CreateFromMixins;
 local GameFontNormal = _G.GameFontNormal;
 
 local BACKDROP_TEMPLATE = _G.BackdropTemplateMixin and 'BackdropTemplate';
@@ -10,8 +11,6 @@ local Factory = addon.share('OptionClass');
 local EditBox = {};
 
 Factory.EditBox = EditBox;
-
-EditBox.__index = EditBox;
 
 local function createScroll (name, parent, editBox)
   local scroll = CreateFrame('ScrollFrame', name .. 'ScrollFrame', parent,
@@ -82,9 +81,7 @@ end
 
 function EditBox:new (parent, name, anchorFrame, xOffset, yOffset, width,
                       height, anchor, parentAnchor)
-  local this = {};
-
-  setmetatable(this, EditBox);
+  local this = CreateFromMixins(EditBox);
 
   this.textField = createTextField(name, parent, width, height, {
     anchor = anchor or 'TOPLEFT',
