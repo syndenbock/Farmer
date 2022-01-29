@@ -1,0 +1,5 @@
+<UI>
+  <script file="MessageFrame.lua"/>
+  <script file="DataMessageFrame.lua"/>
+  <script file="DataMessageModeFrame.lua"/>
+</UI>

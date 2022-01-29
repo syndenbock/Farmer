@@ -12,7 +12,7 @@ local MESSAGE_MODES = {
 };
 
 local DEFAULT_OPTIONS = {
-  mode = MESSAGE_MODES.replace,
+  mode = MESSAGE_MODES.combine,
 };
 
 local DataMessageModeFrame = {};
@@ -44,7 +44,7 @@ end
 local ReplaceMode = {};
 
 function ReplaceMode:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  DataMessageFrame.AddMessageWithData(self, subspace, identifier, nil, nil, text, r, g, b, a);
+  DataMessageFrame.AddMessageWithData(self, subspace, identifier, nil, text, r, g, b, a);
 end
 
 function ReplaceMode:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
@@ -61,14 +61,8 @@ end
 
 local CombineMode = {};
 
-function CombineMode:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  DataMessageFrame.AddMessageWithData(self, subspace, identifier, data, nil, text, r, g, b, a);
-end
-
-function CombineMode:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
-  DataMessageFrame.AddIconMessageWithData(self, subspace, identifier, data, icon, text, r, g, b, a);
-end
-
+CombineMode.AddMessageWithData = DataMessageFrame.AddMessageWithData;
+CombineMode.AddIconMessageWithData = DataMessageFrame.AddIconMessageWithData;
 CombineMode.GetMessageData = DataMessageFrame.GetMessageData;
 
 --##############################################################################
