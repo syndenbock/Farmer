@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-if (_G.TradeSkillUI == nil) then
+if (_G.C_TradeSkillUI == nil) then
   addon.registerUnavailableDetector('professions');
   return;
 end
