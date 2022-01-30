@@ -11,17 +11,12 @@ function Set:new (items)
   local this = CreateFromMixins(Set);
 
   this.items = {};
-  this.itemCount = 0;
 
   if (items) then
     this:add(items);
   end
 
   return this;
-end
-
-function Set:getItemCount ()
-  return self.itemCount;
 end
 
 function Set:has (item)
@@ -31,7 +26,6 @@ end
 function Set:addItem (item)
   if (not self:has(item)) then
     self.items[item] = true;
-    self.itemCount = self.itemCount + 1;
   end
 end
 
@@ -52,7 +46,6 @@ end
 function Set:removeItem (item)
   if (self:has(item)) then
     self.items[item] = nil;
-    self.itemCount = self.itemCount - 1;
   end
 end
 
@@ -64,7 +57,6 @@ end
 
 function Set:clear ()
   wipe(self.items);
-  self.itemCount = 0;
 end
 
 function Set:forEach (callback)
