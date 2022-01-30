@@ -27,7 +27,6 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
       outline = 'OUTLINE',
       hideAtMailbox = true,
       hideInArena = true,
-      hideOnExpeditions = true,
       itemNames = true,
       horizontalAlign = farmerFrame.ALIGNMENT_CENTER,
     },
@@ -90,7 +89,6 @@ do
 
   if (addon.isRetail()) then
     optionMap.hideInArena = mainPanel:addCheckBox(L['don\'t display in arena']);
-    optionMap.hideOnExpeditions = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
   end
 
   optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0);
