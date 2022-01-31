@@ -43,17 +43,11 @@ function Storage:applySlotChange (slot, id, link, count)
 
   if (previousContent == nil) then
     self:addChange(id, link, count);
-    return;
-  end
-
-  if (previousContent.link ~= link) then
+  elseif (previousContent.link ~= link) then
     self:addChange(previousContent.id, previousContent.link,
         -previousContent.count);
     self:addChange(id, link, count);
-    return;
-  end
-
-  if (previousContent.count ~= count) then
+  elseif (previousContent.count ~= count) then
     self:addChange(id, link, count - previousContent.count);
   end
 end
