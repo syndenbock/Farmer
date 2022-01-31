@@ -33,11 +33,11 @@ end
 
 local function addSingleFireCallback (event, callback)
   if (singleFireCallbacks[event] == nil) then
-    singleFireCallbacks[event] = {[callback] = true};
+    singleFireCallbacks[event] = {};
     addCallback(event, callSingleFireCallbacks);
-  else
-    singleFireCallbacks[event][callback] = true;
   end
+
+  singleFireCallbacks[event][callback] = true;
 end
 
 local function callForEvents (events, callback, method)
