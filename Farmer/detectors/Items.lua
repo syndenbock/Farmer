@@ -91,7 +91,7 @@ local function packItemInfo (itemId, itemLink)
 end
 
 local function yellItem (itemId, itemLink, itemCount)
-  addon.yell('NEW_ITEM', ImmutableMap(packItemInfo(itemId, itemLink)),
+  addon.yell('ITEM_CHANGED', ImmutableMap(packItemInfo(itemId, itemLink)),
       itemCount);
 end
 
