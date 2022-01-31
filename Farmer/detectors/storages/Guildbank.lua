@@ -2,30 +2,27 @@ local _, addon = ...;
 
 if (_G.GetGuildBankItemInfo == nil) then return end
 
-local Items = addon.Items;
-
 local GetCurrentGuildBankTab = _G.GetCurrentGuildBankTab;
 local GetGuildBankItemInfo = _G.GetGuildBankItemInfo;
 local GetGuildBankItemLink = _G.GetGuildBankItemLink;
 local GetItemInfoInstant = _G.GetItemInfoInstant;
 
 local storage = addon.Factory.Storage:new();
-local currentTab;
 local isOpen = false;
+local currentTab;
 
 local function readGuildBankSlot (tabContent, tabIndex, slotIndex)
   local link = GetGuildBankItemLink(tabIndex, slotIndex);
 
-  if (not link) then
+  if (link) then
+    local id = GetItemInfoInstant(link);
+    local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
+    local count = info[2];
+
+    tabContent:setSlot(slotIndex, id, link, count);
+  else
     tabContent:clearSlot(slotIndex);
-    return;
   end
-
-  local id = GetItemInfoInstant(link);
-  local info = {GetGuildBankItemInfo(tabIndex, slotIndex)};
-  local count = info[2];
-
-  tabContent:setSlot(slotIndex, id, link, count);
 end
 
 local function readGuildBankTab (tabIndex)
@@ -56,7 +53,9 @@ addon.on('GUILDBANKFRAME_OPENED', function ()
 end);
 
 addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
-  if (isOpen == false) then return end
+  if (not isOpen) then
+    return;
+  end
 
   local tabIndex = readCurrentGuildBankTab();
 
@@ -74,4 +73,4 @@ addon.on({'GUILDBANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
   currentTab = nil;
 end);
 
-Items.addStorage({storage});
+addon.Items.addStorage({storage});
