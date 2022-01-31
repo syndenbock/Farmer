@@ -115,6 +115,6 @@ function addon.secureCall (callback, ...)
   local success, message = pcall(callback, ...);
 
   if (not success) then
-    geterrorhandler()('error in '.. addonName .. ' plugin: ' .. message);
+    geterrorhandler()(addonName .. ' error: ' .. message);
   end
 end
