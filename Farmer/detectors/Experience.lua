@@ -32,9 +32,8 @@ local function checkExperience ()
     return;
   end
 
-  local percentageGain = gain * 100 / currentLevelupExperience, 1;
-  local currentPercentage =
-      currentExperience * 100 / currentLevelupExperience, 1;
+  local percentageGain = gain * 100 / currentLevelupExperience;
+  local currentPercentage = currentExperience * 100 / currentLevelupExperience;
 
   yellExperience({
     current = currentExperience,
@@ -52,10 +51,10 @@ addon.onOnce('PLAYER_LOGIN', function ()
 end);
 
 addon.on('PLAYER_LEVEL_UP', function ()
-  --[[ Experience resets each levelup, so it's to the negative of the value
-    that was last needed for a levelup so it is valued in on the upcoming
+  --[[ Experience resets each levelup, so it's set to the negative of the value
+    that was last needed for a levelup so it's valued in on the upcoming
     PLAYER_XP_UPDATE event ]]
-  currentExperience = currentExperience -currentLevelupExperience;
+  currentExperience = currentExperience - currentLevelupExperience;
   --[[ The experience needed for the next levelup is not available yet, so it's
     set to nil to the next experience check reads it ]]
   currentLevelupExperience = nil;
