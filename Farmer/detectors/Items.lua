@@ -8,11 +8,11 @@ local GetItemInfo = _G.GetItemInfo;
 
 local extractNormalizedItemString = addon.extractNormalizedItemString;
 local fetchItemLink = addon.fetchItemLink;
-local Storage = addon.Factory.Storage;
 local ImmutableMap = addon.Factory.ImmutableMap;
 
 local Items = {};
 local storages = {};
+local changesStorage = addon.Factory.Storage:new();
 
 addon.Items = Items;
 
@@ -54,13 +54,15 @@ local function readStorageChanges (changes, storage)
 end
 
 local function getInventoryChanges ()
-  local changes = Storage:new();
-
   for storage in pairs(storages) do
-    readStorageChanges(changes, storage);
+    readStorageChanges(changesStorage, storage);
   end
 
-  return changes:getChanges();
+  return changesStorage:getChanges();
+end
+
+local function clearInventoryChanges ()
+  changesStorage:clearChanges();
 end
 
 local function packItemInfo (itemId, itemLink)
@@ -118,6 +120,8 @@ addon.funnel('BAG_UPDATE_DELAYED', function ()
       broadCastItemInfo(id, info);
     end
   end
+
+  clearInventoryChanges();
 end);
 
 --##############################################################################
