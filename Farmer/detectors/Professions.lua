@@ -28,13 +28,11 @@ local function readProfessionSkillLine (data, id)
        will return the same info as the classic category, so we skip it --]]
   if (not parentId) then return end
 
-  local list = data[parentId];
-
-  if (not list) then
-    data[parentId] = {id};
-  else
-    tinsert(list, id);
+  if (not data[parentId]) then
+    data[parentId] = {};
   end
+
+  tinsert(data[parentId], id);
 end
 
 local function getProfessionCategories ()
@@ -122,11 +120,11 @@ end
 local function checkProfessions ()
   local data = getLearnedProfessionInfo();
 
-    for id, info in pairs(data) do
-      checkProfessionChange(id, info);
-    end
+  for id, info in pairs(data) do
+    checkProfessionChange(id, info);
+  end
 
-    professionCache = data;
+  professionCache = data;
 end
 
 addon.onOnce('PLAYER_LOGIN', function ()
