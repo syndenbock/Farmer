@@ -2,7 +2,6 @@ local addonName, addon = ...;
 
 local unpack = _G.unpack;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
--- for some reason they are not strings but numbers unlike MessageFrame modes
 
 local L = addon.L;
 
