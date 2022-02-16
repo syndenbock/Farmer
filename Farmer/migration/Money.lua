@@ -13,7 +13,7 @@ Migrate.addMigration('3.5', function (variables)
   local characterOptions = variables.farmerCharOptions or {};
   local characterMoneyOptions = characterOptions.Money or {};
 
-  if (type(earningStamp) == 'number' and not characterOptions.earningStamp) then
+  if (type(earningStamp) == 'number' and not characterMoneyOptions.earningStamp) then
     characterMoneyOptions.earningStamp = earningStamp;
     characterOptions.Money = characterMoneyOptions;
     variables.characterOptions = characterOptions;
