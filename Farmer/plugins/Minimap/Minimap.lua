@@ -19,8 +19,8 @@ local function displayVignette (info, coords)
   printMessage(message);
 end
 
-addon.listen('NEW_VIGNETTE', function (info, coords)
-  if (options.displayVignettes == true and info.onMinimap) then
+addon.listen('NEW_VIGNETTE', function (info, coords, onMinimap)
+  if (options.displayVignettes == true and onMinimap == true) then
     displayVignette(info, coords);
   end
 end);

@@ -95,7 +95,7 @@ local function formatItemCount (item, data)
 end
 
 local function updateData (item, data)
-  data.count = (farmerFrame:GetMessageData(SUBSPACE, item.link) or 0) +
+  data.count = (farmerFrame:GetMessageData(SUBSPACE, item.id) or 0) +
       data.count;
 end
 
@@ -114,7 +114,7 @@ local function printItemDynamic (item, data, forceName)
     text = item.name .. ' ' .. text;
   end
 
-  printIconMessageWithData(SUBSPACE, item.link, data.count,
+  printIconMessageWithData(SUBSPACE, item.id, data.count,
       item.texture, text, data.color or getRarityColor(item.rarity));
 end
 

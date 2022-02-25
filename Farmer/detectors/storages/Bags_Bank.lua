@@ -1,6 +1,5 @@
 local _, addon = ...;
 
-local Items = addon.Items;
 local Storage = addon.Factory.Storage;
 
 local wipe = _G.wipe;
@@ -27,81 +26,68 @@ local LAST_SLOT = LAST_BANK_SLOT;
 local bagCache = {};
 local flaggedBags = {};
 
-local function readBagSlot (bagContent, bagIndex, slotIndex)
-  --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
-         nil if data is not ready --]]
-  local id = GetContainerItemID(bagIndex, slotIndex);
-
-  if (not id) then
-    bagContent:clearSlot(slotIndex);
-    return;
+local function getContainerSlotCount (bagIndex)
+  -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
+  if (bagIndex == BANKBAG_CONTAINER) then
+    return NUM_BANKBAGSLOTS;
+  else
+    return GetContainerNumSlots(bagIndex);
   end
+end
 
-  local info = {GetContainerItemInfo(bagIndex, slotIndex)};
-  local count = info[2];
-  local link = info[7];
-
-  bagContent:setSlot(slotIndex, id, link, count);
+local function initBagContent (bagIndex)
+  if (bagCache[bagIndex] == nil) then
+    bagCache[bagIndex] = Storage:new();
+  end
 end
 
 local function isContainerSlot (bagIndex)
-  return FIRST_BAG_SLOT <= bagIndex and LAST_BANK_SLOT >= bagIndex;
+  return (FIRST_BAG_SLOT <= bagIndex and LAST_BANK_SLOT >= bagIndex);
 end
 
-local function readContainerSlot (bagContent, bagIndex)
+local function readContainerSlot (bagIndex)
   if (not isContainerSlot(bagIndex)) then return end
 
   local inventoryIndex = ContainerIDToInventoryID(bagIndex);
   local id = GetInventoryItemID(UNIT_PLAYER, inventoryIndex);
 
-  if (not id) then
-    bagContent:clearSlot(0);
-    return;
+  if (id) then
+    bagCache[bagIndex]:setSlot(0, id, GetInventoryItemLink(UNIT_PLAYER, inventoryIndex), 1);
+  else
+    bagCache[bagIndex]:clearSlot(0);
   end
-
-  bagContent:setSlot(0, id, GetInventoryItemLink(UNIT_PLAYER, inventoryIndex), 1);
 end
 
-local function getContainerSlotCount (bagIndex)
-  -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
-  return (bagIndex == BANKBAG_CONTAINER and NUM_BANKBAGSLOTS) or
-    GetContainerNumSlots(bagIndex);
-end
+local function readBagSlot (bagIndex, slotIndex)
+  --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
+         nil if data is not ready --]]
+  local id = GetContainerItemID(bagIndex, slotIndex);
 
-local function initBagContent (bagIndex)
-  local bagContent = bagCache[bagIndex];
+  if (id) then
+    local info = {GetContainerItemInfo(bagIndex, slotIndex)};
+    local count = info[2];
+    local link = info[7];
 
-  if (bagContent == nil) then
-    bagContent = Storage:new();
-    bagCache[bagIndex] = bagContent;
+    bagCache[bagIndex]:setSlot(slotIndex, id, link, count);
+  else
+    bagCache[bagIndex]:clearSlot(slotIndex);
   end
-
-  return bagContent;
 end
 
 local function updateBagCache (bagIndex)
   local slotCount = getContainerSlotCount(bagIndex);
-  local bagContent = initBagContent(bagIndex);
 
-  readContainerSlot(bagContent, bagIndex);
+  initBagContent(bagIndex);
+  readContainerSlot(bagIndex);
 
   for slotIndex = 1, slotCount, 1 do
-    readBagSlot(bagContent, bagIndex, slotIndex);
+    readBagSlot(bagIndex, slotIndex);
   end
-
-  return bagContent;
 end
 
 local function initBagCache (bagIndex)
-  updateBagCache(bagIndex):clearChanges();
-end
-
-local function updateFlaggedBags ()
-  for bagIndex in pairs(flaggedBags) do
-    updateBagCache(bagIndex);
-  end
-
-  wipe(flaggedBags);
+  updateBagCache(bagIndex);
+  bagCache[bagIndex]:clearChanges();
 end
 
 local function initInventory ()
@@ -114,50 +100,63 @@ local function initInventory ()
   end
 end
 
-addon.onOnce('PLAYER_LOGIN', initInventory);
+--[[ function is used as event callback, so first argument is ignored ]]
+local function flagBag (_, index)
+  flaggedBags[index] = true;
+end
 
-addon.on('BANKFRAME_OPENED', function ()
+local function updateFlaggedBags ()
+  for bagIndex in pairs(flaggedBags) do
+    updateBagCache(bagIndex);
+  end
+
+  wipe(flaggedBags);
+end
+
+local function initBank ()
   initBagCache(BANKBAG_CONTAINER);
   initBagCache(BANK_CONTAINER);
 
   for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
     initBagCache(x);
   end
-end);
+end
 
-addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
+--[[ function is used as event callback, so first argument is ignored ]]
+local function updateBankSlot (_, slot)
+  if (slot > GetContainerNumSlots(BANK_CONTAINER)) then
+    return;
+  end
+
+  if (bagCache[BANK_CONTAINER]) then
+    readBagSlot(BANK_CONTAINER, slot);
+  end
+end
+
+local function clearBank ()
   bagCache[BANKBAG_CONTAINER] = nil;
   bagCache[BANK_CONTAINER] = nil;
 
   for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
     bagCache[x] = nil;
   end
-end);
-
-addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, function (_, index)
-  flaggedBags[index] = true;
-end);
-
-addon.on('PLAYERBANKSLOTS_CHANGED', function (_, slot)
-  local maxSlot = GetContainerNumSlots(BANK_CONTAINER);
-
-  if (slot > maxSlot) then
-    return;
-  end
-
-  local bagContent = bagCache[BANK_CONTAINER];
-
-  if (bagContent ~= nil) then
-    readBagSlot(bagContent, BANK_CONTAINER, slot)
-  end
-end);
-
-if (REAGENTBANK_CONTAINER ~= nil) then
-  addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', function (_, slot)
-    readBagSlot(bagCache[REAGENTBANK_CONTAINER], REAGENTBANK_CONTAINER, slot);
-  end);
 end
 
+--[[ function is used as event callback, so first argument is ignored ]]
+local function updateReagentBankSlot (_, slot)
+  readBagSlot(REAGENTBANK_CONTAINER, slot);
+end
+
+addon.onOnce('PLAYER_LOGIN', initInventory);
+addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
 addon.on('BAG_UPDATE_DELAYED', updateFlaggedBags);
 
-Items.addStorage(bagCache);
+addon.on('BANKFRAME_OPENED', initBank);
+addon.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
+addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, clearBank);
+
+if (REAGENTBANK_CONTAINER) then
+  addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
+end
+
+addon.Items.addStorage(bagCache);

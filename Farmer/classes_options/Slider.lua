@@ -1,6 +1,8 @@
 local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
+local CreateFromMixins = _G.CreateFromMixins;
+
 local BACKDROP_TEMPLATE = _G.BackdropTemplateMixin and 'BackdropTemplate';
 
 local Factory = addon.share('OptionClass');
@@ -8,8 +10,6 @@ local Factory = addon.share('OptionClass');
 local Slider = {};
 
 Factory.Slider = Slider;
-
-Slider.__index = Slider;
 
 local function createEditBox (name, parent)
   local edit = CreateFrame('EditBox', name .. 'EditBox', parent,
@@ -80,9 +80,7 @@ end
 
 function Slider:new (parent, name, anchorFrame, xOffset, yOffset, text, min,
                      max, lowText, highText, anchor, parentAnchor, precision)
-  local this = {};
-
-  setmetatable(this, Slider);
+  local this = CreateFromMixins(Slider);
 
   precision = precision or 0;
 

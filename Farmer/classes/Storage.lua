@@ -1,20 +1,17 @@
 local _, addon = ...;
 
+local CreateFromMixins = _G.CreateFromMixins;
 local wipe = _G.wipe;
 
 local Storage = {};
 
 addon.share('Factory').Storage = Storage;
 
-Storage.__index = Storage;
-
 function Storage:new ()
-  local this = {
-    items = {},
-    changes = {},
-  };
+  local this = CreateFromMixins(Storage);
 
-  setmetatable(this, Storage);
+  this.items = {};
+  this.changes = {};
 
   return this;
 end
@@ -33,31 +30,26 @@ function Storage:getChanges ()
 end
 
 function Storage:setSlot (slot, id, link, count)
-  self:applySlotChange(slot, id, link, count);
-  self.items[slot] = {
-    id = id,
-    count = count,
-    link = link,
-  };
-end
-
-function Storage:applySlotChange (slot, id, link, count)
   local previousContent = self.items[slot];
 
   if (previousContent == nil) then
     self:addChange(id, link, count);
-    return;
-  end
-
-  if (previousContent.link ~= link) then
+    self.items[slot] = {
+      id = id,
+      count = count,
+      link = link,
+    };
+  elseif (previousContent.link ~= link) then
     self:addChange(previousContent.id, previousContent.link,
         -previousContent.count);
     self:addChange(id, link, count);
-    return;
-  end
 
-  if (previousContent.count ~= count) then
+    previousContent.id = id;
+    previousContent.link = link;
+    previousContent.count = count;
+  elseif (previousContent.count ~= count) then
     self:addChange(id, link, count - previousContent.count);
+    previousContent.count = count;
   end
 end
 

@@ -1,22 +1,17 @@
 local _, addon = ...;
 
+local Mixin = _G.Mixin;
+
 local MessageFrame = addon.Widget.MessageFrame;
+
 local DataMessageFrame = {};
 
 addon.share('Widget').DataMessageFrame = DataMessageFrame;
 
-DataMessageFrame.__index = DataMessageFrame;
-
-setmetatable(DataMessageFrame, {
-  __index = MessageFrame,
-  __call = function (self, ...)
-    return self:New(...);
-  end
-});
-
 function DataMessageFrame:New (options)
-  local this = MessageFrame.New(DataMessageFrame, options);
+  local this = MessageFrame:New(options);
 
+  Mixin(this, DataMessageFrame);
   this.subspaces = {};
 
   return this;
@@ -37,7 +32,7 @@ function DataMessageFrame:GenerateSubspaceIdentifier ()
 end
 
 function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  self:AddIconMessageWithData(subspace, identifier, data, nil, text, r, g, b, a);
+  DataMessageFrame.AddIconMessageWithData(self, subspace, identifier, data, nil, text, r, g, b, a);
 end
 
 function DataMessageFrame:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)

@@ -13,7 +13,7 @@ local farmerFrame = addon.frame;
 local ACCOUNT_HONOR_ID = 1585;
 local HONOR_ID = 1792;
 local ADDON_OPTIONS = addon.SavedVariablesHandler(addonName, 'farmerOptions')
-.vars.farmerOptions;
+    .vars.farmerOptions;
 local CORE_OPTIONS = ADDON_OPTIONS.Core;
 local CURRENCY_OPTIONS = ADDON_OPTIONS.Currency;
 local SUBSPACE = farmerFrame:CreateSubspace();

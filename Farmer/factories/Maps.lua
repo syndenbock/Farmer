@@ -3,13 +3,7 @@ local _, addon = ...;
 local Factory = addon.share('Factory');
 
 local function createMetaTable (baseMap, mode)
-  local metaTable = {__mode = mode};
-
-  baseMap = baseMap or {};
-
-  setmetatable(baseMap, metaTable);
-
-  return baseMap;
+  return setmetatable(baseMap or {}, {__mode = mode});
 end
 
 function Factory.WeakKeyMap (baseMap)
@@ -28,12 +22,6 @@ function Factory.WeakMap (baseMap)
 end
 
 function Factory.ImmutableMap (baseMap)
-  if (baseMap.iterate == nil) then
-    baseMap.iterate = function ()
-      return pairs(baseMap);
-    end
-  end
-
   return setmetatable({}, {
     __index = baseMap,
     __newindex = function ()

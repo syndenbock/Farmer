@@ -15,15 +15,15 @@ end
 
 local function addEvent (event, callback)
   if (callbackMap[event] == nil) then
+    callbackMap[event] = {};
     addon.on(event, handleEvent);
-    callbackMap[event] = {[callback] = true};
-  else
-    callbackMap[event][callback] = true;
   end
+
+  callbackMap[event][callback] = true;
 end
 
-function events.on(eventList, callback)
-  if (type(eventList) == "table") then
+function events.on (eventList, callback)
+  if (type(eventList) == 'table') then
     for _, event in ipairs(eventList) do
       addEvent(event, callback);
     end

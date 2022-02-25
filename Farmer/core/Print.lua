@@ -11,6 +11,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 }).vars.farmerOptions.Core;
 
 local mailIsOpen = false;
+
 addon.on('MAIL_SHOW', function ()
   mailIsOpen = true;
 end);
@@ -24,13 +25,6 @@ end);
 local function checkHideOptions ()
   if (options.hideAtMailbox == true and
       mailIsOpen) then
-    return false;
-  end
-
-  if (options.hideOnExpeditions == true and
-      -- cannot be deferred earlier, as this frame gets initialized dynamically
-      _G.IslandsPartyPoseFrame and
-      _G.IslandsPartyPoseFrame:IsShown()) then
     return false;
   end
 

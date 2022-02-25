@@ -8,16 +8,12 @@ local function isDetectorKnown (detectorName)
       unavailableDetectors[detectorName] ~= nil);
 end
 
-function addon.registerAvailableDetector (detectorName, data)
+function addon.registerAvailableDetector (detectorName)
   assert(not isDetectorKnown(detectorName),
       addon.createAddonMessage('detector was already registered: ' ..
       detectorName));
 
-  if (data == nil) then
-    data = true;
-  end
-
-  availableDetectors[detectorName] = data;
+  availableDetectors[detectorName] = true;
 end
 
 function addon.registerUnavailableDetector (detectorName)

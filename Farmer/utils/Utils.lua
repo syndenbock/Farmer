@@ -23,16 +23,6 @@ function addon.isBCClassic ()
   return IS_BC_CLASSIC;
 end
 
-function addon.cloneTable (table)
-  local copy = {};
-
-  for key, value in pairs(table) do
-    copy[key] = value;
-  end
-
-  return copy;
-end
-
 function addon.round (number)
   return floor(number + 0.5);
 end
@@ -67,6 +57,22 @@ function addon.truncate (number, digits)
   number = number / factor;
 
   return number;
+end
+
+function addon.readOptions (defaults, options, newOptions)
+  local newOptions = newOptions or {};
+
+  options = options or {};
+
+  for option, default in pairs(defaults) do
+    if (type(default) == type(options[option])) then
+      newOptions[option] = options[option];
+    else
+      newOptions[option] = default;
+    end
+  end
+
+  return newOptions;
 end
 
 function addon.setTrueScale (frame, scale)
@@ -109,6 +115,6 @@ function addon.secureCall (callback, ...)
   local success, message = pcall(callback, ...);
 
   if (not success) then
-    geterrorhandler()('error in '.. addonName .. ' plugin: ' .. message);
+    geterrorhandler()(addonName .. ' error: ' .. message);
   end
 end

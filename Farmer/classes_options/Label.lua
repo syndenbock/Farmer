@@ -1,5 +1,6 @@
 local _, addon = ...;
 
+local CreateFromMixins = _G.CreateFromMixins;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
 local Factory = addon.share('OptionClass');
@@ -7,8 +8,6 @@ local Factory = addon.share('OptionClass');
 local Label = {};
 
 Factory.Label = Label;
-
-Label.__index = Label;
 
 local function createLabel (parent, text, anchors)
   local label = parent:CreateFontString('FontString');
@@ -23,9 +22,7 @@ local function createLabel (parent, text, anchors)
 end
 
 function Label:new (parent, anchorFrame, xOffset, yOffset, text, anchor, parentAnchor)
-  local this = {};
-
-  setmetatable(this, Label);
+  local this = CreateFromMixins(Label);
 
   this.label = createLabel(parent, text, {
     anchor = anchor or 'TOPLEFT',

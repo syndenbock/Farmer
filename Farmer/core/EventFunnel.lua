@@ -3,36 +3,31 @@ local _, addon = ...;
 local CallAfter = _G.C_Timer.After;
 local wipe = _G.wipe;
 
-local callbackMap = {};
-local triggeredCallbacks = {};
-local anyCallbacksTriggered = false;
+local callbackHandler = addon.Class.CallbackHandler:new();
+local triggeredEvents = {};
+local anyEventsTriggered = false;
 
-local function callTriggeredCallbacks ()
-  for callback in pairs(triggeredCallbacks) do
-    callback();
+local function callTriggeredEvents ()
+  for event in pairs(triggeredEvents) do
+    callbackHandler:call(event);
   end
 
-  anyCallbacksTriggered = false;
-  wipe(triggeredCallbacks);
+  anyEventsTriggered = false;
+  wipe(triggeredEvents);
 end
 
 local function handleFunnel (event)
-  for callback in pairs(callbackMap[event]) do
-    triggeredCallbacks[callback] = true;
-  end
+  triggeredEvents[event] = true;
 
-  if (anyCallbacksTriggered == false) then
-    CallAfter(0, callTriggeredCallbacks);
-    anyCallbacksTriggered = true;
+  if (not anyEventsTriggered) then
+    CallAfter(0, callTriggeredEvents);
+    anyEventsTriggered = true;
   end
 end
 
 local function addFunnel (event, callback)
-  if (callbackMap[event] == nil) then
-    callbackMap[event] = {[callback] = true};
+  if (callbackHandler:addCallback(event, callback)) then
     addon.on(event, handleFunnel);
-  else
-    callbackMap[event][callback] = true;
   end
 end
 

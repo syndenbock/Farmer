@@ -1,12 +1,9 @@
 local addonName, addon = ...;
 
 local unpack = _G.unpack;
-local GetItemIcon = _G.GetItemIcon;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
--- for some reason they are not strings but numbers unlike MessageFrame modes
 
 local L = addon.L;
-local addonVars = addon.share('vars');
 
 local ADDON_ICON_ID = 134435;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
@@ -29,7 +26,6 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
       outline = 'OUTLINE',
       hideAtMailbox = true,
       hideInArena = true,
-      hideOnExpeditions = true,
       itemNames = true,
       horizontalAlign = farmerFrame.ALIGNMENT_CENTER,
     },
@@ -66,16 +62,11 @@ local function setDefaultPosition ()
 end
 
 local function setFontOptions (options)
-  local shadowOffset = addon.round(options.fontSize / 10);
-  local iconSize = addon.round(options.fontSize * options.iconScale / 1.5);
-
   --[[ we have to use the standard font because on screen messages are always
        localized --]]
   farmerFrame:SetFont(STANDARD_TEXT_FONT, options.fontSize, options.outline);
-  farmerFrame:SetShadowOffset(shadowOffset, -shadowOffset);
   farmerFrame:SetSpacing(options.spacing);
   farmerFrame:SetIconScale(options.iconScale);
-  addonVars.iconOffset = addon.stringJoin({'', iconSize, iconSize}, ':');
 end
 
 local function setVisibleTime (displayTime)
@@ -97,7 +88,6 @@ do
 
   if (addon.isRetail()) then
     optionMap.hideInArena = mainPanel:addCheckBox(L['don\'t display in arena']);
-    optionMap.hideOnExpeditions = mainPanel:addCheckBox(L['don\'t display on island expeditions']);
   end
 
   optionMap.fontSize = mainPanel:addSlider(8, 64, L['font size'], '8', '64', 0);

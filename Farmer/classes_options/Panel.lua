@@ -1,10 +1,11 @@
 local addonName, addon = ...;
 
-local geterrorhandler = _G.geterrorhandler;
 local CreateFrame = _G.CreateFrame;
-local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
-local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
+local CreateFromMixins = _G.CreateFromMixins;
+local geterrorhandler = _G.geterrorhandler;
 local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
+local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
+local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
 local UIParent = _G.UIParent;
 
 local Factory = addon.share('OptionClass');
@@ -15,8 +16,6 @@ local panelCount = 0;
 local lastOpenedPanel;
 
 Factory.Panel = Panel;
-
-Panel.__index = Panel;
 
 local function generatePanelName ()
   local panelName = addonName .. 'Panel' .. panelCount;
@@ -29,10 +28,8 @@ end
 function Panel:new (name, parent)
   parent = parent or UIParent;
 
-  local this = {};
+  local this = CreateFromMixins(Panel);
   local panel = CreateFrame('Frame', generatePanelName(), parent);
-
-  setmetatable(this, Panel);
 
   this.parent = parent;
   this.name = name;

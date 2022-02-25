@@ -1,52 +1,43 @@
 local addonName, addon = ...;
 
+local CreateFromMixins = _G.CreateFromMixins;
 local tinsert = _G.tinsert;
 local tsort = table.sort;
 local wipe = _G.wipe;
 
-local geterrorhandler = _G.geterrorhandler;
+local secureCall = addon.secureCall;
 
 local CallbackHandler = {};
 
 addon.share('Class').CallbackHandler = CallbackHandler;
 
-CallbackHandler.__index = CallbackHandler;
-
-local function callCallback (callback, ...)
-  local success, error = pcall(callback, ...);
-
-  if (success == false) then
-    geterrorhandler()(error);
-  end
-end
-
 function CallbackHandler:new ()
-  return setmetatable({
-    callbacks = {},
-  }, CallbackHandler);
+  local this = CreateFromMixins(CallbackHandler);
+
+  this.callbacks = {};
+
+  return this;
 end
 
 function CallbackHandler:__callCallbacks (identifier, ...)
   for callback in pairs(self.callbacks[identifier]) do
-    callCallback(callback, ...);
+    secureCall(callback, ...);
   end
 end
 
 function CallbackHandler:addCallback (identifier, callback)
   assert(type(callback) == 'function', 'callback is not a function');
 
-  local callbacks = self.callbacks;
-
-  if (callbacks[identifier] == nil) then
-    callbacks[identifier] = {
+  if (self.callbacks[identifier] == nil) then
+    self.callbacks[identifier] = {
       [callback] = true,
     };
     return true;
   else
-    assert(callbacks[identifier][callback] == nil,
+    assert(self.callbacks[identifier][callback] == nil,
         'callback was already registered for ' .. identifier);
 
-    callbacks[identifier][callback] = true;
+        self.callbacks[identifier][callback] = true;
     return false;
   end
 end
