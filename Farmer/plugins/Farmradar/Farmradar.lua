@@ -379,20 +379,6 @@ local function onUpdateHandler (_, elapsed)
   end
 end
 
-local function updateMinimapChildren ()
-  --[[ Execute on the next frame so other addons can update their icons ]]
-  executeAfter(0, function ()
-
-    for _, child in ipairs(getMinimapChildrenToHide) do
-      if (trackedFrames[child] == nil) then
-        storeFrame(child);
-        hideFrame(child);
-        hookFrameToggle(child);
-      end
-    end
-  end);
-end
-
 local function enableFarmMode ()
   initRadar();
 
@@ -423,8 +409,6 @@ local function enableFarmMode ()
   radarFrame:SetScript('OnUpdate', onUpdateHandler);
   radarFrame:Show();
 
-  addon.on('ZONE_CHANGED', updateMinimapChildren);
-
   currentMode = MODE_ENUM.ON;
 end
 
@@ -450,7 +434,6 @@ local function disableFarmMode ()
   Minimap:SetAlpha(1);
   Minimap:SetZoom(minimapDefaults.zoom);
 
-  addon.off('ZONE_CHANGED', updateMinimapChildren);
   radarFrame:SetScript('OnUpdate', nil);
   radarFrame:Hide();
 
