@@ -1,8 +1,4 @@
-- Separated message icons from message frames in preparation for styling options
-
-- Fixed bank bags being detected as new items when unequipping them
-- Replaced Farmradar-ElvUI compatibility workaround with proper fix
-
-- Optimized quite a few things for lower memory usage and less garbage collection
-
 - Updated interface versions
+- Small bug fixes
+- A lot of small performance and memory usage improvements
+- Slightly updated style of messages
