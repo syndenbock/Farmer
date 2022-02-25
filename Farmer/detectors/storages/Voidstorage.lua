@@ -3,7 +3,6 @@ local _, addon = ...;
 if (_G.GetVoidItemInfo == nil) then return end
 
 local Storage = addon.Factory.Storage;
-local Items = addon.Items;
 
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
 local GetVoidItemInfo = _G.GetVoidItemInfo;
@@ -25,18 +24,18 @@ end
 local function readVoidStorageSlot (storage, tabIndex, slotIndex)
   local id = GetVoidItemInfo(tabIndex, slotIndex);
 
-  if (not id) then
+  if (id) then
+    --[[ For some reason, one function requires tabIndex and slotIndex
+         and a related function requires slotIndex as if there was only
+         one tab. Blizzard code at its best once again. ]]
+    local combinedIndex = getCombinedIndex(tabIndex, slotIndex);
+    local link = GetVoidItemHyperlinkString(combinedIndex);
+
+    storage:setSlot(slotIndex, id, link, 1);
+  else
     storage:clearSlot(slotIndex);
-    return;
   end
 
-  --[[ For some reason, one function requires tabIndex and slotIndex
-       and a related function requires slotIndex as if there was only
-       one tab. Blizzard code at its best once again. ]]
-  local combinedIndex = getCombinedIndex(tabIndex, slotIndex);
-  local link = GetVoidItemHyperlinkString(combinedIndex);
-
-  storage:setSlot(slotIndex, id, link, 1);
 end
 
 local function readVoidStorageTab (tabIndex)
@@ -69,4 +68,4 @@ addon.on('VOID_STORAGE_OPEN', initVoidStorage);
 addon.on({'VOID_STORAGE_CONTENTS_UPDATE', 'VOID_TRANSFER_DONE'},
     readVoidStorage);
 
-Items.addStorage(storageTabs);
+addon.Items.addStorage(storageTabs);

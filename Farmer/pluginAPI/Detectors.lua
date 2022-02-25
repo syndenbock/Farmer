@@ -7,7 +7,7 @@ local detectors = {};
 addon.API.detectors = detectors;
 
 local ALLOWED_HOOKS = {
-  NEW_ITEM = true,
+  ITEM_CHANGED = true,
   CURRENCY_CHANGED = true,
   MONEY_CHANGED = true,
   PROFESSION_CHANGED = true,

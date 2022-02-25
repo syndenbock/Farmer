@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 local eventFrame = _G.CreateFrame('frame');
 local callbackHandler = addon.Class.CallbackHandler:new();
+local singleFireCallbacks = {};
 
 eventFrame:SetScript('OnEvent', function (_, event, ...)
   callbackHandler:call(event, event, ...);
@@ -19,13 +20,24 @@ local function removeCallback (event, callback)
   end
 end
 
-local function addSingleFireCallback (event, callback)
-  local function wrapper (...)
-    callback(...);
-    removeCallback(event, wrapper);
+local function callSingleFireCallbacks (event, ...)
+  if (singleFireCallbacks[event] == nil) then return end
+
+  for callback in pairs(singleFireCallbacks[event]) do
+    callback(event, ...);
   end
 
-  addCallback(event, wrapper);
+  singleFireCallbacks[event] = nil;
+  removeCallback(event, callSingleFireCallbacks);
+end
+
+local function addSingleFireCallback (event, callback)
+  if (singleFireCallbacks[event] == nil) then
+    singleFireCallbacks[event] = {};
+    addCallback(event, callSingleFireCallbacks);
+  end
+
+  singleFireCallbacks[event][callback] = true;
 end
 
 local function callForEvents (events, callback, method)
