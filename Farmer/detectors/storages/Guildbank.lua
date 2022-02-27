@@ -7,7 +7,7 @@ local GetGuildBankItemInfo = _G.GetGuildBankItemInfo;
 local GetGuildBankItemLink = _G.GetGuildBankItemLink;
 local GetItemInfoInstant = _G.GetItemInfoInstant;
 
-local storage = addon.Factory.Storage:new();
+local storage = addon.Class.Storage:new();
 local isOpen = false;
 local currentTab;
 

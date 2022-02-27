@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local Storage = addon.Factory.Storage;
+local Storage = addon.Class.Storage;
 
 local wipe = _G.wipe;
 local GetContainerItemID = _G.GetContainerItemID;

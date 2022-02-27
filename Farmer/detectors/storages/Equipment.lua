@@ -11,7 +11,7 @@ local ITEM_QUALITY_ARTIFACT = _G.LE_ITEM_QUALITY_ARTIFACT or
 
 local UNITID_PLAYER = 'player';
 
-local currentEquipment = addon.Factory.Storage:new();
+local currentEquipment = addon.Class.Storage:new();
 
 local function isSlotArtifactOffhand (slot)
   return (slot == INVSLOT_OFFHAND and
