@@ -4,7 +4,7 @@ if (not addon.isDetectorAvailable('professions')) then return end
 
 local L = addon.L;
 
-local panel = addon.OptionClass.Panel:new(L['Professions'], addon.mainPanel);
+local panel = addon.Class.Options.Panel:new(L['Professions'], addon.mainPanel);
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {

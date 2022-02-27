@@ -4,7 +4,7 @@ local L = addon.L;
 
 local AlertFrame = _G.AlertFrame;
 
-local panel = addon.OptionClass.Panel:new(L['Misc'], addon.mainPanel);
+local panel = addon.Class.Options.Panel:new(L['Misc'], addon.mainPanel);
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {

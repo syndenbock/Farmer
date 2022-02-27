@@ -8,7 +8,7 @@ local L = addon.L;
 local ADDON_ICON_ID = 134435;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
-local Panel = addon.OptionClass.Panel;
+local Panel = addon.Class.Options.Panel;
 local mainPanel = Panel:new(addonName);
 local farmerFrame = addon.frame;
 
