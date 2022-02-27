@@ -3,11 +3,7 @@ local _, addon = ...;
 local CreateFromMixins = _G.CreateFromMixins;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
-local Factory = addon.share('OptionClass');
-
-local Label = {};
-
-Factory.Label = Label;
+local Label = addon.share('Class/Options/Label');
 
 local function createLabel (parent, text, anchors)
   local label = parent:CreateFontString('FontString');

@@ -10,11 +10,7 @@ local UIDropDownMenu_JustifyText = _G.UIDropDownMenu_JustifyText;
 local UIDropDownMenu_SetText = _G.UIDropDownMenu_SetText;
 local UIDropDownMenu_SetWidth = _G.UIDropDownMenu_SetWidth;
 
-local Factory = addon.share('OptionClass');
-
-local Dropdown = {};
-
-Factory.Dropdown = Dropdown;
+local Dropdown = addon.share('Class/Options/Dropdown');
 
 local function generateDropdownInitializer (dropdown, options, width)
   local function initializer (_, level)

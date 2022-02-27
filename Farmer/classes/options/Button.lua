@@ -2,11 +2,8 @@ local _, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
 local CreateFromMixins = _G.CreateFromMixins;
-local Factory = addon.share('OptionClass');
 
-local Button = {};
-
-Factory.Button = Button;
+local Button = addon.share('Class/Options/Button');
 
 local function createButton (name, parent, text, anchors)
   local button = CreateFrame('Button', name .. 'Button', parent,

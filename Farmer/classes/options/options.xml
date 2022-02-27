@@ -3,7 +3,7 @@
   <script file="CheckBox.lua"/>
   <script file="Dropdown.lua"/>
   <script file="Label.lua"/>
-  <script file="Panel.lua"/>
   <script file="Slider.lua"/>
   <script file="EditBox.lua"/>
+  <script file="Panel.lua"/>
 </UI>

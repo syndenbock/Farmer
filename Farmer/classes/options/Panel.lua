@@ -8,14 +8,20 @@ local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
 local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
 local UIParent = _G.UIParent;
 
-local Factory = addon.share('OptionClass');
+local OptionClasses = addon.Class.Options;
+local Button = OptionClasses.Button;
+local CheckBox = OptionClasses.CheckBox;
+local Slider = OptionClasses.Slider;
+local Label = OptionClasses.Label;
+local Dropdown = OptionClasses.Dropdown;
+local EditBox = OptionClasses.EditBox;
 local CallbackHandler = addon.Class.CallbackHandler;
 
 local Panel = {};
 local panelCount = 0;
 local lastOpenedPanel;
 
-Factory.Panel = Panel;
+OptionClasses.Panel = Panel;
 
 local function generatePanelName ()
   local panelName = addonName .. 'Panel' .. panelCount;
@@ -136,7 +142,7 @@ function Panel:mapOptions (options, optionMap)
 end
 
 function Panel:addButton (text, onClick)
-  local button = Factory.Button:new(self.panel, self:__createChildName(), self.panel,
+  local button = Button:new(self.panel, self:__createChildName(), self.panel,
       self.anchor.x + 3, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT', onClick);
 
   self.anchor.y = self.anchor.y - 7 - button.button:GetHeight();
@@ -145,7 +151,7 @@ function Panel:addButton (text, onClick)
 end
 
 function Panel:addCheckBox (text, onClick)
-  local checkBox = Factory.CheckBox:new(self.panel, self:__createChildName(),
+  local checkBox = CheckBox:new(self.panel, self:__createChildName(),
       self.panel, self.anchor.x, self.anchor.y, text, 'TOPLEFT', 'TOPLEFT',
       onClick);
 
@@ -155,7 +161,7 @@ function Panel:addCheckBox (text, onClick)
 end
 
 function Panel:addSlider (min, max, text, lowText, highText, precision)
-  local slider = Factory.Slider:new(self.panel, self:__createChildName(),
+  local slider = Slider:new(self.panel, self:__createChildName(),
       self.panel, self.anchor.x + 12, self.anchor.y - 15, text, min, max,
       lowText, highText, 'TOPLEFT', 'TOPLEFT', precision);
 
@@ -165,7 +171,7 @@ function Panel:addSlider (min, max, text, lowText, highText, precision)
 end
 
 function Panel:addLabel (text)
-  local label = Factory.Label:new(self.panel, self.panel, self.anchor.x + 3,
+  local label = Label:new(self.panel, self.panel, self.anchor.x + 3,
       self.anchor.y, text, 'TOPLEFT', 'TOPLEFT')
 
   self.anchor.y = self.anchor.y - 7 - label.label:GetHeight();
@@ -174,7 +180,7 @@ function Panel:addLabel (text)
 end
 
 function Panel:addDropdown (text, options)
-  local dropdown = Factory.Dropdown:new(self.panel, self:__createChildName(),
+  local dropdown = Dropdown:new(self.panel, self:__createChildName(),
       self.panel, self.anchor.x + 10, self.anchor.y, text, options, 'TOPLEFT',
       'TOPLEFT');
 
@@ -184,7 +190,7 @@ function Panel:addDropdown (text, options)
 end
 
 function Panel:addEditBox (width, height)
-  local editBox = Factory.EditBox:new(self.panel, self:__createChildName(),
+  local editBox = EditBox:new(self.panel, self:__createChildName(),
       self.panel, self.anchor.x + 2, self.anchor.y, width, height, 'TOPLEFT',
       'TOPLEFT');
 

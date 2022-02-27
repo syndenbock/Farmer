@@ -3,7 +3,6 @@
   <include file="localizations\localizations.xml"/>
   <include file="utils\utils.xml"/>
   <include file="classes\classes.xml"/>
-  <include file="classes_options\options.xml"/>
   <include file="factories\factories.xml"/>
   <include file="widgets\widgets.xml"/>
   <include file="core\core.xml"/>

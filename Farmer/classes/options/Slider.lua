@@ -5,11 +5,7 @@ local CreateFromMixins = _G.CreateFromMixins;
 
 local BACKDROP_TEMPLATE = _G.BackdropTemplateMixin and 'BackdropTemplate';
 
-local Factory = addon.share('OptionClass');
-
-local Slider = {};
-
-Factory.Slider = Slider;
+local Slider = addon.share('Class/Options/Slider');
 
 local function createEditBox (name, parent)
   local edit = CreateFrame('EditBox', name .. 'EditBox', parent,

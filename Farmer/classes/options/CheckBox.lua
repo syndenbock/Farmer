@@ -3,11 +3,7 @@ local _, addon = ...;
 local CreateFrame = _G.CreateFrame;
 local CreateFromMixins = _G.CreateFromMixins;
 
-local Factory = addon.share('OptionClass');
-
-local CheckBox = {};
-
-Factory.CheckBox = CheckBox;
+local CheckBox =  addon.share('Class/Options/CheckBox');
 
 local function createCheckBox (name, parent, text, anchors)
   local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent,
