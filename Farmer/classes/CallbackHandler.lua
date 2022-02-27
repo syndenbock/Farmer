@@ -7,9 +7,7 @@ local wipe = _G.wipe;
 
 local secureCall = addon.secureCall;
 
-local CallbackHandler = {};
-
-addon.share('Class').CallbackHandler = CallbackHandler;
+local CallbackHandler = addon.share('Class/CallbackHandler');
 
 function CallbackHandler:new ()
   local this = CreateFromMixins(CallbackHandler);

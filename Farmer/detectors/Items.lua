@@ -12,7 +12,7 @@ local ImmutableMap = addon.Factory.ImmutableMap;
 
 local Items = {};
 local storages = {};
-local changesStorage = addon.Factory.Storage:new();
+local changesStorage = addon.Class.Storage:new();
 
 addon.Items = Items;
 

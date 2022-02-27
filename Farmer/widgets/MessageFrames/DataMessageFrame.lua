@@ -4,9 +4,7 @@ local Mixin = _G.Mixin;
 
 local MessageFrame = addon.Widget.MessageFrame;
 
-local DataMessageFrame = {};
-
-addon.share('Widget').DataMessageFrame = DataMessageFrame;
+local DataMessageFrame = addon.share('Widget/DataMessageFrame');
 
 function DataMessageFrame:New (options)
   local this = MessageFrame:New(options);

@@ -3,9 +3,7 @@ local _, addon = ...;
 local CreateFromMixins = _G.CreateFromMixins;
 local wipe = _G.wipe;
 
-local Set = {};
-
-addon.share('Class').Set = Set;
+local Set = addon.share('Class/Set');
 
 function Set:new (items)
   local this = CreateFromMixins(Set);

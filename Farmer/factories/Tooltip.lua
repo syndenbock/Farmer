@@ -3,10 +3,7 @@ local _, addon = ...;
 local CreateFromMixins = _G.CreateFromMixins;
 local GameTooltip = _G.GameTooltip;
 
-local Factory = addon.share('Factory');
-local Tooltip = {};
-
-Factory.Tooltip = Tooltip;
+local Tooltip = addon.share('Factory/Tooltip');
 
 local function displayLines (lines)
   GameTooltip:ClearLines();
