@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+local strsplit = _G.strsplit;
+
 local proxy = {};
 
 setmetatable(addon, {
@@ -13,13 +15,18 @@ setmetatable(addon, {
   end,
 });
 
-function addon.share (name)
-  local shared = proxy[name];
+function addon.share (path)
+  local current = addon;
 
-  if (shared == nil) then
-    shared = {};
-    proxy[name] = shared;
+  path = {strsplit('/', path)};
+
+  for _, name in pairs(path) do
+    if (current[name] == nil) then
+      current[name] = {};
+    end
+
+    current = current[name];
   end
 
-  return shared;
+  return current;
 end
