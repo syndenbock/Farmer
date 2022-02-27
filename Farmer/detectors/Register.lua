@@ -8,24 +8,24 @@ local function isDetectorKnown (detectorName)
       unavailableDetectors[detectorName] ~= nil);
 end
 
-function addon.registerAvailableDetector (detectorName)
+addon.export('registerAvailableDetector', function (detectorName)
   assert(not isDetectorKnown(detectorName),
       addon.createAddonMessage('detector was already registered: ' ..
       detectorName));
 
   availableDetectors[detectorName] = true;
-end
+end);
 
-function addon.registerUnavailableDetector (detectorName)
+addon.export('registerUnavailableDetector', function (detectorName)
   assert(not isDetectorKnown(detectorName),
       addon.createAddonMessage('detector was already registered: ' ..
       detectorName));
   unavailableDetectors[detectorName] = true;
-end
+end);
 
-function addon.isDetectorAvailable (detectorName)
+addon.export('isDetectorAvailable', function (detectorName)
   assert(isDetectorKnown(detectorName),
       addon.createAddonMessage('unknown detector: ' .. detectorName));
 
   return (availableDetectors[detectorName] ~= nil);
-end
+end);

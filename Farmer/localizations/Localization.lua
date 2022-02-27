@@ -1,3 +1,3 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
-addon.L = {};
+addon.export('L', {});

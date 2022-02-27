@@ -53,10 +53,10 @@ local function printIconMessageWithData (subspace, identifier, data, icon, messa
   farmerFrame:AddIconMessageWithData(subspace, identifier, data, icon, message, unpack(colors or DEFAULT_COLOR));
 end
 
-addon.Print = {
+addon.export('Print', {
   checkHideOptions = checkHideOptions,
   printMessage = printMessage;
   printMessageWithData = printMessageWithData;
   printIconMessage = printIconMessage;
   printIconMessageWithData = printIconMessageWithData;
-};
+});

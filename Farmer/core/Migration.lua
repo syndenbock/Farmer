@@ -4,10 +4,8 @@ local strsplit = _G.strsplit;
 
 local TOC_VERSION = _G.GetAddOnMetadata(addonName, 'version');
 
-local Migration = {};
+local Migration = addon.export('Migration', {});
 local callbackHandler = addon.Class.CallbackHandler:new();
-
-addon.Migration = Migration;
 
 local function versionToNumber (version)
   local segmentCount = 3;

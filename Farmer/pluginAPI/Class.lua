@@ -1,5 +1,5 @@
 local _, addon = ...;
 
-addon.API.Class = {
+addon.export('API/Class', {
   CallbackHandler = addon.Class.CallbackHandler,
-};
+});

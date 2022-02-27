@@ -2,14 +2,14 @@ local _, addon = ...;
 
 local callbackHandler = addon.Class.CallbackHandler:new();
 
-function addon.listen (message, callback)
+addon.export('listen', function (message, callback)
   callbackHandler:addCallback(message, callback);
-end
+end);
 
-function addon.unlisten (message, callback)
+addon.export('unlisten', function (message, callback)
   callbackHandler:removeCallback(message, callback);
-end
+end);
 
-function addon.yell (message, ...)
+addon.export('yell', function (message, ...)
   callbackHandler:call(message, ...);
-end
+end);

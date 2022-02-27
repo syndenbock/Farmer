@@ -72,7 +72,6 @@ end
 local function readOptions (self, options)
   options = transformOptions(options);
   addon.readOptions(DEFAULT_OPTIONS, options, self);
-  addon.name = options.name;
 end
 
 local function createAnchor (name, frameStrata, frameLevel)

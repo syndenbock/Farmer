@@ -17,11 +17,9 @@ local Dropdown = OptionClasses.Dropdown;
 local EditBox = OptionClasses.EditBox;
 local CallbackHandler = addon.Class.CallbackHandler;
 
-local Panel = {};
+local Panel = addon.export('Class/Options/Panel', {});
 local panelCount = 0;
 local lastOpenedPanel;
-
-OptionClasses.Panel = Panel;
 
 local function generatePanelName ()
   local panelName = addonName .. 'Panel' .. panelCount;

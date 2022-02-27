@@ -2,10 +2,8 @@ local _, addon = ...;
 
 local secureCall = addon.secureCall;
 
-local events = {};
+local events = addon.export('API/events', {});
 local callbackMap = {};
-
-addon.API.events = events;
 
 local function handleEvent (event, ...)
   for callback in pairs(callbackMap[event]) do

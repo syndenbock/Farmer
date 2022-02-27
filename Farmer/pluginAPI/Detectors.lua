@@ -2,9 +2,7 @@ local addonName, addon = ...;
 
 local secureCall = addon.secureCall;
 
-local detectors = {};
-
-addon.API.detectors = detectors;
+local detectors = addon.export('API/detectors', {});
 
 local ALLOWED_HOOKS = {
   ITEM_CHANGED = true,

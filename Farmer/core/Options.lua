@@ -12,7 +12,7 @@ local Panel = addon.Class.Options.Panel;
 local mainPanel = Panel:new(addonName);
 local farmerFrame = addon.frame;
 
-addon.mainPanel = mainPanel.panel;
+addon.export('mainPanel', mainPanel.panel);
 
 local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {

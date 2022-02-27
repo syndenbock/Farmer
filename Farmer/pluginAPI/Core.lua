@@ -1,4 +1,4 @@
 local _, addon = ...;
 
-addon.API.serialize = addon.serialize;
-addon.API.deserialize = addon.deserialize;
+addon.export('API/serialize', addon.serialize);
+addon.export('API/deserialize', addon.deserialize);

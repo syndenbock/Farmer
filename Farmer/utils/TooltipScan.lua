@@ -8,9 +8,7 @@ local TOOLTIP_NAME = SCANNING_TOOLTIP:GetName();
 
 SCANNING_TOOLTIP:SetOwner(_G.WorldFrame, 'ANCHOR_NONE');
 
-local scanner = {};
-
-ADDON.TooltipScanner = scanner;
+local scanner = ADDON.export('TooltipScanner', {});
 
 local function getTooltipLinesByNames ()
   local lines = {};

@@ -12,15 +12,12 @@ local stringJoin = addon.stringJoin;
 local farmerFrame = addon.frame;
 
 local SUBSPACE = farmerFrame:CreateSubspace();
-local ItemPrint = {};
+local ItemPrint = addon.export('ItemPrint', {});
 
 local addonOptions = addon.SavedVariablesHandler(addonName, 'farmerOptions')
     .vars.farmerOptions;
 local itemOptions = addonOptions.Items;
 local coreOptions = addonOptions.Core;
-
-addon.ItemPrint = ItemPrint;
-
 
 ItemPrint.COLORS = {
   reagent = {0, 0.8, 0.8},

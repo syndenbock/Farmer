@@ -10,11 +10,9 @@ local extractNormalizedItemString = addon.extractNormalizedItemString;
 local fetchItemLink = addon.fetchItemLink;
 local ImmutableMap = addon.Factory.ImmutableMap;
 
-local Items = {};
+local Items = addon.export('Items', {});
 local storages = {};
 local changesStorage = addon.Class.Storage:new();
-
-addon.Items = Items;
 
 function Items.addStorage (storage)
   assert(storages[storage] == nil, 'storage was already added');
