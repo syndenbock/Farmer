@@ -32,6 +32,6 @@ addon.listen('MONEY_CHANGED', function (amount)
   end
 end);
 
-addon.share('tests').money = function ()
+addon.export('tests/money', function ()
   displayMoney(12390);
-end
+end);

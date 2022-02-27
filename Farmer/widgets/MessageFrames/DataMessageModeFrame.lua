@@ -15,7 +15,7 @@ local DEFAULT_OPTIONS = {
   mode = MESSAGE_MODES.combine,
 };
 
-local DataMessageModeFrame = ADDON.share('Widget/DataMessageModeFrame');
+local DataMessageModeFrame = ADDON.export('Widget/DataMessageModeFrame', {});
 
 --##############################################################################
 -- Shifting mode handlers

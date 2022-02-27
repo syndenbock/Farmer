@@ -137,8 +137,8 @@ end);
 -- testing
 --##############################################################################
 
-addon.share('tests').profession = function (id)
+addon.export('tests/profession', function (id)
   id = (id and tonumber(id)) or 171;
 
   yellProfession(getSkillLineInfo(id), 1);
-end
+end);

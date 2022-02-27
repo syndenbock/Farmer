@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-local tests = addon.share('tests');
+local tests = addon.import('tests');
 
 function tests.memory (_addonName)
   local usage;

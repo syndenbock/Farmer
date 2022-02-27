@@ -3,7 +3,7 @@ local _, addon = ...;
 local CreateFromMixins = _G.CreateFromMixins;
 local wipe = _G.wipe;
 
-local Storage = addon.share('Class/Storage');
+local Storage = addon.export('Class/Storage', {});
 
 function Storage:new ()
   local this = CreateFromMixins(Storage);

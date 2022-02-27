@@ -157,10 +157,10 @@ local function testPredefinedItems ()
   end
 end
 
-addon.share('tests').items = function (id, count)
+addon.export('tests/items', function (id, count)
   if (id) then
     testItem(tonumber(id), count or 1);
   else
     testPredefinedItems();
   end
-end
+end);

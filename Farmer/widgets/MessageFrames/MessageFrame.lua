@@ -49,7 +49,7 @@ local DEFAULT_OPTIONS = {
   shadowOffset = {x = 0, y = 0},
 };
 
-local MessageFrame = {
+local MessageFrame = addon.export('Widget/MessageFrame', {
   GROW_DIRECTION_UP = GROW_DIRECTION_UP,
   GROW_DIRECTION_DOWN = GROW_DIRECTION_DOWN,
   ALIGNMENT_LEFT = ALIGNMENT_LEFT,
@@ -57,9 +57,7 @@ local MessageFrame = {
   ALIGNMENT_RIGHT = ALIGNMENT_RIGHT,
   INSERTMODE_PREPEND = INSERTMODE_PREPEND,
   INSERTMODE_APPEND = INSERTMODE_APPEND,
-};
-
-addon.share('Widget').MessageFrame = MessageFrame;
+});
 
 local function transformOptions (options)
   if (type(options) == 'string') then

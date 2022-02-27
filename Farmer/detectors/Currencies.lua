@@ -124,6 +124,6 @@ end);
 -- testing
 --##############################################################################
 
-addon.share('tests').currency = function ()
+addon.export('tests/currency', function ()
   yellCurrencyInfo(packCurrencyInfo(1755), 15357);
-end
+end);

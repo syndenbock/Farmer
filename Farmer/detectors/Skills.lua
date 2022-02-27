@@ -86,10 +86,10 @@ addon.onOnce('PLAYER_LOGIN', function ()
   addon.on('CHAT_MSG_SKILL', checkSkills);
 end);
 
-addon.share('tests').skills = function ()
+addon.export('tests/skills', function ()
   yellSkill({
     name = 'testskill',
     rank = 2,
     maxRank = 20,
   }, 1);
-end
+end);
