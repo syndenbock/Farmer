@@ -16,10 +16,16 @@ setmetatable(addon, {
   end,
 });
 
-local function share (pathList)
+local function splitPathString (pathString)
+  return {strsplit('/', pathString)};
+end
+
+local function generateNameSpaces (pathList)
   local current = addon;
 
   for _, name in ipairs(pathList) do
+    assert(type(current) == 'table', 'Parent namespace is not a table: ' .. name);
+
     if (current[name] == nil) then
       current[name] = {};
     end
@@ -30,20 +36,12 @@ local function share (pathList)
   return current;
 end
 
-local function splitPathString (pathString)
-  return {strsplit('/', pathString)};
-end
-
-function addon.share (pathString)
-  return share(splitPathString(pathString));
-end
-
 function addon.export (pathString, value)
   assert(value ~= nil, 'Export value is nil');
 
   local pathList = splitPathString(pathString);
   local name = tremove(pathList);
-  local shared = share(pathList);
+  local shared = generateNameSpaces(pathList);
 
   assert(shared[name] == nil, 'Value already exists: ' .. name);
 
@@ -57,7 +55,8 @@ function addon.import (pathString)
   local current = addon;
 
   for _, name in ipairs(pathList) do
-    assert(current[name] ~= nil, 'Module does not exist: ' .. name);
+    assert(type(current) == 'table', 'Parent namespace is not a table: ' .. name);
+    assert(current[name] ~= nil, 'Namespace does not exist: ' .. name);
     current = current[name];
   end
 
