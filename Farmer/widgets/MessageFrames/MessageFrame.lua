@@ -166,10 +166,6 @@ function MessageFrame:AddIconMessage (icon, text, r, g, b, a)
 
   self:InsertMessage(message);
 
-  if (self.fading) then
-    self:StartMessageAnimation(message);
-  end
-
   return message;
 end
 
@@ -180,6 +176,11 @@ end
 function MessageFrame:RemoveMessage (message)
   assert(self.framePool:IsActive(message), 'message is not currently displayed!');
 
+  self:RemoveMessageAnchors(message);
+  self.framePool:Release(message);
+end
+
+function MessageFrame:RemoveMessageAnchors (message)
   local head = message.head;
   local tail = message.tail;
 
@@ -193,8 +194,29 @@ function MessageFrame:RemoveMessage (message)
     self.tail = head;
   end
 
+  message.tail = nil;
+  message.head = nil;
+
   self:SetMessagePointsIfExists(tail);
-  self.framePool:Release(message);
+end
+
+function MessageFrame:UpdateMessage (message, text, r, g, b, a)
+  self:UpdateIconMessage(message, nil, text, r, g, b, a);
+end
+
+function MessageFrame:UpdateIconMessage (message, icon, text, r, g, b, a)
+  assert(self.framePool:IsActive(message), 'message is not currently displayed!');
+
+  self:ApplyMessageAttributes(message, icon, text, r, g, b, a);
+end
+
+function MessageFrame:MoveMessageToFront (message)
+  if (self.head == message) then
+    return;
+  end
+
+  self:RemoveMessageAnchors(message);
+  self:InsertMessage(message);
 end
 
 function MessageFrame:Clear ()
@@ -350,8 +372,11 @@ MessageFrame.GetTimeVisible = MessageFrame.GetVisibleTime;
 --##############################################################################
 
 function MessageFrame:CreateMessage (icon, text, r, g, b, a)
-  local message = self.framePool:Acquire();
+  return self:ApplyMessageAttributes(
+      self.framePool:Acquire(), icon, text, r, g, b, a);
+end
 
+function MessageFrame:ApplyMessageAttributes (message, icon, text, r, g, b, a)
   if (message.fontString == nil) then
     message.fontString = self:CreateFontString(message);
   end
@@ -371,6 +396,10 @@ function MessageFrame:CreateMessage (icon, text, r, g, b, a)
     message.iconFrame:Show();
   else
     message.iconFrame:Hide();
+  end
+
+  if (self.fading) then
+    self:StartMessageAnimation(message);
   end
 
   return message;
@@ -544,7 +573,7 @@ function MessageFrame:StartMessageAnimation (message)
   end
 
   self:CreateMessageAnimation(message);
-  message.animationGroup:Play();
+  message.animationGroup:Restart();
 end
 
 function MessageFrame:CreateMessageAnimation (message)
