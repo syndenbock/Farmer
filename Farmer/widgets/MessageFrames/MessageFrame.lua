@@ -87,6 +87,10 @@ local function forEachMessage (self, callback, ...)
   forEachInactiveMessage(self, callback, ...);
 end
 
+local function assertMessageIsActive (self, message)
+  assert(self.framePool:IsActive(message), 'message is not currently displayed!');
+end
+
 --******************************************************************************
 -- initialization methods
 --******************************************************************************
@@ -536,22 +540,22 @@ function MessageFrame:AddAnchorMessage (icon, text, r, g, b, a)
 end
 
 function MessageFrame:RemoveMessage (message)
-  assert(self.framePool:IsActive(message), 'message is not currently displayed!');
+  assertMessageIsActive(self, message);
   removeMessage(self, message);
 end
 
 function MessageFrame:UpdateMessage (message, text, r, g, b, a)
-  assert(self.framePool:IsActive(message), 'message is not currently displayed!');
+  assertMessageIsActive(self, message);
   self:UpdateIconMessage(message, nil, text, r, g, b, a);
 end
 
 function MessageFrame:UpdateIconMessage (message, icon, text, r, g, b, a)
-  assert(self.framePool:IsActive(message), 'message is not currently displayed!');
+  assertMessageIsActive(self, message);
   applyMessageAttributes(self, message, icon, text, r, g, b, a);
 end
 
 function MessageFrame:MoveMessageToFront (message)
-  assert(self.framePool:IsActive(message), 'message is not currently displayed!');
+  assertMessageIsActive(self, message);
 
   if (self.head == message) then
     return;
