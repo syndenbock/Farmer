@@ -1,6 +1,7 @@
 local _, addon = ...;
 
 local max = _G.max;
+local tinsert = _G.tinsert;
 
 local CreateFramePool = _G.CreateFramePool;
 local CreateFromMixins = _G.CreateFromMixins;
@@ -457,6 +458,31 @@ local function createAnchorMessage (self, icon, text, r, g, b, a)
   return message;
 end
 
+local function resetMessage (self, pool, message)
+  message:Hide();
+  message.head = nil;
+  message.tail = nil;
+  message.isFading = nil;
+
+  if (message.animationGroup) then
+    message.animationGroup:Stop();
+  end
+
+  if (message.animation) then
+    message.animation:Stop();
+  end
+end
+
+local function addResetCallback (self, callback)
+  tinsert(self.resetCallbacks, 1, callback);
+end
+
+local function executeResetCallbacks (self, pool, message)
+  for _, callback in ipairs(self.resetCallbacks) do
+    callback(self, pool, message);
+  end
+end
+
 --##############################################################################
 -- public methods
 --##############################################################################
@@ -471,33 +497,19 @@ function MessageFrame:New (options)
   -- these are only needed for initialization
   this.frameStrata = nil;
   this.frameLevel = nil;
-
-  -- explicitly calling ResetMessage of the object to allow overwriting reset
-  -- method
-  -- This should be replaced with a method to add reset handlers
+  this.resetCallbacks = {};
   this.framePool = CreateFramePool(FRAME, this.anchor, nil, function (pool, message)
-    this:ResetMessage(pool, message);
+    executeResetCallbacks(this, pool, message);
   end, false);
+
+  this:AddResetCallback(resetMessage);
   this.framePool:SetResetDisallowedIfNew(true);
   updateSizes(this);
 
   return this;
 end
 
-function MessageFrame:ResetMessage (pool, message)
-  message:Hide();
-  message.head = nil;
-  message.tail = nil;
-  message.isFading = nil;
-
-  if (message.animationGroup) then
-    message.animationGroup:Stop();
-  end
-
-  if (message.animation) then
-    message.animation:Stop();
-  end
-end
+MessageFrame.AddResetCallback = addResetCallback;
 
 function MessageFrame:Move (icon, text, callback)
   local message = createAnchorMessage(self, icon, text);

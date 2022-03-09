@@ -45,6 +45,10 @@ local function removeMessageData (self, message)
   end
 end
 
+local function resetMessage (self, pool, message)
+  removeMessageData(self, message);
+end
+
 --##############################################################################
 -- public methods
 --##############################################################################
@@ -54,6 +58,7 @@ function DataMessageFrame:New (options)
 
   Mixin(this, DataMessageFrame);
   this.subspaces = {};
+  this:AddResetCallback(resetMessage);
 
   return this;
 end
@@ -100,9 +105,4 @@ function DataMessageFrame:RemoveMessageByIdentifier (subspace, identifier)
   end
 
   self:RemoveMessage(data.message);
-end
-
-function DataMessageFrame:ResetMessage (pool, message)
-  removeMessageData(self, message);
-  MessageFrame.ResetMessage(self, pool, message);
 end
