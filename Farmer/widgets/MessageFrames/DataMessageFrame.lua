@@ -6,56 +6,22 @@ local MessageFrame = addon.Widget.MessageFrame;
 
 local DataMessageFrame = addon.export('Widget/DataMessageFrame', {});
 
-function DataMessageFrame:New (options)
-  local this = MessageFrame:New(options);
+--##############################################################################
+-- private methods
+--##############################################################################
 
-  Mixin(this, DataMessageFrame);
-  this.subspaces = {};
-
-  return this;
-end
-
-function DataMessageFrame:CreateSubspace ()
-  local identifier = self:GenerateSubspaceIdentifier();
-
-  self.subspaces[identifier] = {};
-
-  return identifier;
-end
-
-function DataMessageFrame:GenerateSubspaceIdentifier ()
+local function generateSubspaceIdentifier (self)
   local identifier = self.subspaceIdentifier or 1;
   self.subspaceIdentifier = identifier + 1;
   return identifier;
 end
 
-function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  return DataMessageFrame.AddIconMessageWithData(self, subspace, identifier, data, nil, text, r, g, b, a);
+local function getMessageInfo (self, subspace, identifier)
+  return self.subspaces[subspace][identifier];
 end
 
-function DataMessageFrame:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
-  local info = self:GetMessageInfo(subspace, identifier);
-  local message;
-
-  if (info) then
-    message = info.message;
-    MessageFrame.UpdateIconMessage(self, message, icon, text, r, g, b, a);
-  else
-    message = self:AddIconMessage(icon, text, r, g, b, a);
-  end
-
-  self:SetMessageData(subspace, identifier, message, data);
-
-  return message;
-end
-
-function DataMessageFrame:RemoveMessage (message)
-  self:RemoveMessageData(message);
-  MessageFrame.RemoveMessage(self, message);
-end
-
-function DataMessageFrame:SetMessageData (subspace, identifier, message, data)
-  local info = self:GetMessageInfo(subspace, identifier);
+local function setMessageData (self, subspace, identifier, message, data)
+  local info = getMessageInfo(self, subspace, identifier);
 
   message.subspace = subspace;
   message.identifier = identifier;
@@ -71,26 +37,59 @@ function DataMessageFrame:SetMessageData (subspace, identifier, message, data)
   end
 end
 
-function DataMessageFrame:GetMessageInfo (subspace, identifier)
-  return self.subspaces[subspace][identifier];
+local function removeMessageData (self, message)
+  if (message.subspace ~= nil and message.identifier ~= nil) then
+    self.subspaces[message.subspace][message.identifier] = nil;
+    message.subspace = nil;
+    message.identifier = nil;
+  end
+end
+
+--##############################################################################
+-- public methods
+--##############################################################################
+
+function DataMessageFrame:New (options)
+  local this = MessageFrame:New(options);
+
+  Mixin(this, DataMessageFrame);
+  this.subspaces = {};
+
+  return this;
+end
+
+function DataMessageFrame:CreateSubspace ()
+  local identifier = generateSubspaceIdentifier(self);
+
+  self.subspaces[identifier] = {};
+
+  return identifier;
+end
+
+function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
+  return self:AddIconMessageWithData(subspace, identifier, data, nil, text, r, g, b, a);
+end
+
+function DataMessageFrame:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
+  local info = getMessageInfo(self, subspace, identifier);
+  local message;
+
+  if (info) then
+    message = info.message;
+    MessageFrame.UpdateIconMessage(self, message, icon, text, r, g, b, a);
+  else
+    message = self:AddIconMessage(icon, text, r, g, b, a);
+  end
+
+  setMessageData(self, subspace, identifier, message, data);
+
+  return message;
 end
 
 function DataMessageFrame:GetMessageData (subspace, identifier)
-  local data = self:GetMessageInfo(subspace, identifier);
+  local data = getMessageInfo(self, subspace, identifier);
 
   return data and data.data;
-end
-
-function DataMessageFrame:RemoveMessageData (message)
-  if (message.subspace == nil or message.identifier == nil) then
-    return;
-  end
-
-  self:RemoveMessageDataByIdentifier(message.subspace, message.identifier);
-end
-
-function DataMessageFrame:RemoveMessageDataByIdentifier (subspace, identifier)
-  self.subspaces[subspace][identifier] = nil;
 end
 
 function DataMessageFrame:RemoveMessageByIdentifier (subspace, identifier)
@@ -103,8 +102,7 @@ function DataMessageFrame:RemoveMessageByIdentifier (subspace, identifier)
   self:RemoveMessage(data.message);
 end
 
-function DataMessageFrame:ResetFontString (fontString)
-  fontString.subspace = nil;
-  fontString.identifier = nil;
-  MessageFrame.ResetFontString(self, fontString);
+function DataMessageFrame:ResetMessage (pool, message)
+  removeMessageData(self, message);
+  MessageFrame.ResetMessage(self, pool, message);
 end
