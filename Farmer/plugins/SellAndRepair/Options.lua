@@ -11,6 +11,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
       autoRepair = true,
       autoRepairAllowGuild = true,
       autoSell = true,
+      autoSellSkipUsable = true,
       autoSellSkipReadable = true,
     },
   },
@@ -28,6 +29,8 @@ do
 
   optionMap.autoSell =
       panel:addCheckBox(L['autosell gray items when visiting merchants']);
+  optionMap.autoSellSkipUsable =
+      panel:addCheckBox(L['skip usable items when autoselling']);
   optionMap.autoSellSkipReadable =
       panel:addCheckBox(L['skip readable items when autoselling']);
 

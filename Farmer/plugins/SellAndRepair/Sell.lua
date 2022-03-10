@@ -1,8 +1,9 @@
 local addonName, addon = ...;
 
-local GetContainerNumSlots = _G.GetContainerNumSlots;
 local GetContainerItemInfo = _G.GetContainerItemInfo;
+local GetContainerNumSlots = _G.GetContainerNumSlots;
 local GetItemInfo = _G.GetItemInfo;
+local GetItemSpell = _G.GetItemSpell;
 local UseContainerItem = _G.UseContainerItem;
 
 local L = addon.L;
@@ -18,6 +19,24 @@ local function isItemGray (quality)
   return (quality ~= nil and quality == QUALITY_COMMON);
 end
 
+local function shouldSellReadableItem (readable)
+  return (not readable or options.autoSellSkipReadable == false);
+end
+
+local function isItemUsable (itemId)
+  return (GetItemSpell(itemId) ~= nil);
+end
+
+local function shouldSellUsableItem (itemId)
+  return (options.autoSellSkipUsable == false or not isItemUsable(itemId));
+end
+
+local function getItemSellPrice (itemId)
+  local info = {GetItemInfo(itemId)};
+
+  return info[11] or 0;
+end
+
 local function sellitem (bag, slot)
   UseContainerItem(bag, slot);
 
@@ -27,31 +46,22 @@ local function sellitem (bag, slot)
   --PickupMerchantItem();
 end
 
-local function getItemSellPrice (itemLink)
-  local info = {GetItemInfo(itemLink)};
-
-  return info[11] or 0;
-end
-
-local function shouldSellReadableItem (readable)
-  return (not readable or options.autoSellSkipReadable == false);
-end
-
 local function sellItemIfGray (bag, slot)
   local info = {GetContainerItemInfo(bag, slot)};
   local locked = info[3];
   local quality = info[4];
   local readable = info[5];
+  local itemId = info[10];
 
   -- empty info means empty bag slot
   if (info[1] == nil) then return 0 end;
 
   if (not locked and
+      isItemGray(quality) and
       shouldSellReadableItem(readable) and
-      isItemGray(quality)) then
+      shouldSellUsableItem(itemId)) then
     local itemCount = info[2];
-    local itemLink = info[7];
-    local price = getItemSellPrice(itemLink) * itemCount;
+    local price = getItemSellPrice(itemId) * itemCount;
 
     sellitem(bag, slot);
 
