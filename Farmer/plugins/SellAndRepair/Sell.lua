@@ -39,19 +39,20 @@ end
 
 local function sellItemIfGray (bag, slot)
   local info = {GetContainerItemInfo(bag, slot)};
-  local locked = info[3];
-  local quality = info[4];
-  local readable = info[5];
 
   -- empty info means empty bag slot
   if (info[1] == nil) then return 0 end;
+
+  local locked = info[3];
+  local quality = info[4];
+  local readable = info[5];
 
   if (not locked and
       shouldSellReadableItem(readable) and
       isItemGray(quality)) then
     local itemCount = info[2];
-    local itemLink = info[7];
-    local price = getItemSellPrice(itemLink) * itemCount;
+    local itemId = info[10];
+    local price = getItemSellPrice(itemId) * itemCount;
 
     sellitem(bag, slot);
 
