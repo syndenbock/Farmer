@@ -1,4 +1,1 @@
-- Updated interface versions
-- Small bug fixes
-- A lot of small performance and memory usage improvements
-- Slightly updated style of messages
+- Fixed missing coin icons in Classic and Burning Crusade Classic
