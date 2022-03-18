@@ -19,6 +19,11 @@ local CURRENCY_OPTIONS = ADDON_OPTIONS.Currency;
 local SUBSPACE = farmerFrame:CreateSubspace();
 
 local function checkDisplayOptions (id)
+  -- ignore bonus valor
+  if (id == 1947) then
+    return false;
+  end
+
   if (CURRENCY_OPTIONS.displayCurrencies == false) then
     return false;
   end
