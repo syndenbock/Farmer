@@ -417,12 +417,13 @@ local function createIconFrame (parent)
   return iconFrame;
 end
 
-local function applyMessageAttributes (self, message, icon, text, r, g, b, a)
+local function applyMessageAttributes (self, message, icon, text, colors)
   if (message.fontString == nil) then
     message.fontString = createFontString(self, message);
   end
 
-  message.fontString:SetTextColor(r or 1, g or 1, b or 1, a or 1);
+  message.fontString:SetTextColor(colors.r or 1, colors.g or 1, colors.b or 1,
+      colors.a or 1);
   message.fontString:SetText(text);
 
   if (message.iconFrame == nil) then
@@ -446,16 +447,16 @@ local function applyMessageAttributes (self, message, icon, text, r, g, b, a)
   return message;
 end
 
-local function createMessage (self, icon, text, r, g, b, a)
+local function createMessage (self, icon, text, colors)
   return applyMessageAttributes(self, self.framePool:Acquire(), icon, text,
-      r, g, b, a);
+      colors);
 end
 
-local function createAnchorMessage (self, icon, text, r, g, b, a)
+local function createAnchorMessage (self, icon, text, colors)
   -- Setting an anchor text doesn't properly work yet as the message itself
   -- cannot be dragged which causes parts of the message not being able to
   -- clicked if they don't overlap the moving anchor.
-  local message = createMessage(self, icon, nil, r, g, b, a);
+  local message = createMessage(self, icon, nil, colors);
 
   setMessagePoints(self, message);
 
@@ -523,20 +524,20 @@ function MessageFrame:Move (icon, text, callback)
   startMoving(self, message, callback);
 end
 
-function MessageFrame:AddMessage (text, r, g, b, a)
-  return MessageFrame.AddIconMessage(self, nil, text, r, g, b, a);
+function MessageFrame:AddMessage (text, colors)
+  return MessageFrame.AddIconMessage(self, nil, text, colors);
 end
 
-function MessageFrame:AddIconMessage (icon, text, r, g, b, a)
-  local message = createMessage(self, icon, text, r, g, b, a);
+function MessageFrame:AddIconMessage (icon, text, colors)
+  local message = createMessage(self, icon, text, colors);
 
   insertMessage(self, message);
 
   return message;
 end
 
-function MessageFrame:AddAnchorMessage (icon, text, r, g, b, a)
-  startMessageAnimation(self, createAnchorMessage(self, icon, r, g, b, a));
+function MessageFrame:AddAnchorMessage (icon, text, colors)
+  startMessageAnimation(self, createAnchorMessage(self, icon, text, colors));
 end
 
 function MessageFrame:RemoveMessage (message)
@@ -544,14 +545,14 @@ function MessageFrame:RemoveMessage (message)
   removeMessage(self, message);
 end
 
-function MessageFrame:UpdateMessage (message, text, r, g, b, a)
+function MessageFrame:UpdateMessage (message, text, colors)
   assertMessageIsActive(self, message);
-  self:UpdateIconMessage(message, nil, text, r, g, b, a);
+  self:UpdateIconMessage(message, nil, text, colors);
 end
 
-function MessageFrame:UpdateIconMessage (message, icon, text, r, g, b, a)
+function MessageFrame:UpdateIconMessage (message, icon, text, colors)
   assertMessageIsActive(self, message);
-  applyMessageAttributes(self, message, icon, text, r, g, b, a);
+  applyMessageAttributes(self, message, icon, text, colors);
 end
 
 function MessageFrame:MoveMessageToFront (message)
@@ -639,13 +640,13 @@ function MessageFrame:GetGrowDirection ()
   return self.direction;
 end
 
-function MessageFrame:SetShadowColor (r, g, b, a)
-  local colors = self.shadowColors;
+function MessageFrame:SetShadowColor (colors)
+  local currentColors = self.shadowColors;
 
-  colors.r = r or colors.r;
-  colors.g = g or colors.g;
-  colors.b = b or colors.b;
-  colors.a = a or colors.a;
+  currentColors.r = colors.r or currentColors.r;
+  currentColors.g = colors.g or currentColors.g;
+  currentColors.b = colors.b or currentColors.b;
+  currentColors.a = colors.a or currentColors.a;
 
   forEachActiveMessage(self, setMessageShadowColor);
 end

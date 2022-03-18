@@ -10,6 +10,7 @@ local printIconMessageWithData = addon.Print.printIconMessageWithData;
 
 local farmerFrame = addon.frame;
 
+local MESSAGE_COLORS = {r = 1, g = 0.9, b = 0};
 local ACCOUNT_HONOR_ID = 1585;
 local HONOR_ID = 1792;
 local ADDON_OPTIONS = addon.SavedVariablesHandler(addonName, 'farmerOptions')
@@ -57,7 +58,7 @@ local function displayCurrency (info, amount)
   end
 
   printIconMessageWithData(SUBSPACE, info.id, amount, info.icon, text,
-      {1, 0.9, 0, 1});
+      MESSAGE_COLORS);
 end
 
 addon.listen('CURRENCY_CHANGED', function (info, amount)

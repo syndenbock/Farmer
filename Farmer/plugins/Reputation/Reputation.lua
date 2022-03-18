@@ -12,7 +12,7 @@ local farmerFrame = addon.frame;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Reputation;
 
-local MESSAGE_COLORS = {0, 0.35, 1};
+local MESSAGE_COLORS = {r = 0, g = 0.35, b = 1};
 local SUBSPACE = farmerFrame:CreateSubspace();
 
 local function getStandingLabel (standing)

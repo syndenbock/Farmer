@@ -7,7 +7,7 @@ local printMessageWithData = addon.Print.printMessageWithData;
 local farmerFrame = addon.frame;
 
 local SUBSPACE = farmerFrame:CreateSubspace();
-local MESSAGE_COLORS = {0.9, 0.3, 0};
+local MESSAGE_COLORS = {r = 0.9, g = 0.3, b = 0};
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Skills;
