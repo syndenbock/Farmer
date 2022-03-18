@@ -5,10 +5,9 @@ if (not addon.isDetectorAvailable('items')) then return end
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetItemCount = _G.GetItemCount;
 
-local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
-
 local printIconMessageWithData = addon.Print.printIconMessageWithData;
 local stringJoin = addon.stringJoin;
+local getRarityColor = addon.getRarityColor;
 local farmerFrame = addon.frame;
 
 local SUBSPACE = farmerFrame:CreateSubspace();
@@ -23,16 +22,6 @@ ItemPrint.COLORS = {
   reagent = {0, 0.8, 0.8},
   quest = {1, 0.8, 0, 1},
 };
-
-local function getRarityColor (rarity)
-  local colors = ITEM_QUALITY_COLORS[rarity];
-
-  return {
-    colors.r,
-    colors.g,
-    colors.b,
-  };
-end
 
 local function getItemCount (identifier, includeBank)
   return GetItemCount(identifier, includeBank, false);

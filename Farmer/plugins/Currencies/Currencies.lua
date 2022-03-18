@@ -7,6 +7,7 @@ local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local stringJoin = addon.stringJoin;
 local checkHideOptions = addon.Print.checkHideOptions;
 local printIconMessageWithData = addon.Print.printIconMessageWithData;
+local getRarityColor = addon.getRarityColor;
 
 local farmerFrame = addon.frame;
 
@@ -57,7 +58,7 @@ local function displayCurrency (info, amount)
   end
 
   printIconMessageWithData(SUBSPACE, info.id, amount, info.icon, text,
-      {1, 0.9, 0, 1});
+      getRarityColor(info.rarity));
 end
 
 addon.listen('CURRENCY_CHANGED', function (info, amount)
