@@ -17,7 +17,7 @@ local TEXTURE_COPPER, TEXTURE_SILVER, TEXTURE_GOLD = (function ()
 
   local function getCoinTexture (atlas, fallback)
     return (GetAtlasInfo(atlas) and CreateAtlasMarkup(atlas)) or
-        '|TInterface\\MoneyFrame\\' .. fallback .. 'Icon:0:0:0:0|t';
+        ('|TInterface\\MoneyFrame\\' .. fallback .. 'Icon:0:0:0:0|t');
   end
 
   return getCoinTexture('coin-copper', 'UI-Copper'),
