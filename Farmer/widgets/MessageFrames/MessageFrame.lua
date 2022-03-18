@@ -524,7 +524,7 @@ function MessageFrame:Move (icon, text, callback)
 end
 
 function MessageFrame:AddMessage (text, r, g, b, a)
-  return self:AddIconMessage(nil, text, r, g, b, a);
+  return MessageFrame.AddIconMessage(self, nil, text, r, g, b, a);
 end
 
 function MessageFrame:AddIconMessage (icon, text, r, g, b, a)
