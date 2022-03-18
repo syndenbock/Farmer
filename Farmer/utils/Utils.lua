@@ -60,8 +60,7 @@ function addon.truncate (number, digits)
 end
 
 function addon.readOptions (defaults, options, newOptions)
-  local newOptions = newOptions or {};
-
+  newOptions = newOptions or {};
   options = options or {};
 
   for option, default in pairs(defaults) do
