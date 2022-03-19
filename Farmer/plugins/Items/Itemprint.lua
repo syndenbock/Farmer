@@ -19,8 +19,8 @@ local itemOptions = addonOptions.Items;
 local coreOptions = addonOptions.Core;
 
 ItemPrint.COLORS = {
-  reagent = {0, 0.8, 0.8},
-  quest = {1, 0.8, 0, 1},
+  reagent = {r = 0, g = 0.8, b = 0.8},
+  quest = {r = 1, g = 0.8, b = 0, 1},
 };
 
 local function getItemCount (identifier, includeBank)

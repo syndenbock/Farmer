@@ -4,7 +4,7 @@
 ## Title: Farmer
 ## Author: syndenbock
 ## X-Curse-Project-ID: 282961
-## Version: 3.10
+## Version: 3.10.1
 
 ## Notes: Shows information on all the stuff you loot
 ## Notes-deDe: Zeigt Infos über all das Zeug das du lootest

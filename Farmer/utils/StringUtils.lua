@@ -11,9 +11,19 @@ local COPPER_PER_GOLD = _G.COPPER_PER_GOLD;
 local COPPER_PER_SILVER = _G.COPPER_PER_SILVER;
 local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
 
-local TEXTURE_COPPER =  _G.CreateAtlasMarkup('coin-copper');
-local TEXTURE_SILVER =  _G.CreateAtlasMarkup('coin-silver');
-local TEXTURE_GOLD =  _G.CreateAtlasMarkup('coin-gold');
+local TEXTURE_COPPER, TEXTURE_SILVER, TEXTURE_GOLD = (function ()
+  local GetAtlasInfo = _G.C_Texture.GetAtlasInfo;
+  local CreateAtlasMarkup = _G.CreateAtlasMarkup;
+
+  local function getCoinTexture (atlas, fallback)
+    return (GetAtlasInfo(atlas) and CreateAtlasMarkup(atlas)) or
+        ('|TInterface\\MoneyFrame\\' .. fallback .. 'Icon:0:0:0:0|t');
+  end
+
+  return getCoinTexture('coin-copper', 'UI-Copper'),
+    getCoinTexture('coin-silver', 'UI-Silver'),
+    getCoinTexture('coin-gold', 'UI-Gold');
+end)();
 
 local ADDON_MESSAGE_PREFIX = '|cff00ffff' .. addonName .. '|r: ';
 

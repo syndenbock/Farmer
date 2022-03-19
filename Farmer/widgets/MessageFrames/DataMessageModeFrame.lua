@@ -26,12 +26,12 @@ local function doNothing () end
 
 local ShiftMode = {};
 
-function ShiftMode:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  self:AddIconMessage(nil, text, r, g, b, a);
+function ShiftMode:AddMessageWithData (subspace, identifier, data, text, colors)
+  self:AddIconMessage(nil, text, colors);
 end
 
-function ShiftMode:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
-  self:AddIconMessage(icon, text, r, g, b, a);
+function ShiftMode:AddIconMessageWithData (subspace, identifier, data, icon, text, colors)
+  self:AddIconMessage(icon, text, colors);
 end
 
 ShiftMode.GetMessageData = doNothing;
@@ -42,12 +42,12 @@ ShiftMode.GetMessageData = doNothing;
 
 local ReplaceMode = {};
 
-function ReplaceMode:AddMessageWithData (subspace, identifier, data, text, r, g, b, a)
-  return DataMessageFrame.AddMessageWithData(self, subspace, identifier, nil, text, r, g, b, a);
+function ReplaceMode:AddMessageWithData (subspace, identifier, data, text, colors)
+  return DataMessageFrame.AddMessageWithData(self, subspace, identifier, nil, text, colors);
 end
 
-function ReplaceMode:AddIconMessageWithData (subspace, identifier, data, icon, text, r, g, b, a)
-  return DataMessageFrame.AddIconMessageWithData(self, subspace, identifier, nil, icon, text, r, g, b, a);
+function ReplaceMode:AddIconMessageWithData (subspace, identifier, data, icon, text, colors)
+  return DataMessageFrame.AddIconMessageWithData(self, subspace, identifier, nil, icon, text, colors);
 end
 
 ReplaceMode.GetMessageData = doNothing;

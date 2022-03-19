@@ -7,13 +7,7 @@ local GetItemInfo = _G.GetItemInfo;
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
 function addon.getRarityColor (rarity)
-  local colors = ITEM_QUALITY_COLORS[rarity];
-
-  return {
-    colors.r,
-    colors.g,
-    colors.b,
-  };
+  return ITEM_QUALITY_COLORS[rarity];
 end
 
 function addon.fetchItemLink (id, link, callback, ...)

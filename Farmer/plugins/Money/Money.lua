@@ -7,7 +7,7 @@ local printMessageWithData = addon.Print.printMessageWithData;
 
 local farmerFrame = addon.frame;
 
-local MESSAGE_COLORS = {1, 1, 1};
+local MESSAGE_COLORS = {r = 1, g = 1, b = 1};
 local SUBSPACE = farmerFrame:CreateSubspace();
 local IDENTIFIER = 'money';
 

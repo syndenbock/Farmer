@@ -12,6 +12,7 @@ local farmerFrame = addon.frame;
 
 local SUBSPACE = farmerFrame:CreateSubspace();
 local IDENTIFIER = 'experience';
+local MESSAGE_COLORS = {r = 0.5, g = 0.5, b = 1};
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Experience;
@@ -45,5 +46,5 @@ addon.listen('EXPERIENCE_GAINED', function (info)
     '(' .. truncate(percentageGain, 1) .. '%',
     '/',
     truncate(info.percentage, 1) .. '%)',
-  }, ''), {0.5, 0.5, 1});
+  }, ''), MESSAGE_COLORS);
 end);

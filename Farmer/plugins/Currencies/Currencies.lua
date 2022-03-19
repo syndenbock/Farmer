@@ -11,6 +11,7 @@ local getRarityColor = addon.getRarityColor;
 
 local farmerFrame = addon.frame;
 
+local MESSAGE_COLORS = {r = 1, g = 0.9, b = 0};
 local ACCOUNT_HONOR_ID = 1585;
 local HONOR_ID = 1792;
 local ADDON_OPTIONS = addon.SavedVariablesHandler(addonName, 'farmerOptions')
