@@ -12,8 +12,6 @@ local farmerFrame = addon.frame;
 
 local ACCOUNT_HONOR_ID = 1585;
 local HONOR_ID = 1792;
-local BONUS_VALOR_ID = 1947;
-local RENOWN_ID = 1822;
 
 local ADDON_OPTIONS = addon.SavedVariablesHandler(addonName, 'farmerOptions')
     .vars.farmerOptions;
@@ -21,12 +19,22 @@ local CORE_OPTIONS = ADDON_OPTIONS.Core;
 local CURRENCY_OPTIONS = ADDON_OPTIONS.Currency;
 local SUBSPACE = farmerFrame:CreateSubspace();
 
+local IGNORED_CURRENCIES = {
+  [1903] = true, -- Invisible Reward
+  [1822] = true, -- Renown
+  [1947] = true, -- Bonus Valor
+};
+
+local function isCurrencyIgnored (currency)
+  return (IGNORED_CURRENCIES[currency] == true);
+end
+
 local function checkDisplayOptions (id)
-  if (id == BONUS_VALOR_ID or id == RENOWN_ID) then
+  if (CURRENCY_OPTIONS.displayCurrencies == false) then
     return false;
   end
 
-  if (CURRENCY_OPTIONS.displayCurrencies == false) then
+  if (isCurrencyIgnored(id)) then
     return false;
   end
 
