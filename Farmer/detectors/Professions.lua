@@ -20,13 +20,14 @@ local PROFESSION_CATEGORIES;
 local professionCache;
 
 local function readProfessionSkillLine (data, id)
-  local info = {GetTradeSkillLineInfoByID(id)};
-  local parentId = info[5];
+  local parentId = select(5, GetTradeSkillLineInfoByID(id));
 
   --[[ If parentId is nil, the current line is the main profession.
        Because Blizzard apparently does not know how to properly code, this
        will return the same info as the classic category, so we skip it --]]
-  if (not parentId) then return end
+  if (parentId == nil) then
+    return;
+  end
 
   if (not data[parentId]) then
     data[parentId] = {};
@@ -36,10 +37,9 @@ local function readProfessionSkillLine (data, id)
 end
 
 local function getProfessionCategories ()
-  local skillList = GetAllProfessionTradeSkillLines();
   local data = {};
 
-  for _, id in pairs(skillList) do
+  for _, id in ipairs(GetAllProfessionTradeSkillLines()) do
     readProfessionSkillLine(data, id);
   end
 
