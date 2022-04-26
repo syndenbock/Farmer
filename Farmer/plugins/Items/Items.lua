@@ -126,27 +126,6 @@ local function getItemLevelText (item)
   return GetDetailedItemLevelInfo(item.link);
 end
 
-local function isCraftingReagent (item)
-  return (item.isCraftingReagent or item.classId == LE_ITEM_CLASS_TRADEGOODS);
-end
-
-local function handleCraftingReagent (item, count)
-  if (isCraftingReagent(item)) then
-    printItem(item, {
-      count = count,
-      color = COLORS.reagent,
-    });
-    return true;
-  else
-    return false;
-  end
-end
-
-local function isQuestItem (item)
-  return (item.classId == LE_ITEM_CLASS_QUESTITEM or
-          item.classId == LE_ITEM_CLASS_KEY);
-end
-
 local function handleQuestItem (item, count)
   if (isQuestItem(item)) then
     printItemWithName(item, {
@@ -352,7 +331,6 @@ local function displayUncategorizedItem (item, count)
 end
 
 local function handleItem (item, count)
-  if (handleCraftingReagent(item, count)) then return end
   if (handleQuestItem(item, count)) then return end
   if (handleArtifactRelic(item, count)) then return end
   if (handleConduit(item, count)) then return end

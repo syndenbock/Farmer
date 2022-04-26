@@ -19,7 +19,6 @@ local itemOptions = addonOptions.Items;
 local coreOptions = addonOptions.Core;
 
 ItemPrint.COLORS = {
-  reagent = {r = 0, g = 0.8, b = 0.8},
   quest = {r = 1, g = 0.8, b = 0, 1},
 };
 
