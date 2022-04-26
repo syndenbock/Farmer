@@ -4,6 +4,12 @@ local DoesItemExistByID = _G.C_Item.DoesItemExistByID;
 local Item = _G.Item;
 local GetItemInfo = _G.GetItemInfo;
 
+local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
+
+function addon.getRarityColor (rarity)
+  return ITEM_QUALITY_COLORS[rarity];
+end
+
 function addon.fetchItemLink (id, link, callback, ...)
   --[[ Apparently you can actually have non-existent items in your bags ]]
   if (not DoesItemExistByID(id)) then
