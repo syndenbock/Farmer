@@ -18,14 +18,18 @@ local professionCache;
 local function getPackedTradeSkillInfo (id)
   local info = {GetTradeSkillLineInfoByID(id)};
 
-  return {
-    id = id,
-    name = info[1],
-    rank = info[2],
-    maxRank = info[3],
-    modifier = info[4],
-    parent = info[5],
-  };
+  if (info[5] ~= nil) then
+    return {
+      id = id,
+      name = info[1],
+      rank = info[2],
+      maxRank = info[3],
+      modifier = info[4],
+      parent = info[5],
+    };
+  else
+    return nil;
+  end
 end
 
 local function readProfessionSkillLines ()
@@ -44,13 +48,16 @@ end
 
 local function checkProfessionChange (id)
   local oldInfo = professionCache[id];
-  local rank = select(2, GetTradeSkillLineInfoByID(id));
 
-  if (rank ~= oldInfo.rank) then
-    local change = rank - oldInfo.rank;
+  if (oldInfo ~= nil) then
+    local rank = select(2, GetTradeSkillLineInfoByID(id));
 
-    oldInfo.rank = rank;
-    yellProfession(oldInfo, change);
+    if (rank ~= oldInfo.rank) then
+      local change = rank - oldInfo.rank;
+
+      oldInfo.rank = rank;
+      yellProfession(oldInfo, change);
+    end
   end
 end
 
