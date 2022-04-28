@@ -24,7 +24,6 @@ local function collapseExpandedHeaders (expandedHeaders)
 end
 
 local function iterateSkills (callback)
-  local data = {};
   local numSkills = GetNumSkillLines();
   local expandedHeaders = {};
   local i = 1;
@@ -42,25 +41,29 @@ local function iterateSkills (callback)
         numSkills = GetNumSkillLines();
       end
     else
-      callback({
-        name = info[1],
-        rank = info[4],
-        maxRank = info[7],
-      });
+      callback(
+        info[1], -- name
+        info[4], -- rank
+        info[7] --maxRank
+      );
     end
 
     i = i + 1;
   end
 
   collapseExpandedHeaders(expandedHeaders);
+end
 
-  return data;
+local function cacheSkillInfo (name, rank, maxRank)
+  skillCache[name] = {
+    name = name,
+    rank = rank,
+    maxRank = maxRank,
+  };
 end
 
 local function initSkillCache ()
-  iterateSkills(function (skillInfo)
-    skillCache[skillInfo.name] = skillInfo;
-  end);
+  iterateSkills(cacheSkillInfo);
 end
 
 local function yellSkill (skillInfo, change)
@@ -68,15 +71,17 @@ local function yellSkill (skillInfo, change)
 end
 
 local function checkSkills ()
-  iterateSkills(function (skillInfo)
-    local cachedInfo = skillCache[skillInfo.name];
+  iterateSkills(function (name, rank, maxRank)
+    local cachedInfo = skillCache[name];
 
-    if (not cachedInfo) then
-      skillCache[skillInfo.name] = skillInfo;
-      yellSkill(skillInfo, skillInfo.rank);
-    elseif (skillInfo.rank ~= cachedInfo.rank) then
-      yellSkill(skillInfo, skillInfo.rank - cachedInfo.rank);
-      cachedInfo.rank = skillInfo.rank;
+    if (cachedInfo == nil) then
+      cacheSkillInfo(name, rank, maxRank);
+      yellSkill(skillCache[name], rank);
+    elseif (cachedInfo.rank ~= rank) then
+      local change = rank - cachedInfo.rank;
+
+      cachedInfo.rank = rank;
+      yellSkill(cachedInfo, change);
     end
   end);
 end
