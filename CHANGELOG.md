@@ -1,1 +1,3 @@
-- Fixed missing coin icons in Classic and Burning Crusade Classic
+- Reagents and Currencies are now displayed in their rarities color instead of fixed colors
+- Bug fixes
+- Code improvements
