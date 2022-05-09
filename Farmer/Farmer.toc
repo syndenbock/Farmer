@@ -3,8 +3,10 @@
 ## Interface-BCC: 20503
 ## Title: Farmer
 ## Author: syndenbock
-## X-Curse-Project-ID: 282961
 ## Version: 3.10.1
+
+## X-Curse-Project-ID: 282961
+## X-Wago-ID: J96EDgNg
 
 ## Notes: Shows information on all the stuff you loot
 ## Notes-deDe: Zeigt Infos über all das Zeug das du lootest
