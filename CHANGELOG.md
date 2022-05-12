@@ -1,3 +1,1 @@
-- Reagents and Currencies are now displayed in their rarities color instead of fixed colors
-- Bug fixes
-- Code improvements
+- Fixed an error that prevented the display from being moved
