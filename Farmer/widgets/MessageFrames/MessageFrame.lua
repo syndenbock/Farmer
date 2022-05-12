@@ -32,6 +32,7 @@ local ALIGNMENT_LEFT = 'LEFT';
 local ALIGNMENT_CENTER = 'CENTER';
 local ALIGNMENT_RIGHT = 'RIGHT';
 
+local DEFAULT_COLOR = {r = 1, g = 1, b = 1, a = 1};
 local ICON_OFFSET = 3;
 
 local DEFAULT_OPTIONS = {
@@ -324,7 +325,7 @@ local function startMoving (self, message, callback)
   anchor:SetScript(ON_MOUSE_DOWN, startMovingAnchor);
   anchor:SetScript(ON_MOUSE_UP, function ()
     self.isMoving = false;
-    stopMovingAnchor(self);
+    stopMovingAnchor(anchor);
     transformFrameAnchorsToCenter(anchor);
     anchor:SetSize(20, 20);
     startMessageAnimation(self, message);
@@ -417,19 +418,35 @@ local function createIconFrame (parent)
   return iconFrame;
 end
 
+local function applyMessageColor (message, colors)
+  if (colors) then
+    message.fontString:SetTextColor(
+      colors.r or DEFAULT_COLOR.r,
+      colors.g or DEFAULT_COLOR.g,
+      colors.b or DEFAULT_COLOR.b,
+      colors.a or DEFAULT_COLOR.a
+    );
+  else
+    message.fontString:SetTextColor(
+      DEFAULT_COLOR.r,
+      DEFAULT_COLOR.g,
+      DEFAULT_COLOR.b,
+      DEFAULT_COLOR.a
+    );
+  end
+end
+
 local function applyMessageAttributes (self, message, icon, text, colors)
   if (message.fontString == nil) then
     message.fontString = createFontString(self, message);
   end
 
-  message.fontString:SetTextColor(colors.r or 1, colors.g or 1, colors.b or 1,
-      colors.a or 1);
-  message.fontString:SetText(text);
-
   if (message.iconFrame == nil) then
     message.iconFrame = createIconFrame(message);
   end
 
+  applyMessageColor(message, colors);
+  message.fontString:SetText(text);
   resizeMessage(self, message);
   message:Show();
 
