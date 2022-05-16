@@ -13,17 +13,24 @@ local IsItemConduitByItemInfo =
 local GetConduitCollectionDataByVirtualID =
     C_Soulbinds and C_Soulbinds.GetConduitCollectionDataByVirtualID
 
-local LE_ITEM_CLASS_TRADEGOODS = _G.LE_ITEM_CLASS_TRADEGOODS;
-local LE_ITEM_CLASS_QUESTITEM = _G.LE_ITEM_CLASS_QUESTITEM;
-local LE_ITEM_CLASS_KEY = _G.LE_ITEM_CLASS_KEY;
-local LE_ITEM_CLASS_RECIPE = _G.LE_ITEM_CLASS_RECIPE;
-local LE_ITEM_CLASS_GEM = _G.LE_ITEM_CLASS_GEM;
-local LE_ITEM_GEM_ARTIFACTRELIC = _G.LE_ITEM_GEM_ARTIFACTRELIC;
-local LE_ITEM_CLASS_CONTAINER = _G.LE_ITEM_CLASS_CONTAINER;
-local LE_ITEM_CLASS_WEAPON = _G.LE_ITEM_CLASS_WEAPON;
-local LE_ITEM_CLASS_ARMOR = _G.LE_ITEM_CLASS_ARMOR;
-local LE_ITEM_ARMOR_GENERIC = _G.LE_ITEM_ARMOR_GENERIC;
-local LE_ITEM_ARMOR_SHIELD = _G.LE_ITEM_ARMOR_SHIELD;
+local ITEM_CLASS_ENUM = _G.Enum.ItemClass;
+local ARMOR_SUBCLASS_ENUM = _G.Enum.ItemArmorSubclass;
+local GEM_SUBCLASS_ENUM = _G.Enum.ItemGemSubclass;
+
+local ITEM_CLASS_TRADEGOODS = ITEM_CLASS_ENUM.Tradegoods;
+local ITEM_CLASS_QUESTITEM = ITEM_CLASS_ENUM.Questitem;
+local ITEM_CLASS_KEY = ITEM_CLASS_ENUM.Key;
+local ITEM_CLASS_RECIPE = ITEM_CLASS_ENUM.Recipe;
+local ITEM_CLASS_GEM = ITEM_CLASS_ENUM.Gem;
+local ITEM_CLASS_CONTAINER = ITEM_CLASS_ENUM.Container;
+local ITEM_CLASS_WEAPON = ITEM_CLASS_ENUM.Weapon;
+local ITEM_CLASS_ARMOR = ITEM_CLASS_ENUM.Armor;
+
+local ITEM_SUBCLASS_ARMOR_GENERIC = ARMOR_SUBCLASS_ENUM.Generic;
+local ITEM_SUBCLASS_ARMOR_SHIELD = ARMOR_SUBCLASS_ENUM.Shield;
+
+local ITEM_SUBCLASS_GEM_ARTIFACTRELIC = GEM_SUBCLASS_ENUM.Artifactrelic;
+
 local INVTYPE_TABARD = 'INVTYPE_TABARD';
 local INVTYPE_CLOAK = 'INVTYPE_CLOAK';
 
@@ -40,7 +47,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Items;
 
 local function isRecipe (itemInfo)
-  return (itemInfo.classId == LE_ITEM_CLASS_RECIPE);
+  return (itemInfo.classId == ITEM_CLASS_RECIPE);
 end
 
 local function checkRecipeOptions (itemInfo)
@@ -49,8 +56,8 @@ local function checkRecipeOptions (itemInfo)
 end
 
 local function isQuestItem (itemInfo)
-  return (itemInfo.classId == LE_ITEM_CLASS_QUESTITEM or
-          itemInfo.classId == LE_ITEM_CLASS_KEY);
+  return (itemInfo.classId == ITEM_CLASS_QUESTITEM or
+          itemInfo.classId == ITEM_CLASS_KEY);
 end
 
 local function checkQuestItemOptions (itemInfo)
@@ -60,7 +67,7 @@ end
 
 local function isCraftingReagent (itemInfo)
   return (itemInfo.isCraftingReagent or
-      itemInfo.classId == LE_ITEM_CLASS_TRADEGOODS);
+      itemInfo.classId == ITEM_CLASS_TRADEGOODS);
 end
 
 local function checkReagentOptions (itemInfo)
@@ -160,8 +167,8 @@ local function displayArtifactRelic (item, count)
 end
 
 local function isArtifactRelic (item)
-  return (item.classId == LE_ITEM_CLASS_GEM and
-          item.subClassId == LE_ITEM_GEM_ARTIFACTRELIC);
+  return (item.classId == ITEM_CLASS_GEM and
+          item.subClassId == ITEM_SUBCLASS_GEM_ARTIFACTRELIC);
 end
 
 local function handleArtifactRelic (item, count)
@@ -247,7 +254,7 @@ local function displayContainer (item, count)
 end
 
 local function isContainer (item)
-  return (item.classId == LE_ITEM_CLASS_CONTAINER);
+  return (item.classId == ITEM_CLASS_CONTAINER);
 end
 
 local function handleContainer (item, count)
@@ -267,7 +274,7 @@ local function displayWeapon (item, count)
 end
 
 local function isWeapon (item)
-  return (item.classId == LE_ITEM_CLASS_WEAPON);
+  return (item.classId == ITEM_CLASS_WEAPON);
 end
 
 local function handleWeapon (item, count)
@@ -295,9 +302,9 @@ local function displayArmor (item, count)
     textList = {slotText};
   elseif (equipLocation == INVTYPE_CLOAK) then
     textList = {itemLevelText, slotText};
-  elseif (subClassId == LE_ITEM_ARMOR_GENERIC) then
+  elseif (subClassId == ITEM_SUBCLASS_ARMOR_GENERIC) then
     textList = {itemLevelText, slotText}; -- fingers/trinkets
-  elseif (subClassId > LE_ITEM_ARMOR_SHIELD) then -- we all know shields are offhand
+  elseif (subClassId > ITEM_SUBCLASS_ARMOR_SHIELD) then -- we all know shields are offhand
     textList = {itemLevelText, slotText};
   else
     textList = {itemLevelText, item.subType, slotText};
@@ -312,7 +319,7 @@ local function displayArmor (item, count)
 end
 
 local function isArmor (item)
-  return (item.classId == LE_ITEM_CLASS_ARMOR)
+  return (item.classId == ITEM_CLASS_ARMOR)
 end
 
 local function handleArmor (item, count)

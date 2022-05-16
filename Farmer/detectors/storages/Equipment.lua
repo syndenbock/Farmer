@@ -6,8 +6,7 @@ local GetInventoryItemQuality = _G.GetInventoryItemQuality;
 local INVSLOT_FIRST_EQUIPPED = _G.INVSLOT_FIRST_EQUIPPED;
 local INVSLOT_LAST_EQUIPPED = _G.INVSLOT_LAST_EQUIPPED;
 local INVSLOT_OFFHAND = _G.INVSLOT_OFFHAND;
-local ITEM_QUALITY_ARTIFACT = _G.LE_ITEM_QUALITY_ARTIFACT or
-    _G.Enum.ItemQuality.Artifact;
+local ITEM_QUALITY_ARTIFACT = _G.Enum.ItemQuality.Artifact;
 
 local UNITID_PLAYER = 'player';
 
