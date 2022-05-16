@@ -7,6 +7,7 @@ local strmatch = _G.strmatch;
 
 local GetItemInfo = _G.GetItemInfo;
 local GetDetailedItemLevelInfo = _G.GetDetailedItemLevelInfo;
+local GetItemInventoryTypeByID = _G.C_Item.GetItemInventoryTypeByID;
 local C_Soulbinds = _G.C_Soulbinds;
 local IsItemConduitByItemInfo =
     C_Soulbinds and _G.C_Soulbinds.IsItemConduitByItemInfo;
@@ -27,12 +28,12 @@ local ITEM_CLASS_WEAPON = ITEM_CLASS_ENUM.Weapon;
 local ITEM_CLASS_ARMOR = ITEM_CLASS_ENUM.Armor;
 
 local ITEM_SUBCLASS_ARMOR_GENERIC = ARMOR_SUBCLASS_ENUM.Generic;
-local ITEM_SUBCLASS_ARMOR_SHIELD = ARMOR_SUBCLASS_ENUM.Shield;
+local ITEM_SUBCLASS_ARMOR_COSMETIC = ARMOR_SUBCLASS_ENUM.Cosmetic;
 
 local ITEM_SUBCLASS_GEM_ARTIFACTRELIC = GEM_SUBCLASS_ENUM.Artifactrelic;
 
-local INVTYPE_TABARD = 'INVTYPE_TABARD';
-local INVTYPE_CLOAK = 'INVTYPE_CLOAK';
+local INVTYPE_TABARD = _G.Enum.InventoryType.IndexTabartType;
+local INVTYPE_CLOAK = _G.Enum.InventoryType.IndexCloakType;
 
 local CONTAINER_PATTERN = _G.gsub(_G.gsub(
     _G.CONTAINER_SLOTS, '%%s', '%.+'),'%%d', '(%%d+)');
@@ -291,21 +292,21 @@ local function getItemSlotText (equipLocation)
 end
 
 local function displayArmor (item, count)
-  local equipLocation = item.equipLocation;
-  local subClassId = item.subClassId;
+  local inventoryType = GetItemInventoryTypeByID(item.id);
   local itemLevelText = getItemLevelText(item);
-  local slotText = getItemSlotText(equipLocation);
+  local slotText = getItemSlotText(item.equipLocation);
   local textList;
   local text;
 
-  if (equipLocation == INVTYPE_TABARD) then
+  if (inventoryType == INVTYPE_TABARD) then
     textList = {slotText};
-  elseif (equipLocation == INVTYPE_CLOAK) then
+  elseif (inventoryType == INVTYPE_CLOAK or
+      item.subClassId == ITEM_SUBCLASS_ARMOR_GENERIC) then
+    -- cloaks, necks and rings
     textList = {itemLevelText, slotText};
-  elseif (subClassId == ITEM_SUBCLASS_ARMOR_GENERIC) then
-    textList = {itemLevelText, slotText}; -- fingers/trinkets
-  elseif (subClassId > ITEM_SUBCLASS_ARMOR_SHIELD) then -- we all know shields are offhand
-    textList = {itemLevelText, slotText};
+  elseif (item.subClassId >= ITEM_SUBCLASS_ARMOR_COSMETIC) then
+    -- these types are specific to slots so we don't need to display the slot
+    textList = {itemLevelText, item.subType};
   else
     textList = {itemLevelText, item.subType, slotText};
   end
@@ -332,7 +333,7 @@ local function handleArmor (item, count)
 end
 
 local function isEquippable (item)
-  return (item.equipLocation and item.equipLocation ~= '');
+  return (GetItemInventoryTypeByID(item.id) ~= nil);
 end
 
 local function handleEquippable (item, count)
