@@ -35,7 +35,7 @@ end
 -- public methods
 --##############################################################################
 
-addon.export('funnel', function (eventList, callback)
+function addon.funnel (eventList, callback)
   if (type(eventList) == 'table') then
     for _, event in ipairs(eventList) do
       addFunnel(event, callback);
@@ -43,4 +43,4 @@ addon.export('funnel', function (eventList, callback)
   else
     addFunnel(eventList, callback);
   end
-end);
+end

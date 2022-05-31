@@ -11,7 +11,7 @@ local getRarityColor = addon.getRarityColor;
 local farmerFrame = addon.frame;
 
 local SUBSPACE = farmerFrame:CreateSubspace();
-local ItemPrint = addon.export('ItemPrint', {});
+local ItemPrint = addon:extend('ItemPrint', {});
 
 local addonOptions = addon.SavedVariablesHandler(addonName, 'farmerOptions')
     .vars.farmerOptions;

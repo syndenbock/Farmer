@@ -57,14 +57,14 @@ end
 -- public methods
 --##############################################################################
 
-addon.export('on', function (events, callback)
+function addon.on (events, callback)
   callForEvents(events, callback, addCallback);
-end);
+end
 
-addon.export('onOnce', function (events, callback)
+function addon.onOnce (events, callback)
   callForEvents(events, callback, addSingleFireCallback);
-end);
+end
 
-addon.export('off', function (events, callback)
+function addon.off (events, callback)
   callForEvents(events, callback, removeCallback);
-end);
+end

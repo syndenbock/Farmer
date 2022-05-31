@@ -3,7 +3,7 @@ local addonName, addon = ...;
 local tostring = _G.tostring;
 local tinsert = _G.tinsert;
 
-local Debug = addon.export('Debug', {});
+local Debug = addon:extend('Debug', {});
 local enabled = false;
 
 local stringifyTable;

@@ -134,7 +134,7 @@ end
 addon.on('ADDON_LOADED', handleAddonLoad);
 addon.on('PLAYER_LOGOUT', globalizeSavedVariables);
 
-addon.export('SavedVariablesHandler', function (addonName, variables, defaults)
+addon.SavedVariablesHandler = function (addonName, variables, defaults)
   local data = addonData[addonName];
 
   if (data == nil) then
@@ -158,4 +158,4 @@ addon.export('SavedVariablesHandler', function (addonName, variables, defaults)
   end
 
   return data.interface;
-end);
+end
