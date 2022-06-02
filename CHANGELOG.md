@@ -1,1 +1,2 @@
-- Fixed an error that prevented the display from being moved
+- Updated interface version for 9.2.5
+- Some code improvements
