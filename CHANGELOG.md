@@ -1,1 +1,1 @@
-- Updated interface version for 9.2.7
+- Keep the farmradar anchored to the minimap
