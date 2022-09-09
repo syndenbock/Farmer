@@ -312,7 +312,7 @@ local function createRadarFrame ()
   radar:SetSize(radarSize * scale, radarSize * scale);
 
   radar:SetFrameStrata('MEDIUM');
-  radar:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
+  radar:SetPoint('CENTER', Minimap, 'CENTER', 0, 0);
   radar:Hide();
   addon.setTrueScale(radar, 1);
 
@@ -388,7 +388,7 @@ local function enableFarmMode ()
   MinimapCluster:SetAlpha(0);
   Minimap:SetParent(radarFrame);
   Minimap:ClearAllPoints();
-  Minimap:SetPoint('CENTER', radarFrame, 'CENTER', 0, 0);
+  Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
 
   addon.setTrueScale(Minimap, 1);
   Minimap:EnableMouse(false);
