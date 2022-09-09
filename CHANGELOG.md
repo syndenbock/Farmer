@@ -1,1 +1,1 @@
-- Added interface version fro Wrath Classic
+- Keep the farmradar anchored to the minimap
