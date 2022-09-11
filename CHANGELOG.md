@@ -1,1 +1,1 @@
-- Keep the farmradar anchored to the minimap
+- Make the farm radar play nice with addons that lock up the Minimap
