@@ -306,15 +306,13 @@ end
 
 local function createRadarFrame ()
   local scale = 0.432;
-  local radar = CreateFrame('Frame', 'FarmerRadarFrame', UIParent);
+  local radar = CreateFrame('Frame', 'FarmerRadarFrame', Minimap);
 
   radarSize = min(WorldFrame:GetHeight(), WorldFrame:GetWidth());
   radar:SetSize(radarSize * scale, radarSize * scale);
-
   radar:SetFrameStrata('MEDIUM');
   radar:SetPoint('CENTER', Minimap, 'CENTER', 0, 0);
   radar:Hide();
-  addon.setTrueScale(radar, 1);
 
   return radar;
 end
@@ -386,7 +384,6 @@ local function enableFarmMode ()
   minimapDefaults = getMinimapValues();
 
   MinimapCluster:SetAlpha(0);
-  Minimap:SetParent(radarFrame);
   Minimap:ClearAllPoints();
   Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
 
