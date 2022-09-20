@@ -289,6 +289,7 @@ local function getMinimapValues ()
     mouseMotion = Minimap:IsMouseMotionEnabled(),
     zoom = Minimap:GetZoom(),
     scale = Minimap:GetScale(),
+    ignoreParentScale = Minimap:IsIgnoringParentScale(),
     clusterAlpha = MinimapCluster:GetAlpha(),
   };
 end
@@ -386,8 +387,8 @@ local function enableFarmMode ()
   MinimapCluster:SetAlpha(0);
   Minimap:ClearAllPoints();
   Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
-
-  addon.setTrueScale(Minimap, 1);
+  Minimap:SetScale(1);
+  Minimap:SetIgnoreParentScale(true);
   Minimap:EnableMouse(false);
   Minimap:EnableMouseWheel(false);
   Minimap:SetZoom(0);
@@ -424,6 +425,7 @@ local function disableFarmMode ()
   Minimap:SetPoint(unpack(minimapDefaults.anchor));
   Minimap:SetSize(minimapDefaults.width, minimapDefaults.height);
   Minimap:SetScale(minimapDefaults.scale);
+  Minimap:SetIgnoreParentScale(minimapDefaults.ignoreParentScale);
   Minimap:EnableMouse(minimapDefaults.mouse);
   Minimap:EnableMouseWheel(minimapDefaults.mouseWheel);
   Minimap:SetMouseMotionEnabled(minimapDefaults.mouseMotion);

@@ -74,11 +74,6 @@ function addon.readOptions (defaults, options, newOptions)
   return newOptions;
 end
 
-function addon.setTrueScale (frame, scale)
-  frame:SetScale(1);
-  frame:SetScale(scale / frame:GetEffectiveScale());
-end
-
 local function getFrameCenteredCoords (frame)
   local points = {frame:GetCenter()};
 
