@@ -1,1 +1,1 @@
-- Make the farm radar play nice with addons that lock up the Minimap
+- Make the farm radar play even nicer with addons that lock up the Minimap
