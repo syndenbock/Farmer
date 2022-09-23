@@ -5,6 +5,7 @@ local unpack = _G.unpack;
 local tinsert = _G.tinsert;
 local strfind = _G.strfind;
 local hooksecurefunc = _G.hooksecurefunc;
+local C_Minimap = _G.C_Minimap;
 local CreateFrame = _G.CreateFrame;
 local GetCVar = _G.GetCVar;
 local SetCVar = _G.SetCVar;
@@ -41,7 +42,6 @@ local updateStamp = 0;
 local minimapDefaults;
 local hookedFrames = addon.Class.Set:new();
 local trackedFrames;
-local minimapHooked = false;
 
 local function findFrame (frame)
   if (type(frame) == 'string') then
@@ -74,20 +74,6 @@ end
 local function setMinimapRotation (value)
   SetCVar('rotateMinimap', value, 'ROTATE_MINIMAP');
   Minimap_UpdateRotationSetting();
-end
-
-local function hookMinimapAlpha ()
-  if (minimapHooked == true) then return end
-
-  local oldSetAlpha = Minimap.SetAlpha;
-
-  Minimap.SetAlpha = function (self, value)
-    if (currentMode ~= MODE_ENUM.ON) then
-      oldSetAlpha(self, value);
-    end
-  end;
-
-  minimapHooked = true;
 end
 
 local function moveFrameToMinimapClusterIfProtected (frame)
@@ -197,7 +183,6 @@ local function storeFrame (frame)
   trackedFrames[frame] = {
     show = frame:IsShown(),
     mouseEnabled = frame.IsMouseEnabled and frame:IsMouseEnabled(),
-    ignoreAlpha = frame.IsIgnoringParentAlpha and frame:IsIgnoringParentAlpha(),
   };
 end
 
@@ -217,7 +202,6 @@ local function restoreFrame (frame)
 
   setFrameShown(frame, info.show);
   setFrameMouseEnabled(frame, info.mouseEnabled);
-  frame:SetIgnoreParentAlpha(info.ignoreAlpha);
 end
 
 local function restoreAllFrames ()
@@ -248,33 +232,13 @@ local function getMinimapChildrenToHide ()
   return list;
 end
 
-local function setFrameIgnoreParentAlpha (frame, ignore)
-  frame = findFrame(frame);
-
-  if (frame) then
-    frame:SetIgnoreParentAlpha(ignore);
-  end
-end
-
-local function setIgnoreParentAlpha (frames, ignore)
-  for _, frame in ipairs(frames) do
-    setFrameIgnoreParentAlpha(frame, ignore);
-  end
-end
-
 local function hideMinimapChildren ()
-  --[[ MinimapCluster can get protected, so it can only be hidden with
-       SetAlpha ]]
-
   local children = getMinimapChildrenToHide();
 
   hideFrames(children);
   hideFrames({Minimap:GetRegions()});
 
   hookFrames(children);
-
-  setIgnoreParentAlpha({Minimap:GetChildren()}, true);
-  setIgnoreParentAlpha({Minimap:GetRegions()}, true);
 end
 
 local function getMinimapValues ()
@@ -291,6 +255,7 @@ local function getMinimapValues ()
     scale = Minimap:GetScale(),
     ignoreParentScale = Minimap:IsIgnoringParentScale(),
     clusterAlpha = MinimapCluster:GetAlpha(),
+    drawGround = C_Minimap.GetDrawGroundTextures(),
   };
 end
 
@@ -384,6 +349,8 @@ local function enableFarmMode ()
 
   minimapDefaults = getMinimapValues();
 
+  --[[ MinimapCluster can get protected, so it can only be hidden with
+       SetAlpha ]]
   MinimapCluster:SetAlpha(0);
   Minimap:ClearAllPoints();
   Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
@@ -392,14 +359,13 @@ local function enableFarmMode ()
   Minimap:EnableMouse(false);
   Minimap:EnableMouseWheel(false);
   Minimap:SetZoom(0);
-  Minimap:SetAlpha(0);
+  C_Minimap.SetDrawGroundTextures(false);
 
   trackedFrames = {};
   storeMinimapChildren();
   hideMinimapChildren();
   applyMinimapOptions();
   setMinimapRotation(1);
-  hookMinimapAlpha();
 
   updateStamp = 0;
   updateRadar();
@@ -429,8 +395,8 @@ local function disableFarmMode ()
   Minimap:EnableMouse(minimapDefaults.mouse);
   Minimap:EnableMouseWheel(minimapDefaults.mouseWheel);
   Minimap:SetMouseMotionEnabled(minimapDefaults.mouseMotion);
-  Minimap:SetAlpha(1);
   Minimap:SetZoom(minimapDefaults.zoom);
+  C_Minimap.SetDrawGroundTextures(minimapDefaults.drawGround);
 
   radarFrame:SetScript('OnUpdate', nil);
   radarFrame:Hide();
