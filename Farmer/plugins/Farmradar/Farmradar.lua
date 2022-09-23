@@ -4,7 +4,6 @@ local min = _G.min;
 local unpack = _G.unpack;
 local tinsert = _G.tinsert;
 local strfind = _G.strfind;
-local hooksecurefunc = _G.hooksecurefunc;
 local C_Minimap = _G.C_Minimap;
 local CreateFrame = _G.CreateFrame;
 local GetCVar = _G.GetCVar;
@@ -40,7 +39,6 @@ local directionTexture;
 local currentMode = MODE_ENUM.OFF;
 local updateStamp = 0;
 local minimapDefaults;
-local hookedFrames = addon.Class.Set:new();
 local trackedFrames;
 
 local function findFrame (frame)
@@ -118,44 +116,6 @@ end
 local function hideFrames (frames)
   for _, frame in ipairs(frames) do
     hideFrame(frame);
-  end
-end
-
-local function shouldHookBeApplied (frame)
-  return (currentMode == MODE_ENUM.ON and
-          trackedFrames[frame] and
-          trackedFrames[frame].hidden);
-end
-
-local function hookFrameShow (frame)
-  hooksecurefunc(frame, 'Show', function (self)
-    if (not shouldHookBeApplied(self)) then return end
-
-    setFrameShown(self, false);
-    trackedFrames[self].show = true;
-  end);
-end
-
-local function hookFrameHide (frame)
-  hooksecurefunc(frame, 'Hide', function (self)
-    if (not shouldHookBeApplied(self)) then return end
-
-    trackedFrames[self].show = false;
-  end);
-end
-
-local function hookFrameToggle (frame)
-  --[[ Frame was already hooked ]]
-  if (hookedFrames:has(frame)) then return end
-
-  hookedFrames:addItem(frame);
-  hookFrameShow(frame);
-  hookFrameHide(frame);
-end
-
-local function hookFrames (frames)
-  for _, frame in ipairs(frames) do
-    hookFrameToggle(frame);
   end
 end
 
@@ -237,8 +197,6 @@ local function hideMinimapChildren ()
 
   hideFrames(children);
   hideFrames({Minimap:GetRegions()});
-
-  hookFrames(children);
 end
 
 local function getMinimapValues ()
