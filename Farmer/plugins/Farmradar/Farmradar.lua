@@ -119,26 +119,6 @@ local function hideFrames (frames)
   end
 end
 
-local function isGatherMatePin (name)
-  return (strfind(name, 'GatherMatePin') == 1);
-end
-
-local function isHandyNotesPin (name)
-  return (strfind(name, 'HandyNotesPin') == 1);
-end
-
-local function checkPinOptions (name)
-  if (options.showHandyNotesPins == true and isHandyNotesPin(name)) then
-    return false;
-  end
-
-  if (options.showGatherMateNodes == true and isGatherMatePin(name)) then
-    return false;
-  end
-
-  return true;
-end
-
 local function storeFrame (frame)
   trackedFrames[frame] = {
     show = frame:IsShown(),
@@ -170,14 +150,28 @@ local function restoreAllFrames ()
   end
 end
 
+local function isGatherMatePin (name)
+  return (strfind(name, 'GatherMatePin') == 1);
+end
+
+local function isGatherLitePin (name)
+  return (strfind(name, 'GatherLite') == 1);
+end
+
+local function isHandyNotesPin (name)
+  return (strfind(name, 'HandyNotesPin') == 1);
+end
+
 local function shouldMinimapChildBeHidden (frame)
   local name = frame.GetName and frame:GetName();
 
-  if (not name) then
-    return true;
+  if (name) then
+    if (isGatherMatePin(name) or isGatherLitePin(name) or isHandyNotesPin(name)) then
+      return false;
+    end
   end
 
-  return (checkPinOptions(name));
+  return true;
 end
 
 local function getMinimapChildrenToHide ()
