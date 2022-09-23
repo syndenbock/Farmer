@@ -272,12 +272,13 @@ end
 
 local function createRadarFrame ()
   local scale = 0.432;
-  local radar = CreateFrame('Frame', 'FarmerRadarFrame', Minimap);
+  local radar = CreateFrame('Frame', 'FarmerRadarFrame', UIParent);
 
   radarSize = min(WorldFrame:GetHeight(), WorldFrame:GetWidth());
   radar:SetSize(radarSize * scale, radarSize * scale);
   radar:SetFrameStrata('MEDIUM');
   radar:SetPoint('CENTER', Minimap, 'CENTER', 0, 0);
+  radar:SetIgnoreParentScale(true);
   radar:Hide();
 
   return radar;
@@ -352,10 +353,11 @@ local function enableFarmMode ()
   --[[ MinimapCluster can get protected, so it can only be hidden with
        SetAlpha ]]
   MinimapCluster:SetAlpha(0);
+  Minimap:SetParent(radarFrame);
   Minimap:ClearAllPoints();
   Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
   Minimap:SetScale(1);
-  Minimap:SetIgnoreParentScale(true);
+  Minimap:SetIgnoreParentScale(false);
   Minimap:EnableMouse(false);
   Minimap:EnableMouseWheel(false);
   Minimap:SetZoom(0);
