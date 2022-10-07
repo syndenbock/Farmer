@@ -1,1 +1,2 @@
-- Make the farm radar play even nicer with addons that lock up the Minimap
+- Reworked farmradar icon handling to prevent icons from disappearing
+- Added farmradar support for GatherLite and Questie
