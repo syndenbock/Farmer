@@ -6,8 +6,6 @@ local panel = addon.Class.Options.Panel:new(L['Farm radar'], addon.mainPanel);
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     FarmRadar = {
-      showGatherMateNodes = true,
-      showHandyNotesPins = true,
       enableAddonNodeTooltips = false,
       enableDefaultNodeTooltips = false,
       shrinkMinimap = false,
@@ -27,8 +25,6 @@ local function createDefaultNodeOptionBox ()
 end
 
 panel:mapOptions(options, {
-  showGatherMateNodes = panel:addCheckBox(L['show GatherMate nodes']),
-  showHandyNotesPins = panel:addCheckBox(L['show HandyNotes pins']),
   enableAddonNodeTooltips = panel:addCheckBox(L['show addon node tooltips']),
   enableDefaultNodeTooltips = createDefaultNodeOptionBox(),
   shrinkMinimap = panel:addCheckBox(L['shrink minimap to radar size']),

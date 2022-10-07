@@ -4,7 +4,8 @@ local min = _G.min;
 local unpack = _G.unpack;
 local tinsert = _G.tinsert;
 local strfind = _G.strfind;
-local hooksecurefunc = _G.hooksecurefunc;
+local MinimapSetDrawGroundTextures = _G.C_Minimap and _G.C_Minimap.SetDrawGroundTextures;
+local MinimapGetDrawGroundTextures = _G.C_Minimap and _G.C_Minimap.GetDrawGroundTextures;
 local CreateFrame = _G.CreateFrame;
 local GetCVar = _G.GetCVar;
 local SetCVar = _G.SetCVar;
@@ -23,6 +24,7 @@ local RADAR_CIRCLE_TEXTURE = 'Interface\\Addons\\' .. addonName ..
 local RADAR_DIRECTION_TEXTURE = 'Interface\\Addons\\' .. addonName ..
     '\\media\\radar_directions.tga';
 local UPDATE_FREQUENCY_S = 0.01;
+local FALLBACK_UPDATE_FREQUENCY_S = 1;
 
 local MODE_ENUM = {
   OFF = 1,
@@ -38,10 +40,10 @@ local radarSize;
 local directionTexture;
 local currentMode = MODE_ENUM.OFF;
 local updateStamp = 0;
+local fallbackUpdateStamp = 0;
 local minimapDefaults;
-local hookedFrames = addon.Class.Set:new();
 local trackedFrames;
-local minimapHooked = false;
+local fallbackTrackedFrames;
 
 local function findFrame (frame)
   if (type(frame) == 'string') then
@@ -74,20 +76,6 @@ end
 local function setMinimapRotation (value)
   SetCVar('rotateMinimap', value, 'ROTATE_MINIMAP');
   Minimap_UpdateRotationSetting();
-end
-
-local function hookMinimapAlpha ()
-  if (minimapHooked == true) then return end
-
-  local oldSetAlpha = Minimap.SetAlpha;
-
-  Minimap.SetAlpha = function (self, value)
-    if (currentMode ~= MODE_ENUM.ON) then
-      oldSetAlpha(self, value);
-    end
-  end;
-
-  minimapHooked = true;
 end
 
 local function moveFrameToMinimapClusterIfProtected (frame)
@@ -135,69 +123,10 @@ local function hideFrames (frames)
   end
 end
 
-local function shouldHookBeApplied (frame)
-  return (currentMode == MODE_ENUM.ON and
-          trackedFrames[frame] and
-          trackedFrames[frame].hidden);
-end
-
-local function hookFrameShow (frame)
-  hooksecurefunc(frame, 'Show', function (self)
-    if (not shouldHookBeApplied(self)) then return end
-
-    setFrameShown(self, false);
-    trackedFrames[self].show = true;
-  end);
-end
-
-local function hookFrameHide (frame)
-  hooksecurefunc(frame, 'Hide', function (self)
-    if (not shouldHookBeApplied(self)) then return end
-
-    trackedFrames[self].show = false;
-  end);
-end
-
-local function hookFrameToggle (frame)
-  --[[ Frame was already hooked ]]
-  if (hookedFrames:has(frame)) then return end
-
-  hookedFrames:addItem(frame);
-  hookFrameShow(frame);
-  hookFrameHide(frame);
-end
-
-local function hookFrames (frames)
-  for _, frame in ipairs(frames) do
-    hookFrameToggle(frame);
-  end
-end
-
-local function isGatherMatePin (name)
-  return (strfind(name, 'GatherMatePin') == 1);
-end
-
-local function isHandyNotesPin (name)
-  return (strfind(name, 'HandyNotesPin') == 1);
-end
-
-local function checkPinOptions (name)
-  if (options.showHandyNotesPins == true and isHandyNotesPin(name)) then
-    return false;
-  end
-
-  if (options.showGatherMateNodes == true and isGatherMatePin(name)) then
-    return false;
-  end
-
-  return true;
-end
-
 local function storeFrame (frame)
   trackedFrames[frame] = {
     show = frame:IsShown(),
     mouseEnabled = frame.IsMouseEnabled and frame:IsMouseEnabled(),
-    ignoreAlpha = frame.IsIgnoringParentAlpha and frame:IsIgnoringParentAlpha(),
   };
 end
 
@@ -217,7 +146,6 @@ local function restoreFrame (frame)
 
   setFrameShown(frame, info.show);
   setFrameMouseEnabled(frame, info.mouseEnabled);
-  frame:SetIgnoreParentAlpha(info.ignoreAlpha);
 end
 
 local function restoreAllFrames ()
@@ -226,14 +154,33 @@ local function restoreAllFrames ()
   end
 end
 
+local function isGatherMatePin (name)
+  return (strfind(name, '^GatherMatePin') == 1);
+end
+
+local function isGatherLitePin (name)
+  return (strfind(name, '^GatherLite') == 1);
+end
+
+local function isHandyNotesPin (name)
+  return (strfind(name, '^HandyNotesPin') == 1);
+end
+
+local function isQuestiePin (name)
+  return (strfind(name, '^QuestieFrame') == 1);
+end
+
 local function shouldMinimapChildBeHidden (frame)
   local name = frame.GetName and frame:GetName();
 
-  if (not name) then
-    return true;
+  if (name) then
+    if (isGatherMatePin(name) or isGatherLitePin(name) or
+        isHandyNotesPin(name) or isQuestiePin(name)) then
+      return false;
+    end
   end
 
-  return (checkPinOptions(name));
+  return true;
 end
 
 local function getMinimapChildrenToHide ()
@@ -248,33 +195,11 @@ local function getMinimapChildrenToHide ()
   return list;
 end
 
-local function setFrameIgnoreParentAlpha (frame, ignore)
-  frame = findFrame(frame);
-
-  if (frame) then
-    frame:SetIgnoreParentAlpha(ignore);
-  end
-end
-
-local function setIgnoreParentAlpha (frames, ignore)
-  for _, frame in ipairs(frames) do
-    setFrameIgnoreParentAlpha(frame, ignore);
-  end
-end
-
 local function hideMinimapChildren ()
-  --[[ MinimapCluster can get protected, so it can only be hidden with
-       SetAlpha ]]
-
   local children = getMinimapChildrenToHide();
 
   hideFrames(children);
   hideFrames({Minimap:GetRegions()});
-
-  hookFrames(children);
-
-  setIgnoreParentAlpha({Minimap:GetChildren()}, true);
-  setIgnoreParentAlpha({Minimap:GetRegions()}, true);
 end
 
 local function getMinimapValues ()
@@ -282,6 +207,7 @@ local function getMinimapValues ()
     parent = Minimap:GetParent(),
     anchor = {Minimap:GetPoint()},
     rotation = GetCVar('rotateMinimap'),
+    alpha = Minimap:GetAlpha(),
     height = Minimap:GetHeight(),
     width = Minimap:GetWidth(),
     mouse = Minimap:IsMouseEnabled(),
@@ -291,6 +217,7 @@ local function getMinimapValues ()
     scale = Minimap:GetScale(),
     ignoreParentScale = Minimap:IsIgnoringParentScale(),
     clusterAlpha = MinimapCluster:GetAlpha(),
+    drawGround = MinimapGetDrawGroundTextures and MinimapGetDrawGroundTextures(),
   };
 end
 
@@ -307,12 +234,13 @@ end
 
 local function createRadarFrame ()
   local scale = 0.432;
-  local radar = CreateFrame('Frame', 'FarmerRadarFrame', Minimap);
+  local radar = CreateFrame('Frame', 'FarmerRadarFrame', UIParent);
 
   radarSize = min(WorldFrame:GetHeight(), WorldFrame:GetWidth());
   radar:SetSize(radarSize * scale, radarSize * scale);
   radar:SetFrameStrata('MEDIUM');
   radar:SetPoint('CENTER', Minimap, 'CENTER', 0, 0);
+  radar:SetIgnoreParentScale(true);
   radar:Hide();
 
   return radar;
@@ -377,6 +305,32 @@ local function onUpdateHandler (_, elapsed)
   end
 end
 
+local function makeMinimapChildrenIgnoreParentAlpha ()
+  for _, child in ipairs({Minimap:GetChildren()}) do
+    if (not fallbackTrackedFrames[child]) then
+      fallbackTrackedFrames[child] = child:IsIgnoringParentAlpha();
+      child:SetIgnoreParentAlpha(true);
+    end
+  end
+end
+
+local function unmakeMinimapChildrenIgnoreParentAlpha ()
+  for child, ignore in pairs(fallbackTrackedFrames) do
+    child:SetIgnoreParentAlpha(ignore);
+  end
+end
+
+local function fallbackUpdateHandler (_, elapsed)
+  onUpdateHandler(_, elapsed);
+
+  fallbackUpdateStamp = fallbackUpdateStamp + elapsed;
+
+  if (fallbackUpdateStamp >= FALLBACK_UPDATE_FREQUENCY_S) then
+    makeMinimapChildrenIgnoreParentAlpha();
+    fallbackUpdateStamp = 0;
+  end
+end
+
 local function enableFarmMode ()
   initRadar();
 
@@ -384,26 +338,38 @@ local function enableFarmMode ()
 
   minimapDefaults = getMinimapValues();
 
+  --[[ MinimapCluster can get protected, so it can only be hidden with
+       SetAlpha ]]
   MinimapCluster:SetAlpha(0);
+  Minimap:SetParent(radarFrame);
   Minimap:ClearAllPoints();
   Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
   Minimap:SetScale(1);
-  Minimap:SetIgnoreParentScale(true);
+  Minimap:SetIgnoreParentScale(false);
+  Minimap:SetIgnoreParentAlpha(true);
   Minimap:EnableMouse(false);
   Minimap:EnableMouseWheel(false);
   Minimap:SetZoom(0);
-  Minimap:SetAlpha(0);
 
   trackedFrames = {};
   storeMinimapChildren();
   hideMinimapChildren();
   applyMinimapOptions();
   setMinimapRotation(1);
-  hookMinimapAlpha();
 
   updateStamp = 0;
   updateRadar();
-  radarFrame:SetScript('OnUpdate', onUpdateHandler);
+
+  if (MinimapSetDrawGroundTextures) then
+    MinimapSetDrawGroundTextures(false);
+    radarFrame:SetScript('OnUpdate', onUpdateHandler);
+  else
+    fallbackTrackedFrames = {};
+    Minimap:SetAlpha(0);
+    makeMinimapChildrenIgnoreParentAlpha();
+    radarFrame:SetScript('OnUpdate', fallbackUpdateHandler);
+  end
+
   radarFrame:Show();
 
   currentMode = MODE_ENUM.ON;
@@ -429,8 +395,15 @@ local function disableFarmMode ()
   Minimap:EnableMouse(minimapDefaults.mouse);
   Minimap:EnableMouseWheel(minimapDefaults.mouseWheel);
   Minimap:SetMouseMotionEnabled(minimapDefaults.mouseMotion);
-  Minimap:SetAlpha(1);
   Minimap:SetZoom(minimapDefaults.zoom);
+
+  if (MinimapSetDrawGroundTextures) then
+    MinimapSetDrawGroundTextures(minimapDefaults.drawGround);
+  else
+    Minimap:SetAlpha(minimapDefaults.alpha);
+    unmakeMinimapChildrenIgnoreParentAlpha();
+    fallbackTrackedFrames = nil;
+  end
 
   radarFrame:SetScript('OnUpdate', nil);
   radarFrame:Hide();
@@ -456,6 +429,12 @@ local function toggleFarmMode ()
   switch[currentMode]();
 end
 
+local function hideMinimapBackGroundIfInFarmMode ()
+  if (currentMode == MODE_ENUM.ON and MinimapSetDrawGroundTextures) then
+    MinimapSetDrawGroundTextures(false);
+  end
+end
+
 local function restoreMinimapRotation ()
   if (currentMode ~= MODE_ENUM.ON) then return end
 
@@ -463,6 +442,9 @@ local function restoreMinimapRotation ()
 end
 
 addon.onOnce('PLAYER_LOGIN', fixMinimapTaint);
+-- The game seems to re-enable the minimap background every time you teleport,
+-- so it has to be hidden again
+addon.on('PLAYER_ENTERING_WORLD', hideMinimapBackGroundIfInFarmMode);
 addon.on('PLAYER_LOGOUT', restoreMinimapRotation);
 
 addon.slash('radar', toggleFarmMode);
