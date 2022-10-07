@@ -155,22 +155,27 @@ local function restoreAllFrames ()
 end
 
 local function isGatherMatePin (name)
-  return (strfind(name, 'GatherMatePin') == 1);
+  return (strfind(name, '^GatherMatePin') == 1);
 end
 
 local function isGatherLitePin (name)
-  return (strfind(name, 'GatherLite') == 1);
+  return (strfind(name, '^GatherLite') == 1);
 end
 
 local function isHandyNotesPin (name)
-  return (strfind(name, 'HandyNotesPin') == 1);
+  return (strfind(name, '^HandyNotesPin') == 1);
+end
+
+local function isQuestiePin (name)
+  return (strfind(name, '^QuestieFrame') == 1);
 end
 
 local function shouldMinimapChildBeHidden (frame)
   local name = frame.GetName and frame:GetName();
 
   if (name) then
-    if (isGatherMatePin(name) or isGatherLitePin(name) or isHandyNotesPin(name)) then
+    if (isGatherMatePin(name) or isGatherLitePin(name) or
+        isHandyNotesPin(name) or isQuestiePin(name)) then
       return false;
     end
   end
