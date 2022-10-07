@@ -4,7 +4,8 @@ local min = _G.min;
 local unpack = _G.unpack;
 local tinsert = _G.tinsert;
 local strfind = _G.strfind;
-local C_Minimap = _G.C_Minimap;
+local MinimapSetDrawGroundTextures = _G.C_Minimap and _G.C_Minimap.SetDrawGroundTextures;
+local MinimapGetDrawGroundTextures = _G.C_Minimap and _G.C_Minimap.GetDrawGroundTextures;
 local CreateFrame = _G.CreateFrame;
 local GetCVar = _G.GetCVar;
 local SetCVar = _G.SetCVar;
@@ -23,6 +24,7 @@ local RADAR_CIRCLE_TEXTURE = 'Interface\\Addons\\' .. addonName ..
 local RADAR_DIRECTION_TEXTURE = 'Interface\\Addons\\' .. addonName ..
     '\\media\\radar_directions.tga';
 local UPDATE_FREQUENCY_S = 0.01;
+local FALLBACK_UPDATE_FREQUENCY_S = 1;
 
 local MODE_ENUM = {
   OFF = 1,
@@ -38,8 +40,10 @@ local radarSize;
 local directionTexture;
 local currentMode = MODE_ENUM.OFF;
 local updateStamp = 0;
+local fallbackUpdateStamp = 0;
 local minimapDefaults;
 local trackedFrames;
+local fallbackTrackedFrames;
 
 local function findFrame (frame)
   if (type(frame) == 'string') then
@@ -198,6 +202,7 @@ local function getMinimapValues ()
     parent = Minimap:GetParent(),
     anchor = {Minimap:GetPoint()},
     rotation = GetCVar('rotateMinimap'),
+    alpha = Minimap:GetAlpha(),
     height = Minimap:GetHeight(),
     width = Minimap:GetWidth(),
     mouse = Minimap:IsMouseEnabled(),
@@ -207,7 +212,7 @@ local function getMinimapValues ()
     scale = Minimap:GetScale(),
     ignoreParentScale = Minimap:IsIgnoringParentScale(),
     clusterAlpha = MinimapCluster:GetAlpha(),
-    drawGround = C_Minimap.GetDrawGroundTextures(),
+    drawGround = MinimapGetDrawGroundTextures and MinimapGetDrawGroundTextures(),
   };
 end
 
@@ -295,6 +300,32 @@ local function onUpdateHandler (_, elapsed)
   end
 end
 
+local function makeMinimapChildrenIgnoreParentAlpha ()
+  for _, child in ipairs({Minimap:GetChildren()}) do
+    if (not fallbackTrackedFrames[child]) then
+      fallbackTrackedFrames[child] = child:IsIgnoringParentAlpha();
+      child:SetIgnoreParentAlpha(true);
+    end
+  end
+end
+
+local function unmakeMinimapChildrenIgnoreParentAlpha ()
+  for child, ignore in pairs(fallbackTrackedFrames) do
+    child:SetIgnoreParentAlpha(ignore);
+  end
+end
+
+local function fallbackUpdateHandler (_, elapsed)
+  onUpdateHandler(_, elapsed);
+
+  fallbackUpdateStamp = fallbackUpdateStamp + elapsed;
+
+  if (fallbackUpdateStamp >= FALLBACK_UPDATE_FREQUENCY_S) then
+    makeMinimapChildrenIgnoreParentAlpha();
+    fallbackUpdateStamp = 0;
+  end
+end
+
 local function enableFarmMode ()
   initRadar();
 
@@ -310,10 +341,10 @@ local function enableFarmMode ()
   Minimap:SetPoint('CENTER', UIParent, 'CENTER', 0, 0);
   Minimap:SetScale(1);
   Minimap:SetIgnoreParentScale(false);
+  Minimap:SetIgnoreParentAlpha(true);
   Minimap:EnableMouse(false);
   Minimap:EnableMouseWheel(false);
   Minimap:SetZoom(0);
-  C_Minimap.SetDrawGroundTextures(false);
 
   trackedFrames = {};
   storeMinimapChildren();
@@ -323,7 +354,17 @@ local function enableFarmMode ()
 
   updateStamp = 0;
   updateRadar();
-  radarFrame:SetScript('OnUpdate', onUpdateHandler);
+
+  if (MinimapSetDrawGroundTextures) then
+    MinimapSetDrawGroundTextures(false);
+    radarFrame:SetScript('OnUpdate', onUpdateHandler);
+  else
+    fallbackTrackedFrames = {};
+    Minimap:SetAlpha(0);
+    makeMinimapChildrenIgnoreParentAlpha();
+    radarFrame:SetScript('OnUpdate', fallbackUpdateHandler);
+  end
+
   radarFrame:Show();
 
   currentMode = MODE_ENUM.ON;
@@ -350,7 +391,14 @@ local function disableFarmMode ()
   Minimap:EnableMouseWheel(minimapDefaults.mouseWheel);
   Minimap:SetMouseMotionEnabled(minimapDefaults.mouseMotion);
   Minimap:SetZoom(minimapDefaults.zoom);
-  C_Minimap.SetDrawGroundTextures(minimapDefaults.drawGround);
+
+  if (MinimapSetDrawGroundTextures) then
+    MinimapSetDrawGroundTextures(minimapDefaults.drawGround);
+  else
+    Minimap:SetAlpha(minimapDefaults.alpha);
+    unmakeMinimapChildrenIgnoreParentAlpha();
+    fallbackTrackedFrames = nil;
+  end
 
   radarFrame:SetScript('OnUpdate', nil);
   radarFrame:Hide();
