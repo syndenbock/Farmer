@@ -429,6 +429,12 @@ local function toggleFarmMode ()
   switch[currentMode]();
 end
 
+local function hideMinimapBackGroundIfInFarmMode ()
+  if (currentMode == MODE_ENUM.ON and MinimapSetDrawGroundTextures) then
+    MinimapSetDrawGroundTextures(false);
+  end
+end
+
 local function restoreMinimapRotation ()
   if (currentMode ~= MODE_ENUM.ON) then return end
 
@@ -436,6 +442,9 @@ local function restoreMinimapRotation ()
 end
 
 addon.onOnce('PLAYER_LOGIN', fixMinimapTaint);
+-- The game seems to re-enable the minimap background every time you teleport,
+-- so it has to be hidden again
+addon.on('PLAYER_ENTERING_WORLD', hideMinimapBackGroundIfInFarmMode);
 addon.on('PLAYER_LOGOUT', restoreMinimapRotation);
 
 addon.slash('radar', toggleFarmMode);
