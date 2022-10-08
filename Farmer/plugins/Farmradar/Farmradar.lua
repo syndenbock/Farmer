@@ -305,13 +305,20 @@ local function onUpdateHandler (_, elapsed)
   end
 end
 
-local function makeMinimapChildrenIgnoreParentAlpha ()
-  for _, child in ipairs({Minimap:GetChildren()}) do
+local function makeFramesIgnoreParentAlpha (...)
+  for x = 1, select('#', ...), 1 do
+    local child = select(x, ...);
+
     if (not fallbackTrackedFrames[child]) then
       fallbackTrackedFrames[child] = child:IsIgnoringParentAlpha();
       child:SetIgnoreParentAlpha(true);
     end
   end
+end
+
+local function makeMinimapChildrenIgnoreParentAlpha ()
+  makeFramesIgnoreParentAlpha(Minimap:GetChildren());
+  makeFramesIgnoreParentAlpha(Minimap:GetRegions());
 end
 
 local function unmakeMinimapChildrenIgnoreParentAlpha ()
