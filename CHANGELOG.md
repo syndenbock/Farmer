@@ -1,2 +1,1 @@
-- Reworked farmradar icon handling to prevent icons from disappearing
-- Added farmradar support for GatherLite and Questie
+- Prevent minimap regions from going invisible when enabling farm radar
