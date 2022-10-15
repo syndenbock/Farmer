@@ -77,11 +77,17 @@ local function checkSkills ()
     if (cachedInfo == nil) then
       cacheSkillInfo(name, rank, maxRank);
       yellSkill(skillCache[name], rank);
-    elseif (cachedInfo.rank ~= rank) then
-      local change = rank - cachedInfo.rank;
+    else
+      if (cachedInfo.maxRank ~= maxRank) then
+        cachedInfo.maxRank = maxRank;
+      end
 
-      cachedInfo.rank = rank;
-      yellSkill(cachedInfo, change);
+      if (cachedInfo.rank ~= rank) then
+        local change = rank - cachedInfo.rank;
+
+        cachedInfo.rank = rank;
+        yellSkill(cachedInfo, change);
+      end
     end
   end);
 end
