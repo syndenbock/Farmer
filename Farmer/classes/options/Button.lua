@@ -6,8 +6,7 @@ local CreateFromMixins = _G.CreateFromMixins;
 local Button = addon.export('Class/Options/Button', {});
 
 local function createButton (name, parent, text, anchors)
-  local button = CreateFrame('Button', name .. 'Button', parent,
-      'OptionsButtonTemplate');
+  local button = CreateFrame('Button', name .. 'Button', parent, 'UIPanelButtonTemplate');
 
   button:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
       anchors.xOffset, anchors.yOffset);
