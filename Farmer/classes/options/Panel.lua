@@ -43,12 +43,14 @@ function Panel:new (name, parent)
     x = 10,
     y = 10,
   };
+  this.callbackHandler = CallbackHandler:new();
   panel.name = name;
   panel.parent = parent.name;
 
-  this:addPanelHandler('OnCommit');
-  this:addPanelHandler('OnDefault');
-  this:addPanelHandler('OnRefresh');
+  this:addPanelHandler('OnCommit', 'okay');
+  this:addPanelHandler('OnDefault', 'default');
+  this:addPanelHandler('OnRefresh', 'refresh');
+  this:addPanelHandler('OnCanel', 'cancel');
 
   if (Settings) then
     local category = Settings.GetCategory(parent.name);
@@ -98,10 +100,6 @@ function Panel:__createChildName ()
 end
 
 function Panel:__getCallbackHandler ()
-  if (self.callbackHandler == nil) then
-    self.callbackHandler = CallbackHandler:new();
-  end
-
   return self.callbackHandler;
 end
 
@@ -112,12 +110,14 @@ function Panel:__addCallback (identifier, callback)
   self:addPanelHandler(identifier);
 end
 
-function Panel:addPanelHandler (identifier)
-  if (not self.panel[identifier]) then
-    local _self = self;
-    self.panel[identifier] = function (_, ...)
-      _self:__getCallbackHandler():call(identifier, ...);
-    end
+function Panel:addPanelHandler (identifier, ...)
+  local function handler ()
+    self:__getCallbackHandler():call(identifier);
+  end
+
+  self.panel[identifier] = handler;
+  for x = 1, select('#', ...), 1 do
+    self.panel[select(x, ...)] = handler;
   end
 end
 
@@ -131,17 +131,14 @@ function Panel:open ()
 end
 
 function Panel:OnSave (callback)
-  self:__addCallback('okay', callback);
   self:__addCallback('OnCommit', callback);
 end
 
 function Panel:OnCancel (callback)
-  self:__addCallback('cancel', callback);
   self:__addCallback('OnCancel', callback);
 end
 
 function Panel:OnLoad (callback)
-  self:__addCallback('refresh', callback);
   self:__addCallback('OnRefresh', callback);
 end
 
