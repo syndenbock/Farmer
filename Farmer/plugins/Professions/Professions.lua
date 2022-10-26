@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('professions')) then return end
 
-local printIconMessageWithData = addon.Print.printIconMessageWithData;
+local printMessageWithData = addon.Print.printMessageWithData;
 
 local farmerFrame = addon.frame;
 
@@ -12,15 +12,15 @@ local SUBSPACE = farmerFrame:CreateSubspace();
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Professions;
 
-local function checkProfessionOptions ()
-  return (options.displayProfessions == true);
+local function checkProfessionOptions (info)
+  return (options.displayProfessions == true and info.parentProfessionID);
 end
 
 local function displayProfession (info, change)
-  local text = addon.stringJoin({'(', info.rank, '/', info.maxRank, ')'}, '');
+  local text = addon.stringJoin({'(', info.skillLevel, '/', info.maxSkillLevel, ')'}, '');
   local changeText;
 
-  change = change + (farmerFrame:GetMessageData(SUBSPACE, info.id) or 0);
+  change = change + (farmerFrame:GetMessageData(SUBSPACE, info.professionID) or 0);
 
   if (change >= 0) then
     changeText = '+' .. change;
@@ -28,12 +28,12 @@ local function displayProfession (info, change)
     changeText = change;
   end
 
-  text = addon.stringJoin({info.name, changeText, text}, ' ');
-  printIconMessageWithData(SUBSPACE, info.id, change, info.icon, text, MESSAGE_COLORS);
+  text = addon.stringJoin({info.professionName, changeText, text}, ' ');
+  printMessageWithData(SUBSPACE, info.professionID, change, text, MESSAGE_COLORS);
 end
 
 addon.listen('PROFESSION_CHANGED', function (info, change)
-  if (not checkProfessionOptions()) then return end
+  if (not checkProfessionOptions(info)) then return end
 
   displayProfession(info, change);
 end);

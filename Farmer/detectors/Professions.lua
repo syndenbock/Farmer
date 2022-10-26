@@ -9,26 +9,17 @@ addon.registerAvailableDetector('professions');
 
 local TradeSkillUI = _G.C_TradeSkillUI;
 local GetAllProfessionTradeSkillLines = TradeSkillUI.GetAllProfessionTradeSkillLines;
-local GetTradeSkillLineInfoByID = TradeSkillUI.GetTradeSkillLineInfoByID;
+local GetProfessionInfoBySkillLineID = TradeSkillUI.GetProfessionInfoBySkillLineID ;
 
 local ImmutableMap = addon.Factory.ImmutableMap;
 
 local professionCache;
 
-local function getPackedTradeSkillInfo (id)
-  local info = {GetTradeSkillLineInfoByID(id)};
+local function updateSkillLine (data, id)
+  local info = GetProfessionInfoBySkillLineID(id);
 
-  if (info[5] ~= nil) then
-    return {
-      id = id,
-      name = info[1],
-      rank = info[2],
-      maxRank = info[3],
-      modifier = info[4],
-      parent = info[5],
-    };
-  else
-    return nil;
+  if (info.skillLevel ~= 0) then
+    data[id] = info;
   end
 end
 
@@ -36,7 +27,7 @@ local function readProfessionSkillLines ()
   local data = {};
 
   for _, id in ipairs(GetAllProfessionTradeSkillLines()) do
-    data[id] = getPackedTradeSkillInfo(id);
+    updateSkillLine(data, id);
   end
 
   return data;
@@ -48,16 +39,20 @@ end
 
 local function checkProfessionChange (id)
   local oldInfo = professionCache[id];
+  local newInfo = GetProfessionInfoBySkillLineID(id);
 
   if (oldInfo ~= nil) then
-    local rank = select(2, GetTradeSkillLineInfoByID(id));
+    local level = newInfo.skillLevel;
 
-    if (rank ~= oldInfo.rank) then
-      local change = rank - oldInfo.rank;
+    if (level ~= oldInfo.skillLevel) then
+      local change = level - oldInfo.skillLevel;
 
-      oldInfo.rank = rank;
+      oldInfo.skillLevel = level;
       yellProfession(oldInfo, change);
     end
+  elseif (newInfo.skillLevel ~= 0) then
+    professionCache[id] = newInfo;
+    yellProfession(newInfo, newInfo.skillLevel);
   end
 end
 
@@ -79,5 +74,5 @@ end);
 addon.export('tests/profession', function (id)
   id = (id and tonumber(id)) or 171;
 
-  yellProfession(getPackedTradeSkillInfo(id), 1);
+  yellProfession(GetProfessionInfoBySkillLineID(id), 1);
 end);
