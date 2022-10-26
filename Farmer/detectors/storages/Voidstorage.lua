@@ -35,7 +35,6 @@ local function readVoidStorageSlot (storage, tabIndex, slotIndex)
   else
     storage:clearSlot(slotIndex);
   end
-
 end
 
 local function readVoidStorageTab (tabIndex)
@@ -64,7 +63,15 @@ local function initVoidStorage ()
   clearVoidStorageChanges();
 end
 
-addon.on('VOID_STORAGE_OPEN', initVoidStorage);
+local function handleAddonLoad (_, loadedAddon)
+  if (loadedAddon == 'Blizzard_VoidStorageUI') then
+    initVoidStorage();
+    addon.off('ADDON_LOADED', handleAddonLoad);
+  end
+end
+
+addon.on('ADDON_LOADED', handleAddonLoad);
+
 addon.on({'VOID_STORAGE_CONTENTS_UPDATE', 'VOID_TRANSFER_DONE'},
     readVoidStorage);
 
