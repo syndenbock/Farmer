@@ -72,7 +72,10 @@ end);
 --##############################################################################
 
 addon.export('tests/profession', function (id)
-  id = (id and tonumber(id)) or 171;
-
-  yellProfession(GetProfessionInfoBySkillLineID(id), 1);
+  if (id) then
+    yellProfession(GetProfessionInfoBySkillLineID(tonumber(id)), 1);
+  else
+    yellProfession(GetProfessionInfoBySkillLineID(171), 1);
+    yellProfession(GetProfessionInfoBySkillLineID(2483), 1);
+  end
 end);
