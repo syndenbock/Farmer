@@ -2,10 +2,12 @@ local addonName, addon = ...;
 
 local CreateFrame = _G.CreateFrame;
 local CreateFromMixins = _G.CreateFromMixins;
-local geterrorhandler = _G.geterrorhandler;
+
+local Settings = _G.Settings;
 local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
 local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
 local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
+
 local UIParent = _G.UIParent;
 
 local OptionClasses = addon.Class.Options;
@@ -35,18 +37,35 @@ function Panel:new (name, parent)
   local this = CreateFromMixins(Panel);
   local panel = CreateFrame('Frame', generatePanelName(), parent);
 
-  this.parent = parent;
   this.name = name;
   this.panel = panel;
   this.anchor = {
     x = 10,
     y = 10,
   };
-
+  this.callbackHandler = CallbackHandler:new();
   panel.name = name;
   panel.parent = parent.name;
 
-  InterfaceOptions_AddCategory(panel);
+  this:addPanelHandler('OnCommit', 'okay');
+  this:addPanelHandler('OnDefault', 'default');
+  this:addPanelHandler('OnRefresh', 'refresh');
+  this:addPanelHandler('OnCanel', 'cancel');
+
+  if (Settings) then
+    local category = Settings.GetCategory(parent.name);
+
+    if (category) then
+      category = Settings.RegisterCanvasLayoutSubcategory(category, panel, name);
+      category.ID = name;
+    else
+      category = Settings.RegisterCanvasLayoutCategory(panel, name);
+      category.ID = name;
+      Settings.RegisterAddOnCategory(category);
+    end
+  else
+    InterfaceOptions_AddCategory(panel, addonName);
+  end
 
   this.anchor = {
     x = 10,
@@ -81,48 +100,46 @@ function Panel:__createChildName ()
 end
 
 function Panel:__getCallbackHandler ()
-  if (self.callbackHandler == nil) then
-    self.callbackHandler = CallbackHandler:new();
-  end
-
   return self.callbackHandler;
 end
 
 function Panel:__addCallback (identifier, callback)
   local callbackHandler = self:__getCallbackHandler();
-  -- it's necessary to use a safe call with pcall to detect errors as the
-  -- options panel catches errors in option panel handlers
 
-  local safeCall = function ()
-    local success, errorMessage = pcall(callback);
+  callbackHandler:addCallback(identifier, callback);
+  self:addPanelHandler(identifier);
+end
 
-    if (not success) then
-      geterrorhandler()(addonName .. ': error in ' .. identifier .. ' handler: ' .. errorMessage);
-    end
+function Panel:addPanelHandler (identifier, ...)
+  local function handler ()
+    self:__getCallbackHandler():call(identifier);
   end
 
-  if (callbackHandler:addCallback(identifier, safeCall)) then
-    self.panel[identifier] = function ()
-      callbackHandler:call(identifier);
-    end
+  self.panel[identifier] = handler;
+  for x = 1, select('#', ...), 1 do
+    self.panel[select(x, ...)] = handler;
   end
 end
 
 function Panel:open ()
-  InterfaceOptionsFrame_Show();
-  InterfaceOptionsFrame_OpenToCategory(self.panel);
+  if (Settings) then
+    Settings.OpenToCategory(self.panel.name);
+  else
+    InterfaceOptionsFrame_Show();
+    InterfaceOptionsFrame_OpenToCategory(self.panel.name);
+  end
 end
 
 function Panel:OnSave (callback)
-  self:__addCallback('okay', callback);
+  self:__addCallback('OnCommit', callback);
 end
 
 function Panel:OnCancel (callback)
-  self:__addCallback('cancel', callback);
+  self:__addCallback('OnCancel', callback);
 end
 
 function Panel:OnLoad (callback)
-  self:__addCallback('refresh', callback);
+  self:__addCallback('OnRefresh', callback);
 end
 
 function Panel:mapOptions (options, optionMap)

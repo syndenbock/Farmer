@@ -31,7 +31,3 @@ addon.listen('MONEY_CHANGED', function (amount)
     displayMoney(amount);
   end
 end);
-
-addon.export('tests/money', function ()
-  displayMoney(12390);
-end);

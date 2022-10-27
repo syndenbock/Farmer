@@ -112,3 +112,16 @@ function addon.secureCall (callback, ...)
     geterrorhandler()(addonName .. ' error: ' .. message);
   end
 end
+
+function addon.measure (callback, ...)
+  local stamp = _G.debugprofilestop();
+  local result = {callback(...)};
+  print(_G.debugprofilestop() - stamp)
+  return unpack(result);
+end
+
+function addon.createMeasureWrapper (callback)
+  return function (...)
+    return addon.measure(callback, ...);
+  end
+end

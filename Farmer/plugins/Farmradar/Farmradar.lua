@@ -271,9 +271,7 @@ end
 local function checkAddonTooltips ()
   if (options.enableAddonNodeTooltips ~= false) then return end
 
-  local children = {Minimap:GetChildren()};
-
-  for _, child in ipairs(children) do
+  for _, child in ipairs({Minimap:GetChildren()}) do
     setFrameMouseEnabled(child, false);
   end
 end
