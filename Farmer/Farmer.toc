@@ -3,7 +3,7 @@
 ## Interface-BCC: 20504
 ## Title: Farmer
 ## Author: syndenbock
-## Version: 3.13.1
+## Version: 3.13.2
 
 ## X-Curse-Project-ID: 282961
 ## X-Wago-ID: J96EDgNg

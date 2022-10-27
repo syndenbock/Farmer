@@ -1,1 +1,1 @@
-- Prevent minimap regions from going invisible when enabling farm radar
+- Fix compatibility with Retail 10.0
