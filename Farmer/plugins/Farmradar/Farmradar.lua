@@ -75,7 +75,11 @@ end
 
 local function setMinimapRotation (value)
   SetCVar('rotateMinimap', value, 'ROTATE_MINIMAP');
-  Minimap_UpdateRotationSetting();
+
+  -- Unavailable on Retail
+  if (Minimap_UpdateRotationSetting) then
+    Minimap_UpdateRotationSetting();
+  end
 end
 
 local function moveFrameToMinimapClusterIfProtected (frame)
