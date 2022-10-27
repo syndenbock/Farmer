@@ -1,1 +1,1 @@
-- Fix compatibility with Retail 10.0
+- Fix farm radar compatibility with retail
