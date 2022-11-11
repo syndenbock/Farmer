@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local L = addon.L;
 
-local panel = addon.Class.Options.Panel:new(L['Farm radar'], addon.mainPanel);
+local panel = addon.import('Class/Options/Panel'):new(L['Farm radar'], addon.mainPanel);
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     FarmRadar = {
@@ -16,7 +16,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 local function createDefaultNodeOptionBox ()
   local box = panel:addCheckBox( L['enable tooltips for default nodes']);
 
-  addon.Factory.Tooltip:new(box.checkBox, {
+  addon.import('Factory/Tooltip'):new(box.checkBox, {
     L['This will block all mouseovers under the minimap in farm mode!'],
     L['It\'s recommended to enable shrinking the minimap when enabling this'],
   });

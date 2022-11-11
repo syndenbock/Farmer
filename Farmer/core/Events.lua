@@ -1,7 +1,7 @@
 local addonName, addon = ...;
 
 local eventFrame = _G.CreateFrame('frame');
-local callbackHandler = addon.Class.CallbackHandler:new();
+local callbackHandler = addon.import('Class/CallbackHandler'):new();
 local singleFireCallbacks = {};
 
 eventFrame:SetScript('OnEvent', function (_, event, ...)

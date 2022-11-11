@@ -2,7 +2,7 @@ local _, addon = ...;
 
 if (_G.GetVoidItemInfo == nil) then return end
 
-local Storage = addon.Class.Storage;
+local Storage = addon.import('Class/Storage');
 
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
 local GetVoidItemInfo = _G.GetVoidItemInfo;

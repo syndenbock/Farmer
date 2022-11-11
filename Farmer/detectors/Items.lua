@@ -8,11 +8,11 @@ local GetItemInfo = _G.GetItemInfo;
 
 local extractNormalizedItemString = addon.extractNormalizedItemString;
 local fetchItemLink = addon.fetchItemLink;
-local ImmutableMap = addon.Factory.ImmutableMap;
+local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local Items = addon:extend('Items', {});
 local storages = {};
-local changesStorage = addon.Class.Storage:new();
+local changesStorage = addon.import('Class/Storage'):new();
 
 function Items.addStorage (storage)
   assert(storages[storage] == nil, 'storage was already added');
@@ -155,10 +155,10 @@ local function testPredefinedItems ()
   end
 end
 
-addon.export('tests/items', function (id, count)
+addon.import('tests').items = function (id, count)
   if (id) then
     testItem(tonumber(id), count or 1);
   else
     testPredefinedItems();
   end
-end);
+end

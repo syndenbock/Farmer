@@ -2,7 +2,7 @@ local _, ADDON = ...;
 
 local Mixin = _G.Mixin;
 
-local DataMessageFrame = ADDON.Widget.DataMessageFrame;
+local DataMessageFrame = ADDON.import('Widget/DataMessageFrame');
 
 local MESSAGE_MODES = {
   shift = 0,

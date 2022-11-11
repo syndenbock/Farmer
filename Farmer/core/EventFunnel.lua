@@ -3,7 +3,7 @@ local _, addon = ...;
 local CallAfter = _G.C_Timer.After;
 local wipe = _G.wipe;
 
-local callbackHandler = addon.Class.CallbackHandler:new();
+local callbackHandler = addon.import('Class/CallbackHandler'):new();
 local triggeredEvents = {};
 local anyEventsTriggered = false;
 

@@ -1,8 +1,8 @@
 local addonName, addon = ...;
 
-local tests = addon.tests;
+local tests = addon.import('tests');
 
-addon.export('tests/memory', function (_addonName)
+function tests.memory (_addonName)
   local usage;
 
   _addonName = _addonName or addonName;
@@ -11,7 +11,7 @@ addon.export('tests/memory', function (_addonName)
   usage = _G.BreakUpLargeNumbers(_G.GetAddOnMemoryUsage(_addonName));
 
   print(_addonName, 'uses', usage .. 'kb of memory');
-end);
+end
 
 local function printAvailableTests ()
   print(addonName .. ': available tests:');

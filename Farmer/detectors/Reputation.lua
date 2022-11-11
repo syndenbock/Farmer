@@ -12,7 +12,7 @@ local GetFactionInfo = _G.GetFactionInfo;
 local ExpandFactionHeader = _G.ExpandFactionHeader;
 local CollapseFactionHeader = _G.CollapseFactionHeader;
 
-local ImmutableMap = addon.Factory.ImmutableMap;
+local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local reputationCache;
 
@@ -132,7 +132,7 @@ addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
 -- testing
 --##############################################################################
 
-addon.export('tests/reputation', function ()
+addon.import('tests').reputation = function ()
   yellReputation({
     faction = 2170,
     reputationChange = 550,
@@ -140,4 +140,4 @@ addon.export('tests/reputation', function ()
     paragonLevelGained = true,
     standingChanged = false,
   });
-end);
+end

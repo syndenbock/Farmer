@@ -4,7 +4,7 @@ if (not addon.isDetectorAvailable('vignettes')) then return end
 
 local L = addon.L;
 
-local panel = addon.Class.Options.Panel:new(L['Minimap'], addon.mainPanel);
+local panel = addon.import('Class/Options/Panel'):new(L['Minimap'], addon.mainPanel);
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
