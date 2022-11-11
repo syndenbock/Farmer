@@ -132,9 +132,11 @@ addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
 -- testing
 --##############################################################################
 
-addon.import('tests').reputation = function ()
+addon.import('tests').reputation = function (id)
+  local faction = tonumber(id) or 2170;
+
   yellReputation({
-    faction = 2170,
+    faction = faction,
     reputationChange = 550,
     standing = 5,
     paragonLevelGained = true,
