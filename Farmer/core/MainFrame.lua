@@ -1,5 +1,5 @@
 local _, addon = ...;
 
-addon.frame = addon.Widget.DataMessageModeFrame:New({
+addon.frame = addon.import('Widget/DataMessageModeFrame'):New({
   name = 'farmerFrame',
 });

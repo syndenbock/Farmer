@@ -2,7 +2,7 @@ local thisAddonName, addon = ...;
 
 local tinsert = _G.tinsert;
 
-local Set = addon.Class.Set;
+local Set = addon.import('Class/Set');
 
 local variableStorage = {};
 local addonData = {};

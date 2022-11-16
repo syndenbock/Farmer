@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local Mixin = _G.Mixin;
 
-local MessageFrame = addon.Widget.MessageFrame;
+local MessageFrame = addon.import('Widget/MessageFrame');
 
 local DataMessageFrame = addon.export('Widget/DataMessageFrame', {});
 

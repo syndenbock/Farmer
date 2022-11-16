@@ -2,6 +2,8 @@ local _, addon = ...
 
 if (_G.C_PetJournal == nil) then return end
 
+local C_Container = addon.import('polyfills/C_Container');
+
 local tinsert = _G.tinsert;
 local tremove = _G.tremove;
 local C_Timer = _G.C_Timer;
@@ -10,7 +12,7 @@ local CagePetByID = PetJournal.CagePetByID;
 local GetPetInfoByIndex = PetJournal.GetPetInfoByIndex;
 local ClearSearchFilter = PetJournal.ClearSearchFilter;
 local GetNumPets = PetJournal.GetNumPets;
-local GetContainerNumFreeSlots = _G.GetContainerNumFreeSlots;
+local GetContainerNumFreeSlots = C_Container.GetContainerNumFreeSlots;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 
 local function getBagFreeSlots (bagIndex)

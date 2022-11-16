@@ -17,7 +17,7 @@ local GetCurrencyListInfo = C_CurrencyInfo.GetCurrencyListInfo;
 local GetCurrencyListLink = C_CurrencyInfo.GetCurrencyListLink;
 local GetCurrencyListSize = C_CurrencyInfo.GetCurrencyListSize;
 
-local ImmutableMap = addon.Factory.ImmutableMap;
+local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local HONOR_ID = 1585;
 local CONQUEST_ID = 1602;
@@ -124,6 +124,6 @@ end);
 -- testing
 --##############################################################################
 
-addon.export('tests/currency', function ()
+addon.import('tests').currency = function ()
   yellCurrencyInfo(packCurrencyInfo(1755), 15357);
-end);
+end;

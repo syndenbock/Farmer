@@ -1,9 +1,11 @@
 local addonName, addon = ...;
 
-local GetContainerNumSlots = _G.GetContainerNumSlots;
-local GetContainerItemInfo = _G.GetContainerItemInfo;
+local C_Container = addon.import('polyfills/C_Container');
+
+local GetContainerNumSlots = C_Container.GetContainerNumSlots;
+local GetContainerItemInfo = C_Container.GetContainerItemInfo;
+local UseContainerItem = C_Container.UseContainerItem;
 local GetItemInfo = _G.GetItemInfo;
-local UseContainerItem = _G.UseContainerItem;
 
 local L = addon.L;
 
@@ -38,21 +40,15 @@ local function shouldSellReadableItem (readable)
 end
 
 local function sellItemIfGray (bag, slot)
-  local info = {GetContainerItemInfo(bag, slot)};
+  local info = GetContainerItemInfo(bag, slot);
 
   -- empty info means empty bag slot
-  if (info[1] == nil) then return 0 end;
+  if (info == nil) then return 0 end;
 
-  local locked = info[3];
-  local quality = info[4];
-  local readable = info[5];
-
-  if (not locked and
-      shouldSellReadableItem(readable) and
-      isItemGray(quality)) then
-    local itemCount = info[2];
-    local itemId = info[10];
-    local price = getItemSellPrice(itemId) * itemCount;
+  if (not info.isLocked and
+      shouldSellReadableItem(info.isReadable) and
+      isItemGray(info.quality)) then
+    local price = getItemSellPrice(info.itemID) * info.stackCount;
 
     sellitem(bag, slot);
 

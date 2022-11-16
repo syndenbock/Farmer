@@ -1,5 +1,6 @@
 <UI>
   <script file="Core.lua"/>
+  <include file="polyfills\polyfills.xml"/>
   <include file="localizations\localizations.xml"/>
   <include file="utils\utils.xml"/>
   <include file="classes\classes.xml"/>

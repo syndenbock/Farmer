@@ -1,14 +1,14 @@
 local _, addon = ...;
 
-local Storage = addon.Class.Storage;
+local Storage = addon.import('Class/Storage');
+local C_Container = addon.import('polyfills/C_Container');
 
 local wipe = _G.wipe;
-local GetContainerItemID = _G.GetContainerItemID;
-local GetContainerItemInfo = _G.GetContainerItemInfo;
-local ContainerIDToInventoryID = _G.ContainerIDToInventoryID;
+local GetContainerItemInfo = C_Container.GetContainerItemInfo;
+local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID;
+local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
-local GetContainerNumSlots = _G.GetContainerNumSlots;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
 local BANK_CONTAINER = _G.BANK_CONTAINER;
@@ -59,16 +59,10 @@ local function readContainerSlot (bagIndex)
 end
 
 local function readBagSlot (bagIndex, slotIndex)
-  --[[ GetContainerItemID has to be used, as GetContainerItemInfo returns
-         nil if data is not ready --]]
-  local id = GetContainerItemID(bagIndex, slotIndex);
+  local info = GetContainerItemInfo(bagIndex, slotIndex);
 
-  if (id) then
-    local info = {GetContainerItemInfo(bagIndex, slotIndex)};
-    local count = info[2];
-    local link = info[7];
-
-    bagCache[bagIndex]:setSlot(slotIndex, id, link, count);
+  if (info ~= nil) then
+    bagCache[bagIndex]:setSlot(slotIndex, info.itemID, info.hyperlink, info.stackCount);
   else
     bagCache[bagIndex]:clearSlot(slotIndex);
   end

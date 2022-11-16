@@ -14,7 +14,7 @@ local GetVignettes = _G.C_VignetteInfo.GetVignettes;
 local GetVignetteInfo = _G.C_VignetteInfo.GetVignetteInfo;
 local GetVignettePosition = _G.C_VignetteInfo.GetVignettePosition;
 
-local ImmutableMap = addon.Factory.ImmutableMap;
+local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local UNIT_PLAYER = 'player';
 

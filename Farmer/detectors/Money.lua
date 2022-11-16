@@ -21,6 +21,6 @@ addon.funnel('PLAYER_MONEY', function ()
   addon.yell('MONEY_CHANGED', difference);
 end);
 
-addon.export('tests/money', function ()
+addon.import('tests').money = function ()
   addon.yell('MONEY_CHANGED', 12390);
-end);
+end;

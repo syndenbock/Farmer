@@ -13,7 +13,7 @@ local GetSkillLineInfo = _G.GetSkillLineInfo;
 local ExpandSkillHeader = _G.ExpandSkillHeader;
 local CollapseSkillHeader = _G.CollapseSkillHeader;
 
-local ImmutableMap = addon.Factory.ImmutableMap;
+local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local skillCache = {};
 
@@ -97,10 +97,10 @@ addon.onOnce('PLAYER_LOGIN', function ()
   addon.on('CHAT_MSG_SKILL', checkSkills);
 end);
 
-addon.export('tests/skills', function ()
+addon.import('tests').skills = function ()
   yellSkill({
     name = 'testskill',
     rank = 2,
     maxRank = 20,
   }, 1);
-end);
+end;

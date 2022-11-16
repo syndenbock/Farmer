@@ -5,7 +5,7 @@ addon.registerAvailableDetector('experience');
 local UnitXP = _G.UnitXP;
 local UnitXPMax = _G.UnitXPMax;
 
-local ImmutableMap = addon.Factory.ImmutableMap;
+local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local UNIT_PLAYER = 'player';
 

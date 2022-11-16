@@ -11,7 +11,7 @@ local TradeSkillUI = _G.C_TradeSkillUI;
 local GetAllProfessionTradeSkillLines = TradeSkillUI.GetAllProfessionTradeSkillLines;
 local GetProfessionInfoBySkillLineID = TradeSkillUI.GetProfessionInfoBySkillLineID ;
 
-local ImmutableMap = addon.Factory.ImmutableMap;
+local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local professionCache;
 
@@ -71,11 +71,11 @@ end);
 -- testing
 --##############################################################################
 
-addon.export('tests/profession', function (id)
+addon.import('tests').profession = function (id)
   if (id) then
     yellProfession(GetProfessionInfoBySkillLineID(tonumber(id)), 1);
   else
     yellProfession(GetProfessionInfoBySkillLineID(171), 1);
     yellProfession(GetProfessionInfoBySkillLineID(2483), 1);
   end
-end);
+end

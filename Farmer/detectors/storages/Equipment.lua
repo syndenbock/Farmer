@@ -10,7 +10,7 @@ local ITEM_QUALITY_ARTIFACT = _G.Enum.ItemQuality.Artifact;
 
 local UNITID_PLAYER = 'player';
 
-local currentEquipment = addon.Class.Storage:new();
+local currentEquipment = addon.import('Class/Storage'):new();
 
 local function isSlotArtifactOffhand (slot)
   return (slot == INVSLOT_OFFHAND and

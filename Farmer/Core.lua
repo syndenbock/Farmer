@@ -1,8 +1,5 @@
 local _, addon = ...;
 
-local strsplit = _G.strsplit;
-local tremove = _G.tremove;
-
 addon.debugging = false;
 
 if (addon.debugging) then
@@ -19,26 +16,6 @@ if (addon.debugging) then
   setmetatable(addon, proxy);
 end
 
-local function splitPathString (pathString)
-  return {strsplit('/', pathString)};
-end
-
-local function generateNameSpaces (pathList)
-  local current = addon;
-
-  for _, name in ipairs(pathList) do
-    assert(type(current) == 'table', 'Parent namespace is not a table: ' .. name);
-
-    if (current[name] == nil) then
-      current[name] = {};
-    end
-
-    current = current[name];
-  end
-
-  return current;
-end
-
 local function extend (class, key, value)
   assert(class[key] == nil, 'Key already in use: ' .. key);
   class[key] = value;
@@ -47,25 +24,22 @@ end
 
 addon.extend = extend;
 
-function addon.export (pathString, value)
-  assert(value ~= nil, 'Export value is nil');
+local modules = {};
 
-  local pathList = splitPathString(pathString);
-  local name = tremove(pathList);
-  local shared = generateNameSpaces(pathList);
+function addon.export (name, module)
+  assert(name ~= nil);
+  assert(modules[name] == nil, 'Module already exists: ' .. name);
+  assert(module ~= nil, 'Cannot export nil as module: ' .. name);
 
-  return extend(shared, name, value);
+  modules[name] = module;
+  return module;
 end
 
-function addon.import (pathString)
-  local pathList = splitPathString(pathString);
-  local current = addon;
+function addon.import (name)
+  assert(name ~= nil);
+  assert(modules[name] ~= nil, 'Module does not exist: ' .. name);
 
-  for _, name in ipairs(pathList) do
-    assert(type(current) == 'table', 'Parent namespace is not a table: ' .. name);
-    assert(current[name] ~= nil, 'Namespace does not exist: ' .. name);
-    current = current[name];
-  end
-
-  return current;
+  return modules[name];
 end
+
+addon.export('tests', {});

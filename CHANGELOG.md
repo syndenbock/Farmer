@@ -1,1 +1,2 @@
-- Fix farm radar compatibility with retail
+- Updated Retail interface version for 10.0.2
+- Fixed compatibility with 10.0.2
