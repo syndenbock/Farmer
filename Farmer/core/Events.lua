@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+local secureCall = addon.secureCall;
+
 local eventFrame = _G.CreateFrame('frame');
 local callbackHandler = addon.import('Class/CallbackHandler'):new();
 local singleFireCallbacks = {};
@@ -24,7 +26,7 @@ local function callSingleFireCallbacks (event, ...)
   if (singleFireCallbacks[event] == nil) then return end
 
   for callback in pairs(singleFireCallbacks[event]) do
-    callback(event, ...);
+    secureCall(callback, event, ...);
   end
 
   singleFireCallbacks[event] = nil;
