@@ -11,15 +11,37 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 
 local mailIsOpen = false;
 
-addon.on('MAIL_SHOW', function ()
-  mailIsOpen = true;
-end);
+local function onMailClosed ()
+  mailIsOpen = false;
+end
 
 --[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
-not fire, so we clear the flag after entering the world --]]
-addon.on({'MAIL_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
-  mailIsOpen = false;
-end);
+  not fire, so we clear the flag after entering the world --]]
+addon.on('PLAYER_ENTERING_WORLD', onMailClosed);
+
+do
+  local mailType = addon.findGlobal('Enum', 'PlayerInteractionType', 'MailInfo');
+
+  if (mailType ~= nil) then
+    addon.on('PLAYER_INTERACTION_MANAGER_FRAME_SHOW', function (_, type)
+      if (type == mailType) then
+        mailIsOpen = true;
+      end
+    end);
+
+    addon.on('PLAYER_INTERACTION_MANAGER_FRAME_HIDE', function (_, type)
+      if (type == mailType) then
+        mailIsOpen = false;
+      end
+    end);
+  else
+    addon.on('MAIL_SHOW', function ()
+      mailIsOpen = true;
+    end);
+
+    addon.on('MAIL_CLOSED', onMailClosed);
+  end
+end
 
 local function checkHideOptions ()
   if (options.hideAtMailbox == true and

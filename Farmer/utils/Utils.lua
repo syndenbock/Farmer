@@ -59,6 +59,20 @@ function addon.truncate (number, digits)
   return number;
 end
 
+function addon.findGlobal (...)
+  local global = _G;
+
+  for x = 1, select('#', ...), 1 do
+    global = global[select(x, ...)];
+
+    if (global == nil) then
+      return nil;
+    end
+  end
+
+  return global;
+end
+
 function addon.readOptions (defaults, options, newOptions)
   newOptions = newOptions or {};
   options = options or {};
