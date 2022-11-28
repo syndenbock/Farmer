@@ -1,7 +1,6 @@
 local _, addon = ...;
 
-if (_G.C_CurrencyInfo == nil or
-    _G.C_CurrencyInfo.GetCurrencyListInfo == nil) then
+if (addon.findGlobal('C_CurrencyInfo', 'GetCurrencyListInfo') == nil) then
   addon.registerUnavailableDetector('currencies');
   return;
 end

@@ -1,1 +1,1 @@
-- Fixed mailbox detection on Retail
+- Fixed entire reagent bank being displayed sometimes

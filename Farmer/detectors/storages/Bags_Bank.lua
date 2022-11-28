@@ -9,19 +9,17 @@ local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID;
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
+local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
 local BANK_CONTAINER = _G.BANK_CONTAINER;
 local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
 
 local UNIT_PLAYER = 'player';
-local FIRST_BAG_SLOT = 1;
-local FIRST_BANK_SLOT = NUM_BAG_SLOTS + 1;
-local LAST_BANK_SLOT = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS;
+local FIRST_BANK_SLOT = _G.ITEM_INVENTORY_BANK_BAG_OFFSET	+ 1;
+local LAST_BANK_SLOT = _G.ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS;
 -- for some reason there is no constant for bank bag container
 local BANKBAG_CONTAINER = -4;
-local FIRST_SLOT = BANKBAG_CONTAINER;
-local LAST_SLOT = LAST_BANK_SLOT;
 
 local bagCache = {};
 local flaggedBags = {};
@@ -42,7 +40,7 @@ local function initBagContent (bagIndex)
 end
 
 local function isContainerSlot (bagIndex)
-  return (FIRST_BAG_SLOT <= bagIndex and LAST_BANK_SLOT >= bagIndex);
+  return (BACKPACK_CONTAINER < bagIndex and bagIndex <= LAST_BANK_SLOT);
 end
 
 local function readContainerSlot (bagIndex)
@@ -85,12 +83,8 @@ local function initBagCache (bagIndex)
 end
 
 local function initInventory ()
-  for x = FIRST_SLOT, LAST_SLOT, 1 do
+  for x = BACKPACK_CONTAINER, NUM_BAG_SLOTS, 1 do
     initBagCache(x);
-  end
-
-  if (REAGENTBANK_CONTAINER ~= nil) then
-    initBagCache(REAGENTBANK_CONTAINER);
   end
 end
 
@@ -114,6 +108,10 @@ local function initBank ()
   for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
     initBagCache(x);
   end
+
+  if (REAGENTBANK_CONTAINER ~= nil) then
+    initBagCache(REAGENTBANK_CONTAINER);
+  end
 end
 
 --[[ function is used as event callback, so first argument is ignored ]]
@@ -131,6 +129,10 @@ local function clearBank ()
   bagCache[BANKBAG_CONTAINER] = nil;
   bagCache[BANK_CONTAINER] = nil;
 
+  if (REAGENTBANK_CONTAINER ~= nil) then
+    bagCache[REAGENTBANK_CONTAINER] = nil
+  end
+
   for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
     bagCache[x] = nil;
   end
@@ -138,19 +140,24 @@ end
 
 --[[ function is used as event callback, so first argument is ignored ]]
 local function updateReagentBankSlot (_, slot)
-  readBagSlot(REAGENTBANK_CONTAINER, slot);
+  if (bagCache[REAGENTBANK_CONTAINER] ~= nil) then
+    readBagSlot(REAGENTBANK_CONTAINER, slot);
+  end
 end
 
-addon.onOnce('PLAYER_LOGIN', initInventory);
-addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
-addon.on('BAG_UPDATE_DELAYED', updateFlaggedBags);
+addon.onOnce('PLAYER_LOGIN', function ()
+  initInventory();
 
-addon.on('BANKFRAME_OPENED', initBank);
-addon.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
-addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, clearBank);
+  addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
+  addon.on('BAG_UPDATE_DELAYED', updateFlaggedBags);
 
-if (REAGENTBANK_CONTAINER) then
-  addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
-end
+  addon.on('BANKFRAME_OPENED', initBank);
+  addon.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
+  addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, clearBank);
+
+  if (REAGENTBANK_CONTAINER ~= nil) then
+    addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
+  end
+end);
 
 addon.Items.addStorage(bagCache);
