@@ -1,9 +1,13 @@
 local _, addon = ...;
 
-if (_G.GetVoidItemInfo == nil) then return end
+local VOIDSTORAGE_FRAME_TYPE =
+    addon.findGlobal('Enum', 'PlayerInteractionType', 'VoidStorageBanker');
+
+if (VOIDSTORAGE_FRAME_TYPE == nil) then return end
 
 local Storage = addon.import('Class/Storage');
 
+local wipe = _G.wipe;
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
 local GetVoidItemInfo = _G.GetVoidItemInfo;
 
@@ -52,7 +56,7 @@ local function readVoidStorage ()
 end
 
 local function clearVoidStorageChanges ()
-  for _, storage in pairs(storageTabs) do
+  for _, storage in ipairs(storageTabs) do
     storage:clearChanges();
   end
 end
@@ -63,16 +67,22 @@ local function initVoidStorage ()
   clearVoidStorageChanges();
 end
 
-local function handleAddonLoad (_, loadedAddon)
-  if (loadedAddon == 'Blizzard_VoidStorageUI') then
-    initVoidStorage();
-    addon.off('ADDON_LOADED', handleAddonLoad);
-  end
+local function clearVoidStorage ()
+  wipe(storageTabs);
 end
 
-addon.on('ADDON_LOADED', handleAddonLoad);
+addon.on('PLAYER_INTERACTION_MANAGER_FRAME_SHOW', function (_, type)
+  if (type == VOIDSTORAGE_FRAME_TYPE) then
+    initVoidStorage();
+  end
+end);
 
-addon.on({'VOID_STORAGE_CONTENTS_UPDATE', 'VOID_TRANSFER_DONE'},
-    readVoidStorage);
+addon.on('PLAYER_INTERACTION_MANAGER_FRAME_HIDE', function (_, type)
+  if (type == VOIDSTORAGE_FRAME_TYPE) then
+    clearVoidStorage();
+  end
+end);
+
+addon.on('VOID_TRANSFER_DONE', readVoidStorage);
 
 addon.Items.addStorage(storageTabs);
