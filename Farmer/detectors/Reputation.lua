@@ -87,32 +87,33 @@ local function yellReputation (reputationInfo)
   addon.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
 end
 
-local function checkReputationChange (faction, factionInfo)
-  local cachedFactionInfo = reputationCache[faction] or {};
-
-  local function getCacheDifference (key)
-    return (factionInfo[key] or 0) - (cachedFactionInfo[key] or 0);
+local function getDifferenceFromCache (cache, info, key)
+  if (cache == nil) then
+    return info[key] or 0;
+  else
+    return (info[key] or 0) - (cache[key] or 0);
   end
+end
 
-  local reputationChange = getCacheDifference('reputation') +
-      getCacheDifference('paragonReputation');
+local function checkReputationChange (faction, factionInfo)
+  local cachedInfo = reputationCache[faction];
+  local reputationChange =
+      getDifferenceFromCache(cachedInfo, factionInfo, 'reputation') +
+      getDifferenceFromCache(cachedInfo, factionInfo, 'paragonReputation');
 
-  if (reputationChange == 0) then return end
-
-  local paragonLevelGained = (getCacheDifference('paragonLevel') > 0);
-
-  yellReputation({
-    faction = faction,
-    reputationChange = reputationChange,
-    standing = factionInfo.standing,
-    paragonLevelGained = paragonLevelGained,
-    standingChanged = (factionInfo.standing ~= cachedFactionInfo.standing),
-  });
+  if (reputationChange ~= 0) then
+    yellReputation({
+      faction = faction,
+      reputationChange = reputationChange,
+      standing = factionInfo.standing,
+      paragonLevelGained =
+          (getDifferenceFromCache(cachedInfo, factionInfo, 'paragonLevel') > 0),
+      standingChanged = (factionInfo.standing ~= cachedInfo.standing),
+    });
+  end
 end
 
 local function checkReputations ()
-  if (not reputationCache) then return end
-
   local repInfo = getReputationInfo();
 
   for faction, factionInfo in pairs(repInfo) do
@@ -124,9 +125,9 @@ end
 
 addon.onOnce('PLAYER_LOGIN', function ()
   reputationCache = getReputationInfo();
+  addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
 end);
 
-addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
 
 --##############################################################################
 -- testing
