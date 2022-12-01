@@ -1,3 +1,4 @@
 <UI>
   <script file="RegularFactions.lua"/>
+  <script file="MajorFactions.lua"/>
 </UI>
