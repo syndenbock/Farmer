@@ -26,7 +26,7 @@ local LAST_BANK_SLOT = BANK_OFFSET + NUM_BANKBAGSLOTS;
 local BANKBAG_CONTAINER = -4;
 local UNIT_PLAYER = 'player';
 
-local bagSlots = {};
+local bagSlots = {BACKPACK_CONTAINER};
 local bankSlots = {BANKBAG_CONTAINER, BANK_CONTAINER};
 
 local bagCache = {};
