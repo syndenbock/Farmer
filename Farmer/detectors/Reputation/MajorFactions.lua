@@ -2,6 +2,8 @@ local _, addon = ...;
 
 local C_MajorFactions = _G.C_MajorFactions;
 
+if (C_MajorFactions == nil) then return end
+
 local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local majorFactionCache = {};
