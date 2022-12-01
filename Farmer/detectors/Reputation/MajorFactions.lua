@@ -12,14 +12,24 @@ local function iterateMajorFactions (callback)
   end
 end
 
+local function storeMajorFaction (majorFactionInfo)
+  majorFactionCache[majorFactionInfo.factionID] = {
+    renownReputationEarned = majorFactionInfo.renownReputationEarned,
+    renownLevel = majorFactionInfo.renownLevel,
+  };
+end
+
 local function initMajorFactionCache ()
-  iterateMajorFactions(function (majorFactionInfo)
-    majorFactionCache[majorFactionInfo.factionID] = majorFactionInfo;
-  end);
+  iterateMajorFactions(storeMajorFaction);
 end
 
 local function yellReputation (reputationInfo)
   addon.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
+end
+
+local function updateMajorFaction (cachedInfo, majorFactionInfo)
+  cachedInfo.renownReputationEarned = majorFactionInfo.renownReputationEarned;
+  cachedInfo.renownLevel = majorFactionInfo.renownLevel;
 end
 
 local function checkMajorFaction (majorFactionInfo)
@@ -27,13 +37,15 @@ local function checkMajorFaction (majorFactionInfo)
 
   if (cachedInfo.renownReputationEarned ~=
       majorFactionInfo.renownReputationEarned) then
-    majorFactionCache[majorFactionInfo.factionID] = majorFactionInfo;
-
     yellReputation({
       faction = majorFactionInfo.factionID,
       reputationChange = majorFactionInfo.renownReputationEarned -
           cachedInfo.renownReputationEarned,
+      renownLevel = cachedInfo.renownLevel,
+      renownLevelChanged = cachedInfo.renownLevelChanged,
     });
+
+    updateMajorFaction(cachedInfo, majorFactionInfo);
   end
 end
 
