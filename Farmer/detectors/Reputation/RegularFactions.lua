@@ -4,9 +4,11 @@ addon.registerAvailableDetector('reputation');
 
 local floor = _G.floor;
 local tinsert = _G.tinsert;
+
 local C_Reputation = _G.C_Reputation;
 local GetFactionParagonInfo = C_Reputation and C_Reputation.GetFactionParagonInfo;
 local IsFactionParagon = C_Reputation and C_Reputation.IsFactionParagon;
+
 local GetNumFactions = _G.GetNumFactions;
 local GetFactionInfo = _G.GetFactionInfo;
 local ExpandFactionHeader = _G.ExpandFactionHeader;
@@ -108,7 +110,8 @@ local function checkReputationChange (faction, factionInfo)
       standing = factionInfo.standing,
       paragonLevelGained =
           (getDifferenceFromCache(cachedInfo, factionInfo, 'paragonLevel') > 0),
-      standingChanged = (factionInfo.standing ~= cachedInfo.standing),
+      standingChanged =
+          (getDifferenceFromCache(cachedInfo, factionInfo, 'standing') ~= 0),
     });
   end
 end
@@ -127,7 +130,6 @@ addon.onOnce('PLAYER_LOGIN', function ()
   reputationCache = getReputationInfo();
   addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
 end);
-
 
 --##############################################################################
 -- testing
