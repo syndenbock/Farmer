@@ -73,10 +73,8 @@ local function displayReputation (info)
 end
 
 addon.listen('REPUTATION_CHANGED', function (reputationInfo)
-  if (not checkReputationOptions() or
-      not shouldReputationBeDisplayed(reputationInfo)) then
-    return;
+  if (checkReputationOptions() and
+      shouldReputationBeDisplayed(reputationInfo)) then
+    displayReputation(reputationInfo);
   end
-
-  displayReputation(reputationInfo);
 end);

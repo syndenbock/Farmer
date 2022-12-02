@@ -4,7 +4,7 @@
 ## Interface-Wrath: 30400
 ## Title: Farmer
 ## Author: syndenbock
-## Version: 3.14.2
+## Version: 3.15
 
 ## X-Curse-Project-ID: 282961
 ## X-Wago-ID: J96EDgNg

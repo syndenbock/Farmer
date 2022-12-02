@@ -4,30 +4,55 @@ local Storage = addon.import('Class/Storage');
 local C_Container = addon.import('polyfills/C_Container');
 
 local wipe = _G.wipe;
+local tinsert = _G.tinsert;
+
 local GetContainerItemInfo = C_Container.GetContainerItemInfo;
 local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID;
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
+local GetKeyRingSize = _G.GetKeyRingSize;
+
 local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
 local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
+local BANK_OFFSET = (addon.isRetail() and 5) or 4;
 local BANK_CONTAINER = _G.BANK_CONTAINER;
-local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER;
-
-local UNIT_PLAYER = 'player';
-local FIRST_BANK_SLOT = _G.ITEM_INVENTORY_BANK_BAG_OFFSET	+ 1;
-local LAST_BANK_SLOT = _G.ITEM_INVENTORY_BANK_BAG_OFFSET + NUM_BANKBAGSLOTS;
+local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER or -3;
+local REAGENT_CONTAINER = _G.REAGENT_CONTAINER or 5;
+local KEYRING_CONTAINER = _G.KEYRING_CONTAINER or -2;
+local LAST_BANK_SLOT = BANK_OFFSET + NUM_BANKBAGSLOTS;
 -- for some reason there is no constant for bank bag container
 local BANKBAG_CONTAINER = -4;
+local UNIT_PLAYER = 'player';
+
+local bagSlots = {BACKPACK_CONTAINER};
+local bankSlots = {BANKBAG_CONTAINER, BANK_CONTAINER};
 
 local bagCache = {};
 local flaggedBags = {};
+
+for x = 1, NUM_BAG_SLOTS, 1 do
+  tinsert(bagSlots, x);
+end
+
+for x = BANK_OFFSET + 1, LAST_BANK_SLOT, 1 do
+  tinsert(bankSlots, x);
+end
+
+if (addon.isRetail()) then
+  tinsert(bagSlots, REAGENT_CONTAINER);
+  tinsert(bankSlots, REAGENTBANK_CONTAINER);
+else
+  tinsert(bagSlots, KEYRING_CONTAINER);
+end
 
 local function getContainerSlotCount (bagIndex)
   -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
   if (bagIndex == BANKBAG_CONTAINER) then
     return NUM_BANKBAGSLOTS;
+  elseif (bagIndex == KEYRING_CONTAINER) then
+    return GetKeyRingSize();
   else
     return GetContainerNumSlots(bagIndex);
   end
@@ -83,8 +108,8 @@ local function initBagCache (bagIndex)
 end
 
 local function initInventory ()
-  for x = BACKPACK_CONTAINER, NUM_BAG_SLOTS, 1 do
-    initBagCache(x);
+  for _, index in ipairs(bagSlots) do
+    initBagCache(index);
   end
 end
 
@@ -102,15 +127,8 @@ local function updateFlaggedBags ()
 end
 
 local function initBank ()
-  initBagCache(BANKBAG_CONTAINER);
-  initBagCache(BANK_CONTAINER);
-
-  for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
+  for _, x in ipairs(bankSlots) do
     initBagCache(x);
-  end
-
-  if (REAGENTBANK_CONTAINER ~= nil) then
-    initBagCache(REAGENTBANK_CONTAINER);
   end
 end
 
@@ -126,14 +144,7 @@ local function updateBankSlot (_, slot)
 end
 
 local function clearBank ()
-  bagCache[BANKBAG_CONTAINER] = nil;
-  bagCache[BANK_CONTAINER] = nil;
-
-  if (REAGENTBANK_CONTAINER ~= nil) then
-    bagCache[REAGENTBANK_CONTAINER] = nil
-  end
-
-  for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
+  for _, x in ipairs(bankSlots) do
     bagCache[x] = nil;
   end
 end
@@ -155,7 +166,7 @@ addon.onOnce('PLAYER_LOGIN', function ()
   addon.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
   addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, clearBank);
 
-  if (REAGENTBANK_CONTAINER ~= nil) then
+  if (addon.isRetail()) then
     addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
   end
 end);
