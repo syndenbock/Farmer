@@ -55,11 +55,7 @@ local function iterateSkills (callback)
 end
 
 local function cacheSkillInfo (name, rank, maxRank)
-  skillCache[name] = {
-    name = name,
-    rank = rank,
-    maxRank = maxRank,
-  };
+  skillCache[name] = rank;
 end
 
 local function initSkillCache ()
@@ -70,26 +66,20 @@ local function yellSkill (skillInfo, change)
   addon.yell('SKILL_CHANGED', ImmutableMap(skillInfo), change);
 end
 
+local function checkSkill (name, rank, maxRank)
+  if (skillCache[name] ~= rank) then
+    yellSkill({
+      name = name,
+      rank = rank,
+      maxRank = maxRank,
+      rankChange = rank - (skillCache[name] or 0),
+    });
+    cacheSkillInfo(name, rank, maxRank);
+  end
+end
+
 local function checkSkills ()
-  iterateSkills(function (name, rank, maxRank)
-    local cachedInfo = skillCache[name];
-
-    if (cachedInfo == nil) then
-      cacheSkillInfo(name, rank, maxRank);
-      yellSkill(skillCache[name], rank);
-    else
-      if (cachedInfo.maxRank ~= maxRank) then
-        cachedInfo.maxRank = maxRank;
-      end
-
-      if (cachedInfo.rank ~= rank) then
-        local change = rank - cachedInfo.rank;
-
-        cachedInfo.rank = rank;
-        yellSkill(cachedInfo, change);
-      end
-    end
-  end);
+  iterateSkills(checkSkill);
 end
 
 addon.onOnce('PLAYER_LOGIN', function ()

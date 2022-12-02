@@ -16,11 +16,12 @@ local function checkSkillOptions ()
   return (options.displaySkills == true);
 end
 
-local function displaySkill (info, change)
+local function displaySkill (info)
   local text = addon.stringJoin({'(', info.rank, '/', info.maxRank, ')'}, '');
   local changeText;
 
-  change = change + (farmerFrame:GetMessageData(SUBSPACE, info.name) or 0);
+  local change = info.rankChange +
+      (farmerFrame:GetMessageData(SUBSPACE, info.name) or 0);
 
   if (change >= 0) then
     changeText = '+' .. change;
@@ -32,8 +33,8 @@ local function displaySkill (info, change)
   printMessageWithData(SUBSPACE, info.name, change, text, MESSAGE_COLORS);
 end
 
-addon.listen('SKILL_CHANGED', function (info, change)
+addon.listen('SKILL_CHANGED', function (info)
   if (checkSkillOptions()) then
-    displaySkill(info, change);
+    displaySkill(info);
   end
 end);
