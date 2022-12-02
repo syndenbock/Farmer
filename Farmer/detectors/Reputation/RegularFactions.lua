@@ -99,6 +99,10 @@ local function yellReputation (reputationInfo)
   addon.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
 end
 
+local function hasParagonLevel (factionInfo)
+  return (factionInfo.paragonLevel ~= nil and factionInfo.paragonLevel > 0);
+end
+
 local function handleNewReputation (factionInfo)
   if (factionInfo.reputation ~= 0) then
     storeReputation(factionInfo);
@@ -107,7 +111,7 @@ local function handleNewReputation (factionInfo)
       reputationChange = factionInfo.reputation,
       standing = factionInfo.standing,
       paragonLevel = factionInfo.paragonLevel,
-      paragonLevelGained = (factionInfo.paragonLevel > 0),
+      paragonLevelGained = hasParagonLevel(factionInfo),
       standingChanged = true,
     });
   end
@@ -119,14 +123,23 @@ local function updateReputation (cachedInfo, factionInfo)
   cachedInfo.paragonLevel = factionInfo.paragonLevel;
 end
 
+local function wasParagonLevelGained (cachedInfo, factionInfo)
+  if (cachedInfo.paragonLevel == nil) then
+    return hasParagonLevel(factionInfo);
+  else
+    return (factionInfo.paragonLevel ~= nil
+        and factionInfo.paragonLevel > cachedInfo.paragonLevel);
+  end
+end
+
 local function handleCachedReputation (cachedInfo, factionInfo)
   if (factionInfo.reputation ~= cachedInfo.reputation) then
     yellReputation({
       faction = factionInfo.faction,
-      reputationChange = factionInfo.reputation ~= cachedInfo.reputation,
+      reputationChange = factionInfo.reputation - cachedInfo.reputation,
       standing = factionInfo.standing,
       paragonLevel = factionInfo.paragonLevel,
-      paragonLevelGained = (factionInfo.paragonLevel > cachedInfo.paragonLevel),
+      paragonLevelGained = wasParagonLevelGained(cachedInfo, factionInfo),
       standingChanged = (factionInfo.standing ~= cachedInfo.standing),
     });
 
