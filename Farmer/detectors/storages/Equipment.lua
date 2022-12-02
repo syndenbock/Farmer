@@ -3,11 +3,11 @@ local _, addon = ...;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
 local GetInventoryItemQuality = _G.GetInventoryItemQuality;
-local INVSLOT_FIRST_EQUIPPED = _G.INVSLOT_FIRST_EQUIPPED;
-local INVSLOT_LAST_EQUIPPED = _G.INVSLOT_LAST_EQUIPPED;
 local INVSLOT_OFFHAND = _G.INVSLOT_OFFHAND;
 local ITEM_QUALITY_ARTIFACT = _G.Enum.ItemQuality.Artifact;
 
+local FIRST_INVENTORY_SLOT = 0;
+local LAST_INVENTORY_SLOT = (addon.isRetail() and 30) or 19;
 local UNITID_PLAYER = 'player';
 
 local currentEquipment = addon.import('Class/Storage'):new();
@@ -20,7 +20,7 @@ end
 local function getEquipmentSlot (slot)
   local id = GetInventoryItemID(UNITID_PLAYER, slot);
 
-  if (id) then
+  if (id and id ~= 0) then
     return id, GetInventoryItemLink(UNITID_PLAYER, slot);
   else
     return nil, nil;
@@ -43,7 +43,7 @@ local function updateEquipmentSlot (slot)
 end
 
 local function updateEquipment ()
-  for x = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED, 1 do
+  for x = FIRST_INVENTORY_SLOT, LAST_INVENTORY_SLOT, 1 do
     updateEquipmentSlot(x);
   end
 end
