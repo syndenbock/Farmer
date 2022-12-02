@@ -1,4 +1,1 @@
-- Added support for reagent bag
-- Added support for profession items
-- Added support for keyring (classic)
-- Added support for Dragonflight faction reputation
+- Fixed error in reputation detector
