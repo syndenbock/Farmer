@@ -41,10 +41,10 @@ local function stringifyItemIds (map)
 end
 
 local function parseItemIdLine (list, line)
-  line = strtrim(line);
+  local itemId = tonumber(line);
 
-  if (line ~= '') then
-    list[tonumber(line)] = true;
+  if (itemId ~= nil) then
+    list[itemId] = true;
   end
 end
 
