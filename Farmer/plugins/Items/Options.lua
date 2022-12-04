@@ -3,7 +3,6 @@ local addonName, addon = ...;
 if (not addon.isDetectorAvailable('items')) then return end
 
 local tinsert = _G.tinsert;
-local strtrim = _G.strtrim;
 local strsplit = _G.strsplit;
 
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
@@ -96,7 +95,9 @@ do
   panel:addLabel(L['focused item ids:']);
   focusIdBox = panel:addEditBox(150, 180);
 
-  focusIdBox:SetText(stringifyItemIds(options.focusItems));
+  panel:OnFirstLoad(function ()
+    focusIdBox:SetText(stringifyItemIds(options.focusItems));
+  end);
 
   panel:OnSave(function ()
     options.focusItems = parseItemIds(focusIdBox:GetText());

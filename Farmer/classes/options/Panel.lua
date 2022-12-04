@@ -18,6 +18,11 @@ local Dropdown = addon.import('Class/Options/Dropdown');
 local EditBox = addon.import('Class/Options/EditBox');
 local CallbackHandler = addon.import('Class/CallbackHandler');
 
+local ON_FIRST_LOAD = 'OnFirstLoad';
+local ON_REFRESH = 'OnRefresh';
+local ON_COMMIT = 'OnCommit';
+local ON_CANCEL = 'OnCancel';
+
 local Panel = addon.export('Class/Options/Panel', {});
 local panelCount = 0;
 local lastOpenedPanel;
@@ -30,12 +35,22 @@ local function generatePanelName ()
   return panelName;
 end
 
+local function handleFirstLoad (self)
+  local callbackHandler = self:__getCallbackHandler();
+
+  self.loaded = true;
+
+  callbackHandler:call(ON_FIRST_LOAD, self);
+  callbackHandler:removeCallback(ON_REFRESH, handleFirstLoad);
+end
+
 function Panel:new (name, parent)
   parent = parent or UIParent;
 
   local this = CreateFromMixins(Panel);
   local panel = CreateFrame('Frame', generatePanelName(), parent);
 
+  this.loaded = false;
   this.name = name;
   this.panel = panel;
   this.anchor = {
@@ -46,10 +61,10 @@ function Panel:new (name, parent)
   panel.name = name;
   panel.parent = parent.name;
 
-  this:addPanelHandler('OnCommit', 'okay');
+  this:addPanelHandler(ON_COMMIT, 'okay');
   this:addPanelHandler('OnDefault', 'default');
-  this:addPanelHandler('OnRefresh', 'refresh');
-  this:addPanelHandler('OnCancel', 'cancel');
+  this:addPanelHandler(ON_REFRESH, 'refresh');
+  this:addPanelHandler(ON_CANCEL, 'cancel');
 
   if (Settings) then
     local category = Settings.GetCategory(parent.name);
@@ -72,6 +87,8 @@ function Panel:new (name, parent)
   };
 
   this.childCount = 0;
+
+  this:OnLoad(handleFirstLoad);
 
   panel:HookScript('OnShow', function ()
     lastOpenedPanel = this;
@@ -136,15 +153,23 @@ function Panel:open ()
 end
 
 function Panel:OnSave (callback)
-  self:__addCallback('OnCommit', callback);
+  self:__addCallback(ON_COMMIT, callback);
 end
 
 function Panel:OnCancel (callback)
-  self:__addCallback('OnCancel', callback);
+  self:__addCallback(ON_CANCEL, callback);
 end
 
 function Panel:OnLoad (callback)
-  self:__addCallback('OnRefresh', callback);
+  self:__addCallback(ON_REFRESH, callback);
+end
+
+function Panel:OnFirstLoad (callback)
+  if (self.loaded == true) then
+    callback(self);
+  else
+    self:__getCallbackHandler():addCallback(ON_FIRST_LOAD, callback);
+  end
 end
 
 function Panel:applyOptions (options, optionMap)
@@ -160,15 +185,16 @@ function Panel:RestoreOptions (options, optionMap)
 end
 
 function Panel:mapOptions (options, optionMap)
+  local function restore ()
+    self:RestoreOptions(options, optionMap);
+  end
+
+  self:OnCancel(restore);
+  self:OnFirstLoad(restore);
+
   self:OnSave(function ()
     self:applyOptions(options, optionMap);
   end);
-
-  self:OnCancel(function ()
-    self:RestoreOptions(options, optionMap);
-  end);
-
-  self:RestoreOptions(options, optionMap);
 end
 
 function Panel:addButton (text, onClick)

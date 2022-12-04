@@ -1,3 +1,1 @@
-- Fixed option panels resetting when switching between categories
-- Improved reputation detection code
-- Improved (classic) skill detection code
+- Fixed option panel resetting to default values introduced in 3.16
