@@ -19,6 +19,9 @@ local EditBox = addon.import('Class/Options/EditBox');
 local CallbackHandler = addon.import('Class/CallbackHandler');
 
 local ON_FIRST_LOAD = 'OnFirstLoad';
+local ON_REFRESH = 'OnRefresh';
+local ON_COMMIT = 'OnCommit';
+local ON_CANCEL = 'OnCancel';
 
 local Panel = addon.export('Class/Options/Panel', {});
 local panelCount = 0;
@@ -38,7 +41,7 @@ local function handleFirstLoad (self)
   self.loaded = true;
 
   callbackHandler:call(ON_FIRST_LOAD, self);
-  callbackHandler:removeCallback('OnRefresh', handleFirstLoad);
+  callbackHandler:removeCallback(ON_REFRESH, handleFirstLoad);
 end
 
 function Panel:new (name, parent)
@@ -58,10 +61,10 @@ function Panel:new (name, parent)
   panel.name = name;
   panel.parent = parent.name;
 
-  this:addPanelHandler('OnCommit', 'okay');
+  this:addPanelHandler(ON_COMMIT, 'okay');
   this:addPanelHandler('OnDefault', 'default');
-  this:addPanelHandler('OnRefresh', 'refresh');
-  this:addPanelHandler('OnCancel', 'cancel');
+  this:addPanelHandler(ON_REFRESH, 'refresh');
+  this:addPanelHandler(ON_CANCEL, 'cancel');
 
   if (Settings) then
     local category = Settings.GetCategory(parent.name);
@@ -150,22 +153,22 @@ function Panel:open ()
 end
 
 function Panel:OnSave (callback)
-  self:__addCallback('OnCommit', callback);
+  self:__addCallback(ON_COMMIT, callback);
 end
 
 function Panel:OnCancel (callback)
-  self:__addCallback('OnCancel', callback);
+  self:__addCallback(ON_CANCEL, callback);
 end
 
 function Panel:OnLoad (callback)
-  self:__addCallback('OnRefresh', callback);
+  self:__addCallback(ON_REFRESH, callback);
 end
 
 function Panel:OnFirstLoad (callback)
   if (self.loaded == true) then
     callback(self);
   else
-    self:__getCallbackHandler():addCallback('OnFirstLoad', callback);
+    self:__getCallbackHandler():addCallback(ON_FIRST_LOAD, callback);
   end
 end
 

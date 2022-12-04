@@ -3,7 +3,6 @@ local addonName, addon = ...;
 if (not addon.isDetectorAvailable('items')) then return end
 
 local tinsert = _G.tinsert;
-local strtrim = _G.strtrim;
 local strsplit = _G.strsplit;
 
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
