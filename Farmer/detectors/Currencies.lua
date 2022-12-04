@@ -57,6 +57,11 @@ local function readCurrencyTable ()
   while (index <= listSize) do
     local info = GetCurrencyListInfo(index);
 
+    if (info == nil) then
+      addon.printAddonMessage('Could not check currencies as another addon seems to be interfering with the currency pane');
+      break;
+    end
+
     if (info.isHeader) then
       if (not info.isHeaderExpanded) then
         tinsert(expandedIndices, index);
