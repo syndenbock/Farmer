@@ -8,6 +8,7 @@ local tinsert = _G.tinsert;
 local C_Reputation = _G.C_Reputation;
 local GetFactionParagonInfo = C_Reputation and C_Reputation.GetFactionParagonInfo;
 local IsFactionParagon = C_Reputation and C_Reputation.IsFactionParagon;
+local IsMajorFaction = C_Reputation.IsMajorFaction;
 
 local GetNumFactions = _G.GetNumFactions;
 local GetFactionInfo = _G.GetFactionInfo;
@@ -55,25 +56,27 @@ local function iterateReputations (callback)
   local info = {};
   local numFactions = GetNumFactions();
   local expandedIndices = {};
-  local i = 1;
+  local index = 1;
 
   --[[ we have to use a while loop, because a for loop would end when reaching
        the last loop, even when numFactions increases in that loop --]]
-  while (i <= numFactions) do
-    local factionInfo = packFactionInfo(i);
+  while (index <= numFactions) do
+    local factionInfo = packFactionInfo(index);
 
-    if (factionInfo.isHeader and factionInfo.isCollapsed) then
-      tinsert(expandedIndices, i);
-      ExpandFactionHeader(i);
-      numFactions = GetNumFactions();
+    if (not (IsMajorFaction and IsMajorFaction(factionInfo.faction))) then
+      if (factionInfo.isHeader and factionInfo.isCollapsed) then
+        tinsert(expandedIndices, index);
+        ExpandFactionHeader(index);
+        numFactions = GetNumFactions();
+      end
+
+      if (factionInfo.hasRep or not factionInfo.isHeader) then
+        updateParagonInfo(factionInfo);
+        callback(factionInfo);
+      end
     end
 
-    if (factionInfo.hasRep or not factionInfo.isHeader) then
-      updateParagonInfo(factionInfo);
-      callback(factionInfo);
-    end
-
-    i = i + 1;
+    index = index + 1;
   end
 
   collapseExpandedReputations(expandedIndices);

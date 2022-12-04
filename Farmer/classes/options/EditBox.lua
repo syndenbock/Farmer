@@ -94,10 +94,9 @@ function EditBox:GetText ()
   return self.textField:GetText();
 end
 
-EditBox.GetValue = EditBox.GetText;
-
 function EditBox:SetText (text)
   self.textField:SetText(text);
 end
 
+EditBox.GetValue = EditBox.GetText;
 EditBox.SetValue = EditBox.SetText;

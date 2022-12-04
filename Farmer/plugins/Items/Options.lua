@@ -41,10 +41,10 @@ local function stringifyItemIds (map)
 end
 
 local function parseItemIdLine (list, line)
-  line = strtrim(line);
+  local itemId = tonumber(line);
 
-  if (line ~= '') then
-    list[tonumber(line)] = true;
+  if (itemId ~= nil) then
+    list[itemId] = true;
   end
 end
 
@@ -96,9 +96,7 @@ do
   panel:addLabel(L['focused item ids:']);
   focusIdBox = panel:addEditBox(150, 180);
 
-  panel:OnLoad(function ()
-    focusIdBox:SetText(stringifyItemIds(options.focusItems));
-  end);
+  focusIdBox:SetText(stringifyItemIds(options.focusItems));
 
   panel:OnSave(function ()
     options.focusItems = parseItemIds(focusIdBox:GetText());
