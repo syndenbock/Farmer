@@ -63,6 +63,11 @@ local function iterateReputations (callback)
   while (index <= numFactions) do
     local factionInfo = packFactionInfo(index);
 
+    if (factionInfo.faction == nil) then
+      addon.printAddonMessage('Could not check factions as another addon seems to be interfering with the reputation pane');
+      break;
+    end
+
     if (not (IsMajorFaction and IsMajorFaction(factionInfo.faction))) then
       if (factionInfo.isHeader and factionInfo.isCollapsed) then
         tinsert(expandedIndices, index);

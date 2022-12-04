@@ -25,10 +25,14 @@ local TEXTURE_COPPER, TEXTURE_SILVER, TEXTURE_GOLD = (function ()
     getCoinTexture('coin-gold', 'UI-Gold');
 end)();
 
-local ADDON_MESSAGE_PREFIX = '|cff00ffff' .. addonName .. '|r: ';
+local ADDON_MESSAGE_PREFIX = '|cff00ffff' .. addonName .. '|r:';
 
-function addon.createAddonMessage (message)
-  return ADDON_MESSAGE_PREFIX .. message;
+function addon.createAddonMessage (...)
+  return strjoin(' ', ADDON_MESSAGE_PREFIX, ...);
+end
+
+function addon.printAddonMessage (...)
+  print(ADDON_MESSAGE_PREFIX, ...);
 end
 
 function addon.stringStartsWith (string, check)
