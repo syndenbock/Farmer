@@ -49,7 +49,7 @@ function Panel:new (name, parent)
   this:addPanelHandler('OnCommit', 'okay');
   this:addPanelHandler('OnDefault', 'default');
   this:addPanelHandler('OnRefresh', 'refresh');
-  this:addPanelHandler('OnCanel', 'cancel');
+  this:addPanelHandler('OnCancel', 'cancel');
 
   if (Settings) then
     local category = Settings.GetCategory(parent.name);
@@ -110,11 +110,17 @@ function Panel:__addCallback (identifier, callback)
 end
 
 function Panel:addPanelHandler (identifier, ...)
-  local function handler ()
-    self:__getCallbackHandler():call(identifier);
+  local handler;
+
+  if (self.panel[identifier]) then
+    handler = self.panel[identifier];
+  else
+    handler = function ()
+      self:__getCallbackHandler():call(identifier, self);
+    end
+    self.panel[identifier] = handler;
   end
 
-  self.panel[identifier] = handler;
   for x = 1, select('#', ...), 1 do
     self.panel[select(x, ...)] = handler;
   end
@@ -141,18 +147,28 @@ function Panel:OnLoad (callback)
   self:__addCallback('OnRefresh', callback);
 end
 
+function Panel:applyOptions (options, optionMap)
+  for option, element in pairs(optionMap) do
+    options[option] = element:GetValue();
+  end
+end
+
+function Panel:RestoreOptions (options, optionMap)
+  for option, element in pairs(optionMap) do
+    element:SetValue(options[option]);
+  end
+end
+
 function Panel:mapOptions (options, optionMap)
   self:OnSave(function ()
-    for option, element in pairs(optionMap) do
-      options[option] = element:GetValue();
-    end
+    self:applyOptions(options, optionMap);
   end);
 
-  self:OnLoad(function ()
-    for option, element in pairs(optionMap) do
-      element:SetValue(options[option]);
-    end
+  self:OnCancel(function ()
+    self:RestoreOptions(options, optionMap);
   end);
+
+  self:RestoreOptions(options, optionMap);
 end
 
 function Panel:addButton (text, onClick)

@@ -96,9 +96,7 @@ do
   panel:addLabel(L['focused item ids:']);
   focusIdBox = panel:addEditBox(150, 180);
 
-  panel:OnLoad(function ()
-    focusIdBox:SetText(stringifyItemIds(options.focusItems));
-  end);
+  focusIdBox:SetText(stringifyItemIds(options.focusItems));
 
   panel:OnSave(function ()
     options.focusItems = parseItemIds(focusIdBox:GetText());
