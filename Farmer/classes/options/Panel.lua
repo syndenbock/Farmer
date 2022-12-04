@@ -18,6 +18,8 @@ local Dropdown = addon.import('Class/Options/Dropdown');
 local EditBox = addon.import('Class/Options/EditBox');
 local CallbackHandler = addon.import('Class/CallbackHandler');
 
+local ON_FIRST_LOAD = 'OnFirstLoad';
+
 local Panel = addon.export('Class/Options/Panel', {});
 local panelCount = 0;
 local lastOpenedPanel;
@@ -30,12 +32,22 @@ local function generatePanelName ()
   return panelName;
 end
 
+local function handleFirstLoad (self)
+  local callbackHandler = self:__getCallbackHandler();
+
+  self.loaded = true;
+
+  callbackHandler:call(ON_FIRST_LOAD, self);
+  callbackHandler:removeCallback('OnRefresh', handleFirstLoad);
+end
+
 function Panel:new (name, parent)
   parent = parent or UIParent;
 
   local this = CreateFromMixins(Panel);
   local panel = CreateFrame('Frame', generatePanelName(), parent);
 
+  this.loaded = false;
   this.name = name;
   this.panel = panel;
   this.anchor = {
@@ -72,6 +84,8 @@ function Panel:new (name, parent)
   };
 
   this.childCount = 0;
+
+  this:OnLoad(handleFirstLoad);
 
   panel:HookScript('OnShow', function ()
     lastOpenedPanel = this;
@@ -147,6 +161,14 @@ function Panel:OnLoad (callback)
   self:__addCallback('OnRefresh', callback);
 end
 
+function Panel:OnFirstLoad (callback)
+  if (self.loaded == true) then
+    callback(self);
+  else
+    self:__getCallbackHandler():addCallback('OnFirstLoad', callback);
+  end
+end
+
 function Panel:applyOptions (options, optionMap)
   for option, element in pairs(optionMap) do
     options[option] = element:GetValue();
@@ -160,15 +182,16 @@ function Panel:RestoreOptions (options, optionMap)
 end
 
 function Panel:mapOptions (options, optionMap)
+  local function restore ()
+    self:RestoreOptions(options, optionMap);
+  end
+
+  self:OnCancel(restore);
+  self:OnFirstLoad(restore);
+
   self:OnSave(function ()
     self:applyOptions(options, optionMap);
   end);
-
-  self:OnCancel(function ()
-    self:RestoreOptions(options, optionMap);
-  end);
-
-  self:RestoreOptions(options, optionMap);
 end
 
 function Panel:addButton (text, onClick)
