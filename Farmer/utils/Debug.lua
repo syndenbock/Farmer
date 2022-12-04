@@ -1,4 +1,4 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 local tostring = _G.tostring;
 local tinsert = _G.tinsert;
@@ -42,7 +42,7 @@ local function printElements (...)
     tinsert(strings, stringifyElement(element));
   end
 
-  print(addonName, 'debug:', addon.stringJoin(strings, ' '));
+  addon.printAddonMessage('Debug:', addon.stringJoin(strings, ' '));
 end
 
 function Debug.setEnabled (value)

@@ -14,7 +14,7 @@ function tests.memory (_addonName)
 end
 
 local function printAvailableTests ()
-  print(addonName .. ': available tests:');
+  addon.printAddonMessage('Available tests:');
   for name in pairs(tests) do
     print(name);
   end
@@ -26,7 +26,7 @@ local function executeTest (name, ...)
   if (test) then
     test(...);
   else
-    print('unknown test:', name);
+    addon.printAddonMessage('Unknown test:', name);
   end
 end
 

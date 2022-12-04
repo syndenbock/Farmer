@@ -132,7 +132,7 @@ local function testItem (id, count)
   if (link) then
     broadCastItem(id, link, count);
   else
-    print(addonName .. ': no data for item id', id);
+    addon.printAddonMessage('No data for item id', id);
   end
 end
 
