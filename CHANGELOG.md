@@ -1,1 +1,3 @@
-- Fixed error in reputation detector
+- Fixed option panels resetting when switching between categories
+- Improved reputation detection code
+- Improved (classic) skill detection code
