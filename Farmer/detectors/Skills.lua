@@ -32,6 +32,10 @@ local function iterateSkills (callback)
     local info = {GetSkillLineInfo(i)};
     local isHeader = info[2];
 
+    if (info[1] == nil) then
+      addon.printAddonMessage('Could not check skills as another addon seems to be interfering with the skills pane');
+    end
+
     if (isHeader) then
       local isExpanded = info[3];
 
