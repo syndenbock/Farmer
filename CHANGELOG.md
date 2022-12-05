@@ -1,1 +1,1 @@
-- Fixed option panel resetting to default values introduced in 3.16
+- Prevent error when another addon is interfering with the Reputation, Skills or Profession panes while their information is being read

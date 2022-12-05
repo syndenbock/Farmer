@@ -44,7 +44,7 @@ local function collapseExpandedCurrencies (expandedIndices)
   --[[ the headers have to be collapsed from bottom to top, because collapsing
        top ones first would change the index of the lower ones  --]]
   for x = #expandedIndices, 1, -1 do
-    ExpandCurrencyList(expandedIndices[x], 0);
+    ExpandCurrencyList(expandedIndices[x], false);
   end
 end
 
@@ -57,10 +57,15 @@ local function readCurrencyTable ()
   while (index <= listSize) do
     local info = GetCurrencyListInfo(index);
 
+    if (info == nil) then
+      addon.printAddonMessage('Could not check currencies as another addon seems to be interfering with the currency pane');
+      break;
+    end
+
     if (info.isHeader) then
-      if (not info.isExpanded) then
+      if (not info.isHeaderExpanded) then
         tinsert(expandedIndices, index);
-        ExpandCurrencyList(index, 1);
+        ExpandCurrencyList(index, true);
         listSize = GetCurrencyListSize();
       end
     else

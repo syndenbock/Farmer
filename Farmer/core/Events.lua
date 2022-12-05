@@ -44,7 +44,7 @@ end
 
 local function callForEvents (events, callback, method)
   assert(type(callback) == 'function',
-    addonName .. ': callback is not a function');
+      addonName .. ': callback is not a function');
 
   if (type(events) == 'table') then
     for _, event in ipairs(events) do

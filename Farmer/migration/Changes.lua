@@ -55,5 +55,5 @@ Migration.addMigration('3.4.2', function ()
 end);
 
 addon.slash('version', function ()
-  print(addonName .. ' version ' .. VERSION_TOC);
+  addon.printAddonMessage('Version is', VERSION_TOC);
 end);

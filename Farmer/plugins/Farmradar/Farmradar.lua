@@ -55,8 +55,7 @@ end
 
 local function setFrameShown (frame, shown)
   if (frame.IsProtected and frame:IsProtected() and InCombatLockdown()) then
-    print(addonName, 'could not hide or show a protected frame, ' ..
-        'please toggle farm mode after the fight.');
+    addon.printAddonMessage('Could not hide or show a protected frame, please toggle farm mode after the fight.');
     return;
   end
 
@@ -101,9 +100,7 @@ end
 
 local function isMinimapTainted ()
   if (Minimap:IsProtected() and not fixMinimapTaint()) then
-    print(addonName ..
-        ': some addon tainted the minimap, please toggle outside of combat');
-
+    addon.printAddonMessage('Some addon tainted the minimap, please toggle outside of combat');
     return true;
   end
 

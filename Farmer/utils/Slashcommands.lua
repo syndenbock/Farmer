@@ -19,7 +19,7 @@ local function executeSlashCommand (command, ...)
   local handler = slashCommands[command];
 
   if (not handler) then
-    return print(addonName .. ': ' .. L['unknown command'] .. ' "' .. command .. '"');
+    return addon.printAddonMessage(L['unknown command'], '"' .. command .. '"');
   end
 
   handler(...);
