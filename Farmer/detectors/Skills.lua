@@ -33,7 +33,7 @@ local function iterateSkills (callback)
     local isHeader = info[2];
 
     if (info[1] == nil) then
-      addon.printAddonMessage('Could not check skills as another addon seems to be interfering with the skills pane');
+      addon.printOneTimeMessage('Could not check skills as another addon seems to be interfering with the skills pane');
     end
 
     if (isHeader) then

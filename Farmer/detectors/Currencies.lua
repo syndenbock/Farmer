@@ -58,7 +58,7 @@ local function readCurrencyTable ()
     local info = GetCurrencyListInfo(index);
 
     if (info == nil) then
-      addon.printAddonMessage('Could not check currencies as another addon seems to be interfering with the currency pane');
+      addon.printOneTimeMessage('Could not check currencies as another addon seems to be interfering with the currency pane');
       break;
     end
 
