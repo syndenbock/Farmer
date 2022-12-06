@@ -64,7 +64,7 @@ local function iterateReputations (callback)
     local factionInfo = packFactionInfo(index);
 
     if (factionInfo.faction == nil) then
-      addon.printAddonMessage('Could not check factions as another addon seems to be interfering with the reputation pane');
+      addon.printOneTimeMessage('Could not check factions as another addon seems to be interfering with the reputation pane');
       break;
     end
 

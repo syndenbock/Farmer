@@ -11,6 +11,8 @@ local COPPER_PER_GOLD = _G.COPPER_PER_GOLD;
 local COPPER_PER_SILVER = _G.COPPER_PER_SILVER;
 local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
 
+local oneTimeMessages = {};
+
 local TEXTURE_COPPER, TEXTURE_SILVER, TEXTURE_GOLD = (function ()
   local GetAtlasInfo = _G.C_Texture.GetAtlasInfo;
   local CreateAtlasMarkup = _G.CreateAtlasMarkup;
@@ -33,6 +35,15 @@ end
 
 function addon.printAddonMessage (...)
   print(ADDON_MESSAGE_PREFIX, ...);
+end
+
+function addon.printOneTimeMessage (...)
+  local message = strjoin(' ', ...);
+
+  if (oneTimeMessages[message] == nil) then
+    addon.printAddonMessage(message);
+    oneTimeMessages[message] = true;
+  end
 end
 
 function addon.stringStartsWith (string, check)
