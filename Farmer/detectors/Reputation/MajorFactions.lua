@@ -18,6 +18,7 @@ local function storeMajorFaction (majorFactionInfo)
   majorFactionCache[majorFactionInfo.factionID] = {
     renownReputationEarned = majorFactionInfo.renownReputationEarned,
     renownLevel = majorFactionInfo.renownLevel,
+    renownLevelThreshold = majorFactionInfo.renownLevelThreshold,
   };
 end
 
@@ -32,19 +33,27 @@ end
 local function updateMajorFaction (cachedInfo, majorFactionInfo)
   cachedInfo.renownReputationEarned = majorFactionInfo.renownReputationEarned;
   cachedInfo.renownLevel = majorFactionInfo.renownLevel;
+  cachedInfo.renownLevelThreshold = majorFactionInfo.renownLevelThreshold;
 end
 
 local function checkMajorFaction (majorFactionInfo)
   local cachedInfo = majorFactionCache[majorFactionInfo.factionID];
+  local renownLevelChanged = false;
+  local reputationChange =
+      majorFactionInfo.renownReputationEarned - cachedInfo.renownReputationEarned;
 
-  if (cachedInfo.renownReputationEarned ~=
-      majorFactionInfo.renownReputationEarned) then
+  if (majorFactionInfo.renownLevel > cachedInfo.renownLevel) then
+    renownLevelChanged = true;
+    reputationChange = reputationChange + cachedInfo.renownLevelThreshold;
+  end
+
+  if (reputationChange ~= 0) then
     yellReputation({
+      name = majorFactionInfo.name,
       faction = majorFactionInfo.factionID,
-      reputationChange = majorFactionInfo.renownReputationEarned -
-          cachedInfo.renownReputationEarned,
-      renownLevel = cachedInfo.renownLevel,
-      renownLevelChanged = cachedInfo.renownLevelChanged,
+      reputationChange = reputationChange,
+      renownLevel = majorFactionInfo.renownLevel,
+      renownLevelChanged = renownLevelChanged,
     });
 
     updateMajorFaction(cachedInfo, majorFactionInfo);
