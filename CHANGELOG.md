@@ -1,1 +1,1 @@
-- Addon interference warning messages are now only printed once per session
+- Some bugfixes in reputation and profession detectors
