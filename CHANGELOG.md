@@ -1,1 +1,1 @@
-- Prevent error when another addon is interfering with the Reputation, Skills or Profession panes while their information is being read
+- Addon interference warning messages are now only printed once per session
