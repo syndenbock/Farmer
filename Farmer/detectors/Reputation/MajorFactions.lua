@@ -40,6 +40,7 @@ local function checkMajorFaction (majorFactionInfo)
   if (cachedInfo.renownReputationEarned ~=
       majorFactionInfo.renownReputationEarned) then
     yellReputation({
+      name = majorFactionInfo.name,
       faction = majorFactionInfo.factionID,
       reputationChange = majorFactionInfo.renownReputationEarned -
           cachedInfo.renownReputationEarned,

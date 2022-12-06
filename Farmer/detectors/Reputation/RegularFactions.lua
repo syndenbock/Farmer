@@ -8,7 +8,7 @@ local tinsert = _G.tinsert;
 local C_Reputation = _G.C_Reputation;
 local GetFactionParagonInfo = C_Reputation and C_Reputation.GetFactionParagonInfo;
 local IsFactionParagon = C_Reputation and C_Reputation.IsFactionParagon;
-local IsMajorFaction = C_Reputation.IsMajorFaction;
+local IsMajorFaction = C_Reputation.IsMajorFaction or function () return false end;
 
 local GetNumFactions = _G.GetNumFactions;
 local GetFactionInfo = _G.GetFactionInfo;
@@ -43,6 +43,7 @@ local function packFactionInfo (index)
   local factionInfo = {GetFactionInfo(index)};
 
   return {
+    name = factionInfo[1],
     faction = factionInfo[14],
     standing = factionInfo[3],
     reputation = factionInfo[6],
@@ -63,22 +64,20 @@ local function iterateReputations (callback)
   while (index <= numFactions) do
     local factionInfo = packFactionInfo(index);
 
-    if (factionInfo.faction == nil) then
+    if (factionInfo.name == nil) then
       addon.printOneTimeMessage('Could not check factions as another addon seems to be interfering with the reputation pane');
       break;
     end
 
-    if (not (IsMajorFaction and IsMajorFaction(factionInfo.faction))) then
-      if (factionInfo.isHeader and factionInfo.isCollapsed) then
-        tinsert(expandedIndices, index);
-        ExpandFactionHeader(index);
-        numFactions = GetNumFactions();
-      end
+    if (factionInfo.isHeader and factionInfo.isCollapsed) then
+      tinsert(expandedIndices, index);
+      ExpandFactionHeader(index);
+      numFactions = GetNumFactions();
+    end
 
-      if (factionInfo.hasRep or not factionInfo.isHeader) then
-        updateParagonInfo(factionInfo);
-        callback(factionInfo);
-      end
+    if (factionInfo.faction and not IsMajorFaction(factionInfo.faction)) then
+      updateParagonInfo(factionInfo);
+      callback(factionInfo);
     end
 
     index = index + 1;
@@ -115,6 +114,7 @@ local function handleNewReputation (factionInfo)
   if (factionInfo.reputation ~= 0) then
     storeReputation(factionInfo);
     yellReputation({
+      name = factionInfo.name,
       faction = factionInfo.faction,
       reputationChange = factionInfo.reputation,
       standing = factionInfo.standing,
