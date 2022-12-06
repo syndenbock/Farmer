@@ -62,9 +62,9 @@ local function checkProfessions ()
   end
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+addon.onOnce('SKILL_LINES_CHANGED', function ()
   professionCache = readProfessionSkillLines();
-  addon.on('CHAT_MSG_SKILL', checkProfessions);
+  addon.on('SKILL_LINES_CHANGED', checkProfessions);
 end);
 
 --##############################################################################
