@@ -56,7 +56,7 @@ local function checkPetById (petMap, petQueue, petId, petInfo)
   if (isFavorite) then
     local petName = petInfo[8];
 
-    print(petName .. ' is owned 3 times, but favorited');
+    addon.printAddonMessage(petName .. ' is owned 3 times, but favorited');
     return;
   end
 

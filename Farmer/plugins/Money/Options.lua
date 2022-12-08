@@ -39,7 +39,7 @@ addon.slash('gold', function (param)
 
   if (param == 'reset') then
     charOptions.earningStamp = money;
-    print(L['Money counter was reset']);
+    addon.printAddonMessage(L['Money counter was reset']);
     return;
   end
 
@@ -47,8 +47,8 @@ addon.slash('gold', function (param)
   local text = addon.formatMoney(abs(difference));
 
   if (difference >= 0) then
-    print(L['Money earned this session: '] .. text);
+    addon.printAddonMessage(L['Money earned this session: '] .. text);
   else
-    print(L['Money lost this session: '] .. text);
+    addon.printAddonMessage(L['Money lost this session: '] .. text);
   end
 end);
