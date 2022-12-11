@@ -111,11 +111,11 @@ function addon.extractNormalizedItemString (itemLink)
   --[[ the 9th and 10th positions contain character level and spec, which causes
        different links after levelups or spec swaps and therefor have to be
        removed ]]
-  local pattern = '.*(item:.-:.-:.-:.-:.-:.-:.-:.-:)(.-:)(.-:)([%-?%d:]*).*';
+  local pattern = '.*(item:.-:.-:.-:.-:.-:.-:.-:.-:)(.-:.-:)([%-?%d:]*).*';
   local match = {strmatch(itemLink, pattern)};
 
-  if (#match >= 4) then
-    return strjoin('', match[1], '::', match[4]);
+  if (#match >= 3) then
+    return strjoin('', match[1], '::', match[3]);
   else
     return nil;
   end
