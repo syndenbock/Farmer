@@ -42,12 +42,10 @@ local function checkProfessionChange (id)
   local newInfo = GetProfessionInfoBySkillLineID(id);
 
   if (oldInfo ~= nil) then
-    local level = newInfo.skillLevel;
+    if (newInfo.skillLevel ~= oldInfo.skillLevel) then
+      local change = newInfo.skillLevel - oldInfo.skillLevel;
 
-    if (level ~= oldInfo.skillLevel) then
-      local change = level - oldInfo.skillLevel;
-
-      oldInfo.skillLevel = level;
+      oldInfo.skillLevel = newInfo.skillLevel;
       yellProfession(oldInfo, change);
     end
   elseif (newInfo.skillLevel ~= 0) then
@@ -64,7 +62,7 @@ end
 
 addon.onOnce('SKILL_LINES_CHANGED', function ()
   professionCache = readProfessionSkillLines();
-  addon.on('SKILL_LINES_CHANGED', checkProfessions);
+  addon.on('CHAT_MSG_SKILL', checkProfessions);
 end);
 
 --##############################################################################
