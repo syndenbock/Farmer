@@ -28,62 +28,73 @@ function Storage:getChanges ()
 end
 
 function Storage:setSlot (slot, id, link, count)
-  local previousContent = self.items[slot];
+  local content = self.items[slot];
 
-  if (previousContent == nil) then
-    self:addChange(id, link, count);
-    self.items[slot] = {
-      id = id,
-      count = count,
-      link = link,
-    };
-  elseif (previousContent.link ~= link) then
-    self:addChange(previousContent.id, previousContent.link,
-        -previousContent.count);
-    self:addChange(id, link, count);
-
-    previousContent.id = id;
-    previousContent.link = link;
-    previousContent.count = count;
-  elseif (previousContent.count ~= count) then
-    self:addChange(id, link, count - previousContent.count);
-    previousContent.count = count;
+  if (content == nil) then
+    self:__fillSlot(slot, id, link, count);
+  elseif (content.link ~= link) then
+    self:__updateSlot(content, id, link, count);
+  elseif (content.count ~= count) then
+    self:__updateCount(content, id, link, count);
   end
+end
+
+function Storage:__fillSlot (slot, id, link, count)
+  self:addChange(id, link, count);
+  self.items[slot] = {
+    id = id,
+    count = count,
+    link = link,
+  };
+end
+
+function Storage:__updateSlot (content, id, link, count)
+  self:__applySlotClearChange(content);
+  self:addChange(id, link, count);
+
+  content.id = id;
+  content.link = link;
+  content.count = count;
+end
+
+function Storage:__updateCount (content, id, link, count)
+  self:addChange(id, link, count - content.count);
+  content.count = count;
 end
 
 function Storage:clearSlot (slot)
-  self:applySlotClearChange(slot);
-  self.items[slot] = nil;
+  if (self.items[slot] ~= nil) then
+    self:__applySlotClearChange(self.items[slot]);
+    self.items[slot] = nil;
+  end
 end
 
-function Storage:applySlotClearChange (slot)
-  local previousContent = self.items[slot];
-
-  if (previousContent == nil) then
-    return;
-  end
-
-  self:addChange(previousContent.id, previousContent.link,
-      -previousContent.count);
+function Storage:__applySlotClearChange (content)
+  self:addChange(content.id, content.link, -content.count);
 end
 
 function Storage:addChange (id, link, count)
   local changes = self.changes[id];
 
   if (changes == nil) then
-    self.changes[id] = {
-      count = count,
-      links = {
-        [link] = count,
-      },
-    };
-    return;
+    self:__createChange(id, link, count);
+  else
+    self:__updateChanges(changes, link, count);
   end
+end
 
-  local links = changes.links;
+function Storage:__createChange (id, link, count)
+  self.changes[id] = {
+    count = count,
+    links = {
+      [link] = count,
+    },
+  };
+end
 
+function Storage:__updateChanges (changes, link, count)
   changes.count = changes.count + count;
-  links[link] = (links[link] or 0) + count;
+  changes.links[link] = (changes.links[link] or 0) + count;
 end
 
 function Storage:printContents ()
