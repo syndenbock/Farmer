@@ -60,7 +60,7 @@ local function checkProfessions ()
   end
 end
 
-addon.onOnce('SKILL_LINES_CHANGED', function ()
+addon.onOnce('TRADE_SKILL_SHOW', function ()
   professionCache = readProfessionSkillLines();
   addon.on('CHAT_MSG_SKILL', checkProfessions);
 end);
