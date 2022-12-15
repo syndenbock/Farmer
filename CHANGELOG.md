@@ -1,1 +1,1 @@
-- Some bugfixes in reputation and profession detectors
+- Added debugging handler for an error some people encounter
