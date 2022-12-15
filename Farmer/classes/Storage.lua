@@ -28,6 +28,13 @@ function Storage:getChanges ()
 end
 
 function Storage:setSlot (slot, id, link, count)
+  if (link == nil) then
+    addon.printAddonMessage('No link found for item id ' .. id .. '.');
+    print('Please report this id on CurseForge or GitHub!');
+    self:clearSlot(slot);
+    return;
+  end
+
   local content = self.items[slot];
 
   if (content == nil) then
