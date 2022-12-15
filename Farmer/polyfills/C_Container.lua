@@ -20,23 +20,21 @@ function module.GetContainerItemInfo (containerIndex, slotIndex)
   -- data is not ready yet
   local itemID = GetContainerItemID(containerIndex, slotIndex);
 
-  if (itemID == nil) then
-    return nil;
+  if (itemID) then
+    local info = {GetContainerItemInfo(containerIndex, slotIndex)};
+
+    return {
+      iconFileID = info[1],
+      stackCount = info[2],
+      isLocked = info[3],
+      quality = info[4],
+      isReadable = info[5],
+      hasLoot = info[6],
+      hyperlink = info[7],
+      isFiltered = info[8],
+      hasNoValue = info[9],
+      itemID = itemID,
+      isBound = info[11],
+    };
   end
-
-  local info = {GetContainerItemInfo(containerIndex, slotIndex)};
-
-  return {
-    iconFileID = info[1],
-    stackCount = info[2],
-    isLocked = info[3],
-    quality = info[4],
-    isReadable = info[5],
-    hasLoot = info[6],
-    hyperlink = info[7],
-    isFiltered = info[8],
-    hasNoValue = info[9],
-    itemID = itemID,
-    isBound = info[11],
-  };
 end

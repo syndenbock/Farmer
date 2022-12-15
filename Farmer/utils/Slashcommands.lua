@@ -1,7 +1,6 @@
 local addonName, addon = ...;
 
 local strsplit = _G.strsplit;
-local strlower = _G.strlower;
 local tremove = _G.tremove;
 local unpack = _G.unpack;
 
