@@ -6,7 +6,7 @@ local GetInventoryItemQuality = _G.GetInventoryItemQuality;
 local INVSLOT_OFFHAND = _G.INVSLOT_OFFHAND;
 local ITEM_QUALITY_ARTIFACT = _G.Enum.ItemQuality.Artifact;
 
-local FIRST_INVENTORY_SLOT = 0;
+local FIRST_INVENTORY_SLOT = 1;
 local LAST_INVENTORY_SLOT = (addon.isRetail() and 30) or 19;
 local UNITID_PLAYER = 'player';
 
@@ -61,10 +61,12 @@ local function handleSlotUpdate (_, slot, isEmpty)
   end
 end
 
-addon.onOnce('PLAYER_LOGIN', initEquipment);
--- this is needed to detect gear updates when automatically switching specs
--- when joining an LFG instance
-addon.on('EQUIPMENT_SWAP_FINISHED', updateEquipment);
-addon.on('PLAYER_EQUIPMENT_CHANGED', handleSlotUpdate);
+addon.onOnce('PLAYER_LOGIN', function ()
+  initEquipment();
+  -- this is needed to detect gear updates when automatically switching specs
+  -- when joining an LFG instance
+  addon.on('EQUIPMENT_SWAP_FINISHED', updateEquipment);
+  addon.on('PLAYER_EQUIPMENT_CHANGED', handleSlotUpdate);
+end);
 
 addon.Items.addStorage({currentEquipment});
