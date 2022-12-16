@@ -1,1 +1,1 @@
-- Added debugging handler for an error some people encounter
+- Fix error due to reading ammo equipment slot
