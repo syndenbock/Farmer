@@ -26,13 +26,11 @@ local function readItemChanges (changes, id, itemInfo)
       In reality, that case is extremely rare and the game will propably send
       two BAG_UPDATE_DELAYED events for that anyways, so we can use this to
       gain performance]]
-  if (itemInfo.count == 0) then
-    return;
-  end
-
-  for link, count in pairs(itemInfo.links) do
-    if (count ~= 0) then
-      changes:addChange(id, extractNormalizedItemString(link) or link, count);
+  if (itemInfo.count ~= 0) then
+    for link, count in pairs(itemInfo.links) do
+      if (count ~= 0) then
+        changes:addChange(id, extractNormalizedItemString(link) or link, count);
+      end
     end
   end
 end
@@ -45,6 +43,14 @@ local function readContainerChanges (changes, container)
   container:clearChanges();
 end
 
+local function readStorage (storage)
+  if (type(storage) == 'table') then
+    return storage;
+  else
+    return storage();
+  end
+end
+
 local function readStorageChanges (changes, storage)
   for _, container in pairs(storage) do
     readContainerChanges(changes, container);
@@ -53,7 +59,7 @@ end
 
 local function getInventoryChanges ()
   for storage in pairs(storages) do
-    readStorageChanges(changesStorage, storage);
+    readStorageChanges(changesStorage, readStorage(storage));
   end
 
   return changesStorage:getChanges();
@@ -109,10 +115,7 @@ local function broadCastItemInfo (id, info)
   end
 end
 
---[[ Funneling the check so it executes on the next frame after
-     BAG_UPDATE_DELAYED. This allows storages to update first to avoid race
-     conditions ]]
-addon.funnel('BAG_UPDATE_DELAYED', function ()
+local function checkStorageChanges ()
   for id, info in pairs(getInventoryChanges()) do
     if (info.count ~= 0) then
       broadCastItemInfo(id, info);
@@ -120,7 +123,26 @@ addon.funnel('BAG_UPDATE_DELAYED', function ()
   end
 
   clearInventoryChanges();
-end);
+end
+
+if (addon.isWrathClassic()) then
+  -- Wrath Classic currently doesn't fire BAG_UPDATE_DELAYED reliably so we need
+  -- to use a workaround
+  local hasFired = false;
+  local function handler ()
+    hasFired = false;
+    checkStorageChanges();
+  end
+
+  addon.on('BAG_UPDATE', function ()
+    if (not hasFired) then
+      hasFired = true;
+      C_Timer.After(0, handler);
+    end
+  end);
+else
+  addon.on('BAG_UPDATE_DELAYED', checkStorageChanges);
+end
 
 --##############################################################################
 -- testing

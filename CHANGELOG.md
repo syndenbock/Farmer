@@ -1,1 +1,1 @@
-- Fix error due to reading ammo equipment slot
+- Implemented (hopefully) temporary workaround for Wrath Classic not reliably firing bag updates
