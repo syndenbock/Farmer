@@ -1,3 +1,4 @@
 <UI>
   <script file="C_Container.lua"/>
+  <script file="C_CVar.lua"/>
 </UI>
