@@ -26,13 +26,11 @@ local function readItemChanges (changes, id, itemInfo)
       In reality, that case is extremely rare and the game will propably send
       two BAG_UPDATE_DELAYED events for that anyways, so we can use this to
       gain performance]]
-  if (itemInfo.count == 0) then
-    return;
-  end
-
-  for link, count in pairs(itemInfo.links) do
-    if (count ~= 0) then
-      changes:addChange(id, extractNormalizedItemString(link) or link, count);
+  if (itemInfo.count ~= 0) then
+    for link, count in pairs(itemInfo.links) do
+      if (count ~= 0) then
+        changes:addChange(id, extractNormalizedItemString(link) or link, count);
+      end
     end
   end
 end
