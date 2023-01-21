@@ -7,6 +7,7 @@ local strjoin = _G.strjoin;
 local tinsert = _G.tinsert;
 local floor = _G.floor;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
+local CreateAtlasMarkup = _G.CreateAtlasMarkup;
 local COPPER_PER_GOLD = _G.COPPER_PER_GOLD;
 local COPPER_PER_SILVER = _G.COPPER_PER_SILVER;
 local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
@@ -15,7 +16,6 @@ local oneTimeMessages = {};
 
 local TEXTURE_COPPER, TEXTURE_SILVER, TEXTURE_GOLD = (function ()
   local GetAtlasInfo = _G.C_Texture.GetAtlasInfo;
-  local CreateAtlasMarkup = _G.CreateAtlasMarkup;
 
   local function getCoinTexture (atlas, fallback)
     return (GetAtlasInfo(atlas) and CreateAtlasMarkup(atlas)) or
@@ -105,6 +105,16 @@ end
 
 function addon.extractItemString (itemLink)
   return strmatch(itemLink, 'item[%-?%d:]+');
+end
+
+local craftedQualityIcons = {};
+
+function addon.getCraftedQualityIcon (quality)
+  if (craftedQualityIcons[quality] == nil) then
+    craftedQualityIcons[quality] = CreateAtlasMarkup(('Professions-Icon-Quality-Tier%d-Small'):format(quality), nil, nil, nil, nil, nil);
+  end
+
+  return craftedQualityIcons[quality];
 end
 
 function addon.extractNormalizedItemString (itemLink)
