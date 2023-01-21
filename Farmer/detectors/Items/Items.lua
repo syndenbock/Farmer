@@ -45,6 +45,14 @@ local function readContainerChanges (changes, container)
   container:clearChanges();
 end
 
+local function readStorage (storage)
+  if (type(storage) == 'table') then
+    return storage;
+  else
+    return storage();
+  end
+end
+
 local function readStorageChanges (changes, storage)
   for _, container in pairs(storage) do
     readContainerChanges(changes, container);
@@ -53,7 +61,7 @@ end
 
 local function getInventoryChanges ()
   for storage in pairs(storages) do
-    readStorageChanges(changesStorage, storage);
+    readStorageChanges(changesStorage, readStorage(storage));
   end
 
   return changesStorage:getChanges();

@@ -160,8 +160,6 @@ addon.onOnce('PLAYER_LOGIN', function ()
   initInventory();
 
   addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
-  addon.on('BAG_UPDATE_DELAYED', updateFlaggedBags);
-
   addon.on('BANKFRAME_OPENED', initBank);
   addon.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
   addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, clearBank);
@@ -171,4 +169,7 @@ addon.onOnce('PLAYER_LOGIN', function ()
   end
 end);
 
-addon.Items.addStorage(bagCache);
+addon.Items.addStorage(function ()
+  updateFlaggedBags();
+  return bagCache;
+end);
