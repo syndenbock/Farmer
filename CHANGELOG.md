@@ -1,1 +1,1 @@
-- Implemented (hopefully) temporary workaround for Wrath Classic not reliably firing bag updates
+- Quality of crafted items is now displayed
