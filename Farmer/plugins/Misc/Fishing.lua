@@ -1,7 +1,7 @@
 local addonName, addon = ...;
 
-local GetCVar = _G.GetCVar;
-local SetCVar = _G.SetCVar;
+local GetCVar = addon.import('polyfills/C_CVar').GetCVar;
+local SetCVar = addon.import('polyfills/C_CVar').SetCVar;
 local GetSpellInfo = _G.GetSpellInfo;
 local InCombatLockdown = _G.InCombatLockdown;
 

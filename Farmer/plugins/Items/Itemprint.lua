@@ -84,6 +84,29 @@ local function updateData (item, data)
       data.count;
 end
 
+
+local formatItemName;
+
+do
+  local GetItemCraftedQualityByItemInfo = C_TradeSkillUI and C_TradeSkillUI.GetItemCraftedQualityByItemInfo;
+
+  if (GetItemCraftedQualityByItemInfo) then
+    formatItemName = function (item)
+      local quality = GetItemCraftedQualityByItemInfo(item.link);
+
+      if (quality) then
+        return item.name .. addon.getCraftedQualityIcon(quality);
+      else
+        return item.name;
+      end
+    end
+  else
+    formatItemName = function (item)
+      return item.name;
+    end
+  end
+end
+
 local function printItemDynamic (item, data, forceName)
   updateData(item, data);
 
@@ -96,7 +119,7 @@ local function printItemDynamic (item, data, forceName)
   if (text == '' or
       forceName == true or
       coreOptions.itemNames ==  true) then
-    text = item.name .. ' ' .. text;
+    text = formatItemName(item) .. ' ' .. text;
   end
 
   printIconMessageWithData(SUBSPACE, item.id, data.count,
