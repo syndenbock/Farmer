@@ -1,1 +1,2 @@
-- Quality of crafted items is now displayed
+- Use workaround for BAG_UPDATE_DELAYED bug on the Retail client
+- Updated interface version for Retail 10.0.5
