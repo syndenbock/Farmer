@@ -125,21 +125,12 @@ local function checkStorageChanges ()
   clearInventoryChanges();
 end
 
-if (addon.isWrathClassic()) then
+if (addon.isRetail() or addon.isWrathClassic()) then
   -- Wrath Classic currently doesn't fire BAG_UPDATE_DELAYED reliably so we need
   -- to use a workaround
-  local hasFired = false;
-  local function handler ()
-    hasFired = false;
-    checkStorageChanges();
-  end
-
-  addon.on('BAG_UPDATE', function ()
-    if (not hasFired) then
-      hasFired = true;
-      C_Timer.After(0, handler);
-    end
-  end);
+  -- Because Blizzard has the best programmers in the industry, this is now also
+  -- broken on Retail
+  addon.funnel('BAG_UPDATE', checkStorageChanges);
 else
   addon.on('BAG_UPDATE_DELAYED', checkStorageChanges);
 end
