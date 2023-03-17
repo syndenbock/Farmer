@@ -113,6 +113,10 @@ local function initInventory ()
   end
 end
 
+local function clearBag (_, index)
+  bagCache[index]:clearContent();
+end
+
 --[[ function is used as event callback, so first argument is ignored ]]
 local function flagBag (_, index)
   flaggedBags[index] = true;
@@ -159,7 +163,8 @@ end
 addon.onOnce('PLAYER_LOGIN', function ()
   initInventory();
 
-  addon.on({'BAG_UPDATE', 'BAG_CLOSED'}, flagBag);
+  addon.on('BAG_UPDATE', flagBag);
+  addon.on('BAG_CLOSED', clearBag);
   addon.on('BANKFRAME_OPENED', initBank);
   addon.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
   addon.on({'BANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, clearBank);

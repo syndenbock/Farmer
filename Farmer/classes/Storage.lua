@@ -69,6 +69,12 @@ function Storage:clearSlot (slot)
   end
 end
 
+function Storage:clearContent ()
+  for slot in pairs(self.items) do
+    self:clearSlot(slot);
+  end
+end
+
 function Storage:__applySlotClearChange (content)
   self:addChange(content.id, content.link, -content.count);
 end
