@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 local floor = _G.floor;
 local log10 = _G.log10;
+local xpcall = _G.xpcall;
 
 local geterrorhandler = _G.geterrorhandler;
 
@@ -125,11 +126,7 @@ function addon.transformFrameAnchorsToCenter (frame, anchorFrame)
 end
 
 function addon.secureCall (callback, ...)
-  local success, message = pcall(callback, ...);
-
-  if (not success) then
-    geterrorhandler()(addonName .. ' error: ' .. message);
-  end
+  xpcall(callback, geterrorhandler(), ...);
 end
 
 function addon.measure (callback, ...)
