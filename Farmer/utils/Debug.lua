@@ -61,5 +61,5 @@ end
 function Debug.call (func, ...)
   if (not enabled) then return end
 
-  pcall(func, ...);
+  xpcall(func, geterrorhandler(), ...);
 end
