@@ -1,3 +1,2 @@
-- Remove workaround for BAG_UPDATE_DELAYED bug on the Retail client
-- Fixed bug when swapping out a container for a smaller container
-- Updated interface version for Retail 10.0.7
+- Updated interface version for Retail 10.1.0
+- Small bugfixes
