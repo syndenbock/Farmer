@@ -1,10 +1,10 @@
-## Interface: 100007
+## Interface: 100100
 ## Interface-Classic: 11403
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30401
 ## Title: Farmer
 ## Author: syndenbock
-## Version: 3.17.2
+## Version: 3.17.3
 
 ## X-Curse-Project-ID: 282961
 ## X-Wago-ID: J96EDgNg
