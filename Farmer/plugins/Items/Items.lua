@@ -291,32 +291,71 @@ local function getItemSlotText (equipLocation)
   return _G[equipLocation];
 end
 
-local function displayArmor (item, count)
-  local inventoryType = GetItemInventoryTypeByID(item.id);
+local function handleUnequipable (item, inventoryType)
+  if (item.equipLocation == nil or item.equipLocation == '') then
+    local itemLevelText = getItemLevelText(item);
+
+    return true, itemLevelText .. ' ' .. item.subType;
+  else
+    return false;
+  end
+end
+
+local function handleTabard (item, inventoryType)
+  if (inventoryType == INVTYPE_TABARD) then
+    return true, getItemSlotText(item.equipLocation);
+  else
+    return false;
+  end
+end
+
+-- Handle cloaks, necks and rings
+local function handleGeneric (item, inventoryType)
+  if (item.subClassId == ITEM_SUBCLASS_ARMOR_GENERIC or
+      inventoryType == INVTYPE_CLOAK) then
+    local itemLevelText = getItemLevelText(item);
+    local slotText = getItemSlotText(item.equipLocation);
+
+    return true, itemLevelText .. ' ' .. slotText;
+  else
+    return false;
+  end
+end
+
+local function handleSpecific (item, inventoryType)
+  if (item.subClassId >= ITEM_SUBCLASS_ARMOR_COSMETIC) then
+    local itemLevelText = getItemLevelText(item);
+
+    return true, itemLevelText .. ' ' .. item.subType;
+  else
+    return false;
+  end
+end
+
+local function handleSlot (item, inventoryType)
   local itemLevelText = getItemLevelText(item);
   local slotText = getItemSlotText(item.equipLocation);
-  local textList;
-  local text;
 
-  if (inventoryType == INVTYPE_TABARD) then
-    textList = {slotText};
-  elseif (inventoryType == INVTYPE_CLOAK or
-      item.subClassId == ITEM_SUBCLASS_ARMOR_GENERIC) then
-    -- cloaks, necks and rings
-    textList = {itemLevelText, slotText};
-  elseif (item.subClassId >= ITEM_SUBCLASS_ARMOR_COSMETIC) then
-    -- these types are specific to slots so we don't need to display the slot
-    textList = {itemLevelText, item.subType};
-  else
-    textList = {itemLevelText, item.subType, slotText};
+  return true, itemLevelText .. ' ' .. item.subType .. ' ' .. slotText;
+end
+
+local function displayArmor (item, count)
+  local handlers = {handleUnequipable, handleTabard, handleGeneric,
+      handleSpecific, handleSlot};
+  local inventoryType = GetItemInventoryTypeByID(item.id);
+
+  for _, handler in ipairs(handlers) do
+    local handled, text = handler(item, inventoryType);
+
+    if (handled) then
+      return printItem(item, {
+        count = count,
+        info = text,
+      });
+    end
   end
 
-  text = addon.stringJoin(textList, ' ');
-
-  printItem(item, {
-    count = count,
-    info = text,
-  });
+  error('No handler for armor');
 end
 
 local function isArmor (item)
