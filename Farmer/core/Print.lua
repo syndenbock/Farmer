@@ -66,6 +66,10 @@ local function printIconMessage (icon, message, colors)
   farmerFrame:AddIconMessage(icon, message, colors or DEFAULT_COLOR);
 end
 
+local function printAtlasMessage (atlas, message, colors)
+  farmerFrame:AddAtlasMessage(atlas, message, colors or DEFAULT_COLOR);
+end
+
 local function printMessageWithData (subspace, identifier, data, message, colors)
   farmerFrame:AddMessageWithData(subspace, identifier, data, message, colors or DEFAULT_COLOR);
 end
@@ -73,11 +77,16 @@ end
 local function printIconMessageWithData (subspace, identifier, data, icon, message, colors)
   farmerFrame:AddIconMessageWithData(subspace, identifier, data, icon, message, colors or DEFAULT_COLOR);
 end
+local function printAtlasMessageWithData (subspace, identifier, data, atlas, message, colors)
+  farmerFrame:AddAtlasMessageWithData(subspace, identifier, data, atlas, message, colors or DEFAULT_COLOR);
+end
 
 addon.Print = {
   checkHideOptions = checkHideOptions,
   printMessage = printMessage;
   printMessageWithData = printMessageWithData;
   printIconMessage = printIconMessage;
+  printAtlasMessage = printAtlasMessage;
   printIconMessageWithData = printIconMessageWithData;
+  printAtlasMessageWithData = printAtlasMessageWithData;
 };

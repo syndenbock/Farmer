@@ -436,7 +436,7 @@ local function applyMessageColor (message, colors)
   end
 end
 
-local function applyMessageAttributes (self, message, icon, text, colors)
+local function applyMessageAttributes (self, message, icon, atlas, text, colors)
   if (message.fontString == nil) then
     message.fontString = createFontString(self, message);
   end
@@ -453,6 +453,9 @@ local function applyMessageAttributes (self, message, icon, text, colors)
   if (icon) then
     message.iconFrame:SetTexture(icon);
     message.iconFrame:Show();
+  elseif (atlas) then
+    message.iconFrame:SetAtlas(atlas);
+    message.iconFrame:Show();
   else
     message.iconFrame:Hide();
   end
@@ -464,16 +467,16 @@ local function applyMessageAttributes (self, message, icon, text, colors)
   return message;
 end
 
-local function createMessage (self, icon, text, colors)
-  return applyMessageAttributes(self, self.framePool:Acquire(), icon, text,
-      colors);
+local function createMessage (self, icon, atlas, text, colors)
+  return applyMessageAttributes(self, self.framePool:Acquire(), icon, atlas,
+      text, colors);
 end
 
 local function createAnchorMessage (self, icon, text, colors)
   -- Setting an anchor text doesn't properly work yet as the message itself
   -- cannot be dragged which causes parts of the message not being able to
   -- clicked if they don't overlap the moving anchor.
-  local message = createMessage(self, icon, nil, colors);
+  local message = createMessage(self, icon, nil, nil, colors);
 
   setMessagePoints(self, message);
 
@@ -542,11 +545,19 @@ function MessageFrame:Move (icon, text, callback)
 end
 
 function MessageFrame:AddMessage (text, colors)
-  return MessageFrame.AddIconMessage(self, nil, text, colors);
+  return MessageFrame.AddAtlasOrIconMessage(self, nil, nil, text, colors);
 end
 
 function MessageFrame:AddIconMessage (icon, text, colors)
-  local message = createMessage(self, icon, text, colors);
+  return MessageFrame.AddAtlasOrIconMessage(self, icon, nil, text, colors);
+end
+
+function MessageFrame:AddAtlasMessage (atlas, text, colors)
+  return MessageFrame.AddAtlasOrIconMessage(self, nil, atlas, text, colors);
+end
+
+function MessageFrame:AddAtlasOrIconMessage (icon, atlas, text, colors)
+  local message = createMessage(self, icon, atlas, text, colors);
 
   insertMessage(self, message);
 
@@ -563,13 +574,20 @@ function MessageFrame:RemoveMessage (message)
 end
 
 function MessageFrame:UpdateMessage (message, text, colors)
-  assertMessageIsActive(self, message);
-  self:UpdateIconMessage(message, nil, text, colors);
+  MessageFrame.UpdateIconOrAtlasMessage(self, message, nil, nil, text, colors);
 end
 
 function MessageFrame:UpdateIconMessage (message, icon, text, colors)
+  MessageFrame.UpdateIconOrAtlasMessage(self, message, icon, nil, text, colors);
+end
+
+function MessageFrame:UpdateAtlasMessage (message, atlas, text, colors)
+  MessageFrame.UpdateIconOrAtlasMessage(self, message, nil, atlas, text, colors);
+end
+
+function MessageFrame:UpdateIconOrAtlasMessage (message, icon, atlas, text, colors)
   assertMessageIsActive(self, message);
-  applyMessageAttributes(self, message, icon, text, colors);
+  applyMessageAttributes(self, message, icon, atlas, text, colors);
 end
 
 function MessageFrame:MoveMessageToFront (message)

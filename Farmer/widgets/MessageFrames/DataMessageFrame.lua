@@ -72,10 +72,18 @@ function DataMessageFrame:CreateSubspace ()
 end
 
 function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, colors)
-  return DataMessageFrame.AddIconMessageWithData(self, subspace, identifier, data, nil, text, colors);
+  return DataMessageFrame.AddIconOrAtlasMessageWithdata(self, subspace, identifier, data, nil, nil, text, colors);
 end
 
 function DataMessageFrame:AddIconMessageWithData (subspace, identifier, data, icon, text, colors)
+  return DataMessageFrame.AddIconOrAtlasMessageWithdata(self, subspace, identifier, data, icon, nil, text, colors);
+end
+
+function DataMessageFrame:AddAtlasMessageWithData (subspace, identifier, data, atlas, text, colors)
+  return DataMessageFrame.AddIconOrAtlasMessageWithdata(self, subspace, identifier, data, nil, atlas, text, colors);
+end
+
+function DataMessageFrame:AddIconOrAtlasMessageWithdata (subspace, identifier, data, icon, atlas, text, colors)
   local info = getMessageInfo(self, subspace, identifier);
   local message;
 
