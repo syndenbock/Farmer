@@ -5,7 +5,6 @@ local GetRepairAllCost = _G.GetRepairAllCost;
 local IsInGuild = _G.IsInGuild;
 local CanGuildBankRepair = _G.CanGuildBankRepair;
 local GetGuildBankWithdrawMoney = _G.GetGuildBankWithdrawMoney;
-local GetGuildBankMoney = _G.GetGuildBankMoney;
 local RepairAllItems = _G.RepairAllItems;
 local GetMoney = _G.GetMoney;
 
@@ -27,10 +26,9 @@ local function canGuildRepair (cost)
     return false;
   end
 
-  local maxWithdrawableMoney = GetGuildBankWithdrawMoney();
-  local guildMoney = GetGuildBankMoney();
-
-  return (maxWithdrawableMoney > cost and guildMoney > cost);
+  -- Can not check actual guild money because GetGuildMoney() returns 0
+  -- if guild bank frame was not opened yet
+  return (GetGuildBankWithdrawMoney() >= cost);
 end
 
 local function performGuildRepair (cost)
