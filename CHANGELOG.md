@@ -1,2 +1,1 @@
-- Updated interface version for Retail 10.1.0
-- Small bugfixes
+- Updated interface version for Wrath Classic
