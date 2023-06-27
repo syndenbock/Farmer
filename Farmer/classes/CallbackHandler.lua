@@ -35,7 +35,7 @@ function CallbackHandler:addCallback (identifier, callback)
     assert(self.callbacks[identifier][callback] == nil,
         'callback was already registered for ' .. identifier);
 
-        self.callbacks[identifier][callback] = true;
+    self.callbacks[identifier][callback] = true;
     return false;
   end
 end
