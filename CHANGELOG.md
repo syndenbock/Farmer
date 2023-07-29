@@ -1,1 +1,1 @@
-- Updated interface version for Retail
+- Implemented workaround for reputation update issue when gaining a renown level
