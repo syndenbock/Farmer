@@ -44,6 +44,8 @@ local function getDisplayData (info)
     standingChanged = previousData.standingChanged or info.standingChanged,
     paragonLevelGained = previousData.paragonLevelGained or
         info.paragonLevelGained,
+    renownLevelChanged =
+        previousData.renownLevelChanged or info.renownLevelChanged,
   };
 end
 
@@ -62,6 +64,10 @@ local function displayReputation (info)
     icon = 'interface/icons/spell_holy_prayerofmendingtga.blp';
 
     text = addon.stringJoin({text, getStandingLabel(info.standing)}, ' ');
+  elseif (displayData.renownLevelChanged) then
+    icon = 'interface/icons/spell_holy_prayerofmendingtga.blp';
+
+    text = text .. ' (' .. info.renownLevel .. ')';
   end
 
   --[[ could have stored faction name when generating faction info, but we

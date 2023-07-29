@@ -38,12 +38,13 @@ end
 
 local function checkMajorFaction (majorFactionInfo)
   local cachedInfo = majorFactionCache[majorFactionInfo.factionID];
-  local renownLevelChanged = false;
-  local reputationChange =
-      majorFactionInfo.renownReputationEarned - cachedInfo.renownReputationEarned;
+  local reputationChange = majorFactionInfo.renownReputationEarned - cachedInfo.renownReputationEarned;
+  local renownLevelChanged = (
+      (cachedInfo.renownLevel < majorFactionInfo.renownLevel) or
+      (reputationChange < 0)
+  );
 
-  if (majorFactionInfo.renownLevel > cachedInfo.renownLevel) then
-    renownLevelChanged = true;
+  if (renownLevelChanged) then
     reputationChange = reputationChange + cachedInfo.renownLevelThreshold;
   end
 
