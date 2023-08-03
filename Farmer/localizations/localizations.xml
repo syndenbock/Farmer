@@ -6,4 +6,5 @@
   <script file="Russian.lua"/>
   <script file="Korean.lua"/>
   <script file="Chinese_simplified.lua"/>
+  <script file="Portuguese.lua"/>
 </UI>
