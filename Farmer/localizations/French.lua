@@ -36,6 +36,10 @@ L["Thick Monochrome"] = "Épais monochrome"
 L["Thin"] = "Mince"
 L["up"] = "Vers le haut"
 
+-- Experience
+L["Experience"] = "Expérience"
+L["minimum %"] = "minimum %"
+
 -- Farm radar
 L["enable tooltips for default nodes"] = "Activer les info-bulles pour les nœuds par défaut"
 L["Farm radar"] = "Radar de farm"

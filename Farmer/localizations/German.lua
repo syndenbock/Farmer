@@ -62,7 +62,7 @@ L["minimum"] = "Minimum"
 L["minimum rarity"] = "Mindestseltenheit"
 L["only show focused items"] = "Zeige nur Items im Fokus an"
 L["show bag count for items"] = "Zeige Anzahl von Items in der Tasche"
-L['show item levels for equipment'] = "Zeige Itemlevel von Ausrüstung"
+L["show item levels for equipment"] = "Zeige Itemlevel von Ausrüstung"
 L["show items based on rarity"] = "Zeige Items nach Seltenheit an"
 L["show total count for items"] = "Zeige Gesamtanzahl von Items"
 

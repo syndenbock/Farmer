@@ -1,1 +1,2 @@
-- Implemented workaround for reputation update issue when gaining a renown level
+- Added Portuguese translations
+- Updated some translations

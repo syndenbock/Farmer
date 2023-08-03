@@ -63,6 +63,7 @@ L["minimum"] = "минимум"
 L["minimum rarity"] = "Минимальное качество"
 L["only show focused items"] = "Показывать только предметы из списка"
 L["show bag count for items"] = "Показать количество собранных предметов в сумках"
+L["show item levels for equipment"] = "Показать уровни предметов для оборудования"
 L["show items based on rarity"] = "Показывать добычу на основе качества"
 L["show total count for items"] = "Показывать общее количество каждого из собранных предметов"
 
