@@ -119,7 +119,7 @@ local function handleCurrency (_, id)
   yellCurrencyInfo(info, amount);
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+addon.onOnce('FIRST_FRAME_RENDERED', function ()
   currencyTable = readCurrencyTable();
   addon.on('CURRENCY_DISPLAY_UPDATE', handleCurrency);
 end);
