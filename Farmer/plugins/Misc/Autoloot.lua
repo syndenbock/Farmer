@@ -1,7 +1,6 @@
 local addonName, addon = ...;
 
-local GetNumLootItems = _G.GetNumLootItems;
-local GetLootSlotInfo = _G.GetLootSlotInfo;
+local GetLootInfo = _G.GetLootInfo;
 local LootSlot = _G.LootSlot;
 
 local lootIsOpen = false;
@@ -9,18 +8,11 @@ local lootIsOpen = false;
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Misc;
 
-local function autoLootSlot (slot)
-  local info = {GetLootSlotInfo(slot)};
-  local locked = info[6];
-
-  if (not locked) then
-    LootSlot(slot);
-  end
-end
-
 local function performAutoLoot ()
-  for x = 1, GetNumLootItems(), 1 do
-    autoLootSlot(x);
+  for x, info in ipairs(GetLootInfo()) do
+    if (not info.locked) then
+      LootSlot(x);
+    end
   end
 end
 

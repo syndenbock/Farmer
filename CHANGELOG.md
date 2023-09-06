@@ -1,2 +1,2 @@
-- Added Portuguese translations
-- Updated some translations
+- Implemented workaround for Trader's Tenders showing up on login
+- Updated Interface versions for Classic and Retail
