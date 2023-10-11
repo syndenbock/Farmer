@@ -1,2 +1,2 @@
 - Implemented workaround for Trader's Tenders showing up on login
-- Updated Interface versions for Classic and Retail
+- Updated Interface versions for Wrath
