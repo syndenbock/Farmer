@@ -7,6 +7,8 @@ local GetContainerItemInfo = C_Container.GetContainerItemInfo;
 local UseContainerItem = C_Container.UseContainerItem;
 local GetItemInfo = _G.GetItemInfo;
 
+local REAGENT_CONTAINER = _G.REAGENT_CONTAINER or 5;
+
 local L = addon.L;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
@@ -73,6 +75,10 @@ local function sellGrayItems ()
 
   for bag = FIRST_BAG, LAST_BAG, 1 do
     totalPrice = totalPrice + sellGrayItemsInBag(bag);
+  end
+
+  if (addon.isRetail()) then
+    totalPrice = totalPrice + sellGrayItemsInBag(REAGENT_CONTAINER);
   end
 
   if (totalPrice > 0) then
