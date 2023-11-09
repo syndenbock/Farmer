@@ -1,2 +1,2 @@
-- Implemented workaround for Trader's Tenders showing up on login
-- Updated Interface versions for Wrath
+- Updated interface version for 10.2
+- Including reagent bag when autoselling grey items
