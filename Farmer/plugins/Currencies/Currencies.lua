@@ -25,6 +25,7 @@ local SUBSPACE = farmerFrame:CreateSubspace();
 local IGNORED_CURRENCIES = {
   [1822] = true, -- Renown
   [1947] = true, -- Bonus Valor
+  [2408] = true, -- Bonus Flightstones
 };
 
 local function isCurrencyIgnored (currency)
