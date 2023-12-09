@@ -5,10 +5,13 @@ addon.registerAvailableDetector('reputation');
 local floor = _G.floor;
 local tinsert = _G.tinsert;
 
+local function returnFalse ()
+  return false;
+end
+
 local C_Reputation = _G.C_Reputation;
 local GetFactionParagonInfo = C_Reputation and C_Reputation.GetFactionParagonInfo;
-local IsFactionParagon = C_Reputation and C_Reputation.IsFactionParagon;
-local IsMajorFaction = C_Reputation.IsMajorFaction or function () return false end;
+local IsFactionParagon = C_Reputation.IsFactionParagon or returnFalse;
 
 local GetNumFactions = _G.GetNumFactions;
 local GetFactionInfo = _G.GetFactionInfo;
@@ -20,8 +23,7 @@ local ImmutableMap = addon.import('Factory/ImmutableMap');
 local reputationCache = {};
 
 local function updateParagonInfo (factionInfo)
-  if (not IsFactionParagon or
-      not IsFactionParagon(factionInfo.faction)) then return end
+  if (not IsFactionParagon(factionInfo.faction)) then return end
 
   local paragonInfo = {GetFactionParagonInfo(factionInfo.faction)};
 
@@ -75,7 +77,7 @@ local function iterateReputations (callback)
       numFactions = GetNumFactions();
     end
 
-    if (factionInfo.faction and not IsMajorFaction(factionInfo.faction)) then
+    if (factionInfo.faction) then
       updateParagonInfo(factionInfo);
       callback(factionInfo);
     end
