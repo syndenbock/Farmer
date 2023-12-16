@@ -1,2 +1,3 @@
-- Updated interface version for 10.2
-- Including reagent bag when autoselling grey items
+- Fixed wrong reputation amounts sometimes being displayed when gaining renown (hopefully)
+- Fixed paragon reputation on max renown factions not being shown
+- Bonus flight stone currency is now ignored
