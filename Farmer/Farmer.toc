@@ -4,7 +4,7 @@
 ## Interface-Classic: 11404
 ## Title: Farmer
 ## Author: syndenbock
-## Version: 3.19.4
+## Version: 3.19.5
 
 ## X-Curse-Project-ID: 282961
 ## X-Wago-ID: J96EDgNg
