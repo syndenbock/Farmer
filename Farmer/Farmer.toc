@@ -1,7 +1,7 @@
 ## Interface: 100205
 ## Interface-Wrath: 30403
 ## Interface-BCC: 20504
-## Interface-Classic: 11404
+## Interface-Classic: 11501
 ## Title: Farmer
 ## Author: syndenbock
 ## Version: 3.19.5
