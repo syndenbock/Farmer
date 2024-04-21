@@ -260,14 +260,18 @@ local function OnMessageAnimationFinished (animation)
 end
 
 local function CreateMessageAnimation (self, message)
+  local animationGroup = message.animationGroup;
   local animation = message.animation;
 
-  if (not message.animationGroup) then
-    message.animationGroup = message:CreateAnimationGroup();
+  if (not animationGroup) then
+    animationGroup = message:CreateAnimationGroup();
+    message.animationGroup = animationGroup;
+  else
+    animationGroup:Stop();
   end
 
   if (not animation) then
-    animation = message.animationGroup:CreateAnimation('Alpha');
+    animation = animationGroup:CreateAnimation('Alpha');
 
     animation:SetToAlpha(0);
     animation:SetOrder(1);
@@ -281,6 +285,8 @@ local function CreateMessageAnimation (self, message)
   animation:SetStartDelay(self.visibleTime);
   animation:SetDuration(self.fadeDuration);
   animation:SetFromAlpha(message:GetAlpha());
+
+  animationGroup:Play();
 end
 
 local function startMessageAnimation (self, message)
@@ -290,7 +296,6 @@ local function startMessageAnimation (self, message)
   end
 
   CreateMessageAnimation(self, message);
-  message.animationGroup:Restart();
 end
 
 --******************************************************************************
