@@ -66,8 +66,8 @@ local function initSkillCache ()
   iterateSkills(cacheSkillInfo);
 end
 
-local function yellSkill (skillInfo, change)
-  addon.yell('SKILL_CHANGED', ImmutableMap(skillInfo), change);
+local function yellSkill (skillInfo)
+  addon.yell('SKILL_CHANGED', ImmutableMap(skillInfo));
 end
 
 local function checkSkill (name, rank, maxRank)
@@ -96,5 +96,6 @@ addon.import('tests').skills = function ()
     name = 'testskill',
     rank = 2,
     maxRank = 20,
-  }, 1);
+    rankChange = 1,
+  });
 end;
