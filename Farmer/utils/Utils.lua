@@ -12,6 +12,7 @@ local IS_RETAIL = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE);
 local IS_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC);
 local IS_BC_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASSIC);
 local IS_WRATH_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_WRATH_CLASSIC);
+local IS_CATA_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CATACLYSM_CLASSIC);
 
 function addon.isRetail ()
   return IS_RETAIL;
@@ -27,6 +28,10 @@ end
 
 function addon.isWrathClassic ()
   return IS_WRATH_CLASSIC;
+end
+
+function addon.isCataClassic ()
+  return IS_CATA_CLASSIC;
 end
 
 function addon.round (number)
