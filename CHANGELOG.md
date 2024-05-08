@@ -1,1 +1,1 @@
-- Added support for Cataclysm Classic
+- Updated interface version for Retail 10.2.7
