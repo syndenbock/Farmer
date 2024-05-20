@@ -160,6 +160,17 @@ local function handleQuestItem (item, count)
   end
 end
 
+local function handleCraftingReagent (item, count)
+  if (isCraftingReagent(item)) then
+    printItem(item, {
+      count = count,
+    });
+    return true;
+  else
+    return false;
+  end
+end
+
 local function displayArtifactRelic (item, count)
   printItem(item, {
     count = count,
@@ -393,6 +404,7 @@ end
 
 local function handleItem (item, count)
   if (handleQuestItem(item, count)) then return end
+  if (handleCraftingReagent(item, count)) then return end
   if (handleArtifactRelic(item, count)) then return end
   if (handleConduit(item, count)) then return end
   if (handleEquippable(item, count)) then return end
