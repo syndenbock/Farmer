@@ -12,7 +12,7 @@ local C_Soulbinds = _G.C_Soulbinds;
 local IsItemConduitByItemInfo =
     C_Soulbinds and _G.C_Soulbinds.IsItemConduitByItemInfo;
 local GetConduitCollectionDataByVirtualID =
-    C_Soulbinds and C_Soulbinds.GetConduitCollectionDataByVirtualID
+    C_Soulbinds and C_Soulbinds.GetConduitCollectionDataByVirtualID;
 
 local ITEM_CLASS_ENUM = _G.Enum.ItemClass;
 local ARMOR_SUBCLASS_ENUM = _G.Enum.ItemArmorSubclass;
@@ -41,6 +41,7 @@ local CONTAINER_PATTERN = _G.gsub(_G.gsub(
 local Print = addon.Print;
 local printItem = addon.ItemPrint.printItem;
 local printItemWithName = addon.ItemPrint.printItemWithName;
+local stringJoin = addon.stringJoin;
 local COLORS = addon.ItemPrint.COLORS;
 local TooltipScanner = addon.TooltipScanner;
 
@@ -174,7 +175,7 @@ end
 local function displayArtifactRelic (item, count)
   printItem(item, {
     count = count,
-    info = addon.stringJoin({getItemLevelText(item), item.subType}, ' '),
+    info = stringJoin({getItemLevelText(item), item.subType}, ' '),
   });
 end
 
@@ -217,7 +218,7 @@ end
 local function displayConduit (item, count)
   printItem(item, {
     count = count,
-    info = addon.stringJoin({getItemLevelText(item), getConduitText(item)}, ' '),
+    info = stringJoin({getItemLevelText(item), getConduitText(item)}, ' '),
   });
 end
 
@@ -261,7 +262,7 @@ local function displayContainer (item, count)
 
   printItem(item, {
     count = count,
-    info = addon.stringJoin({size, item.subType}, ' '),
+    info = stringJoin({size, item.subType}, ' '),
   });
 end
 
@@ -281,7 +282,7 @@ end
 local function displayWeapon (item, count)
   printItem(item, {
     count = count,
-    info = addon.stringJoin({getItemLevelText(item), item.subType}, ' '),
+    info = stringJoin({getItemLevelText(item), item.subType}, ' '),
   });
 end
 
@@ -306,7 +307,7 @@ local function handleUnequipable (item, inventoryType)
   if (item.equipLocation == nil or item.equipLocation == '') then
     local itemLevelText = getItemLevelText(item);
 
-    return true, itemLevelText .. ' ' .. item.subType;
+    return true, stringJoin({itemLevelText, item.subType}, ' ');
   else
     return false;
   end
@@ -327,7 +328,7 @@ local function handleGeneric (item, inventoryType)
     local itemLevelText = getItemLevelText(item);
     local slotText = getItemSlotText(item.equipLocation);
 
-    return true, itemLevelText .. ' ' .. slotText;
+    return true, stringJoin({itemLevelText, slotText}, ' ');
   else
     return false;
   end
@@ -337,7 +338,7 @@ local function handleSpecific (item, inventoryType)
   if (item.subClassId >= ITEM_SUBCLASS_ARMOR_COSMETIC) then
     local itemLevelText = getItemLevelText(item);
 
-    return true, itemLevelText .. ' ' .. item.subType;
+    return true, stringJoin({itemLevelText, item.subType}, ' ');
   else
     return false;
   end
@@ -347,7 +348,7 @@ local function handleSlot (item, inventoryType)
   local itemLevelText = getItemLevelText(item);
   local slotText = getItemSlotText(item.equipLocation);
 
-  return true, itemLevelText .. ' ' .. item.subType .. ' ' .. slotText;
+  return true, stringJoin({itemLevelText, item.subType, slotText}, ' ');
 end
 
 local function displayArmor (item, count)
