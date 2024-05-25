@@ -4,6 +4,7 @@ local strfind = _G.strfind;
 local strsub = _G.strsub;
 local strmatch = _G.strmatch;
 local strjoin = _G.strjoin;
+local tostring = _G.tostring;
 local tinsert = _G.tinsert;
 local floor = _G.floor;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
@@ -54,7 +55,22 @@ function addon.stringEndsWith (string, check)
   return (check == "" or string:sub(-#check) == check);
 end
 
-function addon.stringJoin (stringList, joiner)
+function addon.stringJoin (joiner, ...)
+  local result;
+
+  for x = 1, select('#', ...), 1 do
+    local fragment = select(x, ...);
+
+    if (fragment ~= nil) then
+      fragment = tostring(fragment);
+      result = (result and result .. joiner .. fragment) or fragment;
+    end
+  end
+
+  return result or '';
+end
+
+function addon.tableJoin (stringList, joiner)
   local result;
 
   joiner = joiner or '';
@@ -96,7 +112,7 @@ function addon.formatMoney (amount)
     tinsert(text, BreakUpLargeNumbers(copper) .. TEXTURE_COPPER);
   end
 
-  return addon.stringJoin(text, ' ');
+  return addon.tableJoin(text, ' ');
 end
 
 function addon.findItemLink (string)

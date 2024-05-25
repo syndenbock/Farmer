@@ -2,11 +2,10 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('experience')) then return end
 
+local strjoin = _G.strjoin;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
-local stringJoin = addon.stringJoin;
 local truncate = addon.truncate;
-
 local printMessageWithData = addon.Print.printMessageWithData;
 local farmerFrame = addon.frame;
 
@@ -40,11 +39,10 @@ addon.listen('EXPERIENCE_GAINED', function (info)
   printMessageWithData(SUBSPACE, IDENTIFIER, {
     gain = gain,
     percentageGain = percentageGain,
-  }, stringJoin({
+  }, strjoin('',
     BreakUpLargeNumbers(truncate(gain, 1)),
-    ' ',
-    '(' .. truncate(percentageGain, 1) .. '%',
+    ' (', truncate(percentageGain, 1), '%',
     '/',
-    truncate(info.percentage, 1) .. '%)',
-  }, ''), MESSAGE_COLORS);
+    truncate(info.percentage, 1), '%)'
+  ), MESSAGE_COLORS);
 end);

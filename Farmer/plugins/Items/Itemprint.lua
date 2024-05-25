@@ -68,7 +68,7 @@ local function formatAdditionalCounts (item, data)
     return nil;
   end
 
-  return '(' .. stringJoin({bagCount, totalCount}, '/') .. ')';
+  return '(' .. stringJoin('/', bagCount, totalCount) .. ')';
 end
 
 local function formatItemCount (item, data)
@@ -83,7 +83,6 @@ local function updateData (item, data)
   data.count = (farmerFrame:GetMessageData(SUBSPACE, item.id) or 0) +
       data.count;
 end
-
 
 local formatItemName;
 
@@ -110,15 +109,15 @@ end
 local function printItemDynamic (item, data, forceName)
   updateData(item, data);
 
-  local text = stringJoin({
+  local text = stringJoin(' ',
     formatItemInfo(data),
     formatItemCount(item, data),
-    formatAdditionalCounts(item, data),
-  }, ' ');
+    formatAdditionalCounts(item, data)
+  );
 
   if (text == '' or
       forceName == true or
-      coreOptions.itemNames ==  true) then
+      coreOptions.itemNames == true) then
     text = formatItemName(item) .. ' ' .. text;
   end
 

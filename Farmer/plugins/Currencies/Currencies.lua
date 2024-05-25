@@ -2,9 +2,9 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('currencies')) then return end
 
+local strjoin = _G.strjoin;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
-local stringJoin = addon.stringJoin;
 local checkHideOptions = addon.Print.checkHideOptions;
 local printIconMessageWithData = addon.Print.printIconMessageWithData;
 local getRarityColor = addon.getRarityColor;
@@ -66,8 +66,10 @@ local function displayCurrency (info, amount)
   local text;
 
   amount = (farmerFrame:GetMessageData(SUBSPACE, info.id) or 0) + amount;
-  text = stringJoin({'x' .. BreakUpLargeNumbers(amount), ' ', '(',
-      BreakUpLargeNumbers(info.total), ')'}, '');
+  text = strjoin('',
+    'x', BreakUpLargeNumbers(amount),
+    ' (', BreakUpLargeNumbers(info.total), ')'
+  );
 
   if (CORE_OPTIONS.itemNames == true) then
     text = info.name .. ' ' .. text;

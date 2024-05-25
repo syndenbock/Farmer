@@ -3,10 +3,12 @@ local addonName, addon = ...;
 if (not addon.isDetectorAvailable('reputation')) then return end
 
 local abs = _G.abs;
+
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetFactionInfoByID = _G.GetFactionInfoByID;
 local printIconMessageWithData = addon.Print.printIconMessageWithData;
 
+local stringJoin = addon.stringJoin;
 local farmerFrame = addon.frame;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
@@ -62,12 +64,10 @@ local function displayReputation (info)
     icon = 'interface/icons/inv_treasurechest_felfirecitadel.blp';
   elseif (displayData.standingChanged) then
     icon = 'interface/icons/spell_holy_prayerofmendingtga.blp';
-
-    text = addon.stringJoin({text, getStandingLabel(info.standing)}, ' ');
+    text = stringJoin(' ', text, getStandingLabel(info.standing));
   elseif (displayData.renownLevelChanged) then
     icon = 'interface/icons/spell_holy_prayerofmendingtga.blp';
-
-    text = text .. ' (' .. info.renownLevel .. ')';
+    text = stringJoin('', text, ' (', info.renownLevel, ')');
   end
 
   --[[ could have stored faction name when generating faction info, but we

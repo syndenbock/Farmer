@@ -52,6 +52,10 @@ local function isRecipe (itemInfo)
   return (itemInfo.classId == ITEM_CLASS_RECIPE);
 end
 
+local function joinItemString (...)
+  return stringJoin(' ', ...);
+end
+
 local function checkRecipeOptions (itemInfo)
   return (options.alwaysShowRecipes == true and
           isRecipe(itemInfo));
@@ -175,7 +179,7 @@ end
 local function displayArtifactRelic (item, count)
   printItem(item, {
     count = count,
-    info = stringJoin({getItemLevelText(item), item.subType}, ' '),
+    info = joinItemString(getItemLevelText(item), item.subType),
   });
 end
 
@@ -218,7 +222,7 @@ end
 local function displayConduit (item, count)
   printItem(item, {
     count = count,
-    info = stringJoin({getItemLevelText(item), getConduitText(item)}, ' '),
+    info = joinItemString(getItemLevelText(item), getConduitText(item)),
   });
 end
 
@@ -262,7 +266,7 @@ local function displayContainer (item, count)
 
   printItem(item, {
     count = count,
-    info = stringJoin({size, item.subType}, ' '),
+    info = joinItemString(size, item.subType),
   });
 end
 
@@ -282,7 +286,7 @@ end
 local function displayWeapon (item, count)
   printItem(item, {
     count = count,
-    info = stringJoin({getItemLevelText(item), item.subType}, ' '),
+    info = joinItemString(getItemLevelText(item), item.subType),
   });
 end
 
@@ -307,7 +311,7 @@ local function handleUnequipable (item, inventoryType)
   if (item.equipLocation == nil or item.equipLocation == '') then
     local itemLevelText = getItemLevelText(item);
 
-    return true, stringJoin({itemLevelText, item.subType}, ' ');
+    return true, joinItemString(itemLevelText, item.subType);
   else
     return false;
   end
@@ -328,7 +332,7 @@ local function handleGeneric (item, inventoryType)
     local itemLevelText = getItemLevelText(item);
     local slotText = getItemSlotText(item.equipLocation);
 
-    return true, stringJoin({itemLevelText, slotText}, ' ');
+    return true, joinItemString(itemLevelText, slotText);
   else
     return false;
   end
@@ -338,7 +342,7 @@ local function handleSpecific (item, inventoryType)
   if (item.subClassId >= ITEM_SUBCLASS_ARMOR_COSMETIC) then
     local itemLevelText = getItemLevelText(item);
 
-    return true, stringJoin({itemLevelText, item.subType}, ' ');
+    return true, joinItemString(itemLevelText, item.subType);
   else
     return false;
   end
@@ -348,7 +352,7 @@ local function handleSlot (item, inventoryType)
   local itemLevelText = getItemLevelText(item);
   local slotText = getItemSlotText(item.equipLocation);
 
-  return true, stringJoin({itemLevelText, item.subType, slotText}, ' ');
+  return true, joinItemString(itemLevelText, item.subType, slotText);
 end
 
 local function displayArmor (item, count)

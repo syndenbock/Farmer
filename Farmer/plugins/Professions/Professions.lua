@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('professions')) then return end
 
+local strjoin = _G.strjoin;
 local printMessageWithData = addon.Print.printMessageWithData;
 
 local farmerFrame = addon.frame;
@@ -17,7 +18,7 @@ local function checkProfessionOptions (info)
 end
 
 local function displayProfession (info, change)
-  local text = addon.stringJoin({'(', info.skillLevel, '/', info.maxSkillLevel, ')'}, '');
+  local text = strjoin('', '(', info.skillLevel, '/', info.maxSkillLevel, ')');
   local changeText;
 
   change = change + (farmerFrame:GetMessageData(SUBSPACE, info.professionID) or 0);
@@ -28,7 +29,7 @@ local function displayProfession (info, change)
     changeText = change;
   end
 
-  text = addon.stringJoin({info.professionName, changeText, text}, ' ');
+  text = strjoin(' ', info.professionName, changeText, text);
   printMessageWithData(SUBSPACE, info.professionID, change, text, MESSAGE_COLORS);
 end
 

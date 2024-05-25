@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('skills')) then return end
 
+local strjoin = _G.strjoin;
 local printMessageWithData = addon.Print.printMessageWithData;
 
 local farmerFrame = addon.frame;
@@ -17,7 +18,7 @@ local function checkSkillOptions ()
 end
 
 local function displaySkill (info)
-  local text = addon.stringJoin({'(', info.rank, '/', info.maxRank, ')'}, '');
+  local text = strjoin('', '(', info.rank, '/', info.maxRank, ')');
   local changeText;
 
   local change = info.rankChange +
@@ -29,7 +30,7 @@ local function displaySkill (info)
     changeText = change;
   end
 
-  text = addon.stringJoin({info.name, changeText, text}, ' ');
+  text = strjoin(' ', info.name, changeText, text);
   printMessageWithData(SUBSPACE, info.name, change, text, MESSAGE_COLORS);
 end
 
