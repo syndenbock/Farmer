@@ -4,7 +4,7 @@ if (not addon.isDetectorAvailable('vignettes')) then return end
 
 local strjoin = _G.strjoin;
 local truncate = addon.truncate;
-local printMessage = addon.Print.printMessage;
+local printAtlasMessage = addon.Print.printAtlasMessage;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Minimap;
@@ -16,7 +16,7 @@ local function displayVignette (info, coords)
     truncate(coords.y, 1)
   );
 
-  printMessage(message);
+  printAtlasMessage('VignetteKillElite', message);
 end
 
 local function shouldVignetteBeDisplayed (onMinimap)
