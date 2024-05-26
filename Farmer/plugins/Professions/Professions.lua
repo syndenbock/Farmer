@@ -3,7 +3,7 @@ local addonName, addon = ...;
 if (not addon.isDetectorAvailable('professions')) then return end
 
 local strjoin = _G.strjoin;
-local printMessageWithData = addon.Print.printMessageWithData;
+local printIconMessageWithData = addon.Print.printIconMessageWithData;
 
 local farmerFrame = addon.frame;
 
@@ -14,7 +14,7 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Professions;
 
 local function checkProfessionOptions (info)
-  return (options.displayProfessions == true and info.parentProfessionID);
+  return (options.displayProfessions == true);
 end
 
 local function displayProfession (info, change)
@@ -30,7 +30,7 @@ local function displayProfession (info, change)
   end
 
   text = strjoin(' ', info.professionName, changeText, text);
-  printMessageWithData(SUBSPACE, info.professionID, change, text, MESSAGE_COLORS);
+  printIconMessageWithData(SUBSPACE, info.professionID, change, info.icon, text, MESSAGE_COLORS);
 end
 
 addon.listen('PROFESSION_CHANGED', function (info, change)

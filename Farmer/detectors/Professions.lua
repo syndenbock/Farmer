@@ -1,69 +1,134 @@
 local _, addon = ...;
 
-if (_G.C_TradeSkillUI == nil or _G.C_TradeSkillUI.GetAllProfessionTradeSkillLines == nil) then
+local TradeSkillUI = _G.C_TradeSkillUI;
+local GetAllProfessionTradeSkillLines =
+    TradeSkillUI and TradeSkillUI.GetAllProfessionTradeSkillLines;
+local GetProfessionInfoBySkillLineID =
+    TradeSkillUI and TradeSkillUI.GetProfessionInfoBySkillLineID;
+local GetTradeSkillTexture = TradeSkillUI.GetTradeSkillTexture;
+local GetProfessions = _G.GetProfessions;
+local GetProfessionInfo = _G.GetProfessionInfo;
+
+if (GetAllProfessionTradeSkillLines == nil and GetProfessions == nil) then
   addon.registerUnavailableDetector('professions');
   return;
 end
 
 addon.registerAvailableDetector('professions');
 
-local TradeSkillUI = _G.C_TradeSkillUI;
-local GetAllProfessionTradeSkillLines = TradeSkillUI.GetAllProfessionTradeSkillLines;
-local GetProfessionInfoBySkillLineID = TradeSkillUI.GetProfessionInfoBySkillLineID ;
-
 local ImmutableMap = addon.import('Factory/ImmutableMap');
 
-local professionCache;
+local professionCache = {};
 
-local function updateSkillLine (data, id)
-  local info = GetProfessionInfoBySkillLineID(id);
-
-  if (info.skillLevel ~= 0) then
-    data[id] = info;
-  end
-end
-
-local function readProfessionSkillLines ()
-  local data = {};
-
-  for _, id in ipairs(GetAllProfessionTradeSkillLines()) do
-    updateSkillLine(data, id);
-  end
-
-  return data;
-end
+--##############################################################################
+--  common functions
+--##############################################################################
 
 local function yellProfession (info, change)
+  if (info.icon == nil and GetTradeSkillTexture ~= nil) then
+    info.icon = GetTradeSkillTexture(info.professionID);
+  end
+
   addon.yell('PROFESSION_CHANGED', ImmutableMap(info), change);
 end
 
-local function checkProfessionChange (id)
-  local oldInfo = professionCache[id];
-  local newInfo = GetProfessionInfoBySkillLineID(id);
+local function checkProfessionChange (info)
+  local oldInfo = professionCache[info.professionID];
 
   if (oldInfo ~= nil) then
-    if (newInfo.skillLevel ~= oldInfo.skillLevel) then
-      local change = newInfo.skillLevel - oldInfo.skillLevel;
+    if (info.skillLevel ~= oldInfo.skillLevel) then
+      local change = info.skillLevel - oldInfo.skillLevel;
 
-      oldInfo.skillLevel = newInfo.skillLevel;
+      oldInfo.skillLevel = info.skillLevel;
       yellProfession(oldInfo, change);
     end
-  elseif (newInfo.skillLevel ~= 0) then
-    professionCache[id] = newInfo;
-    yellProfession(newInfo, newInfo.skillLevel);
+  elseif (info.skillLevel ~= 0) then
+    professionCache[info.professionID] = info;
+    yellProfession(info, info.skillLevel);
   end
 end
 
-local function checkProfessions ()
-  for _, id in ipairs(GetAllProfessionTradeSkillLines()) do
-    checkProfessionChange(id);
+--##############################################################################
+-- subprofession handling
+--##############################################################################
+
+if (GetAllProfessionTradeSkillLines ~= nil) then
+  local function readSubProfessions ()
+    for _, id in ipairs(GetAllProfessionTradeSkillLines()) do
+      local info = GetProfessionInfoBySkillLineID(id);
+
+      -- Skipping parent professions as those just reflect the most up-to date
+      -- subprofession
+      if (info.parentProfessionID ~= nil and info.skillLevel ~= 0) then
+        professionCache[id] = info;
+      end
+    end
   end
+
+  local function checkProfessions ()
+    for _, id in ipairs(GetAllProfessionTradeSkillLines()) do
+      local info = GetProfessionInfoBySkillLineID(id);
+
+      -- Skipping parent professions as those just reflect the most up-to date
+      -- subprofession
+      if (info.parentProfessionID ~= nil) then
+        checkProfessionChange(info);
+      end
+    end
+  end
+
+  addon.onOnce('TRADE_SKILL_SHOW', function ()
+    readSubProfessions();
+    addon.on('CHAT_MSG_SKILL', checkProfessions);
+  end);
 end
 
-addon.onOnce('TRADE_SKILL_SHOW', function ()
-  professionCache = readProfessionSkillLines();
-  addon.on('CHAT_MSG_SKILL', checkProfessions);
-end);
+
+--##############################################################################
+-- consolidated profession handling
+--##############################################################################
+
+-- This is used in classic clients where the profession UI exists but
+-- professions are not split into subprofessions yet
+if (GetAllProfessionTradeSkillLines == nil and GetProfessions ~= nil) then
+  local function getPackedProfessionInfo (parentId)
+    local info = {GetProfessionInfo(parentId)};
+
+    -- This needs to match the return table of GetProfessionInfoBySkillLineID
+    return {
+      profession = parentId,
+      professionID = info[7];
+      professionName = info[1];
+      icon = info[2],
+      skillLevel = info[3],
+      maxSkillLevel = info[4],
+      skillModifier = info[8],
+      parentProfessionID = info[7],
+      parentProfessionName = info[1],
+    };
+  end
+
+  local function readParentProfessions ()
+    for _, parentId in ipairs({GetProfessions()}) do
+      local info = getPackedProfessionInfo(parentId);
+
+      professionCache[info.professionID] = info;
+    end
+  end
+
+  local function checkParentProfessions ()
+    for _, parentId in ipairs({GetProfessions()}) do
+      local info = getPackedProfessionInfo(parentId);
+
+      checkProfessionChange(info);
+    end
+  end
+
+  addon.onOnce('PLAYER_LOGIN', function ()
+    readParentProfessions();
+    addon.on('CHAT_MSG_SKILL', checkParentProfessions);
+  end);
+end
 
 --##############################################################################
 -- testing
@@ -71,9 +136,9 @@ end);
 
 addon.import('tests').profession = function (id)
   if (id) then
-    yellProfession(GetProfessionInfoBySkillLineID(tonumber(id)), 1);
+    yellProfession(GetProfessionInfo(tonumber(id)), 1);
   else
-    yellProfession(GetProfessionInfoBySkillLineID(171), 1);
-    yellProfession(GetProfessionInfoBySkillLineID(2483), 1);
+    yellProfession(GetProfessionInfo(171), 1);
+    yellProfession(GetProfessionInfo(2483), 1);
   end
 end
