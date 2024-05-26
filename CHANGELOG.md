@@ -1,3 +1,2 @@
-- Fixed error when disabling item level text
-- Temporarily disabled broken Profession detection on Cata Classic
-- Some internal improvements
+- Added profession support for cataclysm
+- Added icons to profession skill messages
