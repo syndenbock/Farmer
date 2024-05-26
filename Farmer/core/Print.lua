@@ -77,6 +77,7 @@ end
 local function printIconMessageWithData (subspace, identifier, data, icon, message, colors)
   farmerFrame:AddIconMessageWithData(subspace, identifier, data, icon, message, colors or DEFAULT_COLOR);
 end
+
 local function printAtlasMessageWithData (subspace, identifier, data, atlas, message, colors)
   farmerFrame:AddAtlasMessageWithData(subspace, identifier, data, atlas, message, colors or DEFAULT_COLOR);
 end

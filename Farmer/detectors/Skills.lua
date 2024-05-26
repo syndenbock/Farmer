@@ -1,6 +1,15 @@
 local _, addon = ...;
 
-if (_G.GetSkillLineInfo == nil) then
+-- This is the wackiest feature detection check I had to add so far, but because
+-- Blizzard uses the same client for all Classic flavours, even deprecated APIs
+-- and frames exist. You can even still display the skill frame in Cata Classic
+-- using /run SkillFrame:Show(). Therefor this abomination is the best check I
+-- found. If you find a better way of checking if the skill system exists,
+-- please let me know!
+
+if (GetSkillLineInfo == nil
+    or CHARACTERFRAME_SUBFRAMES == nil
+    or not tContains(CHARACTERFRAME_SUBFRAMES , 'SkillFrame')) then
   addon.registerUnavailableDetector('skills');
   return;
 end
