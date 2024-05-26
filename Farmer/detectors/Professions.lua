@@ -83,7 +83,6 @@ if (GetAllProfessionTradeSkillLines ~= nil) then
   end);
 end
 
-
 --##############################################################################
 -- consolidated profession handling
 --##############################################################################
@@ -136,9 +135,9 @@ end
 
 addon.import('tests').profession = function (id)
   if (id) then
-    yellProfession(GetProfessionInfo(tonumber(id)), 1);
+    yellProfession(GetProfessionInfoBySkillLineID(tonumber(id)), 1);
   else
-    yellProfession(GetProfessionInfo(171), 1);
-    yellProfession(GetProfessionInfo(2483), 1);
+    yellProfession(GetProfessionInfoBySkillLineID(171), 1);
+    yellProfession(GetProfessionInfoBySkillLineID(2483), 1);
   end
 end
