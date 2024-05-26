@@ -1,10 +1,10 @@
 <UI>
+  <script file="Debug.lua"></script>
   <script file="Keybindings.lua"></script>
   <script file="ItemUtils.lua"></script>
   <script file="Serialize.lua"></script>
   <script file="SlashCommands.lua"></script>
   <script file="Utils.lua"></script>
   <script file="StringUtils.lua"></script>
-  <script file="Debug.lua"></script>
   <script file="TooltipScan.lua"></script>
 </UI>

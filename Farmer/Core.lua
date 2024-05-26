@@ -1,21 +1,5 @@
 local _, addon = ...;
 
-addon.debugging = false;
-
-if (addon.debugging) then
-  local proxy = {
-    __metatable = false,
-  };
-  proxy.__index = proxy;
-  proxy.__newindex = function (_, key, value)
-    assert(proxy[key] == nil, 'Addon key already in use: ' .. key);
-
-    proxy[key] = value;
-  end
-
-  setmetatable(addon, proxy);
-end
-
 local function extend (class, key, value)
   assert(class[key] == nil, 'Key already in use: ' .. key);
   class[key] = value;

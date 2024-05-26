@@ -4,7 +4,23 @@ local tostring = _G.tostring;
 local tinsert = _G.tinsert;
 
 local Debug = addon:extend('Debug', {});
+
 local enabled = false;
+
+if (enabled) then
+  local proxy = {
+    __metatable = false,
+  };
+
+  proxy.__index = proxy;
+  proxy.__newindex = function (_, key, value)
+    assert(proxy[key] == nil, 'Addon key already in use: ' .. key);
+
+    proxy[key] = value;
+  end
+
+  setmetatable(addon, proxy);
+end
 
 local stringifyTable;
 local stringifyElement;
@@ -61,5 +77,5 @@ end
 function Debug.call (func, ...)
   if (not enabled) then return end
 
-  xpcall(func, geterrorhandler(), ...);
+  xpcall(func, _G.geterrorhandler(), ...);
 end
