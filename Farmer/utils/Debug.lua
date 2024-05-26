@@ -23,7 +23,7 @@ stringifyTable = function (table)
   tinsert(fragments, 1, '{');
   tinsert(fragments, '}');
 
-  return addon.stringJoin(fragments, '\n');
+  return addon.tableJoin(fragments, '\n');
 end
 
 stringifyElement = function (element)
@@ -42,7 +42,7 @@ local function printElements (...)
     tinsert(strings, stringifyElement(element));
   end
 
-  addon.printAddonMessage('Debug:', addon.stringJoin(strings, ' '));
+  addon.printAddonMessage('Debug:', addon.tableJoin(strings, ' '));
 end
 
 function Debug.setEnabled (value)
