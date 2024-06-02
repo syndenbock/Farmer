@@ -36,7 +36,7 @@ local DEFAULT_COLOR = {r = 1, g = 1, b = 1, a = 1};
 local ICON_OFFSET = 3;
 
 local DEFAULT_OPTIONS = {
-  frameStrata = 'TOOLTIP',
+  frameStrata = 'DIALOG',
   frameLevel = 0,
   spacing = 0,
   fadeDuration = 1,
