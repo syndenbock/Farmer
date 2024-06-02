@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local Mixin = _G.Mixin;
+local CreateFromMixins = _G.CreateFromMixins;
 
 local MessageFrame = addon.import('Widget/MessageFrame');
 
@@ -11,42 +11,41 @@ local DataMessageFrame = addon.export('Widget/DataMessageFrame', {});
 --##############################################################################
 
 local function generateSubspaceIdentifier (self)
-  local identifier = self.subspaceIdentifier or 1;
-  self.subspaceIdentifier = identifier + 1;
-  return identifier;
+  self.subspaceCount = self.subspaceCount + 1;
+  return self.subspaceCount;
 end
 
-local function getMessageInfo (self, subspace, identifier)
+local function getDataByMessage (self, message)
+  return self.messageInfo[message];
+end
+
+local function getDataBySubspaceAndIdentifier (self, subspace, identifier)
   return self.subspaces[subspace][identifier];
 end
 
-local function setMessageData (self, subspace, identifier, message, data)
-  local info = getMessageInfo(self, subspace, identifier);
-
-  message.subspace = subspace;
-  message.identifier = identifier;
+local function storeMessageData (self, subspace, identifier, message, data)
+  local info = getDataBySubspaceAndIdentifier(self, subspace, identifier);
 
   if (not info) then
-    self.subspaces[subspace][identifier] = {
-      message = message,
-      data = data,
+    info = {
+      subspace = subspace,
+      identifier = identifier,
     };
-  else
-    info.message = message;
-    info.data = data;
+    self.subspaces[subspace][identifier] = info;
   end
+
+  info.message = message;
+  info.data = data;
+  self.messageInfo[message] = info;
 end
 
-local function removeMessageData (self, message)
-  if (message.subspace ~= nil and message.identifier ~= nil) then
-    self.subspaces[message.subspace][message.identifier] = nil;
-    message.subspace = nil;
-    message.identifier = nil;
-  end
-end
+local function deleteMessageData (self, message)
+  local info = getDataByMessage(self, message);
 
-local function resetMessage (self, pool, message)
-  removeMessageData(self, message);
+  if (info) then
+    self.subspaces[info.subspace][info.identifier] = nil;
+    self.messageInfo[message] = nil;
+  end
 end
 
 --##############################################################################
@@ -54,11 +53,16 @@ end
 --##############################################################################
 
 function DataMessageFrame:New (options)
-  local this = MessageFrame:New(options);
+  local this = CreateFromMixins(DataMessageFrame);
 
-  Mixin(this, DataMessageFrame);
+  this.subspaceCount = 0;
   this.subspaces = {};
-  this:AddResetCallback(resetMessage);
+  this.messageInfo = {};
+
+  this.messageFrame = MessageFrame:New(options);
+  this.messageFrame:AddResetCallback(function (message)
+    deleteMessageData(this, message);
+  end);
 
   return this;
 end
@@ -72,35 +76,35 @@ function DataMessageFrame:CreateSubspace ()
 end
 
 function DataMessageFrame:AddMessageWithData (subspace, identifier, data, text, colors)
-  return DataMessageFrame.AddIconOrAtlasMessageWithdata(self, subspace, identifier, data, nil, nil, text, colors);
+  return self:AddIconOrAtlasMessageWithdata(subspace, identifier, data, nil, nil, text, colors);
 end
 
 function DataMessageFrame:AddIconMessageWithData (subspace, identifier, data, icon, text, colors)
-  return DataMessageFrame.AddIconOrAtlasMessageWithdata(self, subspace, identifier, data, icon, nil, text, colors);
+  return self:AddIconOrAtlasMessageWithdata(subspace, identifier, data, icon, nil, text, colors);
 end
 
 function DataMessageFrame:AddAtlasMessageWithData (subspace, identifier, data, atlas, text, colors)
-  return DataMessageFrame.AddIconOrAtlasMessageWithdata(self, subspace, identifier, data, nil, atlas, text, colors);
+  return self:AddIconOrAtlasMessageWithdata(subspace, identifier, data, nil, atlas, text, colors);
 end
 
 function DataMessageFrame:AddIconOrAtlasMessageWithdata (subspace, identifier, data, icon, atlas, text, colors)
-  local info = getMessageInfo(self, subspace, identifier);
+  local info = getDataBySubspaceAndIdentifier(self, subspace, identifier);
   local message;
 
   if (info) then
     message = info.message;
-    MessageFrame.UpdateIconMessage(self, message, icon, text, colors);
+    self.messageFrame:UpdateIconMessage(message, icon, text, colors);
   else
-    message = MessageFrame.AddIconMessage(self, icon, text, colors);
+    message = self.messageFrame:AddIconMessage(icon, text, colors);
   end
 
-  setMessageData(self, subspace, identifier, message, data);
+  storeMessageData(self, subspace, identifier, message, data);
 
   return message;
 end
 
 function DataMessageFrame:GetMessageData (subspace, identifier)
-  local data = getMessageInfo(self, subspace, identifier);
+  local data = getDataBySubspaceAndIdentifier(self, subspace, identifier);
 
   return data and data.data;
 end
@@ -112,5 +116,48 @@ function DataMessageFrame:RemoveMessageByIdentifier (subspace, identifier)
     return;
   end
 
-  MessageFrame.RemoveMessage(self, data.message);
+  self.messageFrame:RemoveMessage(data.message);
 end
+
+--##############################################################################
+-- method proxies
+--##############################################################################
+
+local function proxyMethod (methodName)
+  DataMessageFrame[methodName] = function (self, ...)
+    return self.messageFrame[methodName](self.messageFrame, ...);
+  end
+end
+
+proxyMethod('SetFont');
+proxyMethod('Move');
+proxyMethod('SetSpacing');
+proxyMethod('AddMessage');
+proxyMethod('AddAnchorMessage');
+proxyMethod('SetIconScale');
+proxyMethod('SetVisibleTime');
+proxyMethod('SetGrowDirection');
+proxyMethod('SetTextAlign');
+proxyMethod('AddIconMessage');
+proxyMethod('AddAtlasMessage');
+proxyMethod('GetFadeDuration');
+proxyMethod('SetFadeDuration');
+proxyMethod('MoveMessageToFront');
+
+proxyMethod('ClearAllPoints');
+proxyMethod('SetPoint');
+proxyMethod('GetCenter');
+proxyMethod('SetFrameStrata');
+proxyMethod('GetFrameStrata');
+proxyMethod('SetFrameLevel');
+proxyMethod('GetFrameLevel');
+proxyMethod('GetScale');
+proxyMethod('GetEffectiveScale');
+proxyMethod('SetJustifyH');
+proxyMethod('GetJustifyH');
+proxyMethod('SetTextAlign');
+proxyMethod('GetTextAlign');
+proxyMethod('SetTimeVisible');
+proxyMethod('GetTimeVisible');
+proxyMethod('SetVisibleTime');
+proxyMethod('GetVisibleTime');

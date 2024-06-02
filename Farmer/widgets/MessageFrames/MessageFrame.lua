@@ -260,14 +260,18 @@ local function OnMessageAnimationFinished (animation)
 end
 
 local function CreateMessageAnimation (self, message)
+  local animationGroup = message.animationGroup;
   local animation = message.animation;
 
-  if (not message.animationGroup) then
-    message.animationGroup = message:CreateAnimationGroup();
+  if (not animationGroup) then
+    animationGroup = message:CreateAnimationGroup();
+    message.animationGroup = animationGroup;
+  else
+    animationGroup:Stop();
   end
 
   if (not animation) then
-    animation = message.animationGroup:CreateAnimation('Alpha');
+    animation = animationGroup:CreateAnimation('Alpha');
 
     animation:SetToAlpha(0);
     animation:SetOrder(1);
@@ -281,6 +285,8 @@ local function CreateMessageAnimation (self, message)
   animation:SetStartDelay(self.visibleTime);
   animation:SetDuration(self.fadeDuration);
   animation:SetFromAlpha(message:GetAlpha());
+
+  animationGroup:Play();
 end
 
 local function startMessageAnimation (self, message)
@@ -290,7 +296,6 @@ local function startMessageAnimation (self, message)
   end
 
   CreateMessageAnimation(self, message);
-  message.animationGroup:Restart();
 end
 
 --******************************************************************************
@@ -483,7 +488,7 @@ local function createAnchorMessage (self, icon, text, colors)
   return message;
 end
 
-local function resetMessage (self, pool, message)
+local function resetMessage (message)
   message:Hide();
   message.head = nil;
   message.tail = nil;
@@ -502,9 +507,9 @@ local function addResetCallback (self, callback)
   tinsert(self.resetCallbacks, 1, callback);
 end
 
-local function executeResetCallbacks (self, pool, message)
+local function executeResetCallbacks (self, message)
   for _, callback in ipairs(self.resetCallbacks) do
-    callback(self, pool, message);
+    callback(message);
   end
 end
 
@@ -524,10 +529,10 @@ function MessageFrame:New (options)
   this.frameLevel = nil;
   this.resetCallbacks = {};
   this.framePool = CreateFramePool(FRAME, this.anchor, nil, function (pool, message)
-    executeResetCallbacks(this, pool, message);
+    executeResetCallbacks(this, message);
+    resetMessage(message);
   end, false);
 
-  this:AddResetCallback(resetMessage);
   this.framePool:SetResetDisallowedIfNew(true);
   updateSizes(this);
 
