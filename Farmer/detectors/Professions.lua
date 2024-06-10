@@ -5,7 +5,7 @@ local GetAllProfessionTradeSkillLines =
     TradeSkillUI and TradeSkillUI.GetAllProfessionTradeSkillLines;
 local GetProfessionInfoBySkillLineID =
     TradeSkillUI and TradeSkillUI.GetProfessionInfoBySkillLineID;
-local GetTradeSkillTexture = TradeSkillUI.GetTradeSkillTexture;
+local GetTradeSkillTexture = TradeSkillUI and TradeSkillUI.GetTradeSkillTexture;
 local GetProfessions = _G.GetProfessions;
 local GetProfessionInfo = _G.GetProfessionInfo;
 
