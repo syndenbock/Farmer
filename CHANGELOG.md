@@ -1,2 +1,1 @@
-- Added profession support for cataclysm
-- Added icons to profession skill messages
+- Fixed error after login on Classic
