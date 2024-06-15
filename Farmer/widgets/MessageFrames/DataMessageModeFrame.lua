@@ -118,5 +118,13 @@ function DataMessageModeFrame:applyMode ()
   };
 
   assert(modeMap[self.mode] ~= nil, 'Unknown message mode: ' .. self.mode);
-  Mixin(self, modeMap[self.mode]);
+  self.mode = modeMap[self.mode];
+end
+
+function DataMessageModeFrame:AddMessageWithData (...)
+  self.mode.AddMessageWithData(self, ...);
+end
+
+function DataMessageModeFrame:AddIconMessageWithData (...)
+  self.mode.AddIconMessageWithData(self, ...);
 end
