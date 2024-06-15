@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local CreateFromMixins = _G.CreateFromMixins;
+local Mixin = _G.Mixin;
 
 local MessageFrame = addon.import('Widget/MessageFrame');
 
@@ -53,16 +53,15 @@ end
 --##############################################################################
 
 function DataMessageFrame:New (options)
-  local this = CreateFromMixins(DataMessageFrame);
+  local this = MessageFrame:New (options);
+
+  Mixin(this, DataMessageFrame);
 
   this.subspaceCount = 0;
   this.subspaces = {};
   this.messageInfo = {};
 
-  this.messageFrame = MessageFrame:New(options);
-  this.messageFrame:AddResetCallback(function (message)
-    deleteMessageData(this, message);
-  end);
+  this:AddResetCallback(deleteMessageData);
 
   return this;
 end
@@ -93,9 +92,9 @@ function DataMessageFrame:AddIconOrAtlasMessageWithdata (subspace, identifier, d
 
   if (info) then
     message = info.message;
-    self.messageFrame:UpdateIconMessage(message, icon, text, colors);
+    self:UpdateIconMessage(message, icon, text, colors);
   else
-    message = self.messageFrame:AddIconMessage(icon, text, colors);
+    message = self:AddIconMessage(icon, text, colors);
   end
 
   storeMessageData(self, subspace, identifier, message, data);
@@ -116,48 +115,5 @@ function DataMessageFrame:RemoveMessageByIdentifier (subspace, identifier)
     return;
   end
 
-  self.messageFrame:RemoveMessage(data.message);
+  self:RemoveMessage(data.message);
 end
-
---##############################################################################
--- method proxies
---##############################################################################
-
-local function proxyMethod (methodName)
-  DataMessageFrame[methodName] = function (self, ...)
-    return self.messageFrame[methodName](self.messageFrame, ...);
-  end
-end
-
-proxyMethod('SetFont');
-proxyMethod('Move');
-proxyMethod('SetSpacing');
-proxyMethod('AddMessage');
-proxyMethod('AddAnchorMessage');
-proxyMethod('SetIconScale');
-proxyMethod('SetVisibleTime');
-proxyMethod('SetGrowDirection');
-proxyMethod('SetTextAlign');
-proxyMethod('AddIconMessage');
-proxyMethod('AddAtlasMessage');
-proxyMethod('GetFadeDuration');
-proxyMethod('SetFadeDuration');
-proxyMethod('MoveMessageToFront');
-
-proxyMethod('ClearAllPoints');
-proxyMethod('SetPoint');
-proxyMethod('GetCenter');
-proxyMethod('SetFrameStrata');
-proxyMethod('GetFrameStrata');
-proxyMethod('SetFrameLevel');
-proxyMethod('GetFrameLevel');
-proxyMethod('GetScale');
-proxyMethod('GetEffectiveScale');
-proxyMethod('SetJustifyH');
-proxyMethod('GetJustifyH');
-proxyMethod('SetTextAlign');
-proxyMethod('GetTextAlign');
-proxyMethod('SetTimeVisible');
-proxyMethod('GetTimeVisible');
-proxyMethod('SetVisibleTime');
-proxyMethod('GetVisibleTime');

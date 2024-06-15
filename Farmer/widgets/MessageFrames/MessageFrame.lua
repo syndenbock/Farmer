@@ -509,7 +509,7 @@ end
 
 local function executeResetCallbacks (self, message)
   for _, callback in ipairs(self.resetCallbacks) do
-    callback(message);
+    callback(self, message);
   end
 end
 
