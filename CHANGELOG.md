@@ -1,1 +1,1 @@
-- Fixed error after login on Classic
+- Bug fixes and improvements
