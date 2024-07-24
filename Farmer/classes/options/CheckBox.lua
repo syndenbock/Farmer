@@ -6,20 +6,28 @@ local CreateFromMixins = _G.CreateFromMixins;
 local CheckBox =  addon.export('Class/Options/CheckBox', {});
 
 local function createCheckBox (name, parent, text, anchors)
-  local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent,
-      _G.SettingsCheckBoxControlMixin and 'SettingsCheckBoxControlTemplate' or 'OptionsCheckButtonTemplate');
+  local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent, 'SettingsCheckBoxControlTemplate');
 
-  if (checkBox.CheckBox) then
-    checkBox.CheckBox:ClearAllPoints();
-    checkBox.CheckBox:SetPoint('LEFT', checkBox, 'LEFT', 0, 0);
+  -- TWW: CheckBox is renamed to Checkbox
+  if checkBox.CheckBox then
+    checkBox.Checkbox = checkBox.CheckBox
+  end
+
+  if (checkBox.Checkbox) then
+    checkBox.Checkbox:ClearAllPoints();
+    checkBox.Checkbox:SetPoint('LEFT', checkBox, 'LEFT', 0, 0);
     checkBox.Text:ClearAllPoints();
-    checkBox.Text:SetPoint('LEFT', checkBox.CheckBox, 'RIGHT', 5, 0);
+    checkBox.Text:SetPoint('LEFT', checkBox.Checkbox, 'RIGHT', 5, 0);
     checkBox.Text:SetText(text);
     checkBox.Text:SetJustifyH('LEFT');
   else
     -- Blizzard really knows how to write APIs. Not.
-    _G[name .. 'CheckButtonText']:SetText(text);
-    _G[name .. 'CheckButtonText']:SetJustifyH('LEFT');
+    local textFrame = _G[name .. 'CheckButtonText']
+
+    if (textFrame ~= nil) then
+      textFrame:SetText(text);
+      textFrame:SetJustifyH('LEFT');
+    end
   end
 
   checkBox:ClearAllPoints();
