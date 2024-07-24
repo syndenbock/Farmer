@@ -2,14 +2,14 @@ local addonName, addon = ...;
 
 local GetCVar = addon.import('polyfills/C_CVar').GetCVar;
 local SetCVar = addon.import('polyfills/C_CVar').SetCVar;
-local GetSpellInfo = _G.GetSpellInfo;
+local GetSpellInfo = addon.import('polyfills/C_Spell').GetSpellInfo;
 local InCombatLockdown = _G.InCombatLockdown;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Misc;
 
 local UNITID_PLAYER = 'player';
-local FISHING_NAME = GetSpellInfo(7620);
+local FISHING_NAME = GetSpellInfo(7620).name;
 local HIDE_STATES = {
   off = 0,
   hide = 1,
@@ -31,7 +31,7 @@ local function shouldPlatesBeHidden (unit)
 end
 
 local function isSpellFishing (spellid)
-  return (GetSpellInfo(spellid) == FISHING_NAME);
+  return (GetSpellInfo(spellid).name == FISHING_NAME);
 end
 
 local function hidePlates ()
