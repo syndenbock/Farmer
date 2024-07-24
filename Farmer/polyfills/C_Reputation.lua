@@ -1,12 +1,9 @@
 local _, addon = ...;
 
-if (C_Reputation ~= nil) then
-  addon.export('polyfills/C_Reputation', C_Reputation);
-  return;
-end
-
 local GetFactionInfo = _G.GetFactionInfo;
 local GetFactionInfoByID = _G.GetFactionInfoByID;
+local C_Reputation = _G.C_Reputation or {};
+
 
 local function packFactionInfo (...)
   local info = {...};
@@ -36,18 +33,18 @@ local function GetFactionDataByIndex (...)
   return packFactionInfo(GetFactionInfo(...));
 end
 
-local function GetFactionDataById (...)
+local function GetFactionDataByID (...)
   return packFactionInfo(GetFactionInfoByID(...));
 end
 
-addon.export('polyfills/C_Reputation', C_Reputation or {
-  GetNumFactions = _G.GetNumFactions,
-  GetFactionDataByIndex = GetFactionDataByIndex,
-  GetFactionDataById = GetFactionDataById,
-  ExpandFactionHeader = _G.ExpandFactionHeader,
-  CollapseFactionHeader = _G.CollapseFactionHeader,
-  GetFactionParagonInfo = nil,
-  IsFactionParagon = function ()
+addon.export('polyfills/C_Reputation', {
+  GetNumFactions = C_Reputation.GetNumFactions or _G.GetNumFactions,
+  GetFactionDataByIndex = C_Reputation.GetFactionDataByIndex or GetFactionDataByIndex,
+  GetFactionDataByID = C_Reputation.GetFactionDataByID or GetFactionDataByID,
+  ExpandFactionHeader = C_Reputation.ExpandFactionHeader or _G.ExpandFactionHeader,
+  CollapseFactionHeader = C_Reputation.CollapseFactionHeader or _G.CollapseFactionHeader,
+  GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo,
+  IsFactionParagon = C_Reputation.IsFactionParagon or function ()
     return false;
   end,
 });
