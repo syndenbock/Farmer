@@ -59,7 +59,7 @@ local function checkMajorFaction (majorFactionInfo)
     yellReputation({
       name = majorFactionInfo.name,
       faction = majorFactionInfo.factionID,
-      reputationChange = reputationDifference,
+      standingChange = reputationDifference,
       renownLevel = majorFactionInfo.renownLevel,
       renownLevelChanged = renownLevelChanged,
     });

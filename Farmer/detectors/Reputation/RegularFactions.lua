@@ -5,30 +5,26 @@ addon.registerAvailableDetector('reputation');
 local floor = _G.floor;
 local tinsert = _G.tinsert;
 
-local function returnFalse ()
-  return false;
-end
+local C_Reputation = addon.import('polyfills/C_Reputation');
+local GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo;
+local IsFactionParagon = C_Reputation.IsFactionParagon;
 
-local C_Reputation = _G.C_Reputation;
-local GetFactionParagonInfo = C_Reputation and C_Reputation.GetFactionParagonInfo;
-local IsFactionParagon = C_Reputation.IsFactionParagon or returnFalse;
-
-local GetNumFactions = _G.GetNumFactions;
-local GetFactionInfo = _G.GetFactionInfo;
-local ExpandFactionHeader = _G.ExpandFactionHeader;
-local CollapseFactionHeader = _G.CollapseFactionHeader;
+local GetNumFactions = C_Reputation.GetNumFactions;
+local GetFactionDataByIndex = C_Reputation.GetFactionDataByIndex;
+local ExpandFactionHeader = C_Reputation.ExpandFactionHeader;
+local CollapseFactionHeader = C_Reputation.CollapseFactionHeader;
 
 local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local reputationCache = {};
 
 local function updateParagonInfo (factionInfo)
-  if (not IsFactionParagon(factionInfo.faction)) then return end
+  if (not IsFactionParagon(factionInfo.factionID)) then return end
 
-  local paragonInfo = {GetFactionParagonInfo(factionInfo.faction)};
+  local paragonInfo = {GetFactionParagonInfo(factionInfo.factionID)};
 
   if (paragonInfo[1] and paragonInfo[2]) then
-    factionInfo.reputation = factionInfo.reputation + paragonInfo[1];
+    factionInfo.currentStanding = factionInfo.currentStanding + paragonInfo[1];
     factionInfo.paragonLevel = floor(paragonInfo[1] / paragonInfo[2]);
   end
 end
@@ -41,20 +37,6 @@ local function collapseExpandedReputations (expandedIndices)
   end
 end
 
-local function packFactionInfo (index)
-  local factionInfo = {GetFactionInfo(index)};
-
-  return {
-    name = factionInfo[1],
-    faction = factionInfo[14],
-    standing = factionInfo[3],
-    reputation = factionInfo[6],
-    isHeader = factionInfo[9],
-    isCollapsed = factionInfo[10],
-    hasRep = factionInfo[11],
-  };
-end
-
 local function iterateReputations (callback)
   local info = {};
   local numFactions = GetNumFactions();
@@ -64,7 +46,7 @@ local function iterateReputations (callback)
   --[[ we have to use a while loop, because a for loop would end when reaching
        the last loop, even when numFactions increases in that loop --]]
   while (index <= numFactions) do
-    local factionInfo = packFactionInfo(index);
+    local factionInfo = GetFactionDataByIndex(index);
 
     if (factionInfo.name == nil) then
       addon.printOneTimeMessage('Could not check factions as another addon seems to be interfering with the reputation pane');
@@ -77,7 +59,7 @@ local function iterateReputations (callback)
       numFactions = GetNumFactions();
     end
 
-    if (factionInfo.faction) then
+    if (factionInfo.factionID) then
       updateParagonInfo(factionInfo);
       callback(factionInfo);
     end
@@ -92,12 +74,12 @@ end
 
 local function storeReputation (factionInfo)
   local data = {
-    reputation = factionInfo.reputation,
-    standing = factionInfo.standing,
+    reaction = factionInfo.reaction,
+    currentStanding = factionInfo.currentStanding,
     paragonLevel = factionInfo.paragonLevel,
   };
 
-  reputationCache[factionInfo.faction] = data;
+  reputationCache[factionInfo.factionID] = data;
 end
 
 local function initReputationCache ()
@@ -115,21 +97,23 @@ end
 local function handleNewReputation (factionInfo)
   if (factionInfo.reputation ~= 0) then
     storeReputation(factionInfo);
+
     yellReputation({
       name = factionInfo.name,
-      faction = factionInfo.faction,
-      reputationChange = factionInfo.reputation,
-      standing = factionInfo.standing,
+      factionID = factionInfo.factionID,
+      reaction = factionInfo.reaction,
+      reactionChanged = true,
+      currentStanding = factionInfo.currentStanding,
+      standingChange = factionInfo.currentStanding,
       paragonLevel = factionInfo.paragonLevel,
       paragonLevelGained = hasParagonLevel(factionInfo),
-      standingChanged = true,
     });
   end
 end
 
 local function updateReputation (cachedInfo, factionInfo)
-  cachedInfo.reputation = factionInfo.reputation;
-  cachedInfo.standing = factionInfo.standing;
+  cachedInfo.currentStanding = factionInfo.currentStanding;
+  cachedInfo.currentStanding = factionInfo.currentStanding;
   cachedInfo.paragonLevel = factionInfo.paragonLevel;
 end
 
@@ -143,22 +127,25 @@ local function wasParagonLevelGained (cachedInfo, factionInfo)
 end
 
 local function handleCachedReputation (cachedInfo, factionInfo)
-  if (factionInfo.reputation ~= cachedInfo.reputation) then
+  if (factionInfo.currentStanding ~= cachedInfo.currentStanding) then
+
     yellReputation({
-      faction = factionInfo.faction,
-      reputationChange = factionInfo.reputation - cachedInfo.reputation,
-      standing = factionInfo.standing,
+      name = factionInfo.name,
+      factionID = factionInfo.factionID,
+      reaction = factionInfo.reaction,
+      reactionChanged = (factionInfo.reaction ~= cachedInfo.reaction),
+      currentStanding = factionInfo.currentStanding,
+      standingChange = factionInfo.currentStanding - cachedInfo.currentStanding,
       paragonLevel = factionInfo.paragonLevel,
       paragonLevelGained = wasParagonLevelGained(cachedInfo, factionInfo),
-      standingChanged = (factionInfo.standing ~= cachedInfo.standing),
     });
 
     updateReputation(cachedInfo, factionInfo);
   end
 end
 
-local function checkReputationChange (factionInfo)
-  local cachedInfo = reputationCache[factionInfo.faction];
+local function checkstandingChange (factionInfo)
+  local cachedInfo = reputationCache[factionInfo.factionID];
 
   if (cachedInfo == nil) then
     handleNewReputation(factionInfo);
@@ -168,7 +155,7 @@ local function checkReputationChange (factionInfo)
 end
 
 local function checkReputations ()
-  iterateReputations(checkReputationChange);
+  iterateReputations(checkstandingChange);
 end
 
 addon.onOnce('PLAYER_LOGIN', function ()
@@ -181,14 +168,18 @@ end);
 --##############################################################################
 
 addon.import('tests').reputation = function (id)
-  local faction = tonumber(id) or 2170;
+  local factionID = tonumber(id) or 2170;
+
+  local info = C_Reputation.GetFactionDataByID(factionID)
 
   yellReputation({
-    faction = faction,
-    reputationChange = 550,
-    standing = 5,
+    name = info.name,
+    factionID = factionID,
+    reaction = info.reaction,
+    standingChange = 550,
+    currentStanding = 50,
     paragonLevel = 1,
     paragonLevelGained = true,
-    standingChanged = false,
+    reactionChanged = false,
   });
 end
