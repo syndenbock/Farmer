@@ -3,7 +3,7 @@ local _, addon = ...;
 local max = _G.max;
 local tinsert = _G.tinsert;
 
-local CreateFramePool = _G.CreateFramePool;
+local CreateUnsecuredFramePool = _G.CreateUnsecuredFramePool or _G.CreateFramePool;
 local CreateFromMixins = _G.CreateFromMixins;
 local CreateFrame = _G.CreateFrame;
 local UIPARENT = _G.UIParent;
@@ -76,9 +76,17 @@ local function forEachActiveMessage (self, callback, ...)
   end
 end
 
+local function enumerateInactiveFrames (self)
+  -- F****** HELL BLIZZARD WHY DO YOU DELETE STUFF THAT WE USE?!
+  if (self.framePool.EnumerateInactive ~= nil) then
+    return self.framePool:EnumerateInactive();
+  else
+    return ipairs(self.framePool.inactiveObjects);
+  end
+end
+
 local function forEachInactiveMessage (self, callback, ...)
-  -- EnumerateActive returns ipairs() and uses elements as values
-  for _, message in self.framePool:EnumerateInactive() do
+  for _, message in enumerateInactiveFrames(self) do
     callback(self, message, ...);
   end
 end
@@ -528,12 +536,12 @@ function MessageFrame:New (options)
   this.frameStrata = nil;
   this.frameLevel = nil;
   this.resetCallbacks = {};
-  this.framePool = CreateFramePool(FRAME, this.anchor, nil, function (pool, message)
+
+  this.framePool = CreateUnsecuredFramePool(FRAME, this.anchor, nil, function (pool, message)
     executeResetCallbacks(this, message);
     resetMessage(message);
   end, false);
 
-  this.framePool:SetResetDisallowedIfNew(true);
   updateSizes(this);
 
   return this;
