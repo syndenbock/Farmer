@@ -1,1 +1,2 @@
-- Bug fixes and improvements
+- Fixed compatibility with Retail 11.0
+- Bumbed interface version for Retail 11.0
