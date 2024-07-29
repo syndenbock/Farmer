@@ -1,2 +1,1 @@
-- Fixed compatibility with Retail 11.0
-- Bumbed interface version for Retail 11.0
+- Fixed error on classic clients
