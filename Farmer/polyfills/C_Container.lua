@@ -1,27 +1,14 @@
 local _, addon = ...;
 
-if (C_Container) then
-  addon.export('polyfills/C_Container', C_Container);
-  return;
-end
+local C_Container = _G.C_Container or {};
 
-local GetContainerItemID = _G.GetContainerItemID;
-local GetContainerItemInfo = _G.GetContainerItemInfo;
-
-local module = addon.export('polyfills/C_Container', {
-  ContainerIDToInventoryID = _G.ContainerIDToInventoryID,
-  GetContainerNumFreeSlots = GetContainerNumFreeSlots,
-  GetContainerNumSlots = _G.GetContainerNumSlots,
-  UseContainerItem = _G.UseContainerItem,
-});
-
-function module.GetContainerItemInfo (containerIndex, slotIndex)
+local function GetContainerItemInfo (containerIndex, slotIndex)
   -- Use GetContainerItemID because GetContainerItemInfo returns nil if item
   -- data is not ready yet
-  local itemID = GetContainerItemID(containerIndex, slotIndex);
+  local itemID = _G.GetContainerItemID(containerIndex, slotIndex);
 
   if (itemID) then
-    local info = {GetContainerItemInfo(containerIndex, slotIndex)};
+    local info = {_G.GetContainerItemInfo(containerIndex, slotIndex)};
 
     return {
       iconFileID = info[1],
@@ -38,3 +25,11 @@ function module.GetContainerItemInfo (containerIndex, slotIndex)
     };
   end
 end
+
+addon.export('polyfills/C_Container', {
+  ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID or _G.ContainerIDToInventoryID,
+  GetContainerNumFreeSlots = C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots,
+  GetContainerNumSlots = C_Container.GetContainerNumSlots or _G.GetContainerNumSlots,
+  UseContainerItem = C_Container.UseContainerItem or _G.UseContainerItem,
+  GetContainerItemInfo = C_Container.GetContainerItemInfo or GetContainerItemInfo,
+});

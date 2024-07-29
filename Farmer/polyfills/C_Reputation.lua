@@ -1,9 +1,6 @@
 local _, addon = ...;
 
-local GetFactionInfo = _G.GetFactionInfo;
-local GetFactionInfoByID = _G.GetFactionInfoByID;
 local C_Reputation = _G.C_Reputation or {};
-
 
 local function packFactionInfo (...)
   local info = {...};
@@ -30,11 +27,11 @@ local function packFactionInfo (...)
 end
 
 local function GetFactionDataByIndex (...)
-  return packFactionInfo(GetFactionInfo(...));
+  return packFactionInfo(_G.GetFactionInfo(...));
 end
 
 local function GetFactionDataByID (...)
-  return packFactionInfo(GetFactionInfoByID(...));
+  return packFactionInfo(_G.GetFactionInfoByID(...));
 end
 
 addon.export('polyfills/C_Reputation', {
@@ -43,7 +40,7 @@ addon.export('polyfills/C_Reputation', {
   GetFactionDataByID = C_Reputation.GetFactionDataByID or GetFactionDataByID,
   ExpandFactionHeader = C_Reputation.ExpandFactionHeader or _G.ExpandFactionHeader,
   CollapseFactionHeader = C_Reputation.CollapseFactionHeader or _G.CollapseFactionHeader,
-  GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo,
+  GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo or nil,
   IsFactionParagon = C_Reputation.IsFactionParagon or function ()
     return false;
   end,
