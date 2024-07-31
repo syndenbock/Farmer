@@ -58,7 +58,7 @@ local function checkMajorFaction (majorFactionInfo)
   if (reputationDifference ~= 0) then
     yellReputation({
       name = majorFactionInfo.name,
-      faction = majorFactionInfo.factionID,
+      factionID = majorFactionInfo.factionID,
       standingChange = reputationDifference,
       renownLevel = majorFactionInfo.renownLevel,
       renownLevelChanged = renownLevelChanged,
