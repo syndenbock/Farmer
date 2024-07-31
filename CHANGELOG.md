@@ -1,1 +1,1 @@
-- Fixed error on classic clients
+- Fixed error when gaining major faction reputation
