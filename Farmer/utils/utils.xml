@@ -1,5 +1,6 @@
 <UI>
   <script file="Debug.lua"></script>
+  <script file="Events.lua"></script>
   <script file="Keybindings.lua"></script>
   <script file="ItemUtils.lua"></script>
   <script file="Print.lua"></script>
