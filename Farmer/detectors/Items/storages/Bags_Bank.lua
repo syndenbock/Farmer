@@ -11,40 +11,60 @@ local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID;
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
-local GetKeyRingSize = _G.GetKeyRingSize;
+local GetKeyRingSize = _G.GetKeyRingSize or function () return 0 end;
 
-local BACKPACK_CONTAINER = _G.BACKPACK_CONTAINER;
-local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
-local NUM_BANKBAGSLOTS = _G.NUM_BANKBAGSLOTS;
-local BANK_OFFSET = (addon.isRetail() and 5) or 4;
-local BANK_CONTAINER = _G.BANK_CONTAINER or -1;
-local REAGENTBANK_CONTAINER = _G.REAGENTBANK_CONTAINER or -3;
-local REAGENT_CONTAINER = _G.REAGENT_CONTAINER or 5;
-local KEYRING_CONTAINER = _G.KEYRING_CONTAINER or -2;
--- for some reason there is no constant for bank bag container
-local BANKBAG_CONTAINER = -4;
-local LAST_BANK_SLOT = BANK_OFFSET + NUM_BANKBAGSLOTS;
+local BagIndex = _G.Enum.BagIndex;
+local InventoryConstants = _G.Constants.InventoryConstants
+
+local BACKPACK_CONTAINER = BagIndex.Backpack;
+local BANK_CONTAINER = BagIndex.Bank;
+local REAGENTBANK_CONTAINER = BagIndex.Reagentbank;
+local REAGENTBAG_CONTAINER = BagIndex.ReagentBag;
+local KEYRING_CONTAINER = BagIndex.Keyring;
+local BANKBAG_CONTAINER = BagIndex.Bankbag;
+
+local NUM_BAG_SLOTS = InventoryConstants.NumBagSlots;
+-- On Cataclysm Classic ReagentBag exists but not NumReagentBagSlots. Duh.
+local NUM_REAGENTBAG_SLOTS = InventoryConstants.NumReagentBagSlots or 0;
+local NUM_BANKBAGSLOTS = InventoryConstants.NumBankBagSlots;
+local NUM_ACCOUNTBANK_SLOTS = InventoryConstants.NumAccountBankSlots;
+
+local FIRST_BAG_SLOT = BACKPACK_CONTAINER + 1;
+local LAST_BAG_SLOT = FIRST_BAG_SLOT + NUM_BAG_SLOTS;
+
+local FIRST_REAGENTBAG_SLOT = REAGENTBAG_CONTAINER;
+local LAST_REAGENTBAG_SLOT = NUM_REAGENTBAG_SLOTS;
+
+local FIRST_BANK_SLOT = LAST_BAG_SLOT + 1;
+local LAST_BANK_SLOT = FIRST_BANK_SLOT + NUM_BANKBAGSLOTS;
+
+local FIRST_ACCOUNTBANK_SLOT = NUM_ACCOUNTBANK_SLOTS and LAST_BANK_SLOT + 1 or nil;
+local LAST_ACCOUNTBANK_SLOT = NUM_ACCOUNTBANK_SLOTS and FIRST_ACCOUNTBANK_SLOT + NUM_ACCOUNTBANK_SLOTS;
+
 local UNIT_PLAYER = 'player';
 
-local bagSlots = {BACKPACK_CONTAINER};
-local bankSlots = {BANKBAG_CONTAINER, BANK_CONTAINER};
+local bagSlots = {KEYRING_CONTAINER, BACKPACK_CONTAINER};
+local bankSlots = {REAGENTBANK_CONTAINER, BANKBAG_CONTAINER, BANK_CONTAINER};
 
 local bagCache = {};
 local flaggedBags = {};
 
-for x = 1, NUM_BAG_SLOTS, 1 do
+for x = FIRST_BAG_SLOT, LAST_BAG_SLOT, 1 do
   tinsert(bagSlots, x);
 end
 
-for x = BANK_OFFSET + 1, LAST_BANK_SLOT, 1 do
+for x = FIRST_REAGENTBAG_SLOT, LAST_REAGENTBAG_SLOT, 1 do
+  tinsert(bagSlots, x);
+end
+
+for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
   tinsert(bankSlots, x);
 end
 
-if (addon.isRetail()) then
-  tinsert(bagSlots, REAGENT_CONTAINER);
-  tinsert(bankSlots, REAGENTBANK_CONTAINER);
-else
-  tinsert(bagSlots, KEYRING_CONTAINER);
+if (NUM_ACCOUNTBANK_SLOTS) then
+  for x = FIRST_ACCOUNTBANK_SLOT, LAST_ACCOUNTBANK_SLOT, 1 do
+    tinsert(bankSlots, x);
+  end
 end
 
 local function getContainerSlotCount (bagIndex)
@@ -64,12 +84,17 @@ local function initBagContent (bagIndex)
   end
 end
 
-local function isContainerSlot (bagIndex)
-  return (BACKPACK_CONTAINER < bagIndex and bagIndex <= LAST_BANK_SLOT);
+local function isBagSlot (bagIndex)
+  return (FIRST_BAG_SLOT <= bagIndex and bagIndex <= LAST_BAG_SLOT);
+end
+
+local function isReagentBagSlot (bagIndex)
+  return (FIRST_REAGENTBAG_SLOT <= bagIndex and bagIndex <= LAST_REAGENTBAG_SLOT);
 end
 
 local function readContainerSlot (bagIndex)
-  if (not isContainerSlot(bagIndex)) then return end
+  -- Ignoring bank bag slots because they have their own container BANKBAG_CONTAINER
+  if (not isBagSlot(bagIndex) and not isReagentBagSlot) then return end
 
   local inventoryIndex = ContainerIDToInventoryID(bagIndex);
   local id = GetInventoryItemID(UNIT_PLAYER, inventoryIndex);
