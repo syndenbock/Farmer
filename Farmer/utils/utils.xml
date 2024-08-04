@@ -3,7 +3,6 @@
   <script file="Events.lua"></script>
   <script file="Keybindings.lua"></script>
   <script file="ItemUtils.lua"></script>
-  <script file="Print.lua"></script>
   <script file="Serialize.lua"></script>
   <script file="SlashCommands.lua"></script>
   <script file="Utils.lua"></script>
