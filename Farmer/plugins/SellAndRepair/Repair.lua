@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+local EventUtils = addon.import('Utils/Events');
+
 local CanMerchantRepair = _G.CanMerchantRepair;
 local GetRepairAllCost = _G.GetRepairAllCost;
 local IsInGuild = _G.IsInGuild;
@@ -7,6 +9,8 @@ local CanGuildBankRepair = _G.CanGuildBankRepair;
 local GetGuildBankWithdrawMoney = _G.GetGuildBankWithdrawMoney;
 local RepairAllItems = _G.RepairAllItems;
 local GetMoney = _G.GetMoney;
+
+local MERCHANT_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.Merchant;
 
 local L = addon.L;
 
@@ -74,10 +78,8 @@ local function shouldAutoRepair ()
   return (CanMerchantRepair() and options.autoRepair == true);
 end
 
-local function onMerchantOpened ()
+EventUtils.onInteractionFrameShow(MERCHANT_INTERACTION_TYPE, function ()
   if (shouldAutoRepair()) then
     repairEquipment();
   end
-end
-
-addon.on('MERCHANT_SHOW', onMerchantOpened);
+end);

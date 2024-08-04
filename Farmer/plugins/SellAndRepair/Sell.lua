@@ -1,5 +1,6 @@
 local addonName, addon = ...;
 
+local EventUtils = addon.import('Utils/Events');
 local C_Container = addon.import('polyfills/C_Container');
 
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
@@ -7,7 +8,7 @@ local GetContainerItemInfo = C_Container.GetContainerItemInfo;
 local UseContainerItem = C_Container.UseContainerItem;
 local GetItemInfo = _G.GetItemInfo;
 
-local REAGENT_CONTAINER = _G.REAGENT_CONTAINER or 5;
+local MERCHANT_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.Merchant;
 
 local L = addon.L;
 
@@ -90,10 +91,10 @@ local function shouldAutoSell ()
   return (options.autoSell == true);
 end
 
-local function onMerchantOpened ()
+EventUtils.onInteractionFrameShow(MERCHANT_INTERACTION_TYPE, function ()
   if (shouldAutoSell()) then
     sellGrayItems();
   end
-end
+end);
 
 addon.on('MERCHANT_SHOW', onMerchantOpened);

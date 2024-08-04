@@ -2,10 +2,14 @@ local _, addon = ...;
 
 if (_G.GetGuildBankItemInfo == nil) then return end
 
+local EventUtils = addon.import('Utils/Events');
+
 local GetCurrentGuildBankTab = _G.GetCurrentGuildBankTab;
 local GetGuildBankItemInfo = _G.GetGuildBankItemInfo;
 local GetGuildBankItemLink = _G.GetGuildBankItemLink;
 local GetItemInfoInstant = _G.GetItemInfoInstant;
+
+local GUILDBANK_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.GuildBanker;
 
 local storage = addon.import('Class/Storage'):new();
 local isOpen = false;
@@ -48,7 +52,7 @@ local function readCurrentGuildBankTab ()
   return index;
 end
 
-addon.on('GUILDBANKFRAME_OPENED', function ()
+EventUtils.onInteractionFrameShow(GUILDBANK_INTERACTION_TYPE, function ()
   isOpen = true;
 end);
 
@@ -67,10 +71,18 @@ addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
   end
 end);
 
-addon.on({'GUILDBANKFRAME_CLOSED', 'PLAYER_ENTERING_WORLD'}, function ()
+local function handleStorageClosed ()
   isOpen = false;
   storage:clear();
   currentTab = nil;
+end
+
+EventUtils.onInteractionFrameHide(GUILDBANK_INTERACTION_TYPE, function ()
+  if (type ~= GUILDBANK_INTERACTION_TYPE) then return end
+
+  handleStorageClosed();
 end);
+
+addon.on('PLAYER_ENTERING_WORLD', handleStorageClosed);
 
 addon.Items.addStorage({storage});

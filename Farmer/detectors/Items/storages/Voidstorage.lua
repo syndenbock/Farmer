@@ -1,9 +1,8 @@
 local _, addon = ...;
 
-local VOIDSTORAGE_FRAME_TYPE =
-    addon.findGlobal('Enum', 'PlayerInteractionType', 'VoidStorageBanker');
+local EventUtils = addon.import('Utils/Events');
 
-if (VOIDSTORAGE_FRAME_TYPE == nil) then return end
+local VOIDSTORAGE_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.VoidStorageBanker;
 
 local Storage = addon.import('Class/Storage');
 
@@ -71,17 +70,8 @@ local function clearVoidStorage ()
   wipe(storageTabs);
 end
 
-addon.on('PLAYER_INTERACTION_MANAGER_FRAME_SHOW', function (_, type)
-  if (type == VOIDSTORAGE_FRAME_TYPE) then
-    initVoidStorage();
-  end
-end);
-
-addon.on('PLAYER_INTERACTION_MANAGER_FRAME_HIDE', function (_, type)
-  if (type == VOIDSTORAGE_FRAME_TYPE) then
-    clearVoidStorage();
-  end
-end);
+EventUtils.onInteractionFrameShow(VOIDSTORAGE_INTERACTION_TYPE, initVoidStorage);
+EventUtils.onInteractionFrameHide(VOIDSTORAGE_INTERACTION_TYPE, clearVoidStorage);
 
 addon.on('VOID_TRANSFER_DONE', readVoidStorage);
 
