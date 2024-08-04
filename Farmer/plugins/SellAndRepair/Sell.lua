@@ -9,18 +9,32 @@ local UseContainerItem = C_Container.UseContainerItem;
 local GetItemInfo = _G.GetItemInfo;
 
 local MERCHANT_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.Merchant;
+local QUALITY_POOR = _G.Enum.ItemQuality.Poor;
+
+local BagIndex = _G.Enum.BagIndex;
+local InventoryConstants = _G.Constants.InventoryConstants
+
+local BACKPACK_CONTAINER = BagIndex.Backpack;
+local REAGENTBAG_CONTAINER = BagIndex.ReagentBag;
+
+local NUM_BAG_SLOTS = InventoryConstants.NumBagSlots;
+-- On Cataclysm Classic ReagentBag exists but not NumReagentBagSlots. Duh.
+local NUM_REAGENTBAG_SLOTS = InventoryConstants.NumReagentBagSlots or 0;
+
+local FIRST_BAG_SLOT = BACKPACK_CONTAINER + 1;
+local LAST_BAG_SLOT = FIRST_BAG_SLOT + NUM_BAG_SLOTS;
+
+local FIRST_REAGENTBAG_SLOT = REAGENTBAG_CONTAINER;
+local LAST_REAGENTBAG_SLOT = NUM_REAGENTBAG_SLOTS;
 
 local L = addon.L;
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.SellAndRepair;
 
-local FIRST_BAG = _G.BACKPACK_CONTAINER;
-local LAST_BAG = FIRST_BAG + _G.NUM_BAG_SLOTS;
-local QUALITY_COMMON = _G.Enum.ItemQuality.Poor;
 
-local function isItemGray (quality)
-  return (quality ~= nil and quality == QUALITY_COMMON);
+local function isItemTrash (quality)
+  return (quality ~= nil and quality <= QUALITY_POOR);
 end
 
 local function sellitem (bag, slot)
@@ -50,7 +64,7 @@ local function sellItemIfGray (bag, slot)
 
   if (not info.isLocked and
       shouldSellReadableItem(info.isReadable) and
-      isItemGray(info.quality)) then
+      isItemTrash(info.quality)) then
     local price = getItemSellPrice(info.itemID) * info.stackCount;
 
     sellitem(bag, slot);
@@ -74,12 +88,14 @@ end
 local function sellGrayItems ()
 	local totalPrice = 0;
 
-  for bag = FIRST_BAG, LAST_BAG, 1 do
+  totalPrice = totalPrice + sellGrayItemsInBag(BACKPACK_CONTAINER);
+
+  for bag = FIRST_BAG_SLOT, LAST_BAG_SLOT, 1 do
     totalPrice = totalPrice + sellGrayItemsInBag(bag);
   end
 
-  if (addon.isRetail()) then
-    totalPrice = totalPrice + sellGrayItemsInBag(REAGENT_CONTAINER);
+  for bag = FIRST_REAGENTBAG_SLOT, LAST_REAGENTBAG_SLOT, 1 do
+    totalPrice = totalPrice + sellGrayItemsInBag(bag);
   end
 
   if (totalPrice > 0) then
@@ -96,5 +112,3 @@ EventUtils.onInteractionFrameShow(MERCHANT_INTERACTION_TYPE, function ()
     sellGrayItems();
   end
 end);
-
-addon.on('MERCHANT_SHOW', onMerchantOpened);
