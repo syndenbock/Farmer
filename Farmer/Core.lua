@@ -1,5 +1,9 @@
 local _, addon = ...;
 
+local xpcall = _G.xpcall;
+
+local geterrorhandler = _G.geterrorhandler;
+
 local function extend (class, key, value)
   assert(class[key] == nil, 'Key already in use: ' .. key);
   class[key] = value;
@@ -27,3 +31,7 @@ function addon.import (name)
 end
 
 addon.export('tests', {});
+
+function addon.secureCall (callback, ...)
+  xpcall(callback, geterrorhandler(), ...);
+end

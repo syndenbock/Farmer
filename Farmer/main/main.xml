@@ -1,0 +1,5 @@
+<UI>
+  <script file="Migration.lua"/>
+  <script file="MainFrame.lua"/>
+  <script file="Options.lua"/>
+</UI>

@@ -2,9 +2,6 @@ local addonName, addon = ...;
 
 local floor = _G.floor;
 local log10 = _G.log10;
-local xpcall = _G.xpcall;
-
-local geterrorhandler = _G.geterrorhandler;
 
 local UIParent = _G.UIParent;
 
@@ -128,10 +125,6 @@ function addon.transformFrameAnchorsToCenter (frame, anchorFrame)
   frame:ClearAllPoints();
   frame:SetPoint('CENTER', anchorFrame, 'CENTER', relativePoints.x,
       relativePoints.y);
-end
-
-function addon.secureCall (callback, ...)
-  xpcall(callback, geterrorhandler(), ...);
 end
 
 function addon.measure (callback, ...)

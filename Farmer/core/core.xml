@@ -1,10 +1,6 @@
 <UI>
-  <script file="Migration.lua"/>
   <script file="Events.lua"/>
   <script file="EventFunnel.lua"/>
   <script file="Savedvars.lua"/>
   <script file="Yell.lua"/>
-  <script file="MainFrame.lua"/>
-  <script file="Options.lua"/>
-  <script file="Print.lua"/>
 </UI>
