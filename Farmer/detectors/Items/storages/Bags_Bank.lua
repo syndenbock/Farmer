@@ -94,7 +94,7 @@ end
 
 local function readContainerSlot (bagIndex)
   -- Ignoring bank bag slots because they have their own container BANKBAG_CONTAINER
-  if (not isBagSlot(bagIndex) and not isReagentBagSlot) then return end
+  if (not isBagSlot(bagIndex) and not isReagentBagSlot(bagIndex)) then return end
 
   local inventoryIndex = ContainerIDToInventoryID(bagIndex);
   local id = GetInventoryItemID(UNIT_PLAYER, inventoryIndex);
