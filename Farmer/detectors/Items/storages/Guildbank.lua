@@ -71,18 +71,10 @@ addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
   end
 end);
 
-local function handleStorageClosed ()
+EventUtils.onInteractionFrameHide(GUILDBANK_INTERACTION_TYPE, function ()
   isOpen = false;
   storage:clear();
   currentTab = nil;
-end
-
-EventUtils.onInteractionFrameHide(GUILDBANK_INTERACTION_TYPE, function ()
-  if (type ~= GUILDBANK_INTERACTION_TYPE) then return end
-
-  handleStorageClosed();
 end);
-
-addon.on('PLAYER_ENTERING_WORLD', handleStorageClosed);
 
 addon.Items.addStorage({storage});

@@ -13,12 +13,6 @@ local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars.far
 
 local mailIsOpen = false;
 
---[[ when having the mail open and accepting a queue, the MAIL_CLOSED event does
-not fire, so we clear the flag after entering the world --]]
-addon.on('PLAYER_ENTERING_WORLD', function ()
-  mailIsOpen = false;
-end);
-
 EventUtils.onInteractionFrameShow(MAIL_INTERACTION_TYPE, function ()
   mailIsOpen = true;
 end);
