@@ -53,16 +53,16 @@ function CheckBox:new (parent, name, anchorFrame, xOffset, yOffset, text,
 end
 
 function CheckBox:GetValue ()
-  if (self.checkBox.CheckBox) then
-    return self.checkBox.CheckBox:GetChecked();
+  if (self.checkBox.Checkbox) then
+    return self.checkBox.Checkbox:GetChecked();
   else
     return self.checkBox:GetChecked();
   end
 end
 
 function CheckBox:SetValue (checked)
-  if (self.checkBox.CheckBox) then
-    return self.checkBox.CheckBox:SetChecked(checked);
+  if (self.checkBox.Checkbox) then
+    return self.checkBox.Checkbox:SetChecked(checked);
   else
     return self.checkBox:SetChecked(checked);
   end
