@@ -16,9 +16,9 @@ addon.on('PLAYER_INTERACTION_MANAGER_FRAME_HIDE', function (event, type, ...)
 end);
 
 function module.onInteractionFrameShow (type, callback)
-  showCallbackHandler:addCallback(type, callback);
+  showCallbackHandler:add(type, callback);
 end
 
 function module.onInteractionFrameHide (type, callback)
-  hideCallbackHandler:addCallback(type, callback);
+  hideCallbackHandler:add(type, callback);
 end

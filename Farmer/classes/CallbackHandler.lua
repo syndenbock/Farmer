@@ -40,6 +40,16 @@ function CallbackHandler:addCallback (identifier, callback)
   end
 end
 
+function CallbackHandler:add (identifier, callback)
+  if (type(identifier) == "table") then
+    for _, _identifier in ipairs(identifier) do
+      self:addCallback(_identifier, callback)
+    end
+  else
+    self:addCallback(identifier, callback)
+  end
+end
+
 function CallbackHandler:call (identifier, ...)
   if (self.callbacks[identifier] == nil) then
     return false;
