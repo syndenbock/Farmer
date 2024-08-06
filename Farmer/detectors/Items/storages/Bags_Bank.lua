@@ -205,7 +205,7 @@ addon.onOnce('PLAYER_LOGIN', function ()
   EventUtils.onInteractionFrameShow(bankInteractionFrameTypes, initBank);
   EventUtils.onInteractionFrameHide(bankInteractionFrameTypes, clearBank);
 
-  if (addon.isRetail()) then
+  if (_G.C_EventUtils.IsEventValid('PLAYERREAGENTBANKSLOTS_CHANGED')) then
     addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
   end
 end);
