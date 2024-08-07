@@ -22,10 +22,18 @@ local function updateParagonInfo (factionInfo)
   if (not IsFactionParagon(factionInfo.factionID)) then return end
 
   local paragonInfo = {GetFactionParagonInfo(factionInfo.factionID)};
+  local paragonRep = paragonInfo[1];
+  local threshold = paragonInfo[2];
 
-  if (paragonInfo[1] and paragonInfo[2]) then
-    factionInfo.currentStanding = factionInfo.currentStanding + paragonInfo[1];
+  if (paragonRep and threshold) then
+    local hasRewardPending = paragonInfo[3];
+
+    factionInfo.currentStanding = factionInfo.currentStanding + paragonRep;
     factionInfo.paragonLevel = floor(paragonInfo[1] / paragonInfo[2]);
+
+    if (hasRewardPending) then
+      factionInfo.paragonLevel = factionInfo.paragonLevel + 1;
+    end
   end
 end
 
@@ -128,7 +136,6 @@ end
 
 local function handleCachedReputation (cachedInfo, factionInfo)
   if (factionInfo.currentStanding ~= cachedInfo.currentStanding) then
-
     yellReputation({
       name = factionInfo.name,
       factionID = factionInfo.factionID,
