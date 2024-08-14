@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local strsplit = _G.strsplit;
 
-local TOC_VERSION = _G.GetAddOnMetadata(addonName, 'version');
+local TOC_VERSION = _G.C_AddOns.GetAddOnMetadata(addonName, 'version');
 
 local Migration = addon:extend('Migration', {});
 local callbackHandler = addon.import('Class/CallbackHandler'):new();

@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local Migration = addon.Migration;
 
-local VERSION_TOC = _G.GetAddOnMetadata(addonName, 'version');
+local VERSION_TOC = _G.C_AddOns.GetAddOnMetadata(addonName, 'version');
 
 local function checkLegacyVersion (options)
   if (options and (options.version ~= nil)) then
