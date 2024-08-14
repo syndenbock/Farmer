@@ -1,5 +1,2 @@
-- Fixed option checkboxes being always unchecked
-- Added support for account bank tracking
-- Using new player interaction manager system to detect opening and closing of UI frames
-- Making use of enums and constants provided by the game client instead of hardcoded values
-- Small code improvements
+- Fixed compatibility with 11.0.2
+- Updated interface version for 11.0.2
