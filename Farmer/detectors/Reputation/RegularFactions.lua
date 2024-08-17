@@ -120,7 +120,7 @@ local function handleNewReputation (factionInfo)
 end
 
 local function updateReputation (cachedInfo, factionInfo)
-  cachedInfo.currentStanding = factionInfo.currentStanding;
+  cachedInfo.reaction = factionInfo.reaction;
   cachedInfo.currentStanding = factionInfo.currentStanding;
   cachedInfo.paragonLevel = factionInfo.paragonLevel;
 end
