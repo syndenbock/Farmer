@@ -1,2 +1,1 @@
-- Fixed compatibility with 11.0.2
-- Updated interface version for 11.0.2
+- Small bugfixes
