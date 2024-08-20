@@ -23,7 +23,7 @@ ItemPrint.COLORS = {
 };
 
 local function getItemCount (identifier, includeBank)
-  return GetItemCount(identifier, includeBank, false, includeBank);
+  return GetItemCount(identifier, includeBank, false, includeBank, includeBank);
 end
 
 local function formatItemInfo (data)
