@@ -1,10 +1,10 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 addon.registerAvailableDetector('items');
 
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
-local GetItemInfo = _G.GetItemInfo;
+local GetItemInfo = _G.C_Item.GetItemInfo;
 
 local extractNormalizedItemString = addon.extractNormalizedItemString;
 local fetchItemLink = addon.fetchItemLink;

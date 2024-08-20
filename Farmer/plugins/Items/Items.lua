@@ -5,8 +5,8 @@ if (not addon.isDetectorAvailable('items')) then return end
 local strupper = _G.strupper;
 local strmatch = _G.strmatch;
 
-local GetItemInfo = _G.GetItemInfo;
-local GetDetailedItemLevelInfo = _G.GetDetailedItemLevelInfo;
+local GetItemInfo = _G.C_Item.GetItemInfo;
+local GetDetailedItemLevelInfo = _G.C_Item.GetDetailedItemLevelInfo;
 local GetItemInventoryTypeByID = _G.C_Item.GetItemInventoryTypeByID;
 local C_Soulbinds = _G.C_Soulbinds;
 local IsItemConduitByItemInfo =

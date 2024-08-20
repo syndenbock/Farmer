@@ -3,7 +3,7 @@ local addonName, addon = ...;
 if (not addon.isDetectorAvailable('items')) then return end
 
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
-local GetItemCount = _G.GetItemCount;
+local GetItemCount = _G.C_Item.GetItemCount;
 
 local printIconMessageWithData = addon.Print.printIconMessageWithData;
 local stringJoin = addon.stringJoin;
