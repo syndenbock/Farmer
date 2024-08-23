@@ -23,7 +23,6 @@ local BACKPACK_CONTAINER = BagIndex.Backpack;
 local BANK_CONTAINER = BagIndex.Bank;
 local REAGENTBANK_CONTAINER = BagIndex.Reagentbank;
 local KEYRING_CONTAINER = BagIndex.Keyring;
-local BANKBAG_CONTAINER = BagIndex.Bankbag;
 
 local NUM_BAG_SLOTS = InventoryConstants.NumBagSlots;
 -- On Cataclysm Classic ReagentBag exists but not NumReagentBagSlots. Duh.
@@ -46,7 +45,7 @@ local LAST_ACCOUNTBANK_SLOT = FIRST_ACCOUNTBANK_SLOT and FIRST_ACCOUNTBANK_SLOT 
 local UNIT_PLAYER = 'player';
 
 local bagSlots = {KEYRING_CONTAINER, BACKPACK_CONTAINER};
-local bankSlots = {REAGENTBANK_CONTAINER, BANKBAG_CONTAINER, BANK_CONTAINER};
+local bankSlots = {REAGENTBANK_CONTAINER, BANK_CONTAINER};
 
 local bagCache = {};
 local flaggedBags = {};
@@ -70,10 +69,7 @@ if (NUM_ACCOUNTBANK_SLOTS) then
 end
 
 local function getContainerSlotCount (bagIndex)
-  -- For some reason GetContainerNumSlots returns 0 for BANKBAG_CONTAINER
-  if (bagIndex == BANKBAG_CONTAINER) then
-    return NUM_BANKBAGSLOTS;
-  elseif (bagIndex == KEYRING_CONTAINER) then
+  if (bagIndex == KEYRING_CONTAINER) then
     return GetKeyRingSize();
   else
     return GetContainerNumSlots(bagIndex);
