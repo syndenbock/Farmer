@@ -17,7 +17,7 @@ local GetInventoryItemLink = _G.GetInventoryItemLink;
 local GetKeyRingSize = _G.GetKeyRingSize or function () return 0 end;
 
 local BagIndex = _G.Enum.BagIndex;
-local InventoryConstants = _G.Constants.InventoryConstants
+local InventoryConstants = _G.Constants.InventoryConstants;
 
 local BACKPACK_CONTAINER = BagIndex.Backpack;
 local BANK_CONTAINER = BagIndex.Bank;
@@ -95,9 +95,18 @@ local function isReagentBagSlot (bagIndex)
   return (FIRST_REAGENTBAG_SLOT <= bagIndex and bagIndex <= LAST_REAGENTBAG_SLOT);
 end
 
+local function isBankBagSlot (bagIndex)
+  return (FIRST_BANK_SLOT <= bagIndex and bagIndex <= LAST_BANK_SLOT);
+end
+
+local function hasContainerSlot (bagIndex)
+  return (isBagSlot(bagIndex)
+          or isReagentBagSlot(bagIndex)
+          or isBankBagSlot(bagIndex))
+end
+
 local function readContainerSlot (bagIndex)
-  -- Ignoring bank bag slots because they have their own container BANKBAG_CONTAINER
-  if (not isBagSlot(bagIndex) and not isReagentBagSlot(bagIndex)) then return end
+  if (not hasContainerSlot(bagIndex)) then return end
 
   local inventoryIndex = ContainerIDToInventoryID(bagIndex);
   local id = GetInventoryItemID(UNIT_PLAYER, inventoryIndex);
