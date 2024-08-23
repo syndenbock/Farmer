@@ -14,7 +14,7 @@ local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID;
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
-local GetKeyRingSize = _G.GetKeyRingSize or function () return 0 end;
+local GetKeyRingSize = _G.GetKeyRingSize
 
 local BagIndex = _G.Enum.BagIndex;
 local InventoryConstants = _G.Constants.InventoryConstants;
@@ -44,7 +44,7 @@ local LAST_ACCOUNTBANK_SLOT = FIRST_ACCOUNTBANK_SLOT and FIRST_ACCOUNTBANK_SLOT 
 
 local UNIT_PLAYER = 'player';
 
-local bagSlots = {KEYRING_CONTAINER, BACKPACK_CONTAINER};
+local bagSlots = {BACKPACK_CONTAINER};
 local bankSlots = {REAGENTBANK_CONTAINER, BANK_CONTAINER};
 
 local bagCache = {};
@@ -56,6 +56,10 @@ end
 
 for x = FIRST_REAGENTBAG_SLOT, LAST_REAGENTBAG_SLOT, 1 do
   tinsert(bagSlots, x);
+end
+
+if (GetKeyRingSize ~= nil) then
+  tinsert(bagSlots, KEYRING_CONTAINER);
 end
 
 for x = FIRST_BANK_SLOT, LAST_BANK_SLOT, 1 do
