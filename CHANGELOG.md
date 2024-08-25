@@ -1,1 +1,1 @@
-- Small bugfixes
+- Several bugfixes
