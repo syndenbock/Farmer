@@ -578,7 +578,7 @@ function MessageFrame:AddAtlasOrIconMessage (icon, atlas, text, colors)
 end
 
 function MessageFrame:AddAnchorMessage (icon, text, colors)
-  startMessageAnimation(self, createAnchorMessage(self, icon, text, colors));
+  createAnchorMessage(self, icon, text, colors);
 end
 
 function MessageFrame:RemoveMessage (message)
