@@ -25,48 +25,35 @@ local function getCurrentMap ()
   return GetBestMapForUnit(UNIT_PLAYER);
 end
 
-local function yellVignette (info, coords, onMinimap)
-  addon.yell('NEW_VIGNETTE', info, coords, onMinimap);
+local function yellVignette (info, coords)
+  addon.yell('NEW_VIGNETTE', ImmutableMap(info), coords);
 end
 
 -- first parameter is unused to be able to use it as an event listener
-local function readVignette (_, guid)
+local function readVignette (_, vignetteGUID)
   if (currentMapId == nil) then return end
 
-  local state = vignetteCache[guid];
+  local info = GetVignetteInfo(vignetteGUID);
+  local coords = GetVignettePosition(vignetteGUID, currentMapId);
 
-  -- vignette was already triggered both as not on minimap and as on minimap
-  if (state == true) then return end
+  if (not info or not coords) then return end
 
-  local info = GetVignetteInfo(guid);
-
-  if (not info) then return end
-
-  local coords = GetVignettePosition(guid, currentMapId);
-
-  if (not coords) then return end
-
+  local objectGUID = info.objectGUID;
   local onMinimap = info.onMinimap;
 
-  -- info object could be used for both on minimap and not on minimap so
-  -- onMinimap flag will be passed separately
-  info.onMinimap = nil;
-  info = ImmutableMap(info);
+  -- If the vignette was already detected on the minimap it makes the second
+  -- check redundant
+  if (vignetteCache[objectGUID] == true or
+      vignetteCache[objectGUID] == onMinimap) then
+    return;
+  end
 
-  coords = {
+  yellVignette(info, {
     x = coords.x * 100,
     y = coords.y * 100,
-  };
+  });
 
-  if (state == nil) then
-    yellVignette(info, coords, false);
-  end
-
-  if (onMinimap == true) then
-    yellVignette(info, coords, true);
-  end
-
-  vignetteCache[guid] = onMinimap;
+  vignetteCache[objectGUID] = onMinimap;
 end
 
 local function scanVignettes ()
