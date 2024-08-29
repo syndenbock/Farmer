@@ -3,6 +3,8 @@ local addonName, addon = ...;
 if (not addon.isDetectorAvailable('reputation')) then return end
 
 local abs = _G.abs;
+local GetText = _G.GetText;
+local UnitSex = _G.UnitSex;
 
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local printIconMessageWithData = addon.Print.printIconMessageWithData;
@@ -17,9 +19,7 @@ local MESSAGE_COLORS = {r = 0, g = 0.35, b = 1};
 local SUBSPACE = farmerFrame:CreateSubspace();
 
 local function getStandingLabel (standing)
-  local labelPrefix = 'FACTION_STANDING_LABEL';
-
-  return _G[labelPrefix .. standing];
+  return GetText('FACTION_STANDING_LABEL' .. standing, UnitSex('player'));
 end
 
 local function checkReputationOptions ()
