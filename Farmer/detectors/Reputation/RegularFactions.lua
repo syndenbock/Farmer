@@ -72,8 +72,9 @@ local function iterateReputations (callback)
         callback(factionInfo);
       end
 
-      index = index + 1;
     end
+
+    index = index + 1;
   end
 
   collapseExpandedReputations(expandedIndices);
