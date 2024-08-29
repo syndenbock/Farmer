@@ -71,7 +71,6 @@ local function iterateReputations (callback)
         updateParagonInfo(factionInfo);
         callback(factionInfo);
       end
-
     end
 
     index = index + 1;
@@ -83,13 +82,11 @@ local function iterateReputations (callback)
 end
 
 local function storeReputation (factionInfo)
-  local data = {
+  reputationCache[factionInfo.factionID] = {
     reaction = factionInfo.reaction,
     currentStanding = factionInfo.currentStanding,
     paragonLevel = factionInfo.paragonLevel,
   };
-
-  reputationCache[factionInfo.factionID] = data;
 end
 
 local function initReputationCache ()
@@ -106,22 +103,16 @@ end
 
 local function handleNewReputation (factionInfo)
   if (factionInfo.reputation ~= 0) then
-    storeReputation(factionInfo);
+    factionInfo.reactionChanged = true;
+    factionInfo.standingChange = factionInfo.currentStanding;
+    factionInfo.paragonLevelGained = hasParagonLevel(factionInfo);
 
-    yellReputation({
-      name = factionInfo.name,
-      factionID = factionInfo.factionID,
-      reaction = factionInfo.reaction,
-      reactionChanged = true,
-      currentStanding = factionInfo.currentStanding,
-      standingChange = factionInfo.currentStanding,
-      paragonLevel = factionInfo.paragonLevel,
-      paragonLevelGained = hasParagonLevel(factionInfo),
-    });
+    storeReputation(factionInfo);
+    yellReputation(factionInfo);
   end
 end
 
-local function updateReputation (cachedInfo, factionInfo)
+local function updateCachedReputation (cachedInfo, factionInfo)
   cachedInfo.reaction = factionInfo.reaction;
   cachedInfo.currentStanding = factionInfo.currentStanding;
   cachedInfo.paragonLevel = factionInfo.paragonLevel;
@@ -138,18 +129,15 @@ end
 
 local function handleCachedReputation (cachedInfo, factionInfo)
   if (factionInfo.currentStanding ~= cachedInfo.currentStanding) then
-    yellReputation({
-      name = factionInfo.name,
-      factionID = factionInfo.factionID,
-      reaction = factionInfo.reaction,
-      reactionChanged = (factionInfo.reaction ~= cachedInfo.reaction),
-      currentStanding = factionInfo.currentStanding,
-      standingChange = factionInfo.currentStanding - cachedInfo.currentStanding,
-      paragonLevel = factionInfo.paragonLevel,
-      paragonLevelGained = wasParagonLevelGained(cachedInfo, factionInfo),
-    });
+    factionInfo.reactionChanged =
+        (factionInfo.reaction ~= cachedInfo.reaction);
+    factionInfo.standingChange =
+        factionInfo.currentStanding - cachedInfo.currentStanding;
+    factionInfo.paragonLevelGained =
+        wasParagonLevelGained(cachedInfo, factionInfo);
 
-    updateReputation(cachedInfo, factionInfo);
+    updateCachedReputation(cachedInfo, factionInfo);
+    yellReputation(factionInfo);
   end
 end
 
@@ -181,14 +169,9 @@ addon.import('tests').reputation = function (id)
 
   local info = C_Reputation.GetFactionDataByID(factionID)
 
-  yellReputation({
-    name = info.name,
-    factionID = factionID,
-    reaction = info.reaction,
-    standingChange = 550,
-    currentStanding = 50,
-    paragonLevel = 1,
-    paragonLevelGained = true,
-    reactionChanged = false,
-  });
+  info.standingChange = 550;
+  info.paragonLevelGained = true;
+  info.reactionChanged = false;
+
+  yellReputation(info);
 end
