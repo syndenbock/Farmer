@@ -1,5 +1,7 @@
 local addonName, addon = ...;
 
+local CallAfter = _G.C_Timer.After;
+
 local secureCall = addon.secureCall;
 
 local eventFrame = _G.CreateFrame('frame');
@@ -30,6 +32,22 @@ local function addSingleFireCallback (event, callback)
   addCallback(event, wrapper);
 end
 
+local function createFunnelCallback (callback)
+  local triggered = false;
+
+  local function wrapper ()
+    triggered = false;
+    callback();
+  end
+
+  return function ()
+    if (not triggered) then
+      triggered = true;
+      CallAfter(0, wrapper);
+    end
+  end
+end
+
 local function callForEvents (events, callback, method)
   assert(type(callback) == 'function',
       addonName .. ': callback is not a function');
@@ -51,10 +69,16 @@ function addon.on (events, callback)
   callForEvents(events, callback, addCallback);
 end
 
+function addon.off (events, callback)
+  callForEvents(events, callback, removeCallback);
+end
+
 function addon.onOnce (events, callback)
   callForEvents(events, callback, addSingleFireCallback);
 end
 
-function addon.off (events, callback)
-  callForEvents(events, callback, removeCallback);
+function addon.funnel (eventList, callback)
+  local funnelCallback = createFunnelCallback(callback);
+  addon.on(eventList, funnelCallback);
+  return funnelCallback;
 end
