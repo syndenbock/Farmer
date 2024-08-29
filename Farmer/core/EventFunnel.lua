@@ -1,33 +1,20 @@
 local _, addon = ...;
 
 local CallAfter = _G.C_Timer.After;
-local wipe = _G.wipe;
 
-local callbackHandler = addon.import('Class/CallbackHandler'):new();
-local triggeredEvents = {};
-local anyEventsTriggered = false;
+local function createFunnelCallback (callback)
+  local triggered = false;
 
-local function callTriggeredEvents ()
-  for event in pairs(triggeredEvents) do
-    callbackHandler:call(event);
+  local function wrapper ()
+    triggered = false;
+    callback();
   end
 
-  anyEventsTriggered = false;
-  wipe(triggeredEvents);
-end
-
-local function handleFunnel (event)
-  triggeredEvents[event] = true;
-
-  if (not anyEventsTriggered) then
-    CallAfter(0, callTriggeredEvents);
-    anyEventsTriggered = true;
-  end
-end
-
-local function addFunnel (event, callback)
-  if (callbackHandler:addCallback(event, callback)) then
-    addon.on(event, handleFunnel);
+  return function ()
+    if (not triggered) then
+      triggered = true;
+      CallAfter(0, wrapper);
+    end
   end
 end
 
@@ -36,11 +23,7 @@ end
 --##############################################################################
 
 function addon.funnel (eventList, callback)
-  if (type(eventList) == 'table') then
-    for _, event in ipairs(eventList) do
-      addFunnel(event, callback);
-    end
-  else
-    addFunnel(eventList, callback);
-  end
+  local funnelCallback = createFunnelCallback(callback);
+  addon.on(eventList, funnelCallback);
+  return funnelCallback;
 end
