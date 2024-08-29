@@ -16,25 +16,14 @@ local GetCurrencyListInfo = C_CurrencyInfo.GetCurrencyListInfo;
 local GetCurrencyListLink = C_CurrencyInfo.GetCurrencyListLink;
 local GetCurrencyListSize = C_CurrencyInfo.GetCurrencyListSize;
 
+local Currency = addon.findGlobal('Constant', 'Currency');
+
 local ImmutableMap = addon.import('Factory/ImmutableMap');
 
-local HONOR_ID = 1585;
-local CONQUEST_ID = 1602;
+local HONOR_ID = Currency and Currency.Honor or 1585;
+local CONQUEST_ID = Currency and Currency.Conquest or 1602;
 
 local currencyTable;
-
-local function tryToReadGlobalConstants ()
-  --[[ trying to read global constants --]]
-  local constant = _G['Constant'];
-  local currency = constant and constant.Currency;
-
-  if (not currency) then return end
-
-  HONOR_ID = currency.Honor or HONOR_ID;
-  CONQUEST_ID = currency.Conquest or CONQUEST_ID;
-end
-
-tryToReadGlobalConstants();
 
 local function getCurrencyAmount (currencyId)
   return GetCurrencyInfo(currencyId).quantity;
@@ -87,23 +76,9 @@ local function readCurrencyTable ()
   return data;
 end
 
-local function packCurrencyInfo (id)
-  local info = GetCurrencyInfo(id);
-
-  return {
-    id = id,
-    name = info.name,
-    total = info.quantity,
-    icon = info.iconFileID,
-    earnedThisWeek = info.quantityEarnedThisWeek,
-    weeklyMax = info.maxWeeklyQuantity,
-    totalMax = info.maxQuantity,
-    isDiscovered = info.discovered,
-    rarity = info.quality,
-  };
-end
-
-local function yellCurrencyInfo (info, change)
+local function yellCurrencyInfo (id, info, change)
+  -- CurrencyInfo doesn't contain the id for some reason
+  info.id = id;
   addon.yell('CURRENCY_CHANGED', ImmutableMap(info), change);
 end
 
@@ -112,11 +87,11 @@ end
 local function handleCurrency (_, id)
   if (id == nil) then return end
 
-  local info = packCurrencyInfo(id);
-  local amount = info.total - (currencyTable[id] or 0);
+  local info = GetCurrencyInfo(id);
+  local amount = info.quantity - (currencyTable[id] or 0);
 
-  currencyTable[id] = info.total;
-  yellCurrencyInfo(info, amount);
+  currencyTable[id] = info.quantity;
+  yellCurrencyInfo(id, info, amount);
 end
 
 addon.onOnce('FIRST_FRAME_RENDERED', function ()
@@ -129,5 +104,5 @@ end);
 --##############################################################################
 
 addon.import('tests').currency = function ()
-  yellCurrencyInfo(packCurrencyInfo(1755), 15357);
+  yellCurrencyInfo(1755, GetCurrencyInfo(1755), 15357);
 end;

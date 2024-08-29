@@ -37,7 +37,7 @@ local function checkDisplayOptions (info)
     return false;
   end
 
-  if (info.rarity <= RARITY_GRAY) then
+  if (info.quality <= RARITY_GRAY) then
     return false;
   end
 
@@ -61,22 +61,22 @@ end
 
 local function displayCurrency (info, amount)
   -- warfronts show hidden currencies without icons
-  if (not info.name or not info.icon) then return end
+  if (not info.name or not info.iconFileID) then return end
 
   local text;
 
   amount = (farmerFrame:GetMessageData(SUBSPACE, info.id) or 0) + amount;
   text = strjoin('',
     'x', BreakUpLargeNumbers(amount),
-    ' (', BreakUpLargeNumbers(info.total), ')'
+    ' (', BreakUpLargeNumbers(info.quantity), ')'
   );
 
   if (CORE_OPTIONS.itemNames == true) then
     text = info.name .. ' ' .. text;
   end
 
-  printIconMessageWithData(SUBSPACE, info.id, amount, info.icon, text,
-      getRarityColor(info.rarity));
+  printIconMessageWithData(SUBSPACE, info.id, amount, info.iconFileID, text,
+      getRarityColor(info.quality));
 end
 
 addon.listen('CURRENCY_CHANGED', function (info, amount)
