@@ -14,6 +14,10 @@ local GetFactionDataByIndex = C_Reputation.GetFactionDataByIndex;
 local ExpandFactionHeader = C_Reputation.ExpandFactionHeader;
 local CollapseFactionHeader = C_Reputation.CollapseFactionHeader;
 
+local C_GossipInfo = _G.C_GossipInfo;
+local GetFriendshipReputation = C_GossipInfo.GetFriendshipReputation;
+local GetFriendshipReputationRanks = C_GossipInfo.GetFriendshipReputationRanks;
+
 local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local reputationCache = {};
@@ -22,19 +26,31 @@ local function updateParagonInfo (factionInfo)
   if (not IsFactionParagon(factionInfo.factionID)) then return end
 
   local paragonInfo = {GetFactionParagonInfo(factionInfo.factionID)};
-  local paragonRep = paragonInfo[1];
-  local threshold = paragonInfo[2];
+  local paragonReputation = paragonInfo[1];
+  local reputationThreshold = paragonInfo[2];
 
-  if (paragonRep and threshold) then
+  if (paragonReputation and reputationThreshold) then
     local hasRewardPending = paragonInfo[3];
 
-    factionInfo.currentStanding = factionInfo.currentStanding + paragonRep;
-    factionInfo.paragonLevel = floor(paragonInfo[1] / paragonInfo[2]);
+    factionInfo.currentStanding = factionInfo.currentStanding + paragonReputation;
+    factionInfo.paragonLevel = floor(paragonReputation / reputationThreshold);
 
     if (hasRewardPending) then
       factionInfo.paragonLevel = factionInfo.paragonLevel + 1;
     end
   end
+end
+
+local function updateFriendShipInfo (factionInfo)
+  local info = GetFriendshipReputation(factionInfo.factionID);
+
+  if (info == nil) then return end
+
+  factionInfo.friendReaction = info.reaction;
+  factionInfo.friendRank =
+      GetFriendshipReputationRanks(factionInfo.factionID).currentLevel;
+  factionInfo.currentStanding = factionInfo.currentStanding + info.standing;
+  factionInfo.icon = info.texture;
 end
 
 local function collapseExpandedReputations (expandedIndices)
@@ -69,6 +85,7 @@ local function iterateReputations (callback)
 
       if (factionInfo.factionID) then
         updateParagonInfo(factionInfo);
+        updateFriendShipInfo(factionInfo);
         callback(factionInfo);
       end
     end
@@ -81,49 +98,41 @@ local function iterateReputations (callback)
   return info;
 end
 
-local function storeReputation (factionInfo)
-  reputationCache[factionInfo.factionID] = {
-    reaction = factionInfo.reaction,
-    currentStanding = factionInfo.currentStanding,
-    paragonLevel = factionInfo.paragonLevel,
-  };
+local function updateCachedReputation (cachedInfo, factionInfo)
+  cachedInfo.reaction = factionInfo.reaction;
+  cachedInfo.currentStanding = factionInfo.currentStanding;
+  cachedInfo.paragonLevel = factionInfo.paragonLevel;
+  cachedInfo.friendRank = factionInfo.friendRank;
+end
+
+local function initCachedReputation (factionInfo)
+  local cachedInfo = {};
+  updateCachedReputation(cachedInfo, factionInfo);
+  reputationCache[factionInfo.factionID] = cachedInfo;
 end
 
 local function initReputationCache ()
-  iterateReputations(storeReputation);
+  iterateReputations(initCachedReputation);
 end
 
 local function yellReputation (reputationInfo)
   addon.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
 end
 
-local function hasParagonLevel (factionInfo)
-  return (factionInfo.paragonLevel ~= nil and factionInfo.paragonLevel > 0);
-end
-
 local function handleNewReputation (factionInfo)
   if (factionInfo.reputation ~= 0) then
-    factionInfo.reactionChanged = true;
     factionInfo.standingChange = factionInfo.currentStanding;
-    factionInfo.paragonLevelGained = hasParagonLevel(factionInfo);
 
-    storeReputation(factionInfo);
+    if (factionInfo.paragonLevel) then
+      factionInfo.paragonLevelGained = true;
+    elseif (factionInfo.friendRank) then
+      factionInfo.friendshipChanged = true;
+    else
+      factionInfo.reactionChanged = true;
+    end
+
+    initCachedReputation(factionInfo);
     yellReputation(factionInfo);
-  end
-end
-
-local function updateCachedReputation (cachedInfo, factionInfo)
-  cachedInfo.reaction = factionInfo.reaction;
-  cachedInfo.currentStanding = factionInfo.currentStanding;
-  cachedInfo.paragonLevel = factionInfo.paragonLevel;
-end
-
-local function wasParagonLevelGained (cachedInfo, factionInfo)
-  if (cachedInfo.paragonLevel == nil) then
-    return hasParagonLevel(factionInfo);
-  else
-    return (factionInfo.paragonLevel ~= nil
-        and factionInfo.paragonLevel > cachedInfo.paragonLevel);
   end
 end
 
@@ -134,7 +143,9 @@ local function handleCachedReputation (cachedInfo, factionInfo)
     factionInfo.standingChange =
         factionInfo.currentStanding - cachedInfo.currentStanding;
     factionInfo.paragonLevelGained =
-        wasParagonLevelGained(cachedInfo, factionInfo);
+        (factionInfo.paragonLevel ~= cachedInfo.paragonLevel);
+    factionInfo.friendshipChanged =
+        (factionInfo.friendRank ~= cachedInfo.friendRank);
 
     updateCachedReputation(cachedInfo, factionInfo);
     yellReputation(factionInfo);
@@ -167,11 +178,20 @@ end);
 addon.import('tests').reputation = function (id)
   local factionID = tonumber(id) or 2170;
 
-  local info = C_Reputation.GetFactionDataByID(factionID)
+  local info = C_Reputation.GetFactionDataByID(factionID);
+
+  updateParagonInfo(info);
+  updateFriendShipInfo(info);
 
   info.standingChange = 550;
-  info.paragonLevelGained = true;
-  info.reactionChanged = false;
+
+  if (info.paragonLevel) then
+    info.paragonLevelGained = true;
+  elseif (info.friendRank) then
+    info.friendshipChanged = true;
+  else
+    info.reactionChanged = true;
+  end
 
   yellReputation(info);
 end

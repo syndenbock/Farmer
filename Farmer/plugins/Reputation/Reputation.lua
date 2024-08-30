@@ -48,6 +48,7 @@ local function getDisplayData (info)
         info.paragonLevelGained,
     renownLevelChanged =
         previousData.renownLevelChanged or info.renownLevelChanged,
+    friendshipChanged = previousData.friendshipChanged or info.friendshipChanged,
   };
 end
 
@@ -68,6 +69,9 @@ local function displayReputation (info)
   elseif (displayData.renownLevelChanged) then
     icon = 'interface/icons/spell_holy_prayerofmendingtga.blp';
     text = stringJoin('', text, ' (', info.renownLevel, ')');
+  elseif (displayData.friendshipChanged) then
+    icon = info.icon;
+    text = stringJoin('', text, ' (', info.friendReaction, ')');
   end
 
   --[[ could have stored faction name when generating faction info, but we
