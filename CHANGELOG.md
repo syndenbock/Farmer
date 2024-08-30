@@ -1,1 +1,2 @@
-- Some bugfixes
+- Added support for friendship reputations
+- Code improvements
