@@ -63,9 +63,10 @@ end
 
 addon.onOnce('PLAYER_LOGIN', function ()
   initEquipment();
-  -- this is needed to detect gear updates when automatically switching specs
-  -- when joining an LFG instance
-  addon.on('EQUIPMENT_SWAP_FINISHED', updateEquipment);
+  -- This is needed to detect gear updates when automatically switching specs
+  -- when joining an LFG instance.
+  -- EQUIPMENT_SWAP_FINISHED does not work for some reason.
+  addon.on('PLAYER_ENTERING_WORLD', updateEquipment);
   addon.on('PLAYER_EQUIPMENT_CHANGED', handleSlotUpdate);
 end);
 
