@@ -1,0 +1,5 @@
+<UI>
+  <script file="Debug.lua"/>
+  <script file="Serialize.lua"/>
+  <script file="Strings.lua"/>
+</UI>

@@ -1,4 +1,4 @@
 <UI>
-  <script file="Maps.lua"/>
   <script file="Tooltip.lua"/>
+  <include file="options\options.xml"/>
 </UI>

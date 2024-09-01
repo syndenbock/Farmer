@@ -1,6 +1,6 @@
 <UI>
   <script file="CallbackHandler.lua"/>
+  <script file="Maps.lua"/>
   <script file="Set.lua"/>
   <script file="Storage.lua"/>
-  <include file="options\options.xml"/>
 </UI>

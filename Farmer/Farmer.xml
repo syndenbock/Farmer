@@ -1,17 +1,11 @@
 <UI>
-  <script file="Core.lua"/>
-  <include file="polyfills\polyfills.xml"/>
-  <include file="localizations\localizations.xml"/>
-  <include file="classes\classes.xml"/>
-  <include file="factories\factories.xml"/>
+  <include file="localization\localization.xml"/>
   <include file="core\core.xml"/>
-  <include file="utils\utils.xml"/>
-  <include file="widgets\widgets.xml"/>
-  <include file="main\main.xml"/>
+  <include file="client\client.xml"/>
   <include file="migration\migration.xml"/>
+  <include file="main\main.xml"/>
   <include file="detectors\detectors.xml"/>
-  <include file="modules\modules.xml"/>
   <include file="plugins\plugins.xml"/>
+  <include file="modules\modules.xml"/>
   <include file="pluginAPI\pluginAPI.xml"/>
-  <include file="tests\tests.xml"/>
 </UI>
