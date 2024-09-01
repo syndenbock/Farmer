@@ -30,21 +30,15 @@ local function updateParagonInfo (factionInfo)
   local reputationThreshold = paragonInfo[2];
 
   if (paragonReputation and reputationThreshold) then
-    local hasRewardPending = paragonInfo[3];
-
     factionInfo.currentStanding = factionInfo.currentStanding + paragonReputation;
     factionInfo.paragonLevel = floor(paragonReputation / reputationThreshold);
-
-    if (hasRewardPending) then
-      factionInfo.paragonLevel = factionInfo.paragonLevel + 1;
-    end
   end
 end
 
 local function updateFriendShipInfo (factionInfo)
   local info = GetFriendshipReputation(factionInfo.factionID);
 
-  if (info == nil) then return end
+  if (info == nil or info.friendshipFactionID ~= factionInfo.factionID) then return end
 
   factionInfo.friendReaction = info.reaction;
   factionInfo.friendRank =
