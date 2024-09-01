@@ -1,2 +1,1 @@
-- Added support for friendship reputations
-- Code improvements
+- Fixed equipment showing up as new items when gear is swapped due to entering a queued dungeon
