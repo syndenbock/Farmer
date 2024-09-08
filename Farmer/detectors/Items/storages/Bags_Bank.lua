@@ -80,12 +80,6 @@ local function getContainerSlotCount (bagIndex)
   end
 end
 
-local function initBagContent (bagIndex)
-  if (bagCache[bagIndex] == nil) then
-    bagCache[bagIndex] = Storage:new();
-  end
-end
-
 local function isBagSlot (bagIndex)
   return (FIRST_BAG_SLOT <= bagIndex and bagIndex <= LAST_BAG_SLOT);
 end
@@ -128,9 +122,12 @@ local function readBagSlot (bagIndex, slotIndex)
 end
 
 local function updateBagCache (bagIndex)
+  if (bagCache[bagIndex] == nil) then
+    return;
+  end
+
   local slotCount = getContainerSlotCount(bagIndex);
 
-  initBagContent(bagIndex);
   readContainerSlot(bagIndex);
 
   for slotIndex = 1, slotCount, 1 do
@@ -138,7 +135,13 @@ local function updateBagCache (bagIndex)
   end
 end
 
+local function initBagContent (bagIndex)
+  assert(bagCache[bagIndex] == nil);
+  bagCache[bagIndex] = Storage:new();
+end
+
 local function initBagCache (bagIndex)
+  initBagContent(bagIndex);
   updateBagCache(bagIndex);
   bagCache[bagIndex]:clearChanges();
 end
