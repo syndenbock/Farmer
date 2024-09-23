@@ -10,7 +10,7 @@ local extractNormalizedItemString = addon.extractNormalizedItemString;
 local fetchItemLink = addon.fetchItemLink;
 local ImmutableMap = addon.import('Factory/ImmutableMap');
 
-local Items = addon:extend('Items', {});
+local Items = addon.export('detectors/Items/Items', {});
 local storages = {};
 local changesStorage = addon.import('Class/Storage'):new();
 

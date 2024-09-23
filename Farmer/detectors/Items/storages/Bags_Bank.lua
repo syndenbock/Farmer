@@ -221,7 +221,7 @@ addon.onOnce('PLAYER_LOGIN', function ()
   end
 end);
 
-addon.Items.addStorage(function ()
+addon.import('detectors/Items/Items').addStorage(function ()
   updateFlaggedBags();
   return bagCache;
 end);

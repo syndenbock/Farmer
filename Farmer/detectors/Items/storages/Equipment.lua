@@ -70,4 +70,4 @@ addon.onOnce('PLAYER_LOGIN', function ()
   addon.on('PLAYER_EQUIPMENT_CHANGED', handleSlotUpdate);
 end);
 
-addon.Items.addStorage({currentEquipment});
+addon.import('detectors/Items/Items').addStorage({currentEquipment});

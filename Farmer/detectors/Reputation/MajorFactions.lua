@@ -72,7 +72,11 @@ local function checkMajorFactions ()
 end
 
 local function handleRenownLevel (_, factionId, newRenownLevel, oldRenownLevel)
-  checkMajorFaction(GetMajorFactionData(factionId));
+  local info = GetMajorFactionData(factionId);
+
+  if (info ~= nil) then
+    checkMajorFaction(GetMajorFactionData(factionId));
+  end
 end
 
 addon.onOnce('PLAYER_LOGIN', function ()

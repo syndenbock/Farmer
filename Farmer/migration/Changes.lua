@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-local Migration = addon.Migration;
+local Migration = addon.import('core/logic/Migration');
 
 local VERSION_TOC = _G.C_AddOns.GetAddOnMetadata(addonName, 'version');
 

@@ -75,4 +75,4 @@ EventUtils.onInteractionFrameHide(VOIDSTORAGE_INTERACTION_TYPE, clearVoidStorage
 
 addon.on('VOID_TRANSFER_DONE', readVoidStorage);
 
-addon.Items.addStorage(storageTabs);
+addon.import('detectors/Items/Items').addStorage(storageTabs);

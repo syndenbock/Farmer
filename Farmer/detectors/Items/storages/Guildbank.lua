@@ -77,4 +77,4 @@ EventUtils.onInteractionFrameHide(GUILDBANK_INTERACTION_TYPE, function ()
   currentTab = nil;
 end);
 
-addon.Items.addStorage({storage});
+addon.import('detectors/Items/Items').addStorage({storage});

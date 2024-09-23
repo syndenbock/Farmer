@@ -43,7 +43,7 @@ local printItem = addon.ItemPrint.printItem;
 local printItemWithName = addon.ItemPrint.printItemWithName;
 local stringJoin = addon.stringJoin;
 local COLORS = addon.ItemPrint.COLORS;
-local TooltipScanner = addon.TooltipScanner;
+local TooltipScanner = addon.import('client/utils/TooltipScanner');
 
 local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
     .farmerOptions.Items;

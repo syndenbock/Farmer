@@ -2,10 +2,11 @@ local addonName, addon = ...;
 
 local strsplit = _G.strsplit;
 
+local callbackHandler = addon.import('Class/CallbackHandler'):new();
+
 local TOC_VERSION = _G.C_AddOns.GetAddOnMetadata(addonName, 'version');
 
-local Migration = addon:extend('Migration', {});
-local callbackHandler = addon.import('Class/CallbackHandler'):new();
+local Migration = addon.export('core/logic/Migration', {});
 
 local function versionToNumber (version)
   local segmentCount = 3;

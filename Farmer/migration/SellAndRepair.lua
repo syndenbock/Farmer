@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local Migration = addon.Migration;
+local Migration = addon.import('core/logic/Migration');
 
 Migration.addMigration('3.1', function (variables)
   Migration.migrateOptionsToSubobject(variables.farmerOptions, 'SellAndRepair', {

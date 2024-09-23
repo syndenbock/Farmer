@@ -1,6 +1,7 @@
 local _, addon = ...;
 
-local L = addon.L;
+local L = {};
+addon.L = L;
 
 L["unknown command"] = "unknown command"
 L[ [=[You seem to have used an old Version of Farmer

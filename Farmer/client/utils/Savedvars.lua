@@ -3,6 +3,7 @@ local thisAddonName, addon = ...;
 local tinsert = _G.tinsert;
 
 local Set = addon.import('Class/Set');
+local Migration = addon.import('core/logic/Migration');
 
 local variableStorage = {};
 local addonData = {};
@@ -79,9 +80,7 @@ end
 local function migrateAddonVariables (addonName)
   if (addonName ~= thisAddonName) then return end
 
-  if (addon.Migration) then
-    addon.Migration.migrate(addonData[addonName].values or {});
-  end
+  Migration.migrate(addonData[addonName].values or {});
 end
 
 local function executeCallbackList (callbackList, ...)

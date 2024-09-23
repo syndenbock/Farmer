@@ -3,7 +3,7 @@ local _, addon = ...;
 local tostring = _G.tostring;
 local tinsert = _G.tinsert;
 
-local Debug = addon:extend('Debug', {});
+local Debug = addon.export('core/utils/Debug', {});
 
 local enabled = false;
 
