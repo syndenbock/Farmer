@@ -14,7 +14,7 @@ local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID;
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
-local GetKeyRingSize = _G.GetKeyRingSize
+local GetKeyRingSize = _G.GetKeyRingSize;
 
 local BagIndex = _G.Enum.BagIndex;
 local InventoryConstants = _G.Constants.InventoryConstants;

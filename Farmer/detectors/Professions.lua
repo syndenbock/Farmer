@@ -58,7 +58,7 @@ if (GetAllProfessionTradeSkillLines ~= nil) then
       local info = GetProfessionInfoBySkillLineID(id);
 
       -- Skipping parent professions as those just reflect the most up-to date
-      -- subprofession
+      -- subprofession.
       if (info.parentProfessionID ~= nil and info.skillLevel ~= 0) then
         professionCache[id] = info;
       end
@@ -70,7 +70,7 @@ if (GetAllProfessionTradeSkillLines ~= nil) then
       local info = GetProfessionInfoBySkillLineID(id);
 
       -- Skipping parent professions as those just reflect the most up-to date
-      -- subprofession
+      -- subprofession.
       if (info.parentProfessionID ~= nil) then
         checkProfessionChange(info);
       end
