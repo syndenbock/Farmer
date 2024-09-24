@@ -14,15 +14,18 @@ if (GetSkillLineInfo == nil
   return;
 end
 
-addon.registerAvailableDetector('skills');
-
 local tinsert = _G.tinsert;
 local GetNumSkillLines = _G.GetNumSkillLines;
 local GetSkillLineInfo = _G.GetSkillLineInfo;
 local ExpandSkillHeader = _G.ExpandSkillHeader;
 local CollapseSkillHeader = _G.CollapseSkillHeader;
 
-local ImmutableMap = addon.import('Factory/ImmutableMap');
+local ImmutableMap = addon.import('core/classes/Maps').ImmutableMap;
+local Events = addon.import('core/logic/Events');
+local Yell = addon.import('core/logic/Yell');
+local Strings = addon.import('core/utils/Strings');
+
+addon.registerAvailableDetector('skills');
 
 local skillCache = {};
 
@@ -42,7 +45,7 @@ local function iterateSkills (callback)
     local isHeader = info[2];
 
     if (info[1] == nil) then
-      addon.printOneTimeMessage('Could not check skills as another addon seems to be interfering with the skills pane');
+      Strings.printOneTimeMessage('Could not check skills as another addon seems to be interfering with the skills pane');
     end
 
     if (isHeader) then
@@ -76,7 +79,7 @@ local function initSkillCache ()
 end
 
 local function yellSkill (skillInfo)
-  addon.yell('SKILL_CHANGED', ImmutableMap(skillInfo));
+  Yell.yell('SKILL_CHANGED', ImmutableMap(skillInfo));
 end
 
 local function checkSkill (name, rank, maxRank)
@@ -95,16 +98,18 @@ local function checkSkills ()
   iterateSkills(checkSkill);
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('PLAYER_LOGIN', function ()
   initSkillCache();
-  addon.on('CHAT_MSG_SKILL', checkSkills);
+  Events.on('CHAT_MSG_SKILL', checkSkills);
 end);
 
-addon.import('tests').skills = function ()
+local Tests = addon.import('core/logic/Tests');
+
+Tests.addTest('skills', function ()
   yellSkill({
     name = 'testskill',
     rank = 2,
     maxRank = 20,
     rankChange = 1,
   });
-end;
+end);

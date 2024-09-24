@@ -1,12 +1,15 @@
 local addonName, addon = ...;
 
-local GetCVar = addon.import('polyfills/C_CVar').GetCVar;
-local SetCVar = addon.import('polyfills/C_CVar').SetCVar;
-local GetSpellInfo = addon.import('polyfills/C_Spell').GetSpellInfo;
 local InCombatLockdown = _G.InCombatLockdown;
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.Misc;
+local Events = addon.import('core/logic/Events');
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local GetCVar = addon.import('client/polyfills/C_CVar').GetCVar;
+local SetCVar = addon.import('client/polyfills/C_CVar').SetCVar;
+local GetSpellInfo = addon.import('client/polyfills/C_Spell').GetSpellInfo;
+
+local options =
+    SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.Misc;
 
 local UNITID_PLAYER = 'player';
 local FISHING_NAME = GetSpellInfo(7620).name;
@@ -57,7 +60,7 @@ local function shouldPlatesBeRestored (unit)
           (hideState == HIDE_STATES.hidden or hideState == HIDE_STATES.hide));
 end
 
-addon.on('UNIT_SPELLCAST_CHANNEL_START', function (_, unit, _, spellid)
+Events.on('UNIT_SPELLCAST_CHANNEL_START', function (_, unit, _, spellid)
   if (not shouldPlatesBeHidden(unit) or
       not isSpellFishing(spellid)) then
     return;
@@ -74,7 +77,7 @@ addon.on('UNIT_SPELLCAST_CHANNEL_START', function (_, unit, _, spellid)
   end
 end);
 
-addon.on('UNIT_SPELLCAST_CHANNEL_STOP', function (_, unit)
+Events.on('UNIT_SPELLCAST_CHANNEL_STOP', function (_, unit)
   if (not shouldPlatesBeRestored(unit)) then return end
 
   if (InCombatLockdown() == true) then
@@ -84,7 +87,7 @@ addon.on('UNIT_SPELLCAST_CHANNEL_STOP', function (_, unit)
   end
 end);
 
-addon.on('PLAYER_REGEN_ENABLED', function ()
+Events.on('PLAYER_REGEN_ENABLED', function ()
   if (hideState == HIDE_STATES.hide) then
     hidePlates();
   elseif (hideState == HIDE_STATES.restore) then
@@ -92,4 +95,4 @@ addon.on('PLAYER_REGEN_ENABLED', function ()
   end
 end);
 
-addon.on('PLAYER_ENTERING_WORLD', restorePlates);
+Events.on('PLAYER_ENTERING_WORLD', restorePlates);

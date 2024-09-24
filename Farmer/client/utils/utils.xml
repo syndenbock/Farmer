@@ -1,0 +1,7 @@
+<UI>
+  <script file="Events.lua"/>
+  <script file="Items.lua"/>
+  <script file="Keybindings.lua"/>
+  <script file="SavedVariables.lua"/>
+  <script file="Tooltipscan.lua"/>
+</UI>

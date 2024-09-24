@@ -2,7 +2,9 @@ local _, addon = ...
 
 if (_G.C_PetJournal == nil) then return end
 
-local C_Container = addon.import('polyfills/C_Container');
+local SlashCommands = addon.import('core/logic/SlashCommands');
+local Strings = addon.import('core/utils/Strings');
+local C_Container = addon.import('client/polyfills/C_Container');
 
 local tinsert = _G.tinsert;
 local tremove = _G.tremove;
@@ -56,7 +58,7 @@ local function checkPetById (petMap, petQueue, petId, petInfo)
   if (isFavorite) then
     local petName = petInfo[8];
 
-    addon.printAddonMessage(petName .. ' is owned 3 times, but favorited');
+    Strings.printAddonMessage(petName .. ' is owned 3 times, but favorited');
     return;
   end
 
@@ -101,4 +103,4 @@ local function scanPets ()
   end
 end
 
-addon.slash('cagepets', scanPets);
+SlashCommands.addCommand('cagepets', scanPets);

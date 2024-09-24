@@ -14,11 +14,13 @@ if (GetAllProfessionTradeSkillLines == nil and GetProfessions == nil) then
   return;
 end
 
-addon.registerAvailableDetector('professions');
-
-local ImmutableMap = addon.import('Factory/ImmutableMap');
+local ImmutableMap = addon.import('core/classes/Maps').ImmutableMap;
+local Events = addon.import('core/logic/Events');
+local Yell = addon.import('core/logic/Yell');
 
 local professionCache = {};
+
+addon.registerAvailableDetector('professions');
 
 --##############################################################################
 --  common functions
@@ -29,7 +31,7 @@ local function yellProfession (info, change)
     info.icon = GetTradeSkillTexture(info.professionID);
   end
 
-  addon.yell('PROFESSION_CHANGED', ImmutableMap(info), change);
+  Yell.yell('PROFESSION_CHANGED', ImmutableMap(info), change);
 end
 
 local function checkProfessionChange (info)
@@ -58,7 +60,7 @@ if (GetAllProfessionTradeSkillLines ~= nil) then
       local info = GetProfessionInfoBySkillLineID(id);
 
       -- Skipping parent professions as those just reflect the most up-to date
-      -- subprofession
+      -- subprofession.
       if (info.parentProfessionID ~= nil and info.skillLevel ~= 0) then
         professionCache[id] = info;
       end
@@ -70,16 +72,16 @@ if (GetAllProfessionTradeSkillLines ~= nil) then
       local info = GetProfessionInfoBySkillLineID(id);
 
       -- Skipping parent professions as those just reflect the most up-to date
-      -- subprofession
+      -- subprofession.
       if (info.parentProfessionID ~= nil) then
         checkProfessionChange(info);
       end
     end
   end
 
-  addon.onOnce('TRADE_SKILL_SHOW', function ()
+  Events.onOnce('TRADE_SKILL_SHOW', function ()
     readSubProfessions();
-    addon.on('CHAT_MSG_SKILL', checkProfessions);
+    Events.on('CHAT_MSG_SKILL', checkProfessions);
   end);
 end
 
@@ -123,9 +125,9 @@ if (GetAllProfessionTradeSkillLines == nil and GetProfessions ~= nil) then
     end
   end
 
-  addon.onOnce('PLAYER_LOGIN', function ()
+  Events.onOnce('PLAYER_LOGIN', function ()
     readParentProfessions();
-    addon.on('CHAT_MSG_SKILL', checkParentProfessions);
+    Events.on('CHAT_MSG_SKILL', checkParentProfessions);
   end);
 end
 
@@ -133,11 +135,13 @@ end
 -- testing
 --##############################################################################
 
-addon.import('tests').profession = function (id)
+local Tests = addon.import('core/logic/Tests');
+
+Tests.addTest('profession', function (id)
   if (id) then
     yellProfession(GetProfessionInfoBySkillLineID(tonumber(id)), 1);
   else
     yellProfession(GetProfessionInfoBySkillLineID(171), 1);
     yellProfession(GetProfessionInfoBySkillLineID(2483), 1);
   end
-end
+end);

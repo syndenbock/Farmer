@@ -7,16 +7,21 @@ local GetText = _G.GetText;
 local UnitSex = _G.UnitSex;
 
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
-local printIconMessageWithData = addon.Print.printIconMessageWithData;
 
-local stringJoin = addon.stringJoin;
-local farmerFrame = addon.frame;
+local Yell = addon.import('core/logic/Yell');
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Strings = addon.import('core/utils/Strings');
+local Main = addon.import('main/Main');
+local Print = addon.import('main/Print');
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.Reputation;
+local stringJoin = Strings.stringJoin;
+local printIconMessageWithData = Print.printIconMessageWithData;
+
+local options =
+    SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.Reputation;
 
 local MESSAGE_COLORS = {r = 0, g = 0.35, b = 1};
-local SUBSPACE = farmerFrame:CreateSubspace();
+local SUBSPACE = Main.frame:CreateSubspace();
 
 local function getStandingLabel (standing)
   return GetText('FACTION_STANDING_LABEL' .. standing, UnitSex('player'));
@@ -24,7 +29,7 @@ end
 
 local function checkReputationOptions ()
   return (options.displayReputation == true and
-          addon.Print.checkHideOptions());
+          Print.checkHideOptions());
 end
 
 local function shouldReputationBeDisplayed (info)
@@ -34,7 +39,7 @@ local function shouldReputationBeDisplayed (info)
 end
 
 local function getDisplayData (info)
-  local previousData = farmerFrame:GetMessageData(SUBSPACE, info.factionID);
+  local previousData = Main.frame:GetMessageData(SUBSPACE, info.factionID);
 
   if (previousData == nil) then
     return info;
@@ -82,7 +87,7 @@ local function displayReputation (info)
       MESSAGE_COLORS);
 end
 
-addon.listen('REPUTATION_CHANGED', function (reputationInfo)
+Yell.listen('REPUTATION_CHANGED', function (reputationInfo)
   if (checkReputationOptions() and
       shouldReputationBeDisplayed(reputationInfo)) then
     displayReputation(reputationInfo);

@@ -1,0 +1,4 @@
+<UI>
+  <script file="Tooltip.lua"/>
+  <include file="options\options.xml"/>
+</UI>

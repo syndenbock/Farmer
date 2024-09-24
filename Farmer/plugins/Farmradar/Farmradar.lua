@@ -7,8 +7,8 @@ local strfind = _G.strfind;
 local MinimapSetDrawGroundTextures = _G.C_Minimap and _G.C_Minimap.SetDrawGroundTextures;
 local MinimapGetDrawGroundTextures = _G.C_Minimap and _G.C_Minimap.GetDrawGroundTextures;
 local CreateFrame = _G.CreateFrame;
-local GetCVar = addon.import('polyfills/C_CVar').GetCVar;
-local SetCVar = addon.import('polyfills/C_CVar').SetCVar;
+local GetCVar = addon.import('client/polyfills/C_CVar').GetCVar;
+local SetCVar = addon.import('client/polyfills/C_CVar').SetCVar;
 local GetPlayerFacing = _G.GetPlayerFacing;
 local InCombatLockdown = _G.InCombatLockdown;
 local Minimap_UpdateRotationSetting = _G.Minimap_UpdateRotationSetting;
@@ -16,6 +16,12 @@ local Minimap = _G.Minimap;
 local MinimapCluster = _G.MinimapCluster;
 local WorldFrame = _G.WorldFrame;
 local UIParent = _G.UIParent;
+
+local Events = addon.import('core/logic/Events');
+local SlashCommands = addon.import('core/logic/SlashCommands');
+local Strings = addon.import('core/utils/Strings');
+local KeyBindings = addon.import('client/utils/Keybindings');
+local SavedVariables = addon.import('client/utils/SavedVariables');
 
 local L = addon.L;
 
@@ -32,8 +38,8 @@ local MODE_ENUM = {
   TOGGLING = 3,
 };
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.FarmRadar;
+local options =
+    SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.FarmRadar;
 
 local radarFrame;
 local radarSize;
@@ -55,7 +61,7 @@ end
 
 local function setFrameShown (frame, shown)
   if (frame.IsProtected and frame:IsProtected() and InCombatLockdown()) then
-    addon.printAddonMessage('Could not hide or show a protected frame, please toggle farm mode after the fight.');
+    Strings.printAddonMessage('Could not hide or show a protected frame, please toggle farm mode after the fight.');
     return;
   end
 
@@ -100,7 +106,7 @@ end
 
 local function isMinimapTainted ()
   if (Minimap:IsProtected() and not fixMinimapTaint()) then
-    addon.printAddonMessage('Some addon tainted the minimap, please toggle outside of combat');
+    Strings.printAddonMessage('Some addon tainted the minimap, please toggle outside of combat');
     return true;
   end
 
@@ -447,11 +453,11 @@ local function restoreMinimapRotation ()
   setMinimapRotation(minimapDefaults.rotation);
 end
 
-addon.onOnce('PLAYER_LOGIN', fixMinimapTaint);
+Events.onOnce('PLAYER_LOGIN', fixMinimapTaint);
 -- The game seems to re-enable the minimap background every time you teleport,
 -- so it has to be hidden again
-addon.on('PLAYER_ENTERING_WORLD', hideMinimapBackGroundIfInFarmMode);
-addon.on('PLAYER_LOGOUT', restoreMinimapRotation);
+Events.on('PLAYER_ENTERING_WORLD', hideMinimapBackGroundIfInFarmMode);
+Events.on('PLAYER_LOGOUT', restoreMinimapRotation);
 
-addon.slash('radar', toggleFarmMode);
-addon.exposeBinding('TOGGLERADAR', L['Toggle farming radar'], toggleFarmMode);
+SlashCommands.addCommand('radar', toggleFarmMode);
+KeyBindings.exposeBinding('TOGGLERADAR', L['Toggle farming radar'], toggleFarmMode);

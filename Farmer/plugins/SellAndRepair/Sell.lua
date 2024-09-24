@@ -1,12 +1,16 @@
 local addonName, addon = ...;
 
-local EventUtils = addon.import('Utils/Events');
-local C_Container = addon.import('polyfills/C_Container');
+local EventUtils = addon.import('client/utils/Events');
+local C_Container = addon.import('client/polyfills/C_Container');
 
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetContainerItemInfo = C_Container.GetContainerItemInfo;
 local UseContainerItem = C_Container.UseContainerItem;
 local GetItemInfo = _G.GetItemInfo;
+
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Strings = addon.import('core/utils/Strings');
+local L = addon.L;
 
 local MERCHANT_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.Merchant;
 local QUALITY_POOR = _G.Enum.ItemQuality.Poor;
@@ -27,10 +31,9 @@ local LAST_BAG_SLOT = FIRST_BAG_SLOT + NUM_BAG_SLOTS;
 local FIRST_REAGENTBAG_SLOT = REAGENTBAG_CONTAINER;
 local LAST_REAGENTBAG_SLOT = NUM_REAGENTBAG_SLOTS;
 
-local L = addon.L;
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.SellAndRepair;
+local options = SavedVariables
+    .SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.SellAndRepair;
 
 
 local function isItemTrash (quality)
@@ -99,7 +102,7 @@ local function sellGrayItems ()
   end
 
   if (totalPrice > 0) then
-    addon.printAddonMessage(L['Selling gray items for %s']:format(addon.formatMoney(totalPrice)));
+    Strings.printAddonMessage(L['Selling gray items for %s']:format(Strings.formatMoney(totalPrice)));
   end
 end
 

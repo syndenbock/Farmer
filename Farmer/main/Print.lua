@@ -1,15 +1,18 @@
 local addonName, addon = ...;
 
-local EventUtils = addon.import('Utils/Events');
+local EventUtils = addon.import('client/utils/Events');
 
 local IsActiveBattlefieldArena = _G.IsActiveBattlefieldArena;
 
 local MAIL_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.MailInfo;
 
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Main = addon.import('main/Main');
+
 local DEFAULT_COLOR = {r = 1, g = 1, b = 1, a = 1};
 
-local farmerFrame = addon.frame;
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.Core;
+local farmerFrame = Main.frame;
+local options = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.Core;
 
 local mailIsOpen = false;
 
@@ -60,7 +63,7 @@ local function printAtlasMessageWithData (subspace, identifier, data, atlas, mes
   farmerFrame:AddAtlasMessageWithData(subspace, identifier, data, atlas, message, colors or DEFAULT_COLOR);
 end
 
-addon.Print = {
+addon.export('main/Print', {
   checkHideOptions = checkHideOptions,
   printMessage = printMessage;
   printMessageWithData = printMessageWithData;
@@ -68,4 +71,4 @@ addon.Print = {
   printAtlasMessage = printAtlasMessage;
   printIconMessageWithData = printIconMessageWithData;
   printAtlasMessageWithData = printAtlasMessageWithData;
-};
+});

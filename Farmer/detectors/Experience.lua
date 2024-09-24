@@ -1,11 +1,11 @@
 local _, addon = ...;
 
-addon.registerAvailableDetector('experience');
+local ImmutableMap = addon.import('core/classes/Maps').ImmutableMap;
+local Events = addon.import('core/logic/Events');
+local Yell = addon.import('core/logic/Yell');
 
 local UnitXP = _G.UnitXP;
 local UnitXPMax = _G.UnitXPMax;
-
-local ImmutableMap = addon.import('Factory/ImmutableMap');
 
 local UNIT_PLAYER = 'player';
 
@@ -13,8 +13,10 @@ local currentExperience;
 local currentLevelupExperience;
 local hadLevelUp = false;
 
+addon.registerAvailableDetector('experience');
+
 local function yellExperience (info)
-  addon.yell('EXPERIENCE_GAINED', ImmutableMap(info));
+  Yell.yell('EXPERIENCE_GAINED', ImmutableMap(info));
 end
 
 local function checkCurrentLevelUpExperience ()
@@ -49,12 +51,12 @@ local function checkExperience ()
   });
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('PLAYER_LOGIN', function ()
   currentExperience = UnitXP(UNIT_PLAYER);
   currentLevelupExperience = UnitXPMax(UNIT_PLAYER);
 end);
 
-addon.on('PLAYER_LEVEL_UP', function ()
+Events.on('PLAYER_LEVEL_UP', function ()
   --[[ Experience resets each levelup, so it's set to the negative of the value
       that was last needed for a levelup so it's valued in on the upcoming
     PLAYER_XP_UPDATE event ]]
@@ -65,4 +67,4 @@ addon.on('PLAYER_LEVEL_UP', function ()
   hadLevelUp = true;
 end);
 
-addon.funnel('PLAYER_XP_UPDATE', checkExperience);
+Events.funnel('PLAYER_XP_UPDATE', checkExperience);

@@ -1,12 +1,15 @@
 local addonName, addon = ...;
 
+local IsEventValid = _G.C_EventUtils.IsEventValid;
+
 local L = addon.L;
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Panel = addon.import('client/classes/options/Panel');
+local Options = addon.import('main/Options');
 
-local IsEventValid = _G.C_EventUtils.IsEventValid
+local panel = Panel:new(L['Misc'], Options.mainPanel);
 
-local panel = addon.import('Class/Options/Panel'):new(L['Misc'], addon.mainPanel);
-
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+local saved = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Misc = {
       fastLoot = true,

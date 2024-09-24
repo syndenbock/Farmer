@@ -1,9 +1,11 @@
 local _, addon = ...;
 
-local Storage = addon.import('Class/Storage');
-local C_Container = addon.import('polyfills/C_Container');
+local Storage = addon.import('core/classes/Storage');
+local C_Container = addon.import('client/polyfills/C_Container');
 
-local EventUtils = addon.import('Utils/Events');
+local Events = addon.import('core/logic/Events');
+local EventUtils = addon.import('client/utils/Events');
+
 
 local wipe = _G.wipe;
 
@@ -14,7 +16,7 @@ local ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID;
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
-local GetKeyRingSize = _G.GetKeyRingSize
+local GetKeyRingSize = _G.GetKeyRingSize;
 
 local BagIndex = _G.Enum.BagIndex;
 local InventoryConstants = _G.Constants.InventoryConstants;
@@ -80,12 +82,6 @@ local function getContainerSlotCount (bagIndex)
   end
 end
 
-local function initBagContent (bagIndex)
-  if (bagCache[bagIndex] == nil) then
-    bagCache[bagIndex] = Storage:new();
-  end
-end
-
 local function isBagSlot (bagIndex)
   return (FIRST_BAG_SLOT <= bagIndex and bagIndex <= LAST_BAG_SLOT);
 end
@@ -128,9 +124,12 @@ local function readBagSlot (bagIndex, slotIndex)
 end
 
 local function updateBagCache (bagIndex)
+  if (bagCache[bagIndex] == nil) then
+    return;
+  end
+
   local slotCount = getContainerSlotCount(bagIndex);
 
-  initBagContent(bagIndex);
   readContainerSlot(bagIndex);
 
   for slotIndex = 1, slotCount, 1 do
@@ -138,7 +137,13 @@ local function updateBagCache (bagIndex)
   end
 end
 
+local function initBagContent (bagIndex)
+  assert(bagCache[bagIndex] == nil);
+  bagCache[bagIndex] = Storage:new();
+end
+
 local function initBagCache (bagIndex)
+  initBagContent(bagIndex);
   updateBagCache(bagIndex);
   bagCache[bagIndex]:clearChanges();
 end
@@ -196,7 +201,7 @@ local function updateReagentBankSlot (_, slot)
   end
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('PLAYER_LOGIN', function ()
   local interactionFrameTypes = _G.Enum.PlayerInteractionType;
   local bankInteractionFrameTypes = {
     interactionFrameTypes.Banker,
@@ -206,19 +211,19 @@ addon.onOnce('PLAYER_LOGIN', function ()
 
   initInventory();
 
-  addon.on('BAG_UPDATE', flagBag);
-  addon.on('BAG_CLOSED', clearBag);
-  addon.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
+  Events.on('BAG_UPDATE', flagBag);
+  Events.on('BAG_CLOSED', clearBag);
+  Events.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
 
   EventUtils.onInteractionFrameShow(bankInteractionFrameTypes, initBank);
   EventUtils.onInteractionFrameHide(bankInteractionFrameTypes, clearBank);
 
   if (_G.C_EventUtils.IsEventValid('PLAYERREAGENTBANKSLOTS_CHANGED')) then
-    addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
+    Events.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
   end
 end);
 
-addon.Items.addStorage(function ()
+addon.import('detectors/Items/Items').addStorage(function ()
   updateFlaggedBags();
   return bagCache;
 end);

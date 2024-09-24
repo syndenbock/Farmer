@@ -1,6 +1,6 @@
 local _, addon = ...;
 
-local Migrate = addon.Migration;
+local Migrate = addon.import('core/logic/Migration');
 
 Migrate.addMigration('3.1', function (variables)
   Migrate.migrateOptionsToSubobject(variables.farmerOptions, 'Money', {

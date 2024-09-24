@@ -3,18 +3,25 @@ local addonName, addon = ...;
 local unpack = _G.unpack;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
+local SlashCommands = addon.import('core/logic/SlashCommands');
+local Utils = addon.import('core/utils/Utils');
+local Panel = addon.import('client/classes/options/Panel');
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Main = addon.import('main/Main');
+
 local L = addon.L;
 
 local ADDON_ICON_ID = 134435;
 local ANCHOR_DEFAULT = {'BOTTOM', nil, 'CENTER', 0, 50};
 
-local Panel = addon.import('Class/Options/Panel');
+local module = addon.export('main/Options', {});
+
 local mainPanel = Panel:new(addonName);
-local farmerFrame = addon.frame;
+local farmerFrame = Main.frame;
 
-addon.mainPanel = mainPanel.panel;
+module.panel = mainPanel.panel;
 
-local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+local saved = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Core = {
       anchor = ANCHOR_DEFAULT,
@@ -35,7 +42,7 @@ local saved = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
 local options = saved.vars.farmerOptions.Core;
 
 local function storePosition ()
-  local coords = addon.getFrameRelativeCoords(farmerFrame);
+  local coords = Utils.getFrameRelativeCoords(farmerFrame);
 
   options.anchor = {
     'CENTER',
@@ -86,7 +93,7 @@ do
   optionMap.itemNames = mainPanel:addCheckBox(L['always show names']);
   optionMap.hideAtMailbox = mainPanel:addCheckBox(L['don\'t display at mailboxes']);
 
-  if (addon.isRetail()) then
+  if (Utils.isRetail()) then
     optionMap.hideInArena = mainPanel:addCheckBox(L['don\'t display in arena']);
   end
 
@@ -156,9 +163,8 @@ end);
 ///#############################################################################
 --]]
 
-addon.slash('move', moveFrame);
-addon.slash('reset', setDefaultPosition);
-
-addon.slash('default', function ()
+SlashCommands.addCommand('move', moveFrame);
+SlashCommands.addCommand('reset', setDefaultPosition);
+SlashCommands.addCommand('default', function ()
   return (Panel.openLastPanel() or mainPanel:open());
 end);

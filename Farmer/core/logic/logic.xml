@@ -1,0 +1,7 @@
+<UI>
+  <script file="SlashCommands.lua"/>
+  <script file="Events.lua"/>
+  <script file="Yell.lua"/>
+  <script file="Migration.lua"/>
+  <script file="Tests.lua"/>
+</UI>
