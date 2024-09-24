@@ -26,7 +26,7 @@ local function GetContainerItemInfo (containerIndex, slotIndex)
   end
 end
 
-addon.export('polyfills/C_Container', {
+addon.export('client/polyfills/C_Container', {
   ContainerIDToInventoryID = C_Container.ContainerIDToInventoryID or _G.ContainerIDToInventoryID,
   GetContainerNumFreeSlots = C_Container.GetContainerNumFreeSlots or GetContainerNumFreeSlots,
   GetContainerNumSlots = C_Container.GetContainerNumSlots or _G.GetContainerNumSlots,

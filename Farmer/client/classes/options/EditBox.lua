@@ -6,7 +6,7 @@ local GameFontNormal = _G.GameFontNormal;
 
 local BACKDROP_TEMPLATE = _G.BackdropTemplateMixin and 'BackdropTemplate';
 
-local EditBox = addon.export('Class/Options/EditBox', {});
+local EditBox = addon.export('client/classes/options/EditBox', {});
 
 local function createScroll (name, parent, editBox)
   local scroll = CreateFrame('ScrollFrame', name .. 'ScrollFrame', parent,

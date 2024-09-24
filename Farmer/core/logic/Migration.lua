@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 local strsplit = _G.strsplit;
 
-local callbackHandler = addon.import('Class/CallbackHandler'):new();
+local callbackHandler = addon.import('core/classes/CallbackHandler'):new();
 
 local TOC_VERSION = _G.C_AddOns.GetAddOnMetadata(addonName, 'version');
 

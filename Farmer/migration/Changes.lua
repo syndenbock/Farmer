@@ -1,6 +1,7 @@
 local addonName, addon = ...;
 
 local Migration = addon.import('core/logic/Migration');
+local SlashCommands = addon.import('core/logic/SlashCommands');
 
 local VERSION_TOC = _G.C_AddOns.GetAddOnMetadata(addonName, 'version');
 
@@ -54,6 +55,6 @@ Migration.addMigration('3.4.2', function ()
   });
 end);
 
-addon.slash('version', function ()
-  addon.printAddonMessage('Version is', VERSION_TOC);
+SlashCommands.addCommand('version', function ()
+  Strings.printAddonMessage('Version is', VERSION_TOC);
 end);

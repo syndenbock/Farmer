@@ -2,7 +2,8 @@ local _, addon = ...;
 
 if (_G.GetGuildBankItemInfo == nil) then return end
 
-local EventUtils = addon.import('Utils/Events');
+local EventUtils = addon.import('client/utils/Events');
+local Events = addon.import('core/logic/Events');
 
 local GetCurrentGuildBankTab = _G.GetCurrentGuildBankTab;
 local GetGuildBankItemInfo = _G.GetGuildBankItemInfo;
@@ -11,7 +12,7 @@ local GetItemInfoInstant = _G.GetItemInfoInstant;
 
 local GUILDBANK_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.GuildBanker;
 
-local storage = addon.import('Class/Storage'):new();
+local storage = addon.import('core/classes/Storage'):new();
 local isOpen = false;
 local currentTab;
 
@@ -56,7 +57,7 @@ EventUtils.onInteractionFrameShow(GUILDBANK_INTERACTION_TYPE, function ()
   isOpen = true;
 end);
 
-addon.on('GUILDBANKBAGSLOTS_CHANGED', function ()
+Events.on('GUILDBANKBAGSLOTS_CHANGED', function ()
   if (not isOpen) then
     return;
   end

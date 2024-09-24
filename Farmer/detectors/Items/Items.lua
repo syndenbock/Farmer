@@ -1,20 +1,24 @@
 local _, addon = ...;
 
-addon.registerAvailableDetector('items');
 
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local GetItemInfo = _G.C_Item.GetItemInfo;
 
-local extractNormalizedItemString = addon.extractNormalizedItemString;
-local fetchItemLink = addon.fetchItemLink;
-local ImmutableMap = addon.import('Factory/ImmutableMap');
+local ImmutableMap = addon.import('core/classes/Maps').ImmutableMap;
+local Storage = addon.import('core/classes/Storage');
+local Events = addon.import('core/logic/Events');
+local Yell = addon.import('core/logic/Yell');
+local Strings = addon.import('core/utils/Strings');
+local fetchItemLink = addon.import('client/utils/Items').fetchItemLink;
 
-local Items = addon.export('detectors/Items/Items', {});
+local module = addon.export('detectors/Items/Items', {});
 local storages = {};
-local changesStorage = addon.import('Class/Storage'):new();
+local changesStorage = Storage:new();
 
-function Items.addStorage (storage)
+addon.registerAvailableDetector('items');
+
+function module.addStorage (storage)
   assert(storages[storage] == nil, 'storage was already added');
   storages[storage] = true;
 end
@@ -29,7 +33,7 @@ local function readItemChanges (changes, id, itemInfo)
   if (itemInfo.count ~= 0) then
     for link, count in pairs(itemInfo.links) do
       if (count ~= 0) then
-        changes:addChange(id, extractNormalizedItemString(link) or link, count);
+        changes:addChange(id, Strings.extractNormalizedItemString(link) or link, count);
       end
     end
   end
@@ -95,8 +99,7 @@ local function packItemInfo (itemId, itemLink)
 end
 
 local function yellItem (itemId, itemLink, itemCount)
-  addon.yell('ITEM_CHANGED', ImmutableMap(packItemInfo(itemId, itemLink)),
-      itemCount);
+  Yell.yell('ITEM_CHANGED', ImmutableMap(packItemInfo(itemId, itemLink)), itemCount);
 end
 
 local function broadCastItem (id, link, count)
@@ -125,7 +128,7 @@ local function checkStorageChanges ()
   clearInventoryChanges();
 end
 
-addon.on('BAG_UPDATE_DELAYED', checkStorageChanges);
+Events.on('BAG_UPDATE_DELAYED', checkStorageChanges);
 
 --##############################################################################
 -- testing
@@ -137,7 +140,7 @@ local function testItem (id, count)
   if (link) then
     broadCastItem(id, link, count);
   else
-    addon.printAddonMessage('No data for item id', id);
+    Strings.printAddonMessage('No data for item id', id);
   end
 end
 
@@ -160,10 +163,12 @@ local function testPredefinedItems ()
   end
 end
 
-addon.import('tests').items = function (id, count)
+local Tests = addon.import('core/logic/Tests');
+
+Tests.addTest('items', function (id, count)
   if (id) then
     testItem(tonumber(id), count or 1);
   else
     testPredefinedItems();
   end
-end
+end);

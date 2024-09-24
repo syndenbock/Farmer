@@ -4,6 +4,7 @@ local tostring = _G.tostring;
 local tinsert = _G.tinsert;
 
 local Debug = addon.export('core/utils/Debug', {});
+local Strings = addon.import('core/utils/Strings');
 
 local enabled = false;
 
@@ -39,7 +40,7 @@ stringifyTable = function (table)
   tinsert(fragments, 1, '{');
   tinsert(fragments, '}');
 
-  return addon.tableJoin(fragments, '\n');
+  return Strings.tableJoin(fragments, '\n');
 end
 
 stringifyElement = function (element)
@@ -58,7 +59,7 @@ local function printElements (...)
     tinsert(strings, stringifyElement(element));
   end
 
-  addon.printAddonMessage('Debug:', addon.tableJoin(strings, ' '));
+  Strings.printAddonMessage('Debug:', Strings.tableJoin(strings, ' '));
 end
 
 function Debug.setEnabled (value)

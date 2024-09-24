@@ -10,7 +10,7 @@ local UIDropDownMenu_JustifyText = _G.UIDropDownMenu_JustifyText;
 local UIDropDownMenu_SetText = _G.UIDropDownMenu_SetText;
 local UIDropDownMenu_SetWidth = _G.UIDropDownMenu_SetWidth;
 
-local Dropdown = addon.export('Class/Options/Dropdown', {});
+local Dropdown = addon.export('client/classes/options/Dropdown', {});
 
 local function generateDropdownInitializer (dropdown, options, width)
   local function initializer (_, level)

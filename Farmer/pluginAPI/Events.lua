@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+local Events = addon.import('core/logic/Events');
+
 local secureCall = addon.secureCall;
 
 local events = addon.export('API/events', {});
@@ -14,7 +16,7 @@ end
 local function addEvent (event, callback)
   if (callbackMap[event] == nil) then
     callbackMap[event] = {};
-    addon.on(event, handleEvent);
+    Events.on(event, handleEvent);
   end
 
   callbackMap[event][callback] = true;

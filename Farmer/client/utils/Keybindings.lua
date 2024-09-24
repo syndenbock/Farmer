@@ -1,6 +1,8 @@
 local addonName, addon = ...;
 
-function addon.exposeHeader (headerName, text)
+local module = addon.export('client/utils/Keybindings', {});
+
+function module.exposeHeader (headerName, text)
   local bindingToken = 'BINDING_HEADER_FARMER_' .. headerName;
 
   assert(_G[bindingToken] == nil,
@@ -9,7 +11,7 @@ function addon.exposeHeader (headerName, text)
   _G[bindingToken] = text;
 end
 
-function addon.exposeBinding(bindingName, text, handler)
+function module.exposeBinding(bindingName, text, handler)
   local bindingToken = 'BINDING_NAME_FARMER_' .. bindingName;
   local handlerToken = 'FARMER_' .. bindingName;
 

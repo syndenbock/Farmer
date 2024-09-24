@@ -8,7 +8,7 @@ local TOOLTIP_NAME = SCANNING_TOOLTIP:GetName();
 
 SCANNING_TOOLTIP:SetOwner(_G.WorldFrame, 'ANCHOR_NONE');
 
-local scanner = ADDON.export('client/utils/TooltipScanner', {});
+local module = ADDON.export('client/utils/TooltipScanner', {});
 
 local function getTooltipLinesByNames ()
   local lines = {};
@@ -42,7 +42,7 @@ local function getTooltipLinesByRegions ()
   return lines;
 end
 
-function scanner.getLinesByItemLink (itemLink)
+function module.getLinesByItemLink (itemLink)
   SCANNING_TOOLTIP:ClearLines();
   SCANNING_TOOLTIP:SetHyperlink(itemLink);
 

@@ -1,9 +1,11 @@
-local addonName, addon = ...;
+local _, addon = ...;
 
 local floor = _G.floor;
 local log10 = _G.log10;
 
 local UIParent = _G.UIParent;
+
+local module = addon.export('core/utils/Utils', {});
 
 local IS_RETAIL = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_MAINLINE);
 local IS_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CLASSIC);
@@ -11,63 +13,63 @@ local IS_BC_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_BURNING_CRUSADE_CLASS
 local IS_WRATH_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_WRATH_CLASSIC);
 local IS_CATA_CLASSIC = (_G.WOW_PROJECT_ID == _G.WOW_PROJECT_CATACLYSM_CLASSIC);
 
-function addon.isRetail ()
+function module.isRetail ()
   return IS_RETAIL;
 end
 
-function addon.isClassic ()
+function module.isClassic ()
   return IS_CLASSIC;
 end
 
-function addon.isBCClassic ()
+function module.isBCClassic ()
   return IS_BC_CLASSIC;
 end
 
-function addon.isWrathClassic ()
+function module.isWrathClassic ()
   return IS_WRATH_CLASSIC;
 end
 
-function addon.isCataClassic ()
+function module.isCataClassic ()
   return IS_CATA_CLASSIC;
 end
 
-function addon.round (number)
+function module.round (number)
   return floor(number + 0.5);
 end
 
-function addon.toStepPrecision (value, stepSize)
+function module.toStepPrecision (value, stepSize)
   if (stepSize == 1) then
-    return addon.round(value);
+    return module.round(value);
   end
 
-  return addon.round(value / stepSize) * stepSize;
+  return module.round(value / stepSize) * stepSize;
 end
 
-function addon.stepSizeToPrecision (stepSize)
+function module.stepSizeToPrecision (stepSize)
   if (stepSize == 1) then
     return 0;
   end
 
   -- step sizes received from sliders are slightly off the actual value, so
   -- round has to be used
-  return addon.round(log10(1 / stepSize));
+  return module.round(log10(1 / stepSize));
 end
 
-function addon.truncate (number, digits)
+function module.truncate (number, digits)
   if (digits == 0) then
-    return addon.round(number);
+    return module.round(number);
   end
 
   local factor = 10 ^ digits;
 
   number = number * factor;
-  number = addon.round(number);
+  number = module.round(number);
   number = number / factor;
 
   return number;
 end
 
-function addon.findGlobal (...)
+function module.findGlobal (...)
   local global = _G;
 
   for x = 1, select('#', ...), 1 do
@@ -81,9 +83,9 @@ function addon.findGlobal (...)
   return global;
 end
 
-function addon.readOptions (defaults, options, newOptions)
-  newOptions = newOptions or {};
+function module.readOptions (defaults, options, newOptions)
   options = options or {};
+  newOptions = newOptions or {};
 
   for option, default in pairs(defaults) do
     if (type(default) == type(options[option])) then
@@ -105,7 +107,7 @@ local function getFrameCenteredCoords (frame)
   };
 end
 
-function addon.getFrameRelativeCoords (frame, anchorFrame)
+function module.getFrameRelativeCoords (frame, anchorFrame)
   anchorFrame = anchorFrame or UIParent;
 
   local points = getFrameCenteredCoords(frame);
@@ -117,25 +119,25 @@ function addon.getFrameRelativeCoords (frame, anchorFrame)
   };
 end
 
-function addon.transformFrameAnchorsToCenter (frame, anchorFrame)
+function module.transformFrameAnchorsToCenter (frame, anchorFrame)
   anchorFrame = anchorFrame or UIParent;
 
-  local relativePoints = addon.getFrameRelativeCoords(frame, anchorFrame);
+  local relativePoints = module.getFrameRelativeCoords(frame, anchorFrame);
 
   frame:ClearAllPoints();
   frame:SetPoint('CENTER', anchorFrame, 'CENTER', relativePoints.x,
       relativePoints.y);
 end
 
-function addon.measure (callback, ...)
+function module.measure (callback, ...)
   local stamp = _G.debugprofilestop();
   local result = {callback(...)};
   print(_G.debugprofilestop() - stamp)
   return unpack(result);
 end
 
-function addon.createMeasureWrapper (callback)
+function module.createMeasureWrapper (callback)
   return function (...)
-    return addon.measure(callback, ...);
+    return module.measure(callback, ...);
   end
 end

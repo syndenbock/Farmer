@@ -5,11 +5,17 @@ if (not addon.isDetectorAvailable('money')) then return end
 local abs = _G.abs;
 local GetMoney = _G.GetMoney;
 
+local Events = addon.import('core/logic/Events');
+local SlashCommands = addon.import('core/logic/SlashCommands');
+local Strings = addon.import('core/utils/Strings');
+local Panel = addon.import('client/classes/options/Panel');
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Options = addon.import('main/Options');
 local L = addon.L;
 
-local panel = addon.import('Class/Options/Panel'):new(L['Money'], addon.mainPanel);
+local panel = Panel:new(L['Money'], Options.mainPanel);
 
-local vars = addon.SavedVariablesHandler(addonName, {'farmerOptions', 'farmerCharOptions'}, {
+local vars = SavedVariables.SavedVariablesHandler(addonName, {'farmerOptions', 'farmerCharOptions'}, {
   farmerOptions = {
     Money = {
       displayMoney = false,
@@ -27,28 +33,28 @@ panel:mapOptions(options, {
   displayMoney = panel:addCheckBox(L['show money']),
 });
 
-addon.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('PLAYER_LOGIN', function ()
     --[[ GetMoney returns 0 when called before PLAYER_LOGIN ]]
   if (charOptions.earningStamp == nil) then
     charOptions.earningStamp = GetMoney();
   end
 end);
 
-addon.slash('gold', function (param)
+SlashCommands.addCommand('gold', function (param)
   local money = GetMoney();
 
   if (param == 'reset') then
     charOptions.earningStamp = money;
-    addon.printAddonMessage(L['Money counter was reset']);
+    Strings.printAddonMessage(L['Money counter was reset']);
     return;
   end
 
   local difference = money - charOptions.earningStamp;
-  local text = addon.formatMoney(abs(difference));
+  local text = Strings.formatMoney(abs(difference));
 
   if (difference >= 0) then
-    addon.printAddonMessage(L['Money earned this session: '] .. text);
+    Strings.printAddonMessage(L['Money earned this session: '] .. text);
   else
-    addon.printAddonMessage(L['Money lost this session: '] .. text);
+    Strings.printAddonMessage(L['Money lost this session: '] .. text);
   end
 end);

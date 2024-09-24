@@ -5,20 +5,25 @@ if (not addon.isDetectorAvailable('items')) then return end
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetItemCount = _G.C_Item.GetItemCount;
 
-local printIconMessageWithData = addon.Print.printIconMessageWithData;
-local stringJoin = addon.stringJoin;
-local getRarityColor = addon.getRarityColor;
-local farmerFrame = addon.frame;
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Strings = addon.import('core/utils/Strings');
+local stringJoin = Strings.stringJoin;
+local getRarityColor = addon.import('client/utils/Items').getRarityColor;
+local Main = addon.import('main/Main');
+local Print = addon.import('main/Print');
 
-local SUBSPACE = farmerFrame:CreateSubspace();
-local ItemPrint = addon:extend('ItemPrint', {});
+local printIconMessageWithData = Print.printIconMessageWithData;
 
-local addonOptions = addon.SavedVariablesHandler(addonName, 'farmerOptions')
-    .vars.farmerOptions;
+local SUBSPACE = Main.frame:CreateSubspace();
+
+local module = addon.export('plugins/Items/Print', {});
+
+local addonOptions =
+    SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions;
 local itemOptions = addonOptions.Items;
 local coreOptions = addonOptions.Core;
 
-ItemPrint.COLORS = {
+module.COLORS = {
   quest = {r = 1, g = 0.8, b = 0, 1},
 };
 
@@ -80,7 +85,7 @@ local function formatItemCount (item, data)
 end
 
 local function updateData (item, data)
-  data.count = (farmerFrame:GetMessageData(SUBSPACE, item.id) or 0) +
+  data.count = (Main.frame:GetMessageData(SUBSPACE, item.id) or 0) +
       data.count;
 end
 
@@ -94,7 +99,7 @@ do
       local quality = GetItemCraftedQualityByItemInfo(item.link);
 
       if (quality) then
-        return item.name .. addon.getCraftedQualityIcon(quality);
+        return item.name .. Strings.getCraftedQualityIcon(quality);
       else
         return item.name;
       end
@@ -133,6 +138,6 @@ local function printItem (item, data)
   printItemDynamic(item, data, false);
 end
 
-ItemPrint.printItem = printItem;
-ItemPrint.printItemWithName = printItemWithName;
-ItemPrint.getRarityColor = getRarityColor;
+module.printItem = printItem;
+module.printItemWithName = printItemWithName;
+module.getRarityColor = getRarityColor;

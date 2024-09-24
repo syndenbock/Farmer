@@ -2,8 +2,11 @@ local thisAddonName, addon = ...;
 
 local tinsert = _G.tinsert;
 
-local Set = addon.import('Class/Set');
+local Set = addon.import('core/classes/Set');
+local Events = addon.import('core/logic/Events');
 local Migration = addon.import('core/logic/Migration');
+
+local module = addon.export('client/utils/SavedVariables', {});
 
 local variableStorage = {};
 local addonData = {};
@@ -130,10 +133,10 @@ local function globalizeSavedVariables ()
   end
 end
 
-addon.on('ADDON_LOADED', handleAddonLoad);
-addon.on('PLAYER_LOGOUT', globalizeSavedVariables);
+Events.on('ADDON_LOADED', handleAddonLoad);
+Events.on('PLAYER_LOGOUT', globalizeSavedVariables);
 
-addon.SavedVariablesHandler = function (addonName, variables, defaults)
+function module.SavedVariablesHandler (addonName, variables, defaults)
   local data = addonData[addonName];
 
   if (data == nil) then

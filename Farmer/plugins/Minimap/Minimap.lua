@@ -3,11 +3,16 @@ local addonName, addon = ...;
 if (not addon.isDetectorAvailable('vignettes')) then return end
 
 local strjoin = _G.strjoin;
-local truncate = addon.truncate;
-local printMessage = addon.Print.printMessage;
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.Minimap;
+local Yell = addon.import('core/logic/Yell');
+local Utils = addon.import('core/utils/Utils');
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Print = addon.import('main/Print');
+
+local truncate = Utils.truncate;
+
+local options =
+    SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.Minimap;
 
 local function displayVignette (info, coords)
   local message = strjoin(' ',
@@ -16,7 +21,7 @@ local function displayVignette (info, coords)
     truncate(coords.y, 1)
   );
 
-  printMessage(message);
+  Print.printMessage(message);
 end
 
 local function shouldVignetteBeDisplayed (info)
@@ -26,7 +31,7 @@ local function shouldVignetteBeDisplayed (info)
   );
 end
 
-addon.listen('NEW_VIGNETTE', function (info, coords)
+Yell.listen('NEW_VIGNETTE', function (info, coords)
   if (shouldVignetteBeDisplayed(info)) then
     displayVignette(info, coords);
   end

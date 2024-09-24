@@ -1,9 +1,10 @@
 local _, addon = ...;
 
-local options = addon.export('API/options', {});
-local Panel = addon.import('Class/Options/Panel');
-local mainPanel = addon.mainPanel;
+local Panel = addon.import('client/classes/options/Panel');
+local Options = addon.import('main/Options');
 
-function options.createPanel (name)
-  return Panel:new(name, mainPanel);
+local module = addon.export('API/options', {});
+
+function module.createPanel (name)
+  return Panel:new(name, Options.mainPanel);
 end

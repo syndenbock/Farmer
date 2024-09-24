@@ -5,22 +5,25 @@ if (not addon.isDetectorAvailable('currencies')) then return end
 local strjoin = _G.strjoin;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
-local checkHideOptions = addon.Print.checkHideOptions;
-local printIconMessageWithData = addon.Print.printIconMessageWithData;
-local getRarityColor = addon.getRarityColor;
+local Yell = addon.import('core/logic/Yell');
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local getRarityColor = addon.import('client/utils/Items').getRarityColor;
+local Main = addon.import('main/Main');
+local Print = addon.import('main/Print');
 
-local farmerFrame = addon.frame;
+local checkHideOptions = Print.checkHideOptions;
+local printIconMessageWithData = Print.printIconMessageWithData;
 
 local ACCOUNT_HONOR_ID = 1585;
 local HONOR_ID = 1792;
 
 local RARITY_GRAY = _G.Enum.ItemQuality.Poor;
 
-local ADDON_OPTIONS = addon.SavedVariablesHandler(addonName, 'farmerOptions')
-    .vars.farmerOptions;
+local ADDON_OPTIONS =
+    SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions;
 local CORE_OPTIONS = ADDON_OPTIONS.Core;
 local CURRENCY_OPTIONS = ADDON_OPTIONS.Currency;
-local SUBSPACE = farmerFrame:CreateSubspace();
+local SUBSPACE = Main.frame:CreateSubspace();
 
 local IGNORED_CURRENCIES = {
   [1822] = true, -- Renown
@@ -65,7 +68,7 @@ local function displayCurrency (info, amount)
 
   local text;
 
-  amount = (farmerFrame:GetMessageData(SUBSPACE, info.id) or 0) + amount;
+  amount = (Main.frame:GetMessageData(SUBSPACE, info.id) or 0) + amount;
   text = strjoin('',
     'x', BreakUpLargeNumbers(amount),
     ' (', BreakUpLargeNumbers(info.quantity), ')'
@@ -79,7 +82,7 @@ local function displayCurrency (info, amount)
       getRarityColor(info.quality));
 end
 
-addon.listen('CURRENCY_CHANGED', function (info, amount)
+Yell.listen('CURRENCY_CHANGED', function (info, amount)
   if (not shouldCurrencyBeDisplayed(info, amount)) then return end
 
   displayCurrency(info, amount);

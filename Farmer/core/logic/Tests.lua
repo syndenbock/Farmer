@@ -1,8 +1,18 @@
 local addonName, addon = ...;
 
-local tests = addon.import('tests');
+local SlashCommands = addon.import('core/logic/SlashCommands');
+local Strings = addon.import('core/utils/Strings');
 
-function tests.memory (_addonName)
+local module = addon.export('core/logic/Tests', {});
+
+local tests = {};
+
+function module.addTest (testName, callback)
+  assert(tests[testName] == nil, 'Test already exists: ' .. testName);
+  tests[testName] = callback;
+end
+
+module.addTest('memory', function(_addonName)
   local usage;
 
   _addonName = _addonName or addonName;
@@ -11,26 +21,26 @@ function tests.memory (_addonName)
   usage = _G.BreakUpLargeNumbers(_G.GetAddOnMemoryUsage(_addonName));
 
   print(_addonName, 'uses', usage .. 'kb of memory');
-end
+end);
 
 local function printAvailableTests ()
-  addon.printAddonMessage('Available tests:');
-  for name in pairs(tests) do
+  Strings.printAddonMessage('Available tests:');
+  for name in pairs(module) do
     print(name);
   end
 end
 
 local function executeTest (name, ...)
-  local test = tests[name];
+  local test = module[name];
 
   if (test) then
     test(...);
   else
-    addon.printAddonMessage('Unknown test:', name);
+    Strings.printAddonMessage('Unknown test:', name);
   end
 end
 
-addon.slash('test', function (name, ...)
+SlashCommands.addCommand('test', function (name, ...)
   if (name == nil) then
     printAvailableTests();
   else

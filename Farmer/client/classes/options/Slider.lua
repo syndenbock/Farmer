@@ -3,9 +3,11 @@ local _, addon = ...;
 local CreateFrame = _G.CreateFrame;
 local CreateFromMixins = _G.CreateFromMixins;
 
+local Utils = addon.import('core/utils/Utils');
+
 local BACKDROP_TEMPLATE = _G.BackdropTemplateMixin and 'BackdropTemplate';
 
-local Slider = addon.export('Class/Options/Slider', {});
+local Slider = addon.export('client/classes/options/Slider', {});
 
 local function createEditBox (name, parent)
   local edit = CreateFrame('EditBox', name .. 'EditBox', parent,
@@ -32,7 +34,7 @@ local function setSliderOnChange (slider, callback)
 end
 
 local function sliderOnValueChanged (slider, value)
-  value = addon.truncate(value, addon.stepSizeToPrecision(slider:GetValueStep()));
+  value = Utils.truncate(value, Utils.stepSizeToPrecision(slider:GetValueStep()));
 
   if (slider.edit) then
     slider.edit:SetText(value);
@@ -102,8 +104,8 @@ function Slider:new (parent, name, anchorFrame, xOffset, yOffset, text, min,
 end
 
 function Slider:GetValue ()
-  return addon.truncate(self.slider:GetValue(),
-      addon.stepSizeToPrecision(self.slider:GetValueStep()));
+  return Utils.truncate(self.slider:GetValue(),
+      Utils.stepSizeToPrecision(self.slider:GetValueStep()));
 end
 
 function Slider:SetValue (value)

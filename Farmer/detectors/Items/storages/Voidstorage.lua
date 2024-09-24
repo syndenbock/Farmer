@@ -1,10 +1,11 @@
 local _, addon = ...;
 
-local EventUtils = addon.import('Utils/Events');
+local EventUtils = addon.import('client/utils/Events');
+local Events = addon.import('core/logic/Events');
 
 local VOIDSTORAGE_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.VoidStorageBanker;
 
-local Storage = addon.import('Class/Storage');
+local Storage = addon.import('core/classes/Storage');
 
 local wipe = _G.wipe;
 local GetVoidItemHyperlinkString = _G.GetVoidItemHyperlinkString;
@@ -73,6 +74,6 @@ end
 EventUtils.onInteractionFrameShow(VOIDSTORAGE_INTERACTION_TYPE, initVoidStorage);
 EventUtils.onInteractionFrameHide(VOIDSTORAGE_INTERACTION_TYPE, clearVoidStorage);
 
-addon.on('VOID_TRANSFER_DONE', readVoidStorage);
+Events.on('VOID_TRANSFER_DONE', readVoidStorage);
 
 addon.import('detectors/Items/Items').addStorage(storageTabs);

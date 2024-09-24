@@ -6,11 +6,13 @@ local GetItemInfo = _G.GetItemInfo;
 
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
-function addon.getRarityColor (rarity)
+local module = addon.export('client/utils/Items', {});
+
+function module.getRarityColor (rarity)
   return ITEM_QUALITY_COLORS[rarity];
 end
 
-function addon.fetchItemLink (id, link, callback, ...)
+function module.fetchItemLink (id, link, callback, ...)
   --[[ Apparently you can actually have non-existent items in your bags ]]
   if (not DoesItemExistByID(id)) then
     return callback(id, link, ...);

@@ -10,20 +10,20 @@ local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
 
 local UIParent = _G.UIParent;
 
-local Button = addon.import('Class/Options/Button');
-local CheckBox = addon.import('Class/Options/CheckBox');
-local Slider = addon.import('Class/Options/Slider');
-local Label = addon.import('Class/Options/Label');
-local Dropdown = addon.import('Class/Options/Dropdown');
-local EditBox = addon.import('Class/Options/EditBox');
-local CallbackHandler = addon.import('Class/CallbackHandler');
+local Button = addon.import('client/classes/options/Button');
+local CheckBox = addon.import('client/classes/options/Checkbox');
+local Slider = addon.import('client/classes/options/Slider');
+local Label = addon.import('client/classes/options/Label');
+local Dropdown = addon.import('client/classes/options/Dropdown');
+local EditBox = addon.import('client/classes/options/EditBox');
+local CallbackHandler = addon.import('core/classes/CallbackHandler');
 
 local ON_FIRST_LOAD = 'OnFirstLoad';
 local ON_REFRESH = 'OnRefresh';
 local ON_COMMIT = 'OnCommit';
 local ON_CANCEL = 'OnCancel';
 
-local Panel = addon.export('Class/Options/Panel', {});
+local Panel = addon.export('client/classes/options/Panel', {});
 local panelCount = 0;
 local lastOpenedPanel;
 

@@ -5,8 +5,6 @@ if (_G.C_VignetteInfo == nil) then
   return;
 end
 
-addon.registerAvailableDetector('vignettes');
-
 local wipe = _G.wipe;
 
 local GetBestMapForUnit = _G.C_Map.GetBestMapForUnit;
@@ -14,19 +12,23 @@ local GetVignettes = _G.C_VignetteInfo.GetVignettes;
 local GetVignetteInfo = _G.C_VignetteInfo.GetVignetteInfo;
 local GetVignettePosition = _G.C_VignetteInfo.GetVignettePosition;
 
-local ImmutableMap = addon.import('Factory/ImmutableMap');
+local ImmutableMap = addon.import('core/classes/Maps').ImmutableMap;
+local Events = addon.import('core/logic/Events');
+local Yell = addon.import('core/logic/Yell');
 
 local UNIT_PLAYER = 'player';
 
 local vignetteCache = {};
 local currentMapId;
 
+addon.registerAvailableDetector('vignettes');
+
 local function getCurrentMap ()
   return GetBestMapForUnit(UNIT_PLAYER);
 end
 
 local function yellVignette (info, coords)
-  addon.yell('NEW_VIGNETTE', ImmutableMap(info), coords);
+  Yell.yell('NEW_VIGNETTE', ImmutableMap(info), coords);
 end
 
 -- first parameter is unused to be able to use it as an event listener
@@ -68,8 +70,8 @@ local function initZone ()
   scanVignettes();
 end
 
-addon.onOnce('PLAYER_LOGIN', initZone);
-addon.on('ZONE_CHANGED_NEW_AREA', initZone);
+Events.onOnce('PLAYER_LOGIN', initZone);
+Events.on('ZONE_CHANGED_NEW_AREA', initZone);
 
-addon.on('VIGNETTES_UPDATED', scanVignettes);
-addon.on('VIGNETTE_MINIMAP_UPDATED', readVignette);
+Events.on('VIGNETTES_UPDATED', scanVignettes);
+Events.on('VIGNETTE_MINIMAP_UPDATED', readVignette);

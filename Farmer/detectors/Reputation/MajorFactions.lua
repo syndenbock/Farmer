@@ -6,7 +6,9 @@ if (C_MajorFactions == nil) then return end
 
 local GetMajorFactionData = C_MajorFactions.GetMajorFactionData;
 
-local ImmutableMap = addon.import('Factory/ImmutableMap');
+local ImmutableMap = addon.import('core/classes/Maps').ImmutableMap;
+local Events = addon.import('core/logic/Events');
+local Yell = addon.import('core/logic/Yell');
 
 local majorFactionCache = {};
 
@@ -32,7 +34,7 @@ local function initMajorFactionCache ()
 end
 
 local function yellReputation (reputationInfo)
-  addon.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
+  Yell.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
 end
 
 local function checkMajorFaction (majorFactionInfo)
@@ -79,8 +81,8 @@ local function handleRenownLevel (_, factionId, newRenownLevel, oldRenownLevel)
   end
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('PLAYER_LOGIN', function ()
   initMajorFactionCache();
-  addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkMajorFactions);
-  addon.on('MAJOR_FACTION_RENOWN_LEVEL_CHANGED', handleRenownLevel);
+  Events.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkMajorFactions);
+  Events.on('MAJOR_FACTION_RENOWN_LEVEL_CHANGED', handleRenownLevel);
 end);

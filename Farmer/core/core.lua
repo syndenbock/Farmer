@@ -28,8 +28,6 @@ function addon.import (name)
   return modules[name];
 end
 
-addon.export('tests', {});
-
 function addon.secureCall (callback, ...)
   xpcall(callback, geterrorhandler(), ...);
 end

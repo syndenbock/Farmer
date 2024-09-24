@@ -3,14 +3,19 @@ local _, addon = ...;
 local GetInventoryItemID = _G.GetInventoryItemID;
 local GetInventoryItemLink = _G.GetInventoryItemLink;
 local GetInventoryItemQuality = _G.GetInventoryItemQuality;
+
+local Utils = addon.import('core/utils/Utils');
+local Storage = addon.import('core/classes/Storage');
+local Events = addon.import('core/logic/Events');
+
 local INVSLOT_OFFHAND = _G.INVSLOT_OFFHAND;
 local ITEM_QUALITY_ARTIFACT = _G.Enum.ItemQuality.Artifact;
 
 local FIRST_INVENTORY_SLOT = 1;
-local LAST_INVENTORY_SLOT = (addon.isRetail() and 30) or 19;
+local LAST_INVENTORY_SLOT = (Utils.isRetail() and 30) or 19;
 local UNITID_PLAYER = 'player';
 
-local currentEquipment = addon.import('Class/Storage'):new();
+local currentEquipment = Storage:new();
 
 local function isSlotArtifactOffhand (slot)
   return (slot == INVSLOT_OFFHAND and
@@ -61,13 +66,13 @@ local function handleSlotUpdate (_, slot, isEmpty)
   end
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('PLAYER_LOGIN', function ()
   initEquipment();
   -- This is needed to detect gear updates when automatically switching specs
   -- when joining an LFG instance.
   -- EQUIPMENT_SWAP_FINISHED does not work for some reason.
-  addon.on('PLAYER_ENTERING_WORLD', updateEquipment);
-  addon.on('PLAYER_EQUIPMENT_CHANGED', handleSlotUpdate);
+  Events.on('PLAYER_ENTERING_WORLD', updateEquipment);
+  Events.on('PLAYER_EQUIPMENT_CHANGED', handleSlotUpdate);
 end);
 
 addon.import('detectors/Items/Items').addStorage({currentEquipment});

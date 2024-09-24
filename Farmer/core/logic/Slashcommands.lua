@@ -4,9 +4,12 @@ local strlower = _G.strlower;
 local strsplit = _G.strsplit;
 
 local L = addon.L;
+
+local module = addon.export('core/logic/SlashCommands', {});
+
 local slashCommands = {};
 
-function addon.slash (command, callback)
+function module.addCommand (command, callback)
   command = strlower(command);
 
   assert(slashCommands[command] == nil,

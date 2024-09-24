@@ -14,6 +14,13 @@ local IsItemConduitByItemInfo =
 local GetConduitCollectionDataByVirtualID =
     C_Soulbinds and C_Soulbinds.GetConduitCollectionDataByVirtualID;
 
+local Yell = addon.import('core/logic/Yell');
+local Strings = addon.import('core/utils/Strings');
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local TooltipScanner = addon.import('client/utils/TooltipScanner');
+local Print = addon.import('main/Print');
+local ItemPrint = addon.import('plugins/Items/Print');
+
 local ITEM_CLASS_ENUM = _G.Enum.ItemClass;
 local ARMOR_SUBCLASS_ENUM = _G.Enum.ItemArmorSubclass;
 local GEM_SUBCLASS_ENUM = _G.Enum.ItemGemSubclass;
@@ -38,22 +45,20 @@ local INVTYPE_CLOAK = _G.Enum.InventoryType.IndexCloakType;
 local CONTAINER_PATTERN = _G.gsub(_G.gsub(
     _G.CONTAINER_SLOTS, '%%s', '%.+'),'%%d', '(%%d+)');
 
-local Print = addon.Print;
-local printItem = addon.ItemPrint.printItem;
-local printItemWithName = addon.ItemPrint.printItemWithName;
-local stringJoin = addon.stringJoin;
-local COLORS = addon.ItemPrint.COLORS;
-local TooltipScanner = addon.import('client/utils/TooltipScanner');
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.Items;
+local printItem = ItemPrint.printItem;
+local printItemWithName = ItemPrint.printItemWithName;
+local COLORS = ItemPrint.COLORS;
+
+local options =
+    SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.Items;
 
 local function isRecipe (itemInfo)
   return (itemInfo.classId == ITEM_CLASS_RECIPE);
 end
 
 local function joinItemString (...)
-  return stringJoin(' ', ...);
+  return Strings.stringJoin(' ', ...);
 end
 
 local function checkRecipeOptions (itemInfo)
@@ -417,7 +422,7 @@ local function handleItem (item, count)
   displayUncategorizedItem(item, count);
 end
 
-addon.listen('ITEM_CHANGED', function (itemInfo, count)
+Yell.listen('ITEM_CHANGED', function (itemInfo, count)
   if (checkDisplayOptions(itemInfo, count)) then
     handleItem(itemInfo, count);
   end

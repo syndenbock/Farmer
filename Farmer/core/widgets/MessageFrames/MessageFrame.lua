@@ -9,7 +9,7 @@ local CreateFrame = _G.CreateFrame;
 local UIPARENT = _G.UIParent;
 local STANDARD_TEXT_FONT = _G.STANDARD_TEXT_FONT;
 
-local transformFrameAnchorsToCenter = addon.transformFrameAnchorsToCenter;
+local Utils = addon.import('core/utils/Utils');
 
 local ON_MOUSE_DOWN = 'OnMouseDown';
 local ON_MOUSE_UP = 'OnMouseUp';
@@ -51,7 +51,7 @@ local DEFAULT_OPTIONS = {
   shadowOffset = {x = 0, y = 0},
 };
 
-local MessageFrame = addon.export('Widget/MessageFrame', {
+local MessageFrame = addon.export('core/widgets/MessageFrame', {
   GROW_DIRECTION_UP = GROW_DIRECTION_UP,
   GROW_DIRECTION_DOWN = GROW_DIRECTION_DOWN,
   ALIGNMENT_LEFT = ALIGNMENT_LEFT,
@@ -128,7 +128,7 @@ end
 
 local function readOptions (self, options)
   options = transformOptions(options);
-  addon.readOptions(DEFAULT_OPTIONS, options, self);
+  Utils.readOptions(DEFAULT_OPTIONS, options, self);
 end
 
 --******************************************************************************
@@ -339,7 +339,7 @@ local function startMoving (self, message, callback)
   anchor:SetScript(ON_MOUSE_UP, function ()
     self.isMoving = false;
     stopMovingAnchor(anchor);
-    transformFrameAnchorsToCenter(anchor);
+    Utils.transformFrameAnchorsToCenter(anchor);
     anchor:SetSize(20, 20);
     startMessageAnimation(self, message);
 
@@ -552,7 +552,7 @@ MessageFrame.AddResetCallback = addResetCallback;
 function MessageFrame:Move (icon, text, callback)
   local message = createAnchorMessage(self, icon, text);
 
-  transformFrameAnchorsToCenter(self.anchor);
+  Utils.transformFrameAnchorsToCenter(self.anchor);
   self.anchor:SetSize(200, 200);
   startMoving(self, message, callback);
 end

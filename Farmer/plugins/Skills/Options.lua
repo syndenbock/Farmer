@@ -2,11 +2,14 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('skills')) then return end
 
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Panel = addon.import('client/classes/options/Panel');
+local Options = addon.import('main/Options');
 local L = addon.L;
 
-local panel = addon.import('Class/Options/Panel'):new(L['Skills'], addon.mainPanel);
+local panel = Panel:new(L['Skills'], Options.mainPanel);
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+local options = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Skills = {
       displaySkills = true,

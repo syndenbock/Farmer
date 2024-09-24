@@ -7,7 +7,9 @@ local strfind = _G.strfind;
 local strlen = _G.strlen;
 local unpack = _G.unpack;
 
-function addon.serialize (...)
+local module = addon.export('core/utils/Serialize', {});
+
+function module.serialize (...)
   local data = {...};
   local info = {};
   local dataString = '';
@@ -23,7 +25,7 @@ function addon.serialize (...)
   return info .. dataString;
 end
 
-function addon.deserialize (dataString)
+function module.deserialize (dataString)
   local position = strfind(dataString, ';');
   local info = strsub(dataString, 1, position - 1);
   local data = {};

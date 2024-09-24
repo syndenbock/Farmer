@@ -1,11 +1,15 @@
 local addonName, addon = ...;
 
+local CallbackHandler = addon.import('core/classes/CallbackHandler');
+
 local CallAfter = _G.C_Timer.After;
+
+local module = addon.export('core/logic/Events', {});
 
 local secureCall = addon.secureCall;
 
 local eventFrame = _G.CreateFrame('frame');
-local callbackHandler = addon.import('Class/CallbackHandler'):new();
+local callbackHandler = CallbackHandler:new();
 
 eventFrame:SetScript('OnEvent', function (_, event, ...)
   callbackHandler:call(event, event, ...);
@@ -65,20 +69,20 @@ end
 -- public methods
 --##############################################################################
 
-function addon.on (events, callback)
+function module.on (events, callback)
   callForEvents(events, callback, addCallback);
 end
 
-function addon.off (events, callback)
+function module.off (events, callback)
   callForEvents(events, callback, removeCallback);
 end
 
-function addon.onOnce (events, callback)
+function module.onOnce (events, callback)
   callForEvents(events, callback, addSingleFireCallback);
 end
 
-function addon.funnel (eventList, callback)
+function module.funnel (eventList, callback)
   local funnelCallback = createFunnelCallback(callback);
-  addon.on(eventList, funnelCallback);
+  module.on(eventList, funnelCallback);
   return funnelCallback;
 end

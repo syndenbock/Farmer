@@ -3,7 +3,7 @@ local _, addon = ...;
 local CreateFrame = _G.CreateFrame;
 local CreateFromMixins = _G.CreateFromMixins;
 
-local CheckBox =  addon.export('Class/Options/CheckBox', {});
+local CheckBox =  addon.export('client/classes/options/Checkbox', {});
 
 local function createCheckBox (name, parent, text, anchors)
   local checkBox = CreateFrame('CheckButton', name .. 'CheckButton', parent, 'SettingsCheckBoxControlTemplate');

@@ -34,7 +34,7 @@ local function GetFactionDataByID (...)
   return packFactionInfo(_G.GetFactionInfoByID(...));
 end
 
-addon.export('polyfills/C_Reputation', {
+addon.export('client/polyfills/C_Reputation', {
   GetNumFactions = C_Reputation.GetNumFactions or _G.GetNumFactions,
   GetFactionDataByIndex = C_Reputation.GetFactionDataByIndex or GetFactionDataByIndex,
   GetFactionDataByID = C_Reputation.GetFactionDataByID or GetFactionDataByID,

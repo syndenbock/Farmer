@@ -1,5 +1,5 @@
 local _, addon = ...;
 
 addon.export('API/Class', {
-  CallbackHandler = addon.import('Class/CallbackHandler'),
+  CallbackHandler = addon.import('core/classes/CallbackHandler'),
 });

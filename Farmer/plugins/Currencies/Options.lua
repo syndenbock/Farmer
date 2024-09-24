@@ -4,9 +4,13 @@ if (not addon.isDetectorAvailable('currencies')) then return end
 
 local L = addon.L;
 
-local panel = addon.import('Class/Options/Panel'):new(L['Currencies'], addon.mainPanel);
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Panel = addon.import('client/classes/options/Panel');
+local Options = addon.import('main/Options');
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+local panel = Panel:new(L['Currencies'], Options.mainPanel);
+
+local options = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Currency = {
       displayCurrencies = true,

@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local C_Spell = _G.C_Spell or {};
 
-addon.export('polyfills/C_Spell', {
+addon.export('client/polyfills/C_Spell', {
   GetSpellInfo = C_Spell.GetSpellInfo or function (...)
     local info = {_G.GetSpellInfo(...)};
 

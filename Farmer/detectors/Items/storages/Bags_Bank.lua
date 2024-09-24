@@ -1,9 +1,11 @@
 local _, addon = ...;
 
-local Storage = addon.import('Class/Storage');
-local C_Container = addon.import('polyfills/C_Container');
+local Storage = addon.import('core/classes/Storage');
+local C_Container = addon.import('client/polyfills/C_Container');
 
-local EventUtils = addon.import('Utils/Events');
+local Events = addon.import('core/logic/Events');
+local EventUtils = addon.import('client/utils/Events');
+
 
 local wipe = _G.wipe;
 
@@ -199,7 +201,7 @@ local function updateReagentBankSlot (_, slot)
   end
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('PLAYER_LOGIN', function ()
   local interactionFrameTypes = _G.Enum.PlayerInteractionType;
   local bankInteractionFrameTypes = {
     interactionFrameTypes.Banker,
@@ -209,15 +211,15 @@ addon.onOnce('PLAYER_LOGIN', function ()
 
   initInventory();
 
-  addon.on('BAG_UPDATE', flagBag);
-  addon.on('BAG_CLOSED', clearBag);
-  addon.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
+  Events.on('BAG_UPDATE', flagBag);
+  Events.on('BAG_CLOSED', clearBag);
+  Events.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
 
   EventUtils.onInteractionFrameShow(bankInteractionFrameTypes, initBank);
   EventUtils.onInteractionFrameHide(bankInteractionFrameTypes, clearBank);
 
   if (_G.C_EventUtils.IsEventValid('PLAYERREAGENTBANKSLOTS_CHANGED')) then
-    addon.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
+    Events.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
   end
 end);
 

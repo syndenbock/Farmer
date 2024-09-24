@@ -13,6 +13,8 @@ local COPPER_PER_GOLD = _G.COPPER_PER_GOLD;
 local COPPER_PER_SILVER = _G.COPPER_PER_SILVER;
 local SILVER_PER_GOLD = _G.SILVER_PER_GOLD;
 
+local module = addon.export('core/utils/Strings', {});
+
 local oneTimeMessages = {};
 
 local TEXTURE_COPPER, TEXTURE_SILVER, TEXTURE_GOLD = (function ()
@@ -30,32 +32,32 @@ end)();
 
 local ADDON_MESSAGE_PREFIX = '|cff00ffff' .. addonName .. '|r:';
 
-function addon.createAddonMessage (...)
+function module.createAddonMessage (...)
   return strjoin(' ', ADDON_MESSAGE_PREFIX, ...);
 end
 
-function addon.printAddonMessage (...)
+function module.printAddonMessage (...)
   print(ADDON_MESSAGE_PREFIX, ...);
 end
 
-function addon.printOneTimeMessage (...)
+function module.printOneTimeMessage (...)
   local message = strjoin(' ', ...);
 
   if (oneTimeMessages[message] == nil) then
-    addon.printAddonMessage(message);
+    module.printAddonMessage(message);
     oneTimeMessages[message] = true;
   end
 end
 
-function addon.stringStartsWith (string, check)
+function module.stringStartsWith (string, check)
   return (string:sub(1, #check) == check);
 end
 
-function addon.stringEndsWith (string, check)
+function module.stringEndsWith (string, check)
   return (check == "" or string:sub(-#check) == check);
 end
 
-function addon.stringJoin (joiner, ...)
+function module.stringJoin (joiner, ...)
   local result;
 
   for x = 1, select('#', ...), 1 do
@@ -70,7 +72,7 @@ function addon.stringJoin (joiner, ...)
   return result or '';
 end
 
-function addon.tableJoin (stringList, joiner)
+function module.tableJoin (stringList, joiner)
   local result;
 
   joiner = joiner or '';
@@ -84,7 +86,7 @@ function addon.tableJoin (stringList, joiner)
   return result or '';
 end
 
-function addon.replaceString (string, match, replacement)
+function module.replaceString (string, match, replacement)
   local startPos, endPos = strfind(string, match, 1, true);
 
   if (startPos) then
@@ -94,7 +96,7 @@ function addon.replaceString (string, match, replacement)
   end
 end
 
-function addon.formatMoney (amount)
+function module.formatMoney (amount)
   local gold = floor(amount / COPPER_PER_GOLD);
   local silver = floor(amount / COPPER_PER_SILVER) % SILVER_PER_GOLD;
   local copper = amount % COPPER_PER_SILVER;
@@ -112,20 +114,20 @@ function addon.formatMoney (amount)
     tinsert(text, BreakUpLargeNumbers(copper) .. TEXTURE_COPPER);
   end
 
-  return addon.tableJoin(text, ' ');
+  return module.tableJoin(text, ' ');
 end
 
-function addon.findItemLink (string)
+function module.findItemLink (string)
   return strmatch(string, '|c.+|h|r');
 end
 
-function addon.extractItemString (itemLink)
+function module.extractItemString (itemLink)
   return strmatch(itemLink, 'item[%-?%d:]+');
 end
 
 local craftedQualityIcons = {};
 
-function addon.getCraftedQualityIcon (quality)
+function module.getCraftedQualityIcon (quality)
   if (craftedQualityIcons[quality] == nil) then
     craftedQualityIcons[quality] = CreateAtlasMarkup(('Professions-Icon-Quality-Tier%d-Small'):format(quality), nil, nil, nil, nil, nil);
   end
@@ -133,7 +135,7 @@ function addon.getCraftedQualityIcon (quality)
   return craftedQualityIcons[quality];
 end
 
-function addon.extractNormalizedItemString (itemLink)
+function module.extractNormalizedItemString (itemLink)
   --[[ the 9th and 10th positions contain character level and spec, which causes
        different links after levelups or spec swaps and therefor have to be
        removed ]]

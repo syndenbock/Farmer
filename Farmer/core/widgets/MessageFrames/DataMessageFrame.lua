@@ -2,9 +2,9 @@ local _, addon = ...;
 
 local Mixin = _G.Mixin;
 
-local MessageFrame = addon.import('Widget/MessageFrame');
+local MessageFrame = addon.import('core/widgets/MessageFrame');
 
-local DataMessageFrame = addon.export('Widget/DataMessageFrame', {});
+local DataMessageFrame = addon.export('core/widgets/DataMessageFrame', {});
 
 --##############################################################################
 -- private methods

@@ -3,7 +3,7 @@ local _, addon = ...;
 local CreateFrame = _G.CreateFrame;
 local CreateFromMixins = _G.CreateFromMixins;
 
-local Button = addon.export('Class/Options/Button', {});
+local Button = addon.export('client/classes/options/Button', {});
 
 local function createButton (name, parent, text, anchors)
   local button = CreateFrame('Button', name .. 'Button', parent, 'UIPanelButtonTemplate');

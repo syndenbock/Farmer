@@ -5,13 +5,15 @@ if (not addon.isDetectorAvailable('items')) then return end
 local tinsert = _G.tinsert;
 local strsplit = _G.strsplit;
 
+local L = addon.L;
+local SavedVariables = addon.import('client/utils/SavedVariables');
+local Options = addon.import('main/Options');
+
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
-local L = addon.L;
+local panel = addon.import('client/classes/options/Panel'):new(L['Items'], Options.mainPanel);
 
-local panel = addon.import('Class/Options/Panel'):new(L['Items'], addon.mainPanel);
-
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions', {
+local options = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
     Items = {
       showBagCount = false,

@@ -5,7 +5,7 @@ addon.registerAvailableDetector('reputation');
 local floor = _G.floor;
 local tinsert = _G.tinsert;
 
-local C_Reputation = addon.import('polyfills/C_Reputation');
+local C_Reputation = addon.import('client/polyfills/C_Reputation');
 local GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo;
 local IsFactionParagon = C_Reputation.IsFactionParagon;
 
@@ -18,7 +18,10 @@ local C_GossipInfo = _G.C_GossipInfo;
 local GetFriendshipReputation = C_GossipInfo.GetFriendshipReputation;
 local GetFriendshipReputationRanks = C_GossipInfo.GetFriendshipReputationRanks;
 
-local ImmutableMap = addon.import('Factory/ImmutableMap');
+local ImmutableMap = addon.import('core/classes/Maps').ImmutableMap;
+local Events = addon.import('core/logic/Events');
+local Yell = addon.import('core/logic/Yell');
+local Strings = addon.import('core/utils/Strings');
 
 local reputationCache = {};
 
@@ -69,7 +72,7 @@ local function iterateReputations (callback)
     if (factionInfo == nil) then
       -- print('factionInfo is nil:', index);
     elseif (factionInfo.name == nil) then
-      addon.printOneTimeMessage('Could not check factions as another addon seems to be interfering with the reputation pane');
+      Strings.printOneTimeMessage('Could not check factions as another addon seems to be interfering with the reputation pane');
     else
       if (factionInfo.isHeader and factionInfo.isCollapsed) then
         tinsert(expandedIndices, index);
@@ -110,7 +113,7 @@ local function initReputationCache ()
 end
 
 local function yellReputation (reputationInfo)
-  addon.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
+  Yell.yell('REPUTATION_CHANGED', ImmutableMap(reputationInfo));
 end
 
 local function handleNewReputation (factionInfo)
@@ -160,16 +163,18 @@ local function checkReputations ()
   iterateReputations(checkstandingChange);
 end
 
-addon.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('PLAYER_LOGIN', function ()
   initReputationCache();
-  addon.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
+  Events.funnel('CHAT_MSG_COMBAT_FACTION_CHANGE', checkReputations);
 end);
 
 --##############################################################################
 -- testing
 --##############################################################################
 
-addon.import('tests').reputation = function (id)
+local Tests = addon.import('core/logic/Tests');
+
+Tests.addTest('reputation', function (id)
   local factionID = tonumber(id) or 2170;
 
   local info = C_Reputation.GetFactionDataByID(factionID);
@@ -188,4 +193,4 @@ addon.import('tests').reputation = function (id)
   end
 
   yellReputation(info);
-end
+end);

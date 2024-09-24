@@ -1,8 +1,9 @@
-local _, ADDON = ...;
+local _, addon = ...;
 
 local Mixin = _G.Mixin;
 
-local DataMessageFrame = ADDON.import('Widget/DataMessageFrame');
+local DataMessageFrame = addon.import('core/widgets/DataMessageFrame');
+local Utils = addon.import('core/utils/Utils');
 
 local MESSAGE_MODES = {
   shift = 0,
@@ -16,7 +17,7 @@ local DEFAULT_OPTIONS = {
   mode = MESSAGE_MODES.combineAndMove,
 };
 
-local DataMessageModeFrame = ADDON.export('Widget/DataMessageModeFrame', {});
+local DataMessageModeFrame = addon.export('core/widgets/DataMessageModeFrame', {});
 
 local function doNothing () end
 
@@ -102,7 +103,7 @@ function DataMessageModeFrame:New (options)
   local this = DataMessageFrame:New(options);
 
   Mixin(this, DataMessageModeFrame);
-  ADDON.readOptions(DEFAULT_OPTIONS, options, this);
+  Utils.readOptions(DEFAULT_OPTIONS, options, this);
   this:applyMode();
 
   return this;

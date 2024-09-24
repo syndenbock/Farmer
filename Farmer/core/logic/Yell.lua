@@ -1,15 +1,19 @@
 local _, addon = ...;
 
-local callbackHandler = addon.import('Class/CallbackHandler'):new();
+local CallbackHandler = addon.import('core/classes/CallbackHandler');
 
-function addon.listen (message, callback)
+local module = addon.export('core/logic/Yell', {});
+
+local callbackHandler = CallbackHandler:new();
+
+function module.listen (message, callback)
   callbackHandler:addCallback(message, callback);
 end
 
-function addon.unlisten (message, callback)
+function module.unlisten (message, callback)
   callbackHandler:removeCallback(message, callback);
 end
 
-function addon.yell (message, ...)
+function module.yell (message, ...)
   callbackHandler:call(message, ...);
 end

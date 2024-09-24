@@ -1,5 +1,6 @@
 local _, addon = ...;
 
+local Utils = addon.import('core/utils/Utils');
 local Migrate = addon.import('core/logic/Migration');
 
 Migrate.addMigration('3.1', function (variables)
@@ -24,7 +25,7 @@ Migrate.addMigration('3.2.3', function (variables)
   if (not options) then return end
 
   if (options.fontSize) then
-    options.fontSize = addon.round(options.fontSize / _G.UIParent:GetScale());
+    options.fontSize = Utils.round(options.fontSize / _G.UIParent:GetScale());
   end
 
   if (options.anchor) then

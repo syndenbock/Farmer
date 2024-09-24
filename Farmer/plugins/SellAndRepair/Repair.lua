@@ -1,6 +1,6 @@
 local addonName, addon = ...;
 
-local EventUtils = addon.import('Utils/Events');
+local EventUtils = addon.import('client/utils/Events');
 
 local CanMerchantRepair = _G.CanMerchantRepair;
 local GetRepairAllCost = _G.GetRepairAllCost;
@@ -10,17 +10,19 @@ local GetGuildBankWithdrawMoney = _G.GetGuildBankWithdrawMoney;
 local RepairAllItems = _G.RepairAllItems;
 local GetMoney = _G.GetMoney;
 
-local MERCHANT_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.Merchant;
-
+local Strings = addon.import('core/utils/Strings');
+local SavedVariables = addon.import('client/utils/SavedVariables');
 local L = addon.L;
 
-local options = addon.SavedVariablesHandler(addonName, 'farmerOptions').vars
-    .farmerOptions.SellAndRepair;
+local MERCHANT_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.Merchant;
+
+local options = SavedVariables
+    .SavedVariablesHandler(addonName, 'farmerOptions').vars.farmerOptions.SellAndRepair;
 
 local function repairEquipmentFromGuildFunds (cost)
   RepairAllItems(true);
   print(L['Equipment has been repaired by your guild for %s']
-      :format(addon.formatMoney(cost)));
+      :format(Strings.formatMoney(cost)));
 end
 
 local function canGuildRepair (cost)
@@ -47,7 +49,7 @@ end
 local function repairEquipmentFromOwnFunds (cost)
   RepairAllItems(false);
   print(L['Equipment has been repaired for %s']
-      :format(addon.formatMoney(cost)));
+      :format(Strings.formatMoney(cost)));
 end
 
 local function canSelfRepair (cost)

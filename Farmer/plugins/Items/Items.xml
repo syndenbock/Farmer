@@ -1,5 +1,5 @@
 <UI>
   <script file="Options.lua"/>
-  <script file="Itemprint.lua"/>
+  <script file="Print.lua"/>
   <script file="Items.lua"/>
 </UI>
