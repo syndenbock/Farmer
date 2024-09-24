@@ -25,7 +25,7 @@ local function shouldMoneyBeDisplayed (amount)
 end
 
 local function displayMoney (amount)
-  amount = amount + (Main.farmerFrame:GetMessageData(SUBSPACE, IDENTIFIER) or 0);
+  amount = amount + (Main.frame:GetMessageData(SUBSPACE, IDENTIFIER) or 0);
   printMessageWithData(SUBSPACE, IDENTIFIER, amount, Strings.formatMoney(amount), MESSAGE_COLORS);
 end
 
