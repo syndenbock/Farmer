@@ -34,14 +34,15 @@ local function GetFactionDataByID (...)
   return packFactionInfo(_G.GetFactionInfoByID(...));
 end
 
+local function returnFalse () return false end
+
 addon.export('client/polyfills/C_Reputation', {
   GetNumFactions = C_Reputation.GetNumFactions or _G.GetNumFactions,
   GetFactionDataByIndex = C_Reputation.GetFactionDataByIndex or GetFactionDataByIndex,
   GetFactionDataByID = C_Reputation.GetFactionDataByID or GetFactionDataByID,
   ExpandFactionHeader = C_Reputation.ExpandFactionHeader or _G.ExpandFactionHeader,
   CollapseFactionHeader = C_Reputation.CollapseFactionHeader or _G.CollapseFactionHeader,
-  GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo or nil,
-  IsFactionParagon = C_Reputation.IsFactionParagon or function ()
-    return false;
-  end,
+  GetFactionParagonInfo = C_Reputation.GetFactionParagonInfo or function () end,
+  IsFactionParagon = C_Reputation.IsFactionParagon or returnFalse,
+  IsMajorFaction = C_Reputation.IsMajorFaction or returnFalse,
 });

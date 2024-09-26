@@ -13,6 +13,7 @@ local GetNumFactions = C_Reputation.GetNumFactions;
 local GetFactionDataByIndex = C_Reputation.GetFactionDataByIndex;
 local ExpandFactionHeader = C_Reputation.ExpandFactionHeader;
 local CollapseFactionHeader = C_Reputation.CollapseFactionHeader;
+local IsMajorFaction = C_Reputation.IsMajorFaction;
 
 local C_GossipInfo = _G.C_GossipInfo;
 local GetFriendshipReputation = C_GossipInfo.GetFriendshipReputation;
@@ -80,7 +81,7 @@ local function iterateReputations (callback)
         numFactions = GetNumFactions();
       end
 
-      if (factionInfo.factionID) then
+      if (factionInfo.factionID and not IsMajorFaction(factionInfo.factionID)) then
         updateParagonInfo(factionInfo);
         updateFriendShipInfo(factionInfo);
         callback(factionInfo);
