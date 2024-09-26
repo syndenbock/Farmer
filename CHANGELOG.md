@@ -1,1 +1,1 @@
-- Fixed equipment showing up as new items when gear is swapped due to entering a queued dungeon
+- Updated interface version for Classic
