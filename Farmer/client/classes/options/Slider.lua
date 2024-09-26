@@ -47,19 +47,19 @@ local function sliderOnValueChanged (slider, value)
 end
 
 local function createSlider (name, parent, values, text, anchors)
-  local slider = CreateFrame('Slider', name .. 'Slider', parent,
-      'OptionsSliderTemplate');
+  local slider = CreateFrame('Slider', name .. 'Slider', parent, 'UISliderTemplateWithLabels');
 
   slider:SetPoint(anchors.anchor, anchors.parent, anchors.parentAnchor,
       anchors.xOffset, anchors.yOffset);
   slider:SetOrientation('HORIZONTAL');
+  slider:SetSize(144, 17);
   slider:SetMinMaxValues(values.min, values.max);
   slider:SetValueStep(1 / (10 ^ values.precision));
   slider:SetObeyStepOnDrag(true);
 
-  _G[name .. 'SliderText']:SetText(text.label);
-  _G[name .. 'SliderLow']:SetText(text.low);
-  _G[name .. 'SliderHigh']:SetText(text.high);
+  slider.Text:SetText(text.label);
+  slider.Low:SetText(text.low);
+  slider.High:SetText(text.high);
 
   slider:SetScript('OnValueChanged', sliderOnValueChanged);
   slider.OnChange = setSliderOnChange;
