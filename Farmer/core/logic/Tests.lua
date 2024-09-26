@@ -25,13 +25,13 @@ end);
 
 local function printAvailableTests ()
   Strings.printAddonMessage('Available tests:');
-  for name in pairs(module) do
+  for name in pairs(tests) do
     print(name);
   end
 end
 
 local function executeTest (name, ...)
-  local test = module[name];
+  local test = tests[name];
 
   if (test) then
     test(...);
