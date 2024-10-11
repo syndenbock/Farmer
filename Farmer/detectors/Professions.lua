@@ -55,28 +55,30 @@ end
 --##############################################################################
 
 if (GetAllProfessionTradeSkillLines ~= nil) then
-  local function readSubProfessions ()
-    for _, id in ipairs(GetAllProfessionTradeSkillLines()) do
-      local info = GetProfessionInfoBySkillLineID(id);
-
-      -- Skipping parent professions as those just reflect the most up-to date
-      -- subprofession.
-      if (info.parentProfessionID ~= nil and info.skillLevel ~= 0) then
-        professionCache[id] = info;
-      end
-    end
-  end
-
-  local function checkProfessions ()
+  local function iterateSubProfessions (callback)
     for _, id in ipairs(GetAllProfessionTradeSkillLines()) do
       local info = GetProfessionInfoBySkillLineID(id);
 
       -- Skipping parent professions as those just reflect the most up-to date
       -- subprofession.
       if (info.parentProfessionID ~= nil) then
-        checkProfessionChange(info);
+        callback(info);
       end
     end
+  end
+
+  local function readSubProfession (info)
+    if (info.skillLevel ~= 0) then
+      professionCache[info.professionID] = info;
+    end
+  end
+
+  local function readSubProfessions ()
+    iterateSubProfessions(readSubProfession);
+  end
+
+  local function checkProfessions ()
+    iterateSubProfessions(checkProfessionChange);
   end
 
   Events.onOnce('TRADE_SKILL_SHOW', function ()
@@ -109,20 +111,22 @@ if (GetAllProfessionTradeSkillLines == nil and GetProfessions ~= nil) then
     };
   end
 
-  local function readParentProfessions ()
+  local function iterateParentProfessions (callback)
     for _, parentId in ipairs({GetProfessions()}) do
-      local info = getPackedProfessionInfo(parentId);
-
-      professionCache[info.professionID] = info;
+      callback(getPackedProfessionInfo(parentId));
     end
   end
 
-  local function checkParentProfessions ()
-    for _, parentId in ipairs({GetProfessions()}) do
-      local info = getPackedProfessionInfo(parentId);
+  local function readParentProfession (info)
+    professionCache[info.professionID] = info;
+  end
 
-      checkProfessionChange(info);
-    end
+  local function readParentProfessions ()
+    iterateParentProfessions(readParentProfession);
+  end
+
+  local function checkParentProfessions ()
+    iterateParentProfessions(checkProfessionChange);
   end
 
   Events.onOnce('PLAYER_LOGIN', function ()
