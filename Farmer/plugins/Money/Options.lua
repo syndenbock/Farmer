@@ -13,7 +13,7 @@ local SavedVariables = addon.import('client/utils/SavedVariables');
 local Options = addon.import('main/Options');
 local L = addon.L;
 
-local panel = Panel:new(L['Money'], Options.mainPanel);
+local panel = Panel:new(L['Money'], Options.panel);
 
 local vars = SavedVariables.SavedVariablesHandler(addonName, {'farmerOptions', 'farmerCharOptions'}, {
   farmerOptions = {

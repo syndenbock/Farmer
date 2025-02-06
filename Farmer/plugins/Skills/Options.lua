@@ -7,7 +7,7 @@ local Panel = addon.import('client/classes/options/Panel');
 local Options = addon.import('main/Options');
 local L = addon.L;
 
-local panel = Panel:new(L['Skills'], Options.mainPanel);
+local panel = Panel:new(L['Skills'], Options.panel);
 
 local options = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {

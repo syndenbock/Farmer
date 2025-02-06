@@ -11,7 +11,7 @@ local Options = addon.import('main/Options');
 
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 
-local panel = addon.import('client/classes/options/Panel'):new(L['Items'], Options.mainPanel);
+local panel = addon.import('client/classes/options/Panel'):new(L['Items'], Options.panel);
 
 local options = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {
