@@ -1,9 +1,9 @@
 ## Interface: 110107
-## Interface-Cata: 40402
+## Interface-Mists: 50500
 ## Interface-Classic: 11507
 ## Title: Farmer
 ## Author: syndenbock
-## Version: 3.26.11
+## Version: 3.26.12
 
 ## X-Curse-Project-ID: 282961
 ## X-Wago-ID: J96EDgNg
