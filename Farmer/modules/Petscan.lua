@@ -7,7 +7,6 @@ local Strings = addon.import('core/utils/Strings');
 local C_Container = addon.import('client/polyfills/C_Container');
 
 local tinsert = _G.tinsert;
-local tremove = _G.tremove;
 local C_Timer = _G.C_Timer;
 local PetJournal = _G.C_PetJournal;
 local CagePetByID = PetJournal.CagePetByID;
@@ -16,6 +15,8 @@ local ClearSearchFilter = PetJournal.ClearSearchFilter;
 local GetNumPets = PetJournal.GetNumPets;
 local GetContainerNumFreeSlots = C_Container.GetContainerNumFreeSlots;
 local NUM_BAG_SLOTS = _G.NUM_BAG_SLOTS;
+
+local routine = nil;
 
 local function getBagFreeSlots (bagIndex)
   local generalBagType = 0;
@@ -32,20 +33,6 @@ local function getInventoryFreeSlots ()
   end
 
   return freeSlots;
-end
-
-local function processPetQueue (petQueue, freeSlots)
-  CagePetByID(petQueue[1]);
-  tremove(petQueue, 1);
-  freeSlots = freeSlots - 1;
-
-  --[[ we want to process queue once with no slots left, so the game displays
-       an "inventory is full" message once --]]
-  if (freeSlots >= 0 and #petQueue > 0) then
-    C_Timer.After(0.4, function ()
-      processPetQueue(petQueue, freeSlots);
-    end);
-  end
 end
 
 local function checkPetById (petMap, petQueue, petId, petInfo)
@@ -79,28 +66,53 @@ local function readPetByIndex (petMap, petQueue, petIndex)
   checkPetById(petMap, petQueue, petId, petInfo);
 end
 
-local function scanPets ()
-  local freeSlots = getInventoryFreeSlots();
-
-  if (freeSlots == 0) then return end;
-
+local function determineExcessPets ()
   --[[ Filters have to be cleared because PetJournal functions can only access
        pets that are currently displayed ]]
   ClearSearchFilter();
 
-  local _, ownedPets = GetNumPets();
   local petMap = {};
   local petQueue = {};
+  local _, ownedPets = GetNumPets();
 
   for x = 1, ownedPets, 1 do
     readPetByIndex(petMap, petQueue, x);
   end
 
-  if (#petQueue > 0) then
-    processPetQueue(petQueue, freeSlots);
-  else
-    print('no pets to be caged!')
+  return petQueue;
+end
+
+local function cageExcessPets ()
+  local petQueue = determineExcessPets();
+  local freeSlots = getInventoryFreeSlots();
+  local currentIndex = 1;
+
+  --[[ we want to process queue once with no slots left, so the game displays
+        an "inventory is full" message once --]]
+  for _, petId in ipairs(petQueue) do
+    if (freeSlots <= 0) then
+      break;
+    end
+
+    CagePetByID(petId);
+    freeSlots = freeSlots - 1;
+    coroutine.yield();
   end
 end
 
-SlashCommands.addCommand('cagepets', scanPets);
+local function executeCoroutine ()
+  if (coroutine.resume(routine)) then
+    C_Timer.After(0.5, executeCoroutine);
+  else
+    routine = nil;
+  end
+end
+
+SlashCommands.addCommand('cagepets', function ()
+  if (routine ~= nil) then
+    return;
+  end
+
+  routine = coroutine.create(cageExcessPets);
+  executeCoroutine();
+end);
