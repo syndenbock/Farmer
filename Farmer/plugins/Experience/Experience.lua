@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('experience')) then return end
 
-local strjoin = _G.strjoin;
+local strconcat = _G.strconcat;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
 local Yell = addon.import('core/logic/Yell');
@@ -44,7 +44,7 @@ Yell.listen('EXPERIENCE_GAINED', function (info)
   printMessageWithData(SUBSPACE, IDENTIFIER, {
     gain = gain,
     percentageGain = percentageGain,
-  }, strjoin('',
+  }, strconcat(
     BreakUpLargeNumbers(truncate(gain, 1)),
     ' (', truncate(percentageGain, 1), '%',
     '/',

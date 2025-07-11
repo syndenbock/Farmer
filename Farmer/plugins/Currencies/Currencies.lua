@@ -2,7 +2,7 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('currencies')) then return end
 
-local strjoin = _G.strjoin;
+local strconcat = _G.strconcat;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 
 local Yell = addon.import('core/logic/Yell');
@@ -69,7 +69,7 @@ local function displayCurrency (info, amount)
   local text;
 
   amount = (Main.frame:GetMessageData(SUBSPACE, info.id) or 0) + amount;
-  text = strjoin('',
+  text = strconcat(
     'x', BreakUpLargeNumbers(amount),
     ' (', BreakUpLargeNumbers(info.quantity), ')'
   );

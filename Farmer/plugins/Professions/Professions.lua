@@ -3,6 +3,7 @@ local addonName, addon = ...;
 if (not addon.isDetectorAvailable('professions')) then return end
 
 local strjoin = _G.strjoin;
+local strconcat = _G.strconcat;
 
 local Yell = addon.import('core/logic/Yell');
 local SavedVariables = addon.import('client/utils/SavedVariables');
@@ -22,7 +23,7 @@ local function checkProfessionOptions (info)
 end
 
 local function displayProfession (info, change)
-  local text = strjoin('', '(', info.skillLevel, '/', info.maxSkillLevel, ')');
+  local text = strconcat('(', info.skillLevel, '/', info.maxSkillLevel, ')');
   local changeText;
 
   change = change + (Main.frame:GetMessageData(SUBSPACE, info.professionID) or 0);

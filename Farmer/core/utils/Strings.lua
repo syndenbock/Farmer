@@ -4,6 +4,7 @@ local strfind = _G.strfind;
 local strsub = _G.strsub;
 local strmatch = _G.strmatch;
 local strjoin = _G.strjoin;
+local strconcat = _G.strconcat;
 local tostring = _G.tostring;
 local tinsert = _G.tinsert;
 local floor = _G.floor;
@@ -143,7 +144,7 @@ function module.extractNormalizedItemString (itemLink)
   local match = {strmatch(itemLink, pattern)};
 
   if (#match >= 3) then
-    return strjoin('', match[1], '::', match[3]);
+    return strconcat(match[1], '::', match[3]);
   else
     return nil;
   end

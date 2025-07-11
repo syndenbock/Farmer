@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('skills')) then return end
 
+local strconcat = _G.strconcat;
 local strjoin = _G.strjoin;
 
 local Yell = addon.import('core/logic/Yell');
@@ -22,7 +23,7 @@ local function checkSkillOptions ()
 end
 
 local function displaySkill (info)
-  local text = strjoin('', '(', info.rank, '/', info.maxRank, ')');
+  local text = strconcat('(', info.rank, '/', info.maxRank, ')');
   local changeText;
 
   local change = info.rankChange + (Main.frame:GetMessageData(SUBSPACE, info.name) or 0);
