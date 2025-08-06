@@ -1,5 +1,7 @@
 local _, addon = ...;
 
+if (not _G.C_EventUtils.IsEventValid("VOID_TRANSFER_DONE")) then return end
+
 local EventUtils = addon.import('client/utils/Events');
 local Events = addon.import('core/logic/Events');
 
