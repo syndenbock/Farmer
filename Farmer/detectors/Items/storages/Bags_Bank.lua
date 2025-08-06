@@ -6,7 +6,6 @@ local C_Container = addon.import('client/polyfills/C_Container');
 local Events = addon.import('core/logic/Events');
 local EventUtils = addon.import('client/utils/Events');
 
-
 local wipe = _G.wipe;
 
 local tinsert = _G.tinsert;
@@ -29,7 +28,7 @@ local KEYRING_CONTAINER = BagIndex.Keyring;
 local NUM_BAG_SLOTS = InventoryConstants.NumBagSlots;
 -- On Cataclysm Classic ReagentBag exists but not NumReagentBagSlots. Duh.
 local NUM_REAGENTBAG_SLOTS = InventoryConstants.NumReagentBagSlots or 0;
-local NUM_BANKBAGSLOTS = InventoryConstants.NumBankBagSlots;
+local NUM_BANKBAGSLOTS = InventoryConstants.MAX_TRANSACTION_BANK_TABS or InventoryConstants.NumBankBagSlots;
 local NUM_ACCOUNTBANK_SLOTS = InventoryConstants.NumAccountBankSlots;
 
 local FIRST_BAG_SLOT = BagIndex.Bag_1;
@@ -38,7 +37,7 @@ local LAST_BAG_SLOT = FIRST_BAG_SLOT + NUM_BAG_SLOTS - 1;
 local FIRST_REAGENTBAG_SLOT = BagIndex.ReagentBag;
 local LAST_REAGENTBAG_SLOT = FIRST_REAGENTBAG_SLOT + NUM_REAGENTBAG_SLOTS - 1;
 
-local FIRST_BANK_SLOT = BagIndex.BankBag_1;
+local FIRST_BANK_SLOT = BagIndex.CharacterBankTab_1 or BagIndex.BankBag_1;
 local LAST_BANK_SLOT = FIRST_BANK_SLOT + NUM_BANKBAGSLOTS - 1;
 
 local FIRST_ACCOUNTBANK_SLOT = NUM_ACCOUNTBANK_SLOTS and BagIndex.AccountBankTab_1 or nil;
@@ -179,11 +178,8 @@ end
 
 --[[ function is used as event callback, so first argument is ignored ]]
 local function updateBankSlot (_, slot)
-  if (slot > GetContainerNumSlots(BANK_CONTAINER)) then
-    return;
-  end
-
-  if (bagCache[BANK_CONTAINER]) then
+  if (slot <= GetContainerNumSlots(BANK_CONTAINER) and
+      bagCache[BANK_CONTAINER]) then
     readBagSlot(BANK_CONTAINER, slot);
   end
 end
@@ -213,7 +209,10 @@ Events.onOnce('PLAYER_LOGIN', function ()
 
   Events.on('BAG_UPDATE', flagBag);
   Events.on('BAG_CLOSED', clearBag);
-  Events.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
+
+  if (BANK_CONTAINER ~= nil) then
+    Events.on('PLAYERBANKSLOTS_CHANGED', updateBankSlot);
+  end
 
   EventUtils.onInteractionFrameShow(bankInteractionFrameTypes, initBank);
   EventUtils.onInteractionFrameHide(bankInteractionFrameTypes, clearBank);
