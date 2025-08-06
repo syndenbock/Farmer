@@ -27,6 +27,8 @@ jobs:
       # we first have to clone the AddOn project, this is a required step
       - name: Clone project
         uses: actions/checkout@master
+        with:
+          fetch-depth: 0  # gets entire git history, needed for automatic changelogs
 
       # Create package
       - name: Release Retail
