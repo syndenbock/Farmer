@@ -118,7 +118,7 @@ local function yellReputation (reputationInfo)
 end
 
 local function handleNewReputation (factionInfo)
-  if (factionInfo.reputation ~= 0) then
+  if (factionInfo.currentStanding ~= 0) then
     factionInfo.standingChange = factionInfo.currentStanding;
 
     if (factionInfo.paragonLevel) then
