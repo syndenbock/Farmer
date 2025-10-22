@@ -3,7 +3,7 @@
 ## Interface-Classic: 11508
 ## Title: Farmer
 ## Author: syndenbock
-## Version: 3.27.2
+## Version: 3.27.3
 
 ## X-Curse-Project-ID: 282961
 ## X-Wago-ID: J96EDgNg
