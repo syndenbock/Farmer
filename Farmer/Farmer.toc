@@ -1,7 +1,7 @@
 ## Interface: 11508, 38000, 50502, 110200
 ## Title: Farmer
 ## Author: syndenbock
-## Version: 3.27.3
+## Version: 3.27.4
 
 ## X-Curse-Project-ID: 282961
 ## X-Wago-ID: J96EDgNg
