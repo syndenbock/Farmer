@@ -1,6 +1,4 @@
-## Interface: 110200
-## Interface-Mists: 50502
-## Interface-Classic: 11508
+## Interface: 11508, 38000, 50502, 110200
 ## Title: Farmer
 ## Author: syndenbock
 ## Version: 3.27.3
