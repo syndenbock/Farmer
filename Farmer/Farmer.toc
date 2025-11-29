@@ -1,4 +1,4 @@
-## Interface: 11508, 38000, 50502, 110200
+## Interface: 11508, 20504, 30404, 38000, 40402, 50502, 110200
 ## Title: Farmer
 ## Author: syndenbock
 ## Version: 3.27.4
