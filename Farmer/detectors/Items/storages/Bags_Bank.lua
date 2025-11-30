@@ -25,22 +25,30 @@ local BANK_CONTAINER = BagIndex.Bank;
 local REAGENTBANK_CONTAINER = BagIndex.Reagentbank;
 local KEYRING_CONTAINER = BagIndex.Keyring;
 
+local BAG_OFFSET = 0;
+
 local NUM_BAG_SLOTS = InventoryConstants.NumBagSlots;
 -- On Cataclysm Classic ReagentBag exists but not NumReagentBagSlots. Duh.
 local NUM_REAGENTBAG_SLOTS = InventoryConstants.NumReagentBagSlots or 0;
+
+-- Ugly as heck workaround for a bug on MoP classic where BagIndex.BankBag_1 is incorrect
+if (NUM_REAGENTBAG_SLOTS == 0) then
+  BAG_OFFSET = 1;
+end
+
 local NUM_BANKBAGSLOTS = InventoryConstants.MAX_TRANSACTION_BANK_TABS or InventoryConstants.NumBankBagSlots;
 local NUM_ACCOUNTBANK_SLOTS = InventoryConstants.NumAccountBankSlots;
 
 local FIRST_BAG_SLOT = BagIndex.Bag_1;
 local LAST_BAG_SLOT = FIRST_BAG_SLOT + NUM_BAG_SLOTS - 1;
 
-local FIRST_REAGENTBAG_SLOT = BagIndex.ReagentBag;
+local FIRST_REAGENTBAG_SLOT = BagIndex.ReagentBag - BAG_OFFSET;
 local LAST_REAGENTBAG_SLOT = FIRST_REAGENTBAG_SLOT + NUM_REAGENTBAG_SLOTS - 1;
 
-local FIRST_BANK_SLOT = BagIndex.CharacterBankTab_1 or BagIndex.BankBag_1;
+local FIRST_BANK_SLOT = BagIndex.CharacterBankTab_1 or BagIndex.BankBag_1 - BAG_OFFSET;
 local LAST_BANK_SLOT = FIRST_BANK_SLOT + NUM_BANKBAGSLOTS - 1;
 
-local FIRST_ACCOUNTBANK_SLOT = NUM_ACCOUNTBANK_SLOTS and BagIndex.AccountBankTab_1 or nil;
+local FIRST_ACCOUNTBANK_SLOT = NUM_ACCOUNTBANK_SLOTS and BagIndex.AccountBankTab_1 - BAG_OFFSET or nil;
 local LAST_ACCOUNTBANK_SLOT = FIRST_ACCOUNTBANK_SLOT and FIRST_ACCOUNTBANK_SLOT + NUM_ACCOUNTBANK_SLOTS - 1;
 
 local UNIT_PLAYER = 'player';
