@@ -70,7 +70,9 @@ local function sellItemIfGray (bag, slot)
       isItemTrash(info.quality)) then
     local price = getItemSellPrice(info.itemID) * info.stackCount;
 
-    sellitem(bag, slot);
+    if (price > 0) then
+      sellitem(bag, slot);
+    end
 
     return price;
   else
@@ -88,8 +90,8 @@ local function sellGrayItemsInBag (bag)
   return price;
 end
 
-local function sellGrayItems ()
-	local totalPrice = 0;
+local function sellGrayItems()
+  local totalPrice = 0;
 
   totalPrice = totalPrice + sellGrayItemsInBag(BACKPACK_CONTAINER);
 
