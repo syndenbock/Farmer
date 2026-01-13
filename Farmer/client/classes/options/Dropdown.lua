@@ -62,7 +62,8 @@ local function createDropdown(name, parent, text, options, anchors)
 
   function dropdown:SetValue(value)
     self.value = value;
-    UIDropDownMenu_SetText(self, value);
+    -- The dropdown itself shall keep its text so SetText is not called
+    -- UIDropDownMenu_SetText(self, value);
   end
 
   function dropdown:GetValue()
