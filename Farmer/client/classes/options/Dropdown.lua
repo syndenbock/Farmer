@@ -77,8 +77,7 @@ local function createDropdown(name, parent, text, options, anchors)
   dropdown.options = options;
   dropdown.width = anchors.width;
 
-  -- Assigning this instead of using UIDropDownMenu_Initialize avoids taint
-  dropdown.initialize = initDropDown;
+  UIDropDownMenu_Initialize(dropdown, initDropDown);
 
   return dropdown;
 end
