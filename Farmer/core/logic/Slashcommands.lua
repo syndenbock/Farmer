@@ -5,6 +5,8 @@ local strsplit = _G.strsplit;
 
 local L = addon.L;
 
+local Strings = addon.import('core/utils/Strings');
+
 local module = addon.export('core/logic/SlashCommands', {});
 
 local slashCommands = {};
@@ -22,7 +24,7 @@ local function executeSlashCommand (command, ...)
   local handler = slashCommands[strlower(command)];
 
   if (handler == nil) then
-    return addon.printAddonMessage(L['unknown command'], '"' .. command .. '"');
+    return Strings.printAddonMessage(L['unknown command'], '"' .. command .. '"');
   end
 
   handler(...);
