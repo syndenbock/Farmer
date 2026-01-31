@@ -4,10 +4,6 @@ local CreateFrame = _G.CreateFrame;
 local CreateFromMixins = _G.CreateFromMixins;
 
 local Settings = _G.Settings;
-local InterfaceOptionsFrame_OpenToCategory = _G.InterfaceOptionsFrame_OpenToCategory;
-local InterfaceOptionsFrame_Show = _G.InterfaceOptionsFrame_Show;
-local InterfaceOptions_AddCategory = _G.InterfaceOptions_AddCategory;
-
 local UIParent = _G.UIParent;
 
 local Button = addon.import('client/classes/options/Button');
@@ -45,10 +41,8 @@ local function handleFirstLoad (self)
 end
 
 function Panel:new (name, parent)
-  parent = parent or UIParent;
-
   local this = CreateFromMixins(Panel);
-  local panel = CreateFrame('Frame', generatePanelName(), parent);
+  local panel = CreateFrame('Frame', generatePanelName(), parent and parent.panel or UIParent);
 
   this.loaded = false;
   this.name = name;
@@ -58,27 +52,17 @@ function Panel:new (name, parent)
     y = 10,
   };
   this.callbackHandler = CallbackHandler:new();
-  panel.name = name;
-  panel.parent = parent.name;
 
   this:addPanelHandler(ON_COMMIT, 'okay');
   this:addPanelHandler('OnDefault', 'default');
   this:addPanelHandler(ON_REFRESH, 'refresh');
   this:addPanelHandler(ON_CANCEL, 'cancel');
 
-  if (Settings) then
-    local category = Settings.GetCategory(parent.name);
-
-    if (category) then
-      category = Settings.RegisterCanvasLayoutSubcategory(category, panel, name);
-      category.ID = name;
-    else
-      category = Settings.RegisterCanvasLayoutCategory(panel, name);
-      category.ID = name;
-      Settings.RegisterAddOnCategory(category);
-    end
+  if (parent ~= nil) then
+    this.category = Settings.RegisterCanvasLayoutSubcategory(parent.category, panel, name);
   else
-    InterfaceOptions_AddCategory(panel, addonName);
+    this.category = Settings.RegisterCanvasLayoutCategory(panel, name);
+    Settings.RegisterAddOnCategory(this.category);
   end
 
   this.anchor = {
@@ -144,12 +128,7 @@ function Panel:addPanelHandler (identifier, ...)
 end
 
 function Panel:open ()
-  if (Settings) then
-    Settings.OpenToCategory(self.panel.name);
-  else
-    InterfaceOptionsFrame_Show();
-    InterfaceOptionsFrame_OpenToCategory(self.panel.name);
-  end
+  Settings.OpenToCategory(self.category:GetID());
 end
 
 function Panel:OnSave (callback)

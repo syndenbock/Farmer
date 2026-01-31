@@ -19,7 +19,7 @@ local module = addon.export('main/Options', {});
 local mainPanel = Panel:new(addonName);
 local farmerFrame = Main.frame;
 
-module.panel = mainPanel.panel;
+module.panel = mainPanel;
 
 local saved = SavedVariables.SavedVariablesHandler(addonName, 'farmerOptions', {
   farmerOptions = {

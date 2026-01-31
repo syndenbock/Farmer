@@ -21,7 +21,7 @@ end
 local function executeSlashCommand (command, ...)
   local handler = slashCommands[strlower(command)];
 
-  if (not handler) then
+  if (handler == nil) then
     return addon.printAddonMessage(L['unknown command'], '"' .. command .. '"');
   end
 
