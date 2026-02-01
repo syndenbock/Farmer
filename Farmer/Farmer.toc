@@ -8,7 +8,7 @@
 
 ## Title: Farmer
 ## Author: syndenbock
-## Version: 3.27.10
+## Version: 3.27.11
 
 ## X-Curse-Project-ID: 282961
 ## X-Wago-ID: J96EDgNg
