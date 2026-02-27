@@ -126,16 +126,6 @@ function module.extractItemString (itemLink)
   return strmatch(itemLink, 'item[%-?%d:]+');
 end
 
-local craftedQualityIcons = {};
-
-function module.getCraftedQualityIcon (quality)
-  if (craftedQualityIcons[quality] == nil) then
-    craftedQualityIcons[quality] = CreateAtlasMarkup(('Professions-Icon-Quality-Tier%d-Small'):format(quality), nil, nil, nil, nil, nil);
-  end
-
-  return craftedQualityIcons[quality];
-end
-
 function module.extractNormalizedItemString (itemLink)
   --[[ the 9th and 10th positions contain character level and spec, which causes
        different links after levelups or spec swaps and therefor have to be

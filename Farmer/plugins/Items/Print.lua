@@ -2,6 +2,7 @@ local addonName, addon = ...;
 
 if (not addon.isDetectorAvailable('items')) then return end
 
+local CreateAtlasMarkup = _G.CreateAtlasMarkup;
 local BreakUpLargeNumbers = _G.BreakUpLargeNumbers;
 local GetItemCount = _G.C_Item.GetItemCount;
 
@@ -92,14 +93,16 @@ end
 local formatItemName;
 
 do
-  local GetItemCraftedQualityByItemInfo = C_TradeSkillUI and C_TradeSkillUI.GetItemCraftedQualityByItemInfo;
+  local GetItemCraftedQualityInfo = C_TradeSkillUI and C_TradeSkillUI.GetItemCraftedQualityInfo;
 
-  if (GetItemCraftedQualityByItemInfo) then
+  if (GetItemCraftedQualityInfo) then
     formatItemName = function (item)
-      local quality = GetItemCraftedQualityByItemInfo(item.link);
+      -- GetItemCraftedQualityInfo returns info for both crafted items and reagents.
+      -- This might change in the future, requiring checking GetItemReagentQualityInfo too.
+      local qualityInfo = GetItemCraftedQualityInfo(item.link);
 
-      if (quality) then
-        return item.name .. Strings.getCraftedQualityIcon(quality);
+      if (qualityInfo ~= nil) then
+        return item.name .. CreateAtlasMarkup(qualityInfo.iconChat or qualityInfo.icon, nil, nil, nil, nil, nil);
       else
         return item.name;
       end
