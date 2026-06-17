@@ -205,7 +205,7 @@ local function updateReagentBankSlot (_, slot)
   end
 end
 
-Events.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('BAG_UPDATE_DELAYED', function ()
   local interactionFrameTypes = _G.Enum.PlayerInteractionType;
   local bankInteractionFrameTypes = {
     interactionFrameTypes.Banker,

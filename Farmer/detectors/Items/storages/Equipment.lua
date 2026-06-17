@@ -66,7 +66,7 @@ local function handleSlotUpdate (_, slot, isEmpty)
   end
 end
 
-Events.onOnce('PLAYER_LOGIN', function ()
+Events.onOnce('BAG_UPDATE_DELAYED', function ()
   initEquipment();
   -- This is needed to detect gear updates when automatically switching specs
   -- when joining an LFG instance.
