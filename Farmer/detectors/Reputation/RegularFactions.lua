@@ -81,7 +81,7 @@ local function iterateReputations (callback)
         numFactions = GetNumFactions();
       end
 
-      if (factionInfo.factionID and not IsMajorFaction(factionInfo.factionID)) then
+      if (factionInfo.factionID) then
         updateParagonInfo(factionInfo);
         updateFriendShipInfo(factionInfo);
         callback(factionInfo);
