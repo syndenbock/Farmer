@@ -40,13 +40,12 @@ local function readVignette (_, vignetteGUID)
 
   if (not info or not coords) then return end
 
-  local objectGUID = info.objectGUID;
   local onMinimap = info.onMinimap;
 
   -- If the vignette was already detected on the minimap it makes the second
   -- check redundant
-  if (vignetteCache[objectGUID] == true or
-      vignetteCache[objectGUID] == onMinimap) then
+  if (vignetteCache[vignetteGUID] == true or
+      vignetteCache[vignetteGUID] == onMinimap) then
     return;
   end
 
@@ -55,7 +54,7 @@ local function readVignette (_, vignetteGUID)
     y = coords.y * 100,
   });
 
-  vignetteCache[objectGUID] = onMinimap;
+  vignetteCache[vignetteGUID] = onMinimap;
 end
 
 local function scanVignettes ()
