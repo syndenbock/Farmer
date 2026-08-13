@@ -13,7 +13,6 @@ local GetNumFactions = C_Reputation.GetNumFactions;
 local GetFactionDataByIndex = C_Reputation.GetFactionDataByIndex;
 local ExpandFactionHeader = C_Reputation.ExpandFactionHeader;
 local CollapseFactionHeader = C_Reputation.CollapseFactionHeader;
-local IsMajorFaction = C_Reputation.IsMajorFaction;
 
 local C_GossipInfo = _G.C_GossipInfo;
 local GetFriendshipReputation = C_GossipInfo.GetFriendshipReputation;
@@ -121,7 +120,7 @@ local function handleNewReputation (factionInfo)
   if (factionInfo.currentStanding ~= 0) then
     factionInfo.standingChange = factionInfo.currentStanding;
 
-    if (factionInfo.paragonLevel) then
+    if (factionInfo.paragonLevel and factionInfo.paragonLevel > 0) then
       factionInfo.paragonLevelGained = true;
     elseif (factionInfo.friendRank) then
       factionInfo.friendshipChanged = true;
