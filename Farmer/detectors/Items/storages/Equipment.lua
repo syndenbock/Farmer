@@ -66,13 +66,13 @@ local function handleSlotUpdate (_, slot, isEmpty)
   end
 end
 
-Events.onOnce('BAG_UPDATE_DELAYED', function ()
+local function initStorage ()
   initEquipment();
   -- This is needed to detect gear updates when automatically switching specs
   -- when joining an LFG instance.
   -- EQUIPMENT_SWAP_FINISHED does not work for some reason.
   Events.on('PLAYER_ENTERING_WORLD', updateEquipment);
   Events.on('PLAYER_EQUIPMENT_CHANGED', handleSlotUpdate);
-end);
+end
 
-addon.import('detectors/Items/Items').addStorage({currentEquipment});
+addon.import('detectors/Items/Items').addStorage({currentEquipment}, initStorage);

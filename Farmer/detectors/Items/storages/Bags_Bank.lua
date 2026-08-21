@@ -205,7 +205,7 @@ local function updateReagentBankSlot (_, slot)
   end
 end
 
-Events.onOnce('BAG_UPDATE_DELAYED', function ()
+local function initStorage ()
   local interactionFrameTypes = _G.Enum.PlayerInteractionType;
   local bankInteractionFrameTypes = {
     interactionFrameTypes.Banker,
@@ -228,9 +228,9 @@ Events.onOnce('BAG_UPDATE_DELAYED', function ()
   if (_G.C_EventUtils.IsEventValid('PLAYERREAGENTBANKSLOTS_CHANGED')) then
     Events.on('PLAYERREAGENTBANKSLOTS_CHANGED', updateReagentBankSlot);
   end
-end);
+end
 
 addon.import('detectors/Items/Items').addStorage(function ()
   updateFlaggedBags();
   return bagCache;
-end);
+end, initStorage);

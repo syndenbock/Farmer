@@ -73,9 +73,10 @@ local function clearVoidStorage ()
   wipe(storageTabs);
 end
 
-EventUtils.onInteractionFrameShow(VOIDSTORAGE_INTERACTION_TYPE, initVoidStorage);
-EventUtils.onInteractionFrameHide(VOIDSTORAGE_INTERACTION_TYPE, clearVoidStorage);
+local function initStorage ()
+  EventUtils.onInteractionFrameShow(VOIDSTORAGE_INTERACTION_TYPE, initVoidStorage);
+  EventUtils.onInteractionFrameHide(VOIDSTORAGE_INTERACTION_TYPE, clearVoidStorage);
+  Events.on('VOID_TRANSFER_DONE', readVoidStorage);
+end
 
-Events.on('VOID_TRANSFER_DONE', readVoidStorage);
-
-addon.import('detectors/Items/Items').addStorage(storageTabs);
+addon.import('detectors/Items/Items').addStorage(storageTabs, initStorage);

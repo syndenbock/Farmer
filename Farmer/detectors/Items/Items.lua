@@ -1,6 +1,9 @@
 local _, addon = ...;
 
+local tinsert = _G.tinsert;
+local wipe = _G.wipe;
 
+local After = _G.C_Timer.After;
 local C_Item = _G.C_Item;
 local IsItemDataCachedByID = C_Item.IsItemDataCachedByID;
 local GetItemInfo = _G.C_Item.GetItemInfo;
@@ -14,13 +17,22 @@ local fetchItemLink = addon.import('client/utils/Items').fetchItemLink;
 
 local module = addon.export('detectors/Items/Items', {});
 local storages = {};
+local initCallbacks = {};
 local changesStorage = Storage:new();
 
 addon.registerAvailableDetector('items');
 
-function module.addStorage (storage)
+function module.addStorage (storage, onInit)
   assert(storages[storage] == nil, 'storage was already added');
   storages[storage] = true;
+
+  if (onInit ~= nil) then
+    if (initCallbacks ~= nil) then
+      tinsert(initCallbacks, onInit);
+    else
+      onInit();
+    end
+  end
 end
 
 local function readItemChanges (changes, id, itemInfo)
@@ -128,7 +140,14 @@ local function checkStorageChanges ()
   clearInventoryChanges();
 end
 
-Events.on('BAG_UPDATE_DELAYED', checkStorageChanges);
+Events.onOnce("BAG_UPDATE_DELAYED", function ()
+  for _, callback in ipairs(initCallbacks) do
+    callback();
+  end
+  initCallbacks = nil;
+  Events.on('BAG_UPDATE_DELAYED', checkStorageChanges);
+end);
+
 
 --##############################################################################
 -- testing

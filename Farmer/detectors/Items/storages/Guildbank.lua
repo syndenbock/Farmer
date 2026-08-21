@@ -53,24 +53,26 @@ local function readCurrentGuildBankTab ()
   return index;
 end
 
-EventUtils.onInteractionFrameShow(GUILDBANK_INTERACTION_TYPE, function ()
-  isOpen = true;
-end);
+local function initStorage ()
+  EventUtils.onInteractionFrameShow(GUILDBANK_INTERACTION_TYPE, function ()
+    isOpen = true;
+  end);
 
-Events.on('GUILDBANKBAGSLOTS_CHANGED', function ()
-  if (not isOpen) then
-    return;
-  end
+  Events.on('GUILDBANKBAGSLOTS_CHANGED', function ()
+    if (not isOpen) then
+      return;
+    end
 
-  local tabIndex = readCurrentGuildBankTab();
+    local tabIndex = readCurrentGuildBankTab();
 
-  --[[ Guild bank content was not updated, but tab was switched.
-    This includes handling the guild bank getting opened ]]
-  if (tabIndex ~= currentTab) then
-    storage:clearChanges();
-    currentTab = tabIndex;
-  end
-end);
+    --[[ Guild bank content was not updated, but tab was switched.
+      This includes handling the guild bank getting opened ]]
+    if (tabIndex ~= currentTab) then
+      storage:clearChanges();
+      currentTab = tabIndex;
+    end
+  end);
+end
 
 EventUtils.onInteractionFrameHide(GUILDBANK_INTERACTION_TYPE, function ()
   isOpen = false;
@@ -78,4 +80,4 @@ EventUtils.onInteractionFrameHide(GUILDBANK_INTERACTION_TYPE, function ()
   currentTab = nil;
 end);
 
-addon.import('detectors/Items/Items').addStorage({storage});
+addon.import('detectors/Items/Items').addStorage({storage}, initStorage);
