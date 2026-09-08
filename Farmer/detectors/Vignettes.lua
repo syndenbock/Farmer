@@ -63,14 +63,20 @@ local function scanVignettes ()
   end
 end
 
-local function initZone ()
-  currentMapId = getCurrentMap();
-  wipe(vignetteCache);
-  scanVignettes();
+local function initZone (event)
+  local mapId = getCurrentMap();
+
+  if (currentMapId ~= mapId) then
+    currentMapId = mapId;
+    wipe(vignetteCache);
+    scanVignettes();
+  end
 end
 
-Events.onOnce('PLAYER_LOGIN', initZone);
+Events.on('PLAYER_ENTERING_WORLD', initZone);
 Events.on('ZONE_CHANGED_NEW_AREA', initZone);
+Events.on('ZONE_CHANGED', initZone);
+Events.on('ZONE_CHANGED_INDOORS', initZone);
 
 Events.on('VIGNETTES_UPDATED', scanVignettes);
 Events.on('VIGNETTE_MINIMAP_UPDATED', readVignette);
