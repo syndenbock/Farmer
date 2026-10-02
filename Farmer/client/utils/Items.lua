@@ -2,7 +2,7 @@ local _, addon = ...;
 
 local DoesItemExistByID = _G.C_Item.DoesItemExistByID;
 local Item = _G.Item;
-local GetItemInfo = _G.GetItemInfo;
+local GetItemInfo = _G.C_Item.GetItemInfo;
 
 local ITEM_QUALITY_COLORS = _G.ITEM_QUALITY_COLORS;
 

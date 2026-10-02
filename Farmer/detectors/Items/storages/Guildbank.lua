@@ -8,7 +8,7 @@ local Events = addon.import('core/logic/Events');
 local GetCurrentGuildBankTab = _G.GetCurrentGuildBankTab;
 local GetGuildBankItemInfo = _G.GetGuildBankItemInfo;
 local GetGuildBankItemLink = _G.GetGuildBankItemLink;
-local GetItemInfoInstant = _G.GetItemInfoInstant;
+local GetItemInfoInstant = _G.C_Item.GetItemInfoInstant;
 
 local GUILDBANK_INTERACTION_TYPE = _G.Enum.PlayerInteractionType.GuildBanker;
 

@@ -6,7 +6,7 @@ local C_Container = addon.import('client/polyfills/C_Container');
 local GetContainerNumSlots = C_Container.GetContainerNumSlots;
 local GetContainerItemInfo = C_Container.GetContainerItemInfo;
 local UseContainerItem = C_Container.UseContainerItem;
-local GetItemInfo = _G.GetItemInfo;
+local GetItemInfo = _G.C_Item.GetItemInfo;
 
 local SavedVariables = addon.import('client/utils/SavedVariables');
 local Strings = addon.import('core/utils/Strings');
