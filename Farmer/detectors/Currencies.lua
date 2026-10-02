@@ -91,7 +91,7 @@ end
 
 local function yellCurrencyInfo (id, info, change)
   -- CurrencyInfo doesn't contain the id for some reason
-  info.id = id;
+  info.currencyID = info.currencyID or id;
   Yell.yell('CURRENCY_CHANGED', ImmutableMap(info), change);
 end
 

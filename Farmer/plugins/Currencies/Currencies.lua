@@ -44,12 +44,12 @@ local function checkDisplayOptions (info)
     return false;
   end
 
-  if (isCurrencyIgnored(info.id)) then
+  if (isCurrencyIgnored(info.currencyID)) then
     return false;
   end
 
   if (CURRENCY_OPTIONS.ignoreHonor == true and
-      (info.id == ACCOUNT_HONOR_ID or info.id == HONOR_ID)) then
+      (info.currencyID == ACCOUNT_HONOR_ID or info.currencyID == HONOR_ID)) then
     return false;
   end
 
@@ -68,7 +68,7 @@ local function displayCurrency (info, amount)
 
   local text;
 
-  amount = (Main.frame:GetMessageData(SUBSPACE, info.id) or 0) + amount;
+  amount = (Main.frame:GetMessageData(SUBSPACE, info.currencyID) or 0) + amount;
   text = strconcat(
     'x', BreakUpLargeNumbers(amount),
     ' (', BreakUpLargeNumbers(info.quantity), ')'
@@ -78,7 +78,7 @@ local function displayCurrency (info, amount)
     text = info.name .. ' ' .. text;
   end
 
-  printIconMessageWithData(SUBSPACE, info.id, amount, info.iconFileID, text,
+  printIconMessageWithData(SUBSPACE, info.currencyID, amount, info.iconFileID, text,
       getRarityColor(info.quality));
 end
 
