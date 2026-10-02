@@ -23,8 +23,12 @@ local Strings = addon.import('core/utils/Strings');
 
 local Currency = Utils.findGlobal('Constant', 'Currency');
 
-local HONOR_ID = Currency and Currency.Honor or 1585;
-local CONQUEST_ID = Currency and Currency.Conquest or 1602;
+local function validateCurrencyId (id)
+  return GetCurrencyInfo(id) and id;
+end
+
+local HONOR_ID = (Currency and Currency.Honor) or validateCurrencyId(1585) or validateCurrencyId(1792);
+local CONQUEST_ID = Currency and Currency.Conquest or validateCurrencyId(1602);
 
 local currencyTable;
 
@@ -75,8 +79,12 @@ local function readCurrencyTable ()
 
   collapseExpandedCurrencies(expandedIndices);
 
-  data[HONOR_ID] = getCurrencyAmount(HONOR_ID);
-  data[CONQUEST_ID] = getCurrencyAmount(CONQUEST_ID);
+  if (HONOR_ID ~= nil) then
+    data[HONOR_ID] = getCurrencyAmount(HONOR_ID);
+  end
+  if (CONQUEST_ID ~= nil) then
+    data[CONQUEST_ID] = getCurrencyAmount(CONQUEST_ID);
+  end
 
   return data;
 end
