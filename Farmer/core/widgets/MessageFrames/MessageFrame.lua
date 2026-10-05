@@ -274,6 +274,9 @@ local function CreateMessageAnimation (self, message)
 
   if (not animationGroup) then
     animationGroup = message:CreateAnimationGroup();
+    animationGroup.parent = self;
+    animationGroup.message = message;
+    animationGroup:SetScript('OnFinished', OnMessageAnimationFinished);
     message.animationGroup = animationGroup;
   else
     animationGroup:Stop();
@@ -287,7 +290,6 @@ local function CreateMessageAnimation (self, message)
     animation.parent = self;
     animation.message = message;
 
-    animation:SetScript('OnFinished', OnMessageAnimationFinished);
     message.animation = animation;
   end
 
@@ -474,9 +476,7 @@ local function applyMessageAttributes (self, message, icon, atlas, text, colors)
     message.iconFrame:Hide();
   end
 
-  if (self.fading) then
-    startMessageAnimation(self, message);
-  end
+  startMessageAnimation(self, message);
 
   return message;
 end
@@ -501,7 +501,6 @@ local function resetMessage (message)
   message:Hide();
   message.head = nil;
   message.tail = nil;
-  message.isFading = nil;
 
   if (message.animationGroup) then
     message.animationGroup:Stop();
