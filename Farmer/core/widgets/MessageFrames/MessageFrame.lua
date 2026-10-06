@@ -284,12 +284,10 @@ local function CreateMessageAnimation (self, message)
 
   if (not animation) then
     animation = animationGroup:CreateAnimation('Alpha');
-
     animation:SetToAlpha(0);
     animation:SetOrder(1);
     animation.parent = self;
     animation.message = message;
-
     message.animation = animation;
   end
 
@@ -344,7 +342,10 @@ local function startMoving (self, message, callback)
     stopMovingAnchor(anchor);
     Utils.transformFrameAnchorsToCenter(anchor);
     anchor:SetSize(20, 20);
-    startMessageAnimation(self, message);
+
+    if (self.fading) then
+      startMessageAnimation(self, message);
+    end
 
     if (callback) then
       callback();
@@ -476,7 +477,9 @@ local function applyMessageAttributes (self, message, icon, atlas, text, colors)
     message.iconFrame:Hide();
   end
 
-  startMessageAnimation(self, message);
+  if (self.fading) then
+    startMessageAnimation(self, message);
+  end
 
   return message;
 end
