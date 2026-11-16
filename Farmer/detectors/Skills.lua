@@ -7,23 +7,22 @@ local _, addon = ...;
 -- found. If you find a better way of checking if the skill system exists,
 -- please let me know!
 
-if (GetSkillLineInfo == nil
-    or CHARACTERFRAME_SUBFRAMES == nil
-    or not tContains(CHARACTERFRAME_SUBFRAMES , 'SkillFrame')) then
+local C_SkillInfo = addon.import("client/polyfills/C_SkillInfo");
+
+if (C_SkillInfo.GetSkillLineInfo == nil) then
   addon.registerUnavailableDetector('skills');
   return;
 end
 
 local tinsert = _G.tinsert;
-local GetNumSkillLines = _G.GetNumSkillLines;
-local GetSkillLineInfo = _G.GetSkillLineInfo;
-local ExpandSkillHeader = _G.ExpandSkillHeader;
-local CollapseSkillHeader = _G.CollapseSkillHeader;
+local GetNumSkillLines = C_SkillInfo.GetNumSkillLines;
+local GetSkillLineInfo = C_SkillInfo.GetSkillLineInfo;
+local ExpandSkillHeader = C_SkillInfo.ExpandSkillHeader;
+local CollapseSkillHeader = C_SkillInfo.CollapseSkillHeader;
 
 local ImmutableMap = addon.import('core/classes/Maps').ImmutableMap;
 local Events = addon.import('core/logic/Events');
 local Yell = addon.import('core/logic/Yell');
-local Strings = addon.import('core/utils/Strings');
 
 addon.registerAvailableDetector('skills');
 
@@ -41,27 +40,18 @@ local function iterateSkills (callback)
   local i = 1;
 
   while (i <= numSkills) do
-    local info = {GetSkillLineInfo(i)};
-    local isHeader = info[2];
+    local info = GetSkillLineInfo(i);
 
-    if (info[1] == nil) then
-      Strings.printOneTimeMessage('Could not check skills as another addon seems to be interfering with the skills pane');
-    end
-
-    if (isHeader) then
-      local isExpanded = info[3];
-
-      if (not isExpanded) then
-        tinsert(expandedHeaders, i);
-        ExpandSkillHeader(i);
-        numSkills = GetNumSkillLines();
+    if (info ~= nil) then
+      if (info.isHeader) then
+        if (info.isCollapsed) then
+          tinsert(expandedHeaders, i);
+          ExpandSkillHeader(i);
+          numSkills = GetNumSkillLines();
+        end
+      else
+        callback(info);
       end
-    else
-      callback(
-        info[1], -- name
-        info[4], -- rank
-        info[7] --maxRank
-      );
     end
 
     i = i + 1;
@@ -70,8 +60,8 @@ local function iterateSkills (callback)
   collapseExpandedHeaders(expandedHeaders);
 end
 
-local function cacheSkillInfo (name, rank, maxRank)
-  skillCache[name] = rank;
+local function cacheSkillInfo (skillInfo)
+  skillCache[skillInfo.name] = skillInfo.rank;
 end
 
 local function initSkillCache ()
@@ -82,15 +72,15 @@ local function yellSkill (skillInfo)
   Yell.yell('SKILL_CHANGED', ImmutableMap(skillInfo));
 end
 
-local function checkSkill (name, rank, maxRank)
-  if (skillCache[name] ~= rank) then
+local function checkSkill (skillInfo)
+  if (skillCache[skillInfo.name] ~= skillInfo.rank) then
     yellSkill({
-      name = name,
-      rank = rank,
-      maxRank = maxRank,
-      rankChange = rank - (skillCache[name] or 0),
+      name = skillInfo.name,
+      rank = skillInfo.rank,
+      maxRank = skillInfo.maxRank,
+      rankChange = skillInfo.rank - (skillCache[skillInfo.name] or 0),
     });
-    cacheSkillInfo(name, rank, maxRank);
+    cacheSkillInfo(skillInfo);
   end
 end
 
