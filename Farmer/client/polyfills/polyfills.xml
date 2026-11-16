@@ -2,5 +2,6 @@
   <script file="C_Container.lua"/>
   <script file="C_CVar.lua"/>
   <script file="C_Reputation.lua"/>
+  <script file="C_SkillInfo.lua"/>
   <script file="C_Spell.lua"/>
 </UI>
